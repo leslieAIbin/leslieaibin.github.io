@@ -2,6 +2,20 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://leslieaibin.github.io/2020/11/11/Linux/%E7%BA%BF%E7%A8%8B%E3%80%81%E8%BF%9B%E7%A8%8B%E3%80%81%E5%8D%8F%E7%A8%8B%E7%AE%80%E4%BB%8B/</loc>
+    
+    <lastmod>2020-11-10</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://leslieaibin.github.io/2020/10/31/%E5%B7%A5%E5%85%B7/win10%E8%BF%9E%E6%8E%A5linux%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E5%B7%A5%E5%85%B7/</loc>
+    
+    <lastmod>2020-11-10</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://leslieaibin.github.io/2020/11/10/Java/JVM/Java%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E7%AE%80%E4%BB%8B/</loc>
     
     <lastmod>2020-11-10</lastmod>
@@ -26,13 +40,6 @@
     <loc>https://leslieaibin.github.io/2020/11/02/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%A0%91/%E5%89%8D%E3%80%81%E4%B8%AD%E3%80%81%E5%90%8E%E5%BA%8F%E9%81%8D%E5%8E%86%EF%BC%88%E9%80%92%E5%BD%92%E5%92%8C%E5%BE%AA%E7%8E%AF%EF%BC%89/</loc>
     
     <lastmod>2020-11-02</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://leslieaibin.github.io/2020/10/31/%E5%B7%A5%E5%85%B7/win10%E8%BF%9E%E6%8E%A5linux%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E5%B7%A5%E5%85%B7/</loc>
-    
-    <lastmod>2020-10-31</lastmod>
     
   </url>
   
@@ -174,13 +181,6 @@
   </url>
   
   <url>
-    <loc>https://leslieaibin.github.io/categories/ssh/</loc>
-    <lastmod>2020-11-10</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>https://leslieaibin.github.io/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/</loc>
     <lastmod>2020-11-10</lastmod>
     <changefreq>daily</changefreq>
@@ -196,6 +196,13 @@
   
   <url>
     <loc>https://leslieaibin.github.io/categories/JVM/</loc>
+    <lastmod>2020-11-10</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://leslieaibin.github.io/categories/linux/</loc>
     <lastmod>2020-11-10</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>

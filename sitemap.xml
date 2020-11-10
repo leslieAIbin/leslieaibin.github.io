@@ -102,14 +102,7 @@
 
   
   <url>
-    <loc>https://leslieaibin.github.io/tags/HTTP/</loc>
-    <lastmod>2020-11-10</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://leslieaibin.github.io/tags/TCP-IP/</loc>
+    <loc>https://leslieaibin.github.io/tags/linux/</loc>
     <lastmod>2020-11-10</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -123,14 +116,21 @@
   </url>
   
   <url>
-    <loc>https://leslieaibin.github.io/tags/linux/</loc>
+    <loc>https://leslieaibin.github.io/tags/%E4%BA%8C%E5%8F%89%E6%A0%91/</loc>
     <lastmod>2020-11-10</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://leslieaibin.github.io/tags/%E4%BA%8C%E5%8F%89%E6%A0%91/</loc>
+    <loc>https://leslieaibin.github.io/tags/Java/</loc>
+    <lastmod>2020-11-10</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://leslieaibin.github.io/tags/JVM/</loc>
     <lastmod>2020-11-10</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -151,14 +151,14 @@
   </url>
   
   <url>
-    <loc>https://leslieaibin.github.io/tags/Java/</loc>
+    <loc>https://leslieaibin.github.io/tags/HTTP/</loc>
     <lastmod>2020-11-10</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://leslieaibin.github.io/tags/JVM/</loc>
+    <loc>https://leslieaibin.github.io/tags/TCP-IP/</loc>
     <lastmod>2020-11-10</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -167,14 +167,7 @@
 
   
   <url>
-    <loc>https://leslieaibin.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/</loc>
-    <lastmod>2020-11-10</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://leslieaibin.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/</loc>
+    <loc>https://leslieaibin.github.io/categories/linux/</loc>
     <lastmod>2020-11-10</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -188,13 +181,6 @@
   </url>
   
   <url>
-    <loc>https://leslieaibin.github.io/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%A0%91/</loc>
-    <lastmod>2020-11-10</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>https://leslieaibin.github.io/categories/JVM/</loc>
     <lastmod>2020-11-10</lastmod>
     <changefreq>daily</changefreq>
@@ -202,7 +188,21 @@
   </url>
   
   <url>
-    <loc>https://leslieaibin.github.io/categories/linux/</loc>
+    <loc>https://leslieaibin.github.io/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%A0%91/</loc>
+    <lastmod>2020-11-10</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://leslieaibin.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/</loc>
+    <lastmod>2020-11-10</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://leslieaibin.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/</loc>
     <lastmod>2020-11-10</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>

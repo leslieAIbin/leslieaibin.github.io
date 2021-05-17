@@ -1,0 +1,397 @@
+<!DOCTYPE html><html lang="zh-Hans" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>14.JVM —— StringTable | Mr.Ai</title><meta name="keywords" content="JVM"><meta name="author" content="Leslie"><meta name="copyright" content="Leslie"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><meta name="description" content="StringTableString的基本特性 String：字符串，使用一对””引起来表示  String s1 &#x3D; “mogublog”； &#x2F;&#x2F;  字面量的定义方式  创建一个对象 或者不创建对象 String s2 &#x3D; new String(“moxi”)； &#x2F;&#x2F;创建一个或者两个对象  s2 为新创建的   String声明为final 的，不可被继承  String实现了Serializab">
+<meta property="og:type" content="article">
+<meta property="og:title" content="14.JVM —— StringTable">
+<meta property="og:url" content="https://leslieaibin.github.io/2021/05/17/JVM/14.StringTable/index.html">
+<meta property="og:site_name" content="Mr.Ai">
+<meta property="og:description" content="StringTableString的基本特性 String：字符串，使用一对””引起来表示  String s1 &#x3D; “mogublog”； &#x2F;&#x2F;  字面量的定义方式  创建一个对象 或者不创建对象 String s2 &#x3D; new String(“moxi”)； &#x2F;&#x2F;创建一个或者两个对象  s2 为新创建的   String声明为final 的，不可被继承  String实现了Serializab">
+<meta property="og:locale">
+<meta property="og:image" content="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/6.jpg?raw=true">
+<meta property="article:published_time" content="2021-05-17T01:15:42.000Z">
+<meta property="article:modified_time" content="2021-05-17T06:50:18.379Z">
+<meta property="article:author" content="Leslie">
+<meta property="article:tag" content="JVM">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/6.jpg?raw=true"><link rel="shortcut icon" href="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/01.jpg?raw=true"><link rel="canonical" href="https://leslieaibin.github.io/2021/05/17/JVM/14.StringTable/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":false},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  ClickShowText: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  justifiedGallery: {
+    js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+    css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+};
+
+var saveToLocal = {
+  set: function setWithExpiry(key, value, ttl) {
+    const now = new Date()
+    const expiryDay = ttl * 86400000
+    const item = {
+      value: value,
+      expiry: now.getTime() + expiryDay,
+    }
+    localStorage.setItem(key, JSON.stringify(item))
+  },
+
+  get: function getWithExpiry(key) {
+    const itemStr = localStorage.getItem(key)
+
+    if (!itemStr) {
+      return undefined
+    }
+    const item = JSON.parse(itemStr)
+    const now = new Date()
+
+    if (now.getTime() > item.expiry) {
+      localStorage.removeItem(key)
+      return undefined
+    }
+    return item.value
+  }
+}</script><script id="config_change">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2021-05-17 14:50:18'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(function () {  window.activateDarkMode = function () {
+    document.documentElement.setAttribute('data-theme', 'dark')
+    if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+    }
+  }
+  window.activateLightMode = function () {
+    document.documentElement.setAttribute('data-theme', 'light')
+   if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+    }
+  }
+  const autoChangeMode = 'false'
+  const t = saveToLocal.get('theme')
+  if (autoChangeMode === '1') {
+    const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+    const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+    const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+    const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+    if (t === undefined) {
+      if (isLightMode) activateLightMode()
+      else if (isDarkMode) activateDarkMode()
+      else if (isNotSpecified || hasNoSupport) {
+        const now = new Date()
+        const hour = now.getHours()
+        const isNight = hour <= 6 || hour >= 18
+        isNight ? activateDarkMode() : activateLightMode()
+      }
+      window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
+        if (saveToLocal.get('theme') === undefined) {
+          e.matches ? activateDarkMode() : activateLightMode()
+        }
+      })
+    } else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else if (autoChangeMode === '2') {
+    const now = new Date()
+    const hour = now.getHours()
+    const isNight = hour <= 6 || hour >= 18
+    if (t === undefined) isNight ? activateDarkMode() : activateLightMode()
+    else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else {
+    if (t === 'dark') activateDarkMode()
+    else if (t === 'light') activateLightMode()
+  }const asideStatus = saveToLocal.get('aside-status')
+if (asideStatus !== undefined) {
+   if (asideStatus === 'hide') {
+     document.documentElement.classList.add('hide-aside')
+   } else {
+     document.documentElement.classList.remove('hide-aside')
+   }
+}})()</script><meta name="generator" content="Hexo 5.2.0"><link rel="alternate" href="/atom.xml" title="Mr.Ai" type="application/atom+xml">
+</head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="author-avatar"><img class="avatar-img" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/01.jpg?raw=true" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">37</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">Tags</div><div class="length-num">14</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">Categories</div><div class="length-num">11</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/artitalk/"><i class="fa-fw fas fa-pen"></i><span> 自言自语</span></a></div></div></div></div><div id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/6.jpg?raw=true)"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Mr.Ai</a></span><span id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/artitalk/"><i class="fa-fw fas fa-pen"></i><span> 自言自语</span></a></div></div><span class="close" id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></span></span></nav><div id="post-info"><h1 class="post-title">14.JVM —— StringTable</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2021-05-17T01:15:42.000Z" title="Created 2021-05-17 09:15:42">2021-05-17</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2021-05-17T06:50:18.379Z" title="Updated 2021-05-17 14:50:18">2021-05-17</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/JVM/">JVM</a></span></div><div class="meta-secondline"> <span class="post-meta-separator">|</span><span class="post-meta-pv-cv"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post View:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="StringTable"><a href="#StringTable" class="headerlink" title="StringTable"></a>StringTable</h1><h2 id="String的基本特性"><a href="#String的基本特性" class="headerlink" title="String的基本特性"></a>String的基本特性</h2><ul>
+<li><p>String：字符串，使用一对””引起来表示</p>
+<ul>
+<li>String s1 = “mogublog”； //  字面量的定义方式  创建一个对象 或者不创建对象</li>
+<li>String s2 = new String(“moxi”)； //创建一个或者两个对象  s2 为新创建的</li>
+</ul>
+</li>
+<li><p>String声明为final 的，不可被继承</p>
+</li>
+<li><p>String实现了Serializable接口：表示字符串是支持序列化的。实现了Comparable接口：表示String 可以比较大小</p>
+</li>
+<li><p>String在JDK8及以前内部定义了 fianl char[] value用于存储字符串数据。JDK9时改为byte[]</p>
+</li>
+</ul>
+<h3 id="为什么JDK9改变了结构"><a href="#为什么JDK9改变了结构" class="headerlink" title="为什么JDK9改变了结构"></a>为什么JDK9改变了结构</h3><p>String类的当前实现将字符存储在char数组中，每个字符使用两个字节（16位）。从许多不同的应用程序收集的数据表明，字符串是堆使用的主要组成部分，而且，大多数字符串对象只包含拉丁字符。这些字符只需要一个字节的存储空间，因此这些字符串对象的内部char数组中有一半的空间将不会使用。</p>
+<p>我们建议改变字符串的内部表示clasš从utf - 16字符数组到字节数组+一个encoding-flag字段。新的String类将根据字符串的内容存储编码为ISO-8859-1/Latin-1(每个字符一个字节)或UTF-16(每个字符两个字节)的字符。编码标志将指示使用哪种编码。</p>
+<p>结论：String再也不用char[] 来存储了，改成了byte [] 加上编码标记，节约了一些空间</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 之前</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">char</span> value[];</span><br><span class="line"><span class="comment">// 之后</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">byte</span>[] value</span><br></pre></td></tr></table></figure>
+
+<p>同时基于String的数据结构，例如StringBuffer和StringBuilder也同样做了修改</p>
+<h3 id="String的不可变性"><a href="#String的不可变性" class="headerlink" title="String的不可变性"></a>String的不可变性</h3><p>String：代表不可变的字符序列。简称：不可变性</p>
+<p>当字符串重新赋值时，需要重写指定内存区域赋值，不能使用原有的value进行赋值。当对现有的字符串进行连接操作时，也需要重新指定内存区域赋值，不能使用原有的value进行赋值</p>
+<p>当调用String 的replace() 方法修改指定字符或字符串时，也需要重新指定内存区域赋值，不能使用原有的value进行赋值</p>
+<p>通过字面量的方式（区别于new）给一个字符串赋值，此时的字符串值声明在字符串常量池中</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">StringTest</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">test1</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 字面量定义的方式，“abc”存储在字符串常量池中</span></span><br><span class="line">        String s1 = <span class="string">&quot;abc&quot;</span>;</span><br><span class="line">        String s2 = <span class="string">&quot;abc&quot;</span>;</span><br><span class="line">        System.out.println(s1 == s2);</span><br><span class="line">        s1 = <span class="string">&quot;hello&quot;</span>;</span><br><span class="line">        System.out.println(s1 == s2);</span><br><span class="line">        System.out.println(s1);</span><br><span class="line">        System.out.println(s2);</span><br><span class="line">        System.out.println(<span class="string">&quot;----------------&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">test2</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        String s1 = <span class="string">&quot;abc&quot;</span>;</span><br><span class="line">        String s2 = <span class="string">&quot;abc&quot;</span>;</span><br><span class="line">        <span class="comment">// 只要进行了修改，就会重新创建一个对象，这就是不可变性</span></span><br><span class="line">        s2 += <span class="string">&quot;def&quot;</span>;</span><br><span class="line">        System.out.println(s1);</span><br><span class="line">        System.out.println(s2);</span><br><span class="line">        System.out.println(<span class="string">&quot;----------------&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">test3</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        String s1 = <span class="string">&quot;abc&quot;</span>;</span><br><span class="line">        String s2 = s1.replace(<span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;m&#x27;</span>);</span><br><span class="line">        System.out.println(s1);</span><br><span class="line">        System.out.println(s2);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        test1();</span><br><span class="line">        test2();</span><br><span class="line">        test3();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>运行结果</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">true</span></span><br><span class="line"><span class="keyword">false</span></span><br><span class="line">hello</span><br><span class="line">abc</span><br><span class="line">----------------</span><br><span class="line">abc</span><br><span class="line">abcdef</span><br><span class="line">----------------</span><br><span class="line">abc</span><br><span class="line">mbc</span><br></pre></td></tr></table></figure>
+
+<h3 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h3><p><strong>字符串常量池是不会存储相同内容的字符串的</strong></p>
+<p>String的string Pool是一个固定大小的Hashtable，默认值大小长度是1009。如果放进string Pool的string非常多，就会造成Hash冲突严重，从而导致链表会很长，而链表长了后直接会造成的影响就是当调用string.intern时性能会大幅下降。</p>
+<p>使用-XX:StringTablesize可设置stringTab1e的长度</p>
+<p>在jdk6中stringTable是固定的，就是1009的长度，所以如果常量池中的字符串过多就会导致效率下降很快。stringTablesize设置没有要求</p>
+<p>在jdk7中，stringTable的长度默认值是60013，</p>
+<p>在JDK8中，StringTable可以设置的最小值为1009</p>
+<h2 id="Sring的内存分配"><a href="#Sring的内存分配" class="headerlink" title="Sring的内存分配"></a>Sring的内存分配</h2><p>在Java语言中有8中基本数据类型和一种比较特殊的类型String。这些类型为了使他们在运行过程中速度更快、更节省内存、都提供了一种常量池概念。</p>
+<p>常量池就类似一个Java系统级别提供的缓存。8种基本数据类型的常量池都是系统协调的，String类型的常量池比较特殊。他的主要使用方法有两种</p>
+<p>直接使用双引号声明出来的String对象会直接存储在常量池中</p>
+<p>如果不是双引号声明的String对象，可以使用String提供的intern（）方法</p>
+<p>Java 6及以前，字符串常量池存放在永久代</p>
+<p>Java 7中 oracle的工程师对字符串池的逻辑做了很大的改变，即将字符串常量池的位置调整到Java堆内</p>
+<blockquote>
+<p>所有的字符串都保存在堆（Heap）中，和其他普通对象一样，这样可以让你在进行调优应用时仅需要调整堆大小就可以了。</p>
+<p>字符串常量池概念原本使用得比较多，但是这个改动使得我们有足够的理由让我们重新考虑在Java 7中使用string.intern（）。</p>
+</blockquote>
+<p>Java8元空间，字符串常量在堆</p>
+<p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/image-20210516200425682.png" alt="image-20210516200425682"></p>
+<h3 id="为什么StringTable从永久代调整到堆中"><a href="#为什么StringTable从永久代调整到堆中" class="headerlink" title="为什么StringTable从永久代调整到堆中"></a>为什么StringTable从永久代调整到堆中</h3><p>在JDK 7中，interned字符串不再在Java堆的永久生成中分配，而是在Java堆的主要部分(称为年轻代和年老代)中分配，与应用程序创建的其他对象一起分配。此更改将导致驻留在主Java堆中的数据更多，驻留在永久生成中的数据更少，因此可能需要调整堆大小。由于这一变化，大多数应用程序在堆使用方面只会看到相对较小的差异，但加载许多类或大量使用字符串的较大应用程序会出现这种差异。intern()方法会看到更显著的差异。</p>
+<ul>
+<li>永久代的默认比较小</li>
+<li>永久代垃圾回收频率低</li>
+</ul>
+<h2 id="String的基本操作"><a href="#String的基本操作" class="headerlink" title="String的基本操作"></a>String的基本操作</h2><p>java语言规范要求完全相同的字符串字面量，应该包含同样的Unicode字符序列（包含同一份码点序列的常量），并且必须是指向同一个String类实例。</p>
+<h2 id="字符串拼接操作"><a href="#字符串拼接操作" class="headerlink" title="字符串拼接操作"></a>字符串拼接操作</h2><ul>
+<li>常量与常量的拼接结果在常量池，原理是编译期优化</li>
+<li>常量池中不会存在相同内容的变量</li>
+<li>只要其中有一个是变量，结果就在堆中。变量拼接的原理是StringBuilder</li>
+<li>如果拼接的结果调用interm()方法，则主动将常量池中还没有的字符串对象放入池中，并返回此对象地址</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">test1</span><span class="params">()</span></span>&#123;</span><br><span class="line">    String s1 = <span class="string">&quot;a&quot;</span> + <span class="string">&quot;b&quot;</span> +<span class="string">&quot;c&quot;</span>;  <span class="comment">// 得到abc的常量池</span></span><br><span class="line">    String s2 = <span class="string">&quot;abc&quot;</span>;  <span class="comment">// abc存放在常量池中，直接将常量池的地址返回</span></span><br><span class="line">    </span><br><span class="line">   <span class="comment">// 最终java变异成.class、再执行.class</span></span><br><span class="line">    System.out.println(s1 == s2); <span class="comment">// true 因为存放在字符串常量池</span></span><br><span class="line">    System.out.println(s1.equals(s2)); <span class="comment">//true </span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">test2</span><span class="params">()</span></span>&#123;</span><br><span class="line">        String s1 = <span class="string">&quot;javaEE&quot;</span>;</span><br><span class="line">        String s2 = <span class="string">&quot;hadoop&quot;</span>;</span><br><span class="line">        String s3 = <span class="string">&quot;javaEEhadoop&quot;</span>;</span><br><span class="line">        String s4 = <span class="string">&quot;javaEE&quot;</span> + <span class="string">&quot;hadoop&quot;</span>;    </span><br><span class="line">        String s5 = s1 + <span class="string">&quot;hadoop&quot;</span>;</span><br><span class="line">        String s6 = <span class="string">&quot;javaEE&quot;</span> + s2;</span><br><span class="line">        String s7 = s1 + s2;</span><br><span class="line"></span><br><span class="line">        System.out.println(s3 == s4); <span class="comment">// true</span></span><br><span class="line">        System.out.println(s3 == s5); <span class="comment">// false</span></span><br><span class="line">        System.out.println(s3 == s6); <span class="comment">// false</span></span><br><span class="line">        System.out.println(s3 == s7); <span class="comment">// false</span></span><br><span class="line">        System.out.println(s5 == s6); <span class="comment">// false</span></span><br><span class="line">        System.out.println(s5 == s7); <span class="comment">// false</span></span><br><span class="line">        System.out.println(s6 == s7); <span class="comment">// false</span></span><br><span class="line"></span><br><span class="line">        String s8 = s6.intern();</span><br><span class="line">        System.out.println(s3 == s8); <span class="comment">// true</span></span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>从上述的结果我们可以知道：</p>
+<p>如果拼接符号的前后出现了变量，则相当于在堆空间中<code>new String()</code>，具体的内容为拼接的结果。而调用intern方法，则会判断字符串常量池中是否存在JavaEEhadoop值，如果存在则返回常量池中的值，否则就在常量池中创建</p>
+<h3 id="底层原理"><a href="#底层原理" class="headerlink" title="底层原理"></a>底层原理</h3><p>拼接操作的底层其实使用了StringBuilder</p>
+<p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/image-20200711102231129.png" alt="image-20200711102231129"></p>
+<p>s1 + s2的执行细节</p>
+<ul>
+<li>StringBuilder s = new StringBuilder();</li>
+<li>s.append(s1);</li>
+<li>s.append(s2);</li>
+<li>s.toString();  -&gt; 类似于new String(“ab”);</li>
+</ul>
+<p>在JDK5之后，使用的是StringBuilder，在JDK5之前使用的是StringBuffer</p>
+<p>在JDK5之后，使用的是StringBuilder，在JDK5之前使用的是StringBuffer</p>
+<table>
+<thead>
+<tr>
+<th>String</th>
+<th>StringBuffer</th>
+<th>StringBuilder</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>String的值是不可变的，这就导致每次对String的操作都会生成新的String对象，不仅效率低下，而且浪费大量优先的内存空间</td>
+<td>StringBuffer是可变类，和线程安全的字符串操作类，任何对它指向的字符串的操作都不会产生新的对象。每个StringBuffer对象都有一定的缓冲区容量，当字符串大小没有超过容量时，不会分配新的容量，当字符串大小超过容量时，会自动增加容量</td>
+<td>可变类，速度更快</td>
+</tr>
+<tr>
+<td>不可变</td>
+<td>可变</td>
+<td>可变</td>
+</tr>
+<tr>
+<td></td>
+<td>线程安全</td>
+<td>线程不安全</td>
+</tr>
+<tr>
+<td></td>
+<td>多线程操作字符串</td>
+<td>单线程操作字符串</td>
+</tr>
+</tbody></table>
+<p>注意，我们左右两边如果是变量的话，就是需要new StringBuilder进行拼接，但是如果使用的是final修饰，则是从常量池中获取。所以说拼接符号左右两边都是字符串常量或常量引用 则仍然使用编译器优化。<strong>也就是说被final修饰的变量，将会变成常量，类和方法将不能被继承、</strong></p>
+<ul>
+<li>在开发中，能够使用final的时候，建议使用上</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">test4</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">final</span> String s1 = <span class="string">&quot;a&quot;</span>;</span><br><span class="line">    <span class="keyword">final</span> String s2 = <span class="string">&quot;b&quot;</span>;</span><br><span class="line">    String s3 = <span class="string">&quot;ab&quot;</span>;</span><br><span class="line">    String s4 = s1 + s2;</span><br><span class="line">    System.out.println(s3 == s4);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>运行结果</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">true</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="拼接操作和append性能对比"><a href="#拼接操作和append性能对比" class="headerlink" title="拼接操作和append性能对比"></a>拼接操作和append性能对比</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">method1</span><span class="params">(<span class="keyword">int</span> highLevel)</span> </span>&#123;</span><br><span class="line">    String src = <span class="string">&quot;&quot;</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; highLevel; i++) &#123;</span><br><span class="line">        src += <span class="string">&quot;a&quot;</span>; <span class="comment">// 每次循环都会创建一个StringBuilder对象</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">method2</span><span class="params">(<span class="keyword">int</span> highLevel)</span> </span>&#123;</span><br><span class="line">    StringBuilder sb = <span class="keyword">new</span> StringBuilder();</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; highLevel; i++) &#123;</span><br><span class="line">        sb.append(<span class="string">&quot;a&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>方法1耗费的时间：4005ms，方法2消耗时间：7ms</p>
+<p>结论：</p>
+<ul>
+<li>通过StringBuilder的append()方式添加字符串的效率，要远远高于String的字符串拼接方法</li>
+</ul>
+<p>好处</p>
+<ul>
+<li>StringBuilder的append的方式，自始至终只创建一个StringBuilder的对象</li>
+<li>对于字符串拼接的方式，还需要创建很多StringBuilder对象和 调用toString时候创建的String对象</li>
+<li>内存中由于创建了较多的StringBuilder和String对象，内存占用过大，如果进行GC那么将会耗费更多的时间</li>
+</ul>
+<p>改进的空间</p>
+<ul>
+<li>我们使用的是StringBuilder的空参构造器，默认的字符串容量是16，然后将原来的字符串拷贝到新的字符串中， 我们也可以默认初始化更大的长度，减少扩容的次数</li>
+<li>因此在实际开发中，我们能够确定，前前后后需要添加的字符串不高于某个限定值，那么建议使用构造器创建一个阈值的长度</li>
+</ul>
+<h2 id="intern-的使用"><a href="#intern-的使用" class="headerlink" title="intern()的使用"></a>intern()的使用</h2><p><strong>intern是一个native方法，调用的是底层C的方法</strong></p>
+<p>字符串池最初是空的，由String类私有地维护。在调用intern方法时，如果池中已经包含了由equals(object)方法确定的与该字符串对象相等的字符串，则返回池中的字符串。否则，该字符串对象将被添加到池中，并返回对该字符串对象的引用。</p>
+<p>如果不是用双引号声明的string对象，可以使用string提供的intern方法：intern方法会从字符串常量池中查询当前字符串是否存在，若不存在就会将当前字符串放入常量池中。</p>
+<p>比如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">String myInfo = <span class="keyword">new</span> string(<span class="string">&quot;I love atguigu&quot;</span>).intern();</span><br></pre></td></tr></table></figure>
+
+<p>也就是说，如果在任意字符串上调用string.intern方法，那么其返回结果所指向的那个类实例，必须和直接以常量形式出现的字符串实例完全相同。因此，下列表达式的值必定是true</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">（<span class="string">&quot;a&quot;</span>+<span class="string">&quot;b&quot;</span>+<span class="string">&quot;c&quot;</span>）.intern（）==<span class="string">&quot;abc&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>通俗点讲，Interned string就是确保字符串在内存里只有一份拷贝，这样可以节约内存空间，加快字符串操作任务的执行速度。注意，这个值会被存放在字符串内部池（String Intern Pool）</p>
+<h3 id="intern的空间效率测试"><a href="#intern的空间效率测试" class="headerlink" title="intern的空间效率测试"></a>intern的空间效率测试</h3><p>我们通过测试一下，使用了intern和不使用的时候，其实相差还挺多的</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">StringIntern2</span> </span>&#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> MAX_COUNT = <span class="number">1000</span> * <span class="number">10000</span>;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">final</span> String[] arr = <span class="keyword">new</span> String[MAX_COUNT];</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Integer [] data = <span class="keyword">new</span> Integer[]&#123;<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>,<span class="number">7</span>,<span class="number">8</span>,<span class="number">9</span>,<span class="number">10</span>&#125;;</span><br><span class="line">        <span class="keyword">long</span> start = System.currentTimeMillis();</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; MAX_COUNT; i++) &#123;</span><br><span class="line">            arr[i] = <span class="keyword">new</span> String(String.valueOf(data[i%data.length])).intern();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">long</span> end = System.currentTimeMillis();</span><br><span class="line">        System.out.println(<span class="string">&quot;花费的时间为：&quot;</span> + (end - start));</span><br><span class="line"></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            Thread.sleep(<span class="number">1000000</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            e.getStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>结论</strong>：对于程序中大量使用存在的字符串时，尤其存在很多已经重复的字符串时，使用intern()方法能够节省内存空间。</p>
+<p>大的网站平台，需要内存中存储大量的字符串。比如社交网站，很多人都存储：北京市、海淀区等信息。这时候如果字符串都调用intern() 方法，就会很明显降低内存的大小。</p>
+<h2 id="面试题"><a href="#面试题" class="headerlink" title="面试题"></a>面试题</h2><h3 id="new-String-“ab”-会创建几个对象"><a href="#new-String-“ab”-会创建几个对象" class="headerlink" title="new String(“ab”)会创建几个对象"></a>new String(“ab”)会创建几个对象</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * new String(&quot;ab&quot;) 会创建几个对象？ 看字节码就知道是2个对象</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">StringNewTest</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        String str = <span class="keyword">new</span> String(<span class="string">&quot;ab&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们转换成字节码来查看</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"> 0 new #2 &lt;java&#x2F;lang&#x2F;String&gt;</span><br><span class="line"> 3 dup</span><br><span class="line"> 4 ldc #3 &lt;ab&gt;</span><br><span class="line"> 6 invokespecial #4 &lt;java&#x2F;lang&#x2F;String.&lt;init&gt;&gt;</span><br><span class="line"> 9 astore_1</span><br><span class="line">10 return</span><br></pre></td></tr></table></figure>
+
+<p>这里面就是两个对象</p>
+<ul>
+<li>一个对象是：new关键字在堆空间中创建</li>
+<li>另一个对象：字符串常量池中的对象</li>
+</ul>
+<h3 id="new-String-“a”-new-String-“b”-会创建几个对象"><a href="#new-String-“a”-new-String-“b”-会创建几个对象" class="headerlink" title="new String(“a”) + new String(“b”) 会创建几个对象"></a>new String(“a”) + new String(“b”) 会创建几个对象</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * new String(&quot;ab&quot;) 会创建几个对象？ 看字节码就知道是2个对象</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">StringNewTest</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        String str = <span class="keyword">new</span> String(<span class="string">&quot;a&quot;</span>) + <span class="keyword">new</span> String(<span class="string">&quot;b&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>字节码文件为</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"> 0 new #2 &lt;java&#x2F;lang&#x2F;StringBuilder&gt;</span><br><span class="line"> 3 dup</span><br><span class="line"> 4 invokespecial #3 &lt;java&#x2F;lang&#x2F;StringBuilder.&lt;init&gt;&gt;</span><br><span class="line"> 7 new #4 &lt;java&#x2F;lang&#x2F;String&gt;</span><br><span class="line">10 dup</span><br><span class="line">11 ldc #5 &lt;a&gt;</span><br><span class="line">13 invokespecial #6 &lt;java&#x2F;lang&#x2F;String.&lt;init&gt;&gt;</span><br><span class="line">16 invokevirtual #7 &lt;java&#x2F;lang&#x2F;StringBuilder.append&gt;</span><br><span class="line">19 new #4 &lt;java&#x2F;lang&#x2F;String&gt;</span><br><span class="line">22 dup</span><br><span class="line">23 ldc #8 &lt;b&gt;</span><br><span class="line">25 invokespecial #6 &lt;java&#x2F;lang&#x2F;String.&lt;init&gt;&gt;</span><br><span class="line">28 invokevirtual #7 &lt;java&#x2F;lang&#x2F;StringBuilder.append&gt;</span><br><span class="line">31 invokevirtual #9 &lt;java&#x2F;lang&#x2F;StringBuilder.toString&gt;</span><br><span class="line">34 astore_1</span><br><span class="line">35 return</span><br></pre></td></tr></table></figure>
+
+<p>我们创建了6个对象</p>
+<ul>
+<li>对象1：new StringBuilder()</li>
+<li>对象2：new String(“a”)</li>
+<li>对象3：常量池的 a</li>
+<li>对象4：new String(“b”)</li>
+<li>对象5：常量池的 b</li>
+<li>对象6：toString中会创建一个 new String(“ab”)<ul>
+<li>调用toString方法，不会在常量池中生成ab</li>
+</ul>
+</li>
+</ul>
+<h3 id="intern的使用：JDK6和JDK7"><a href="#intern的使用：JDK6和JDK7" class="headerlink" title="intern的使用：JDK6和JDK7"></a>intern的使用：JDK6和JDK7</h3><h4 id="JDK6中"><a href="#JDK6中" class="headerlink" title="JDK6中"></a>JDK6中</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">String s = <span class="keyword">new</span> String(<span class="string">&quot;1&quot;</span>);  <span class="comment">// 在常量池中已经有了</span></span><br><span class="line">s.intern(); <span class="comment">// 将该对象放入到常量池。但是调用此方法没有太多的区别，因为已经存在了1</span></span><br><span class="line">String s2 = <span class="string">&quot;1&quot;</span>;</span><br><span class="line">System.out.println(s == s2); <span class="comment">// false</span></span><br><span class="line"></span><br><span class="line">String s3 = <span class="keyword">new</span> String(<span class="string">&quot;1&quot;</span>) + <span class="keyword">new</span> String(<span class="string">&quot;1&quot;</span>);</span><br><span class="line">s3.intern();</span><br><span class="line">String s4 = <span class="string">&quot;11&quot;</span>;</span><br><span class="line">System.out.println(s3 == s4); <span class="comment">// true</span></span><br></pre></td></tr></table></figure>
+
+<p>输出结果</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">false</span><br><span class="line">true</span><br></pre></td></tr></table></figure>
+
+<p>为什么对象会不一样呢？</p>
+<ul>
+<li>一个是new创建的对象，一个是常量池中的对象，显然不是同一个</li>
+</ul>
+<p>如果是下面这样的，那么就是true</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">String s &#x3D; new String(&quot;1&quot;);</span><br><span class="line">s &#x3D; s.intern();</span><br><span class="line">String s2 &#x3D; &quot;1&quot;;</span><br><span class="line">System.out.println(s &#x3D;&#x3D; s2); &#x2F;&#x2F; true</span><br></pre></td></tr></table></figure>
+
+<p>而对于下面的来说，因为 s3变量记录的地址是  new String(“11”)，然后这段代码执行完以后，常量池中不存在 “11”，这是JDK6的关系，然后执行 s3.intern()后，就会在常量池中生成 “11”，最后 s4用的就是s3的地址</p>
+<blockquote>
+<p>为什么最后输出的 s3 == s4  会为false呢？</p>
+<p>这是因为在JDK6中创建了一个新的对象 “11”，也就是有了新的地址， s2 = 新地址</p>
+<p>而在JDK7中，在JDK7中，并没有创新一个新对象，而是指向常量池中的新对象</p>
+</blockquote>
+<h4 id="JDK7中"><a href="#JDK7中" class="headerlink" title="JDK7中"></a>JDK7中</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">String s &#x3D; new String(&quot;1&quot;);</span><br><span class="line">s.intern();</span><br><span class="line">String s2 &#x3D; &quot;1&quot;;</span><br><span class="line">System.out.println(s &#x3D;&#x3D; s2); &#x2F;&#x2F; true</span><br><span class="line"></span><br><span class="line">String s3 &#x3D; new String(&quot;1&quot;) + new String(&quot;1&quot;);</span><br><span class="line">s3.intern();</span><br><span class="line">String s4 &#x3D; &quot;11&quot;;</span><br><span class="line">System.out.println(s3 &#x3D;&#x3D; s4); &#x2F;&#x2F; true</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/image-20200711145925091.png" alt="image-20200711145925091"></p>
+<h3 id="扩展"><a href="#扩展" class="headerlink" title="扩展"></a>扩展</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">String s3 = <span class="keyword">new</span> String(<span class="string">&quot;1&quot;</span>) + <span class="keyword">new</span> String(<span class="string">&quot;1&quot;</span>);</span><br><span class="line">String s4 = <span class="string">&quot;11&quot;</span>;  <span class="comment">// 在常量池中生成的字符串</span></span><br><span class="line">s3.intern();  <span class="comment">// 然后s3就会从常量池中找，发现有了，就什么事情都不做</span></span><br><span class="line">System.out.println(s3 == s4);</span><br></pre></td></tr></table></figure>
+
+<p>我们将 s4的位置向上移动一行，发现变化就会很大，最后得到的是 false</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>总结string的intern（）的使用：</p>
+<p>JDK1.6中，将这个字符串对象尝试放入串池。</p>
+<ul>
+<li>如果串池中有，则并不会放入。返回已有的串池中的对象的地址</li>
+<li>如果没有，会把此<strong>对象复制一份</strong>，放入串池，并返回串池中的对象地址</li>
+</ul>
+<p>JDK1.7起，将这个字符串对象尝试放入串池。</p>
+<ul>
+<li>如果串池中有，则并不会放入。返回已有的串池中的对象的地址</li>
+<li>如果没有，则会把<strong>对象的引用地址</strong>复制一份，放入串池，并返回串池中的引用地址</li>
+</ul>
+<p>练习：</p>
+<p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/image-20200711150859709.png" alt="image-20200711150859709"></p>
+<ul>
+<li>在JDK6中，在字符串常量池中创建一个字符串 “ab”</li>
+<li>在JDK8中，在字符串常量池中没有创建 “ab”，而是将堆中的地址复制到 串池中。</li>
+</ul>
+<p>所以上述结果，在JDK6中是：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">true</span><br><span class="line">false</span><br></pre></td></tr></table></figure>
+
+<p>在JDK8中是</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">false</span><br><span class="line">true</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/image-20200711151326909.png" alt="image-20200711151326909"></p>
+<p>针对下面这题，在JDK6和8中表现的是一样的</p>
+<p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/image-20200711151433277.png" alt="image-20200711151433277"></p>
+<h2 id="StringTable的垃圾回收"><a href="#StringTable的垃圾回收" class="headerlink" title="StringTable的垃圾回收"></a>StringTable的垃圾回收</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * String的垃圾回收</span></span><br><span class="line"><span class="comment"> * -Xms15m -Xmx15m -XX:+PrintStringTableStatistics -XX:+PrintGCDetails</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">StringGCTest</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">100000</span>; i++) &#123;</span><br><span class="line">            String.valueOf(i).intern();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="G1中的String去重操作"><a href="#G1中的String去重操作" class="headerlink" title="G1中的String去重操作"></a>G1中的String去重操作</h2><p>注意这里说的重复，指的是在堆中的数据，而不是常量池中的，因为常量池中的本身就不会重复</p>
+<h3 id="描述"><a href="#描述" class="headerlink" title="描述"></a>描述</h3><p>背景：对许多Java应用（有大的也有小的）做的测试得出以下结果：</p>
+<ul>
+<li><p>堆存活数据集合里面string对象占了25%</p>
+</li>
+<li><p>堆存活数据集合里面重复的string对象有13.5%</p>
+</li>
+<li><p>string对象的平均长度是45</p>
+</li>
+</ul>
+<p>许多大规模的Java应用的瓶颈在于内存，测试表明，在这些类型的应用里面，Java堆中存活的数据集合差不多25%是string对象。更进一步，这里面差不多一半string对象是重复的，重复的意思是说：</p>
+<p>stringl.equals（string2）= true。堆上存在重复的string对象必然是一种内存的浪费。这个项目将在G1垃圾收集器中实现自动持续对重复的string对象进行去重，这样就能避免浪费内存。</p>
+<h3 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h3><ul>
+<li>当垃圾收集器工作的时候，会访问堆上存活的对象。对每一个访问的对象都会检查是否是候选的要去重的string对象。</li>
+<li>如果是，把这个对象的一个引用插入到队列中等待后续的处理。一个去重的线程在后台运行，处理这个队列。处理队列的一个元素意味着从队列删除这个元素，然后尝试去重它引用的string对象。</li>
+<li>使用一个hashtab1e来记录所有的被string对象使用的不重复的char数组。当去重的时候，会查这个hashtable，来看堆上是否已经存在一个一模一样的char数组。</li>
+<li>如果存在，string对象会被调整引用那个数组，释放对原来的数组的引用，最终会被垃圾收集器回收掉。</li>
+<li>如果查找失败，char数组会被插入到hashtable，这样以后的时候就可以共享这个数组了。</li>
+</ul>
+<h3 id="开启"><a href="#开启" class="headerlink" title="开启"></a>开启</h3><p>命令行选项</p>
+<blockquote>
+<p>UsestringDeduplication（bool）：开启string去重，默认是不开启的，需要手动开启。<br>Printstringbeduplicationstatistics（bool）：打印详细的去重统计信息<br>stringpeduplicationAgeThreshold（uintx）：达到这个年龄的string对象被认为是去重的候选对象</p>
+</blockquote>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined">Leslie</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="https://leslieaibin.github.io/2021/05/17/JVM/14.StringTable/">https://leslieaibin.github.io/2021/05/17/JVM/14.StringTable/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/JVM/">JVM</a></div><div class="post_share"><div class="social-share" data-image="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/6.jpg?raw=true" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2021/05/15/JVM/13.%E6%89%A7%E8%A1%8C%E5%BC%95%E6%93%8E/"><img class="next-cover" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/5.jpg?raw=true" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">13.JVM —— 执行引擎</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span> Related Articles</span></div><div class="relatedPosts-list"><div><a href="/2020/11/15/JVM/3.类文件结构/" title="3.JVM —— 类文件结构"><img class="cover" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/20.jpg?raw=true" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-11-15</div><div class="title">3.JVM —— 类文件结构</div></div></a></div><div><a href="/2021/05/11/JVM/5.运行时数据区概述及线程/" title="5.JVM —— 运行时数据区概述及线程"><img class="cover" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/36.jpg?raw=true" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-05-11</div><div class="title">5.JVM —— 运行时数据区概述及线程</div></div></a></div><div><a href="/2021/05/12/JVM/6.程序计数器/" title="6.JVM —— 程序计数器"><img class="cover" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/37.jpg?raw=true" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-05-12</div><div class="title">6.JVM —— 程序计数器</div></div></a></div><div><a href="/2021/05/13/JVM/8.本地方法接口/" title="8.JVM —— 本地方法接口"><img class="cover" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/39.jpg?raw=true" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-05-13</div><div class="title">8.JVM —— 本地方法接口</div></div></a></div><div><a href="/2020/11/09/JVM/0.JVM与Java体系结构/" title="0.JVM —— JVM与Java体系结构"><img class="cover" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/34.jpg?raw=true" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-11-09</div><div class="title">0.JVM —— JVM与Java体系结构</div></div></a></div><div><a href="/2020/11/10/JVM/1.Java内存区域简介/" title="1.JVM —— 内存区域简介"><img class="cover" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/09.jpg?raw=true" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-11-10</div><div class="title">1.JVM —— 内存区域简介</div></div></a></div></div></div></div><div class="aside_content" id="aside_content"><div class="card-widget card-info"><div class="card-content"><div class="card-info-avatar is-center"><img class="avatar-img" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/01.jpg?raw=true" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/><div class="author-info__name">Leslie</div><div class="author-info__description"></div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">37</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">Tags</div><div class="length-num">14</div></a></div><div class="card-info-data-item is-center"><a href="/categories/"><div class="headline">Categories</div><div class="length-num">11</div></a></div></div><a class="button--animated" id="card-info-btn"><i class="fas fa-heart"></i><span>瓶中的水 青天的云</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/leslieAIbin" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="https://www.instagram.com/leslieaibin/" target="_blank" title="Ins"><i class="fab fa-instagram"></i></a><a class="social-icon" href="mailto:1915612226@qq.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a><a class="social-icon" href="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/image-20201122143121657.png" target="_blank" title="weixin"><i class="fab fa-weixin"></i></a></div></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="card-content"><div class="item-headline"><i class="fas fa-stream"></i><span>Catalog</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#StringTable"><span class="toc-number">1.</span> <span class="toc-text">StringTable</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#String%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%89%B9%E6%80%A7"><span class="toc-number">1.1.</span> <span class="toc-text">String的基本特性</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88JDK9%E6%94%B9%E5%8F%98%E4%BA%86%E7%BB%93%E6%9E%84"><span class="toc-number">1.1.1.</span> <span class="toc-text">为什么JDK9改变了结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#String%E7%9A%84%E4%B8%8D%E5%8F%AF%E5%8F%98%E6%80%A7"><span class="toc-number">1.1.2.</span> <span class="toc-text">String的不可变性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B3%A8%E6%84%8F"><span class="toc-number">1.1.3.</span> <span class="toc-text">注意</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Sring%E7%9A%84%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D"><span class="toc-number">1.2.</span> <span class="toc-text">Sring的内存分配</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88StringTable%E4%BB%8E%E6%B0%B8%E4%B9%85%E4%BB%A3%E8%B0%83%E6%95%B4%E5%88%B0%E5%A0%86%E4%B8%AD"><span class="toc-number">1.2.1.</span> <span class="toc-text">为什么StringTable从永久代调整到堆中</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#String%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C"><span class="toc-number">1.3.</span> <span class="toc-text">String的基本操作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%8B%BC%E6%8E%A5%E6%93%8D%E4%BD%9C"><span class="toc-number">1.4.</span> <span class="toc-text">字符串拼接操作</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86"><span class="toc-number">1.4.1.</span> <span class="toc-text">底层原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8B%BC%E6%8E%A5%E6%93%8D%E4%BD%9C%E5%92%8Cappend%E6%80%A7%E8%83%BD%E5%AF%B9%E6%AF%94"><span class="toc-number">1.4.2.</span> <span class="toc-text">拼接操作和append性能对比</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#intern-%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="toc-number">1.5.</span> <span class="toc-text">intern()的使用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#intern%E7%9A%84%E7%A9%BA%E9%97%B4%E6%95%88%E7%8E%87%E6%B5%8B%E8%AF%95"><span class="toc-number">1.5.1.</span> <span class="toc-text">intern的空间效率测试</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%9D%A2%E8%AF%95%E9%A2%98"><span class="toc-number">1.6.</span> <span class="toc-text">面试题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#new-String-%E2%80%9Cab%E2%80%9D-%E4%BC%9A%E5%88%9B%E5%BB%BA%E5%87%A0%E4%B8%AA%E5%AF%B9%E8%B1%A1"><span class="toc-number">1.6.1.</span> <span class="toc-text">new String(“ab”)会创建几个对象</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#new-String-%E2%80%9Ca%E2%80%9D-new-String-%E2%80%9Cb%E2%80%9D-%E4%BC%9A%E5%88%9B%E5%BB%BA%E5%87%A0%E4%B8%AA%E5%AF%B9%E8%B1%A1"><span class="toc-number">1.6.2.</span> <span class="toc-text">new String(“a”) + new String(“b”) 会创建几个对象</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#intern%E7%9A%84%E4%BD%BF%E7%94%A8%EF%BC%9AJDK6%E5%92%8CJDK7"><span class="toc-number">1.6.3.</span> <span class="toc-text">intern的使用：JDK6和JDK7</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#JDK6%E4%B8%AD"><span class="toc-number">1.6.3.1.</span> <span class="toc-text">JDK6中</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#JDK7%E4%B8%AD"><span class="toc-number">1.6.3.2.</span> <span class="toc-text">JDK7中</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%89%A9%E5%B1%95"><span class="toc-number">1.6.4.</span> <span class="toc-text">扩展</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">1.6.5.</span> <span class="toc-text">总结</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#StringTable%E7%9A%84%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6"><span class="toc-number">1.7.</span> <span class="toc-text">StringTable的垃圾回收</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#G1%E4%B8%AD%E7%9A%84String%E5%8E%BB%E9%87%8D%E6%93%8D%E4%BD%9C"><span class="toc-number">1.8.</span> <span class="toc-text">G1中的String去重操作</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8F%8F%E8%BF%B0"><span class="toc-number">1.8.1.</span> <span class="toc-text">描述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0"><span class="toc-number">1.8.2.</span> <span class="toc-text">实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BC%80%E5%90%AF"><span class="toc-number">1.8.3.</span> <span class="toc-text">开启</span></a></li></ol></li></ol></li></ol></div></div></div><div class="card-widget card-recent-post"><div class="card-content"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2021/05/17/JVM/14.StringTable/" title="14.JVM —— StringTable"><img src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/6.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="14.JVM —— StringTable"/></a><div class="content"><a class="title" href="/2021/05/17/JVM/14.StringTable/" title="14.JVM —— StringTable">14.JVM —— StringTable</a><time datetime="2021-05-17T01:15:42.000Z" title="Created 2021-05-17 09:15:42">2021-05-17</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/05/15/JVM/13.%E6%89%A7%E8%A1%8C%E5%BC%95%E6%93%8E/" title="13.JVM —— 执行引擎"><img src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/5.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="13.JVM —— 执行引擎"/></a><div class="content"><a class="title" href="/2021/05/15/JVM/13.%E6%89%A7%E8%A1%8C%E5%BC%95%E6%93%8E/" title="13.JVM —— 执行引擎">13.JVM —— 执行引擎</a><time datetime="2021-05-15T11:15:42.000Z" title="Created 2021-05-15 19:15:42">2021-05-15</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/05/15/JVM/12.%E7%9B%B4%E6%8E%A5%E5%86%85%E5%AD%98Direct%20Memory/" title="12.JVM —— 直接内存"><img src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/4.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="12.JVM —— 直接内存"/></a><div class="content"><a class="title" href="/2021/05/15/JVM/12.%E7%9B%B4%E6%8E%A5%E5%86%85%E5%AD%98Direct%20Memory/" title="12.JVM —— 直接内存">12.JVM —— 直接内存</a><time datetime="2021-05-15T01:15:42.000Z" title="Created 2021-05-15 09:15:42">2021-05-15</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/05/14/JVM/11.%E5%AF%B9%E8%B1%A1%E5%AE%9E%E4%BE%8B%E5%8C%96%E5%86%85%E5%AD%98%E5%B8%83%E5%B1%80%E4%B8%8E%E8%AE%BF%E9%97%AE%E5%AE%9A%E4%BD%8D/" title="11.JVM —— 对象实例化内存布局与访问定位"><img src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/3.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="11.JVM —— 对象实例化内存布局与访问定位"/></a><div class="content"><a class="title" href="/2021/05/14/JVM/11.%E5%AF%B9%E8%B1%A1%E5%AE%9E%E4%BE%8B%E5%8C%96%E5%86%85%E5%AD%98%E5%B8%83%E5%B1%80%E4%B8%8E%E8%AE%BF%E9%97%AE%E5%AE%9A%E4%BD%8D/" title="11.JVM —— 对象实例化内存布局与访问定位">11.JVM —— 对象实例化内存布局与访问定位</a><time datetime="2021-05-14T01:15:42.000Z" title="Created 2021-05-14 09:15:42">2021-05-14</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/05/14/JVM/10.%E6%96%B9%E6%B3%95%E5%8C%BA/" title="10.JVM —— 方法区"><img src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/41.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="10.JVM —— 方法区"/></a><div class="content"><a class="title" href="/2021/05/14/JVM/10.%E6%96%B9%E6%B3%95%E5%8C%BA/" title="10.JVM —— 方法区">10.JVM —— 方法区</a><time datetime="2021-05-13T21:15:42.000Z" title="Created 2021-05-14 05:15:42">2021-05-14</time></div></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/6.jpg?raw=true)"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021 By Leslie</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="Back To Top"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><div class="js-pjax"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></div></body></html>

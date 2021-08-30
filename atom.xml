@@ -6,7 +6,7 @@
   <link href="https://leslieaibin.github.io/atom.xml" rel="self"/>
   
   <link href="https://leslieaibin.github.io/"/>
-  <updated>2021-08-29T13:40:53.923Z</updated>
+  <updated>2021-08-30T07:48:26.657Z</updated>
   <id>https://leslieaibin.github.io/</id>
   
   <author>
@@ -15,6 +15,29 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>java异常</title>
+    <link href="https://leslieaibin.github.io/2021/08/30/java%E5%9F%BA%E7%A1%80/java%E5%BC%82%E5%B8%B8%E4%BD%93%E7%B3%BB/"/>
+    <id>https://leslieaibin.github.io/2021/08/30/java%E5%9F%BA%E7%A1%80/java%E5%BC%82%E5%B8%B8%E4%BD%93%E7%B3%BB/</id>
+    <published>2021-08-30T01:15:42.000Z</published>
+    <updated>2021-08-30T07:48:26.657Z</updated>
+    
+    <content type="html"><![CDATA[<p>java把异常作为一类，当做对象来处理。所有异常类的基类是Throwable类，两大子类分别是Error  和 Exception。</p><p>系统错误由Java虚拟机抛出，用Error类表示，Error类描述的是内部系统错误，例如Java虚拟机崩溃。这种情况仅凭程序自身是无法处理的，在程序中也不会对Error异常进行捕捉和抛出。</p><p>异常（Exception）又分为RuntimeException（运行时异常）和 CheckedException（检查时异常），两者区别如下：</p><ul><li>RuntimeException：程序运行过程中才可能发生的异常，一般为代码的逻辑异常，例如：类型错误，数组越界，空指针异常等</li><li>CheckedException：编译期间可以检查到的异常，必须显示的进行处理（捕获或者抛出到上一层）。例如：IOException, FileNotFoundException等等。</li></ul><h2 id="java异常体系结构图"><a href="#java异常体系结构图" class="headerlink" title="java异常体系结构图"></a>java异常体系结构图</h2><p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/1294391-20180919152605174-2400592.png" alt="img"></p><p>首先说明一点，java中的Exception类的子类不仅仅只是像上图所示只包含IOException和RuntimeException这两大类，事实上Exception的子类很多很多，主要可概括为：运行时异常与非运行时异常。</p><p>Thorwable类（表示可抛出）是所有异常和错误的超类，两个直接子类为Error和Exception，分别表示错误和异常。其中异常类Exception又分为运行时异常(RuntimeException)和非运行时异常， 这两种异常有很大的区别，也称之为不检查异常（Unchecked Exception）和检查异常（Checked Exception）。下面将详细讲述这些异常之间的区别与联系：</p><p>1、Error与Exception</p><p>Error是程序无法处理的错误，它是由JVM产生和抛出的，比如OutOfMemoryError、ThreadDeath等。这些异常发生时，Java虚拟机（JVM）一般会选择线程终止。 Exception是程序本身可以处理的异常，这种异常分两大类运行时异常和非运行时异常。程序中应当尽可能去处理这些异常。</p><p>2、运行时异常和非运行时异常</p><p> 运行时异常都是RuntimeException类及其子类异常，如NullPointerException、IndexOutOfBoundsException等，这些异常是不检查异常，程序中可以选择捕获处理，也可以不处理。这些异常一般是由程序逻辑错误引起的，程序应该从逻辑角度尽可能避免这类异常的发生。非运行时异常是RuntimeException以外的异常，类型上都属于Exception类及其子类。从程序语法角度讲是必须进行处理的异常，如果不处理，程序就不能编译通过。如IOException、SQLException等以及用户自定义的Exception异常，一般情况下不自定义检查异常。</p><h2 id="异常处理"><a href="#异常处理" class="headerlink" title="异常处理"></a>异常处理</h2><p><strong>常用关键字：try、catch、throw（抛出一个异常，动词）、throws（声明一个方法可能抛出的异常）、finally。</strong></p><h3 id="throws-声明异常"><a href="#throws-声明异常" class="headerlink" title="throws(声明异常)"></a>throws(声明异常)</h3><p>若方法中存在检查时异常，如果不对其捕获，那必须在方法头中显式声明该异常，以便于告知方法调用者此方法有异常，需要进行处理。 </p><p>在方法中声明一个异常，方法头中使用关键字throws，后面接上要声明的异常。若声明多个异常，则使用逗号分割。</p><p>若是父类的方法没有声明异常，则子类继承方法后，也不能声明异常。</p><h2 id="try-catch-捕获异常"><a href="#try-catch-捕获异常" class="headerlink" title="try-catch(捕获异常)"></a>try-catch(捕获异常)</h2><p>若执行try块的过程中没有发生异常，则跳过catch子句。若是出现异常，try块中剩余语句不再执行。开始逐步检查catch块，判断catch块的异常类实例是否是捕获的异常类型。匹配后执行相应的catch块中的代码。如果异常没有在当前的方法中被捕获，就会被传递给该方法的调用者。这个过程一直重复，直到异常被捕获或被传给main方法（交给JVM来捕获）。</p><p>对于try..catch捕获异常的形式来说，对于异常的捕获，可以有多个catch。对于try里面发生的异常，他会根据发生的异常和catch里面的进行匹配(按照catch块从上往下匹配)，如果有匹配的catch，它就会忽略掉这个catch后面所有的catch。</p><p>如果有finally的话进入到finally里面继续执行。</p><p>try ctach fianally 中有return 时，会先执行return ，但是不会返回。在执行完 finally 后 进行返回。</p><p>return 的是基本类型数据时， fianlly 里面的语句不会影响 return 的值，</p><p>return 的是引用类型数据时，此时已经确定了要返回对象的地址（地址一），后面 fianlly 里面的可以通过修改前面地址一中的内容修改返回的内容，</p><p>但是如果将对象指向另一个地址（地址二），则不会影响返回的内容。因为返回的对象地址已经确定为地址一，只能通过修改地址一对象的内容修改返回的信息。 </p><h2 id="try、catch、finally三个语句块应注意的问题"><a href="#try、catch、finally三个语句块应注意的问题" class="headerlink" title="try、catch、finally三个语句块应注意的问题"></a>try、catch、finally三个语句块应注意的问题</h2><ul><li>try、catch、finally三个语句块均不能单独使用，三者可以组成 try…catch…finally、try…catch、try…finally三种结构，catch语句可以有一个或多个，finally语句最多一个。</li><li>try、catch、finally三个代码块中变量的作用域为代码块内部，分别独立而不能相互访问。如果要在三个块中都可以访问，则需要将变量定义到这些块的外面。</li><li>多个catch块时候，最多只会匹配其中一个异常类且只会执行该catch块代码，而不会再执行其它的catch块，且匹配catch语句的顺序为从上到下，也可能所有的catch都没执行。</li><li>先Catch子类异常再Catch父类异常。</li></ul><h2 id="throw、throws关键字"><a href="#throw、throws关键字" class="headerlink" title="throw、throws关键字"></a>throw、throws关键字</h2><p>  throw关键字是用于方法体内部，用来抛出一个Throwable类型的异常。如果抛出了检查异常，则还应该在方法头部声明方法可能抛出的异常类型。该方法的调用者也必须检查处理抛出的异常。如果所有方法都层层上抛获取的异常，最终JVM会进行处理，处理也很简单，就是打印异常消息和堆栈信息。throw关键字用法如下： </p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">test</span><span class="params">()</span> <span class="keyword">throws</span> Exception  </span></span><br><span class="line"><span class="function"></span>&#123;  </span><br><span class="line">   <span class="keyword">throw</span> <span class="keyword">new</span> Exception(<span class="string">&quot;方法test中的Exception&quot;</span>);  </span><br><span class="line">&#125;  </span><br></pre></td></tr></table></figure><p>  throws关键字用于方法体外部的方法声明部分，用来声明方法可能会抛出某些异常。仅当抛出了检查异常，该方法的调用者才必须处理或者重新抛出该异常。当方法的调用者无力处理该异常的时候，应该继续抛出.</p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;java把异常作为一类，当做对象来处理。所有异常类的基类是Throwable类，两大子类分别是Error  和 Exception。&lt;/p&gt;
+&lt;p&gt;系统错误由Java虚拟机抛出，用Error类表示，Error类描述的是内部系统错误，例如Java虚拟机崩溃。这种情况仅凭程序自</summary>
+      
+    
+    
+    
+    <category term="计算机基础知识" scheme="https://leslieaibin.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/"/>
+    
+    
+  </entry>
   
   <entry>
     <title>平衡二叉树、B 树、B+树</title>
@@ -465,30 +488,6 @@
       
       
     <summary type="html">&lt;h1 id=&quot;虚拟机栈&quot;&gt;&lt;a href=&quot;#虚拟机栈&quot; class=&quot;headerlink&quot; title=&quot;虚拟机栈&quot;&gt;&lt;/a&gt;虚拟机栈&lt;/h1&gt;&lt;h2 id=&quot;虚拟机栈概述&quot;&gt;&lt;a href=&quot;#虚拟机栈概述&quot; class=&quot;headerlink&quot; title=&quot;虚拟机栈概</summary>
-      
-    
-    
-    
-    <category term="JVM" scheme="https://leslieaibin.github.io/categories/JVM/"/>
-    
-    
-    <category term="JVM" scheme="https://leslieaibin.github.io/tags/JVM/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>6.JVM —— 程序计数器</title>
-    <link href="https://leslieaibin.github.io/2021/05/12/JVM/6.%E7%A8%8B%E5%BA%8F%E8%AE%A1%E6%95%B0%E5%99%A8/"/>
-    <id>https://leslieaibin.github.io/2021/05/12/JVM/6.%E7%A8%8B%E5%BA%8F%E8%AE%A1%E6%95%B0%E5%99%A8/</id>
-    <published>2021-05-11T16:15:42.000Z</published>
-    <updated>2021-05-12T08:15:01.145Z</updated>
-    
-    <content type="html"><![CDATA[<h1 id="程序计数器"><a href="#程序计数器" class="headerlink" title="程序计数器"></a>程序计数器</h1><h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><p>JVM中的<code>程序计数器（Program Counter Register)</code>中，Register的命名源于CPU的寄存器，寄存器存储指令相关的现场信息。CPU只有吧数据装在寄存器才能够运行。这里，并非是广义上所指的物理寄存器，或许将其翻译为PC寄存器（或指令寄存器）会更加贴切（也称为程序钩子)，并且不容易引起一些不必要的误会。JVM中的PC寄存器是对物理PC寄存器的一种抽象模拟。</p><p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/image-20200705155551919.png" alt="image-20200705155551919"></p><p>它是一块很小的内存空间，几乎可以忽略不计。也是运行速度最快的存储区域。</p><p>在JVM规范中，每个线程都会有自己的额程序计数器，是线程私有的，生命周期与线程的声明周期保持一致。</p><p>任何时间一个线程都是只有一个方法在执行，也就是所谓的当前方法。程序计数器会存储当前线程正在执行的Java方法的JVM指令地址：或者是执行native方法，则是未指定值（undefend）.</p><p>他是唯一一个在Java虚拟机规范中没有规定任何outMemoryError情况的区域。</p><h2 id="作用"><a href="#作用" class="headerlink" title="作用"></a>作用</h2><p>PC寄存器用来存储指向下一条指令的地址，也即将要执行的指令代码。由执行引擎读取下一条指令。</p><p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/image-20200705155728557.png" alt="image-20200705155728557"></p><h2 id="代码演示"><a href="#代码演示" class="headerlink" title="代码演示"></a>代码演示</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PCRegisterTest</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">        <span class="keyword">int</span> i  = <span class="number">10</span>;</span><br><span class="line">        <span class="keyword">int</span> j  = <span class="number">20</span>;</span><br><span class="line">        <span class="keyword">int</span> k  = i + j;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>然后将代码进行编译成字节码文件，我们再次查看 ，发现在字节码的左边有一个行号标识，它其实就是指令地址，用于指向当前执行到哪里。</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">0: bipush        10</span><br><span class="line">2: istore_1</span><br><span class="line">3: bipush        20</span><br><span class="line">5: istore_2</span><br><span class="line">6: iload_1</span><br><span class="line">7: iload_2</span><br><span class="line">8: iadd</span><br><span class="line">9: istore_3</span><br><span class="line">10: <span class="built_in">return</span></span><br></pre></td></tr></table></figure><p>通过PC寄存器，我们就可以知道当前程序执行到哪一步了 </p><p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/image-20200705161007423.png" alt="image-20200705161007423"></p><h2 id="使用PC寄存器存储字节码指令地址有什么用呢？"><a href="#使用PC寄存器存储字节码指令地址有什么用呢？" class="headerlink" title="使用PC寄存器存储字节码指令地址有什么用呢？"></a>使用PC寄存器存储字节码指令地址有什么用呢？</h2><p>因为CPU需要不停的切换各个线程，这时候切换回来以后，就得知道接着从哪开始继续执行。</p><p>JVM的字节码解释器就需要通过改变PC寄存器的值来明确下一条应该执行什么样的字节码指令。</p><p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/image-20200705161409533.png" alt="image-20200705161409533"></p><h2 id="PC寄存器为什么被设定为私有的？"><a href="#PC寄存器为什么被设定为私有的？" class="headerlink" title="PC寄存器为什么被设定为私有的？"></a>PC寄存器为什么被设定为私有的？</h2><p>我们都知道所谓的多线程在一个特定的时间段内只会执行其中某一个线程的方法，CPU会不停地做任务切换，这样必然导致经常中断或恢复，如何保证分毫无差呢？为了能够准确地记录各个线程正在执行的当前字节码指令地址，最好的办法自然是为每一个线程都分配一个PC寄存器，这样一来各个线程之间便可以进行独立计算，从而不会出现相互干扰的情况。</p><p>由于CPU时间片轮限制，众多线程在并发执行过程中，任何一个确定的时刻，一个处理器或者多核处理器中的一个内核，只会执行某个线程中的一条指令。</p><p>这样必然导致经常中断或恢复，如何保证分毫无差呢？每个线程在创建后，都会产生自己的程序计数器和栈帧，程序计数器在各个线程之间互不影响。</p><p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/image-20200705161812542.png" alt="image-20200705161812542"></p><h2 id="CPU时间片"><a href="#CPU时间片" class="headerlink" title="CPU时间片"></a>CPU时间片</h2><p>CPU时间片即CPU分配给各个程序的时间，每个线程被分配一个时间段，称作它的时间片。</p><p>在宏观上：我们可以同时打开多个应用程序，每个程序并行不悖，同时运行。</p><p>但在微观上：由于只有一个CPU，一次只能处理程序要求的一部分，如何处理公平，一种方法就是引入时间片，每个程序轮流执行。</p><p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/image-20200705161849557.png" alt="image-20200705161849557"></p>]]></content>
-    
-    
-      
-      
-    <summary type="html">&lt;h1 id=&quot;程序计数器&quot;&gt;&lt;a href=&quot;#程序计数器&quot; class=&quot;headerlink&quot; title=&quot;程序计数器&quot;&gt;&lt;/a&gt;程序计数器&lt;/h1&gt;&lt;h2 id=&quot;介绍&quot;&gt;&lt;a href=&quot;#介绍&quot; class=&quot;headerlink&quot; title=&quot;介绍&quot;&gt;&lt;/a&gt;介</summary>
       
     
     

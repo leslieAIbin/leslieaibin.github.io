@@ -1,0 +1,270 @@
+<!DOCTYPE html><html lang="zh-Hans" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>4.HashMap实现原理 | Mr.Ai</title><meta name="keywords" content="Collection"><meta name="author" content="Leslie"><meta name="copyright" content="Leslie"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><meta name="description" content="HashMap的实现原理概述HashMap是Java中对Map接口的实现类，是最常用的实现类中之一。主要有以下几个特性：  HashMap中的key 和 value 都允许为null， 但最多智能拥有一个null的key HashMap不保证顺序性 HashMap非线性安全  HashMap的数据结构： HashMap内部是以数组+链表的方式存储的数据。  HashMap的数组中，每个元素称之为“">
+<meta property="og:type" content="article">
+<meta property="og:title" content="4.HashMap实现原理">
+<meta property="og:url" content="https://leslieaibin.github.io/2021/09/05/Collection/4.HashMap%E7%9A%84%E6%89%A9%E5%AE%B9%E6%9C%BA%E5%88%B6/index.html">
+<meta property="og:site_name" content="Mr.Ai">
+<meta property="og:description" content="HashMap的实现原理概述HashMap是Java中对Map接口的实现类，是最常用的实现类中之一。主要有以下几个特性：  HashMap中的key 和 value 都允许为null， 但最多智能拥有一个null的key HashMap不保证顺序性 HashMap非线性安全  HashMap的数据结构： HashMap内部是以数组+链表的方式存储的数据。  HashMap的数组中，每个元素称之为“">
+<meta property="og:locale">
+<meta property="og:image" content="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/39.jpg?raw=true">
+<meta property="article:published_time" content="2021-09-04T16:15:42.000Z">
+<meta property="article:modified_time" content="2021-09-05T08:36:32.595Z">
+<meta property="article:author" content="Leslie">
+<meta property="article:tag" content="Collection">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/39.jpg?raw=true"><link rel="shortcut icon" href="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/01.jpg?raw=true"><link rel="canonical" href="https://leslieaibin.github.io/2021/09/05/Collection/4.HashMap%E7%9A%84%E6%89%A9%E5%AE%B9%E6%9C%BA%E5%88%B6/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":false},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  ClickShowText: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  justifiedGallery: {
+    js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+    css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+};
+
+var saveToLocal = {
+  set: function setWithExpiry(key, value, ttl) {
+    const now = new Date()
+    const expiryDay = ttl * 86400000
+    const item = {
+      value: value,
+      expiry: now.getTime() + expiryDay,
+    }
+    localStorage.setItem(key, JSON.stringify(item))
+  },
+
+  get: function getWithExpiry(key) {
+    const itemStr = localStorage.getItem(key)
+
+    if (!itemStr) {
+      return undefined
+    }
+    const item = JSON.parse(itemStr)
+    const now = new Date()
+
+    if (now.getTime() > item.expiry) {
+      localStorage.removeItem(key)
+      return undefined
+    }
+    return item.value
+  }
+}</script><script id="config_change">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2021-09-05 16:36:32'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(function () {  window.activateDarkMode = function () {
+    document.documentElement.setAttribute('data-theme', 'dark')
+    if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+    }
+  }
+  window.activateLightMode = function () {
+    document.documentElement.setAttribute('data-theme', 'light')
+   if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+    }
+  }
+  const autoChangeMode = 'false'
+  const t = saveToLocal.get('theme')
+  if (autoChangeMode === '1') {
+    const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+    const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+    const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+    const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+    if (t === undefined) {
+      if (isLightMode) activateLightMode()
+      else if (isDarkMode) activateDarkMode()
+      else if (isNotSpecified || hasNoSupport) {
+        const now = new Date()
+        const hour = now.getHours()
+        const isNight = hour <= 6 || hour >= 18
+        isNight ? activateDarkMode() : activateLightMode()
+      }
+      window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
+        if (saveToLocal.get('theme') === undefined) {
+          e.matches ? activateDarkMode() : activateLightMode()
+        }
+      })
+    } else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else if (autoChangeMode === '2') {
+    const now = new Date()
+    const hour = now.getHours()
+    const isNight = hour <= 6 || hour >= 18
+    if (t === undefined) isNight ? activateDarkMode() : activateLightMode()
+    else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else {
+    if (t === 'dark') activateDarkMode()
+    else if (t === 'light') activateLightMode()
+  }const asideStatus = saveToLocal.get('aside-status')
+if (asideStatus !== undefined) {
+   if (asideStatus === 'hide') {
+     document.documentElement.classList.add('hide-aside')
+   } else {
+     document.documentElement.classList.remove('hide-aside')
+   }
+}})()</script><meta name="generator" content="Hexo 5.2.0"><link rel="alternate" href="/atom.xml" title="Mr.Ai" type="application/atom+xml">
+</head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="author-avatar"><img class="avatar-img" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/01.jpg?raw=true" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">58</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">Tags</div><div class="length-num">18</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">Categories</div><div class="length-num">16</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/artitalk/"><i class="fa-fw fas fa-pen"></i><span> 自言自语</span></a></div></div></div></div><div id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/39.jpg?raw=true)"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Mr.Ai</a></span><span id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/artitalk/"><i class="fa-fw fas fa-pen"></i><span> 自言自语</span></a></div></div><span class="close" id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></span></span></nav><div id="post-info"><h1 class="post-title">4.HashMap实现原理</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2021-09-04T16:15:42.000Z" title="Created 2021-09-05 00:15:42">2021-09-05</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2021-09-05T08:36:32.595Z" title="Updated 2021-09-05 16:36:32">2021-09-05</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Collection/">Collection</a></span></div><div class="meta-secondline"> <span class="post-meta-separator">|</span><span class="post-meta-pv-cv"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post View:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="HashMap的实现原理"><a href="#HashMap的实现原理" class="headerlink" title="HashMap的实现原理"></a>HashMap的实现原理</h1><h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>HashMap是Java中对Map接口的实现类，是最常用的实现类中之一。主要有以下几个特性：</p>
+<ul>
+<li>HashMap中的key 和 value 都允许为null， 但最多智能拥有一个null的key</li>
+<li>HashMap不保证顺序性</li>
+<li>HashMap非线性安全</li>
+</ul>
+<p>HashMap的数据结构：</p>
+<p>HashMap内部是以数组+链表的方式存储的数据。</p>
+<p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/image-20210904213431065.png" alt="image-20210904213431065"></p>
+<p>HashMap的数组中，每个元素称之为“<strong>桶</strong>”。需要注意的是，这个“桶”并不等同于“键值对（Entity）”。至于它是什么请往下看。</p>
+<p><strong>初始化</strong></p>
+<p>HashMap在初始化时会创建一个Entity的数组。其个数为<strong>16</strong>。其源码类似下面的代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Entry</span>&lt;<span class="title">K</span>,<span class="title">V</span>&gt; <span class="keyword">implements</span> <span class="title">Map</span>.<span class="title">Entry</span>&lt;<span class="title">K</span>,<span class="title">V</span>&gt; </span>&#123;</span><br><span class="line">    <span class="keyword">final</span> K key;</span><br><span class="line">    V value;</span><br><span class="line">    Entry&lt;K,V&gt; next;</span><br><span class="line">    <span class="keyword">final</span> <span class="keyword">int</span> hash;</span><br><span class="line">    ……</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>其中key和value不必多说，不过它还包含了一个next属性，这说明它可以组织成一个链表结构。</p>
+<p><strong>put()方法</strong></p>
+<p>put方法被调用时，HashMap会根据key计算出对应的hashcode，然后根据hashcode确定该Entity应该存放在数组的哪个位置（应该放在哪个桶里）。</p>
+<p>这种设定有一个问题：实际引用中有可能会发生hash碰撞（即两个数据虽然内容不同，但其hashcode有可能是相同的）！因此，HashMap如果发现hashcode已经存在，则会对key进行euqals对比：</p>
+<ul>
+<li>equals结果是true，则认为确实是同一个key，然后将新的value覆盖旧的value（此时put方法将会返回旧value值）。</li>
+<li>equals结果是false，则认为是hash碰撞，此时会将之前的Entity作为新Entity的next，此时形成一个链表，新Entity则处在链表的首位。</li>
+</ul>
+<p>因此，所谓的<strong>“桶”就是数组每个位置放置的“链表”</strong>。</p>
+<p><strong>get()方法</strong></p>
+<p>如果理解了上述的put逻辑，则get方法就很容易理解。主要有以下几个步骤：</p>
+<ul>
+<li>根据key计算hashcode，然后得出其数组下标（位置）。</li>
+<li>去对应位置获取桶（链表）。</li>
+<li>从头到尾遍历链表的每一个Entity，通过equals方法找到对应的Entity。</li>
+<li></li>
+</ul>
+<p>上述的过程中有一个点未详细说明：<strong>如何根据key的hashcode计算出对应的数组坐标呢？</strong></p>
+<p>HashMap的内部实现用了一个非常巧妙的方法。HashMap的初始容量被定为<strong>16</strong>，且每次增长都是2的倍数。这样设计的目的是要<strong>保证存入map中的元素尽量分散</strong>，尽量避免出现桶中出现链表，这可以有效降低数据查询时的处理速度。</p>
+<p>key是这么一步步转化成数组下标的：</p>
+<p>第一步：Object Key –&gt; int hash</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">static final int hash(Object key) &#123;</span><br><span class="line">    int h;</span><br><span class="line">    return (key == null) ? 0 : (h = key.hashCode()) ^ (h &gt;&gt;&gt; 16);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果key是null，则其hash为0；否则便将 <strong>hashcode</strong> 与 <strong>hashcode的高位</strong> 做 <strong>异或运算</strong>。这是为了尽量避免“低位不变，高位变化”时造成的hash冲突。</p>
+<p>第二步：hash –&gt; i</p>
+<p>上一步计算出的hash是个长度较长的二进制数字，而通常情况下HashMap的底层数组长度（length）较小，因此如果我们进行 <strong>hash % length</strong> 计算，则一定能得到一个下标，且相对比较分散。而在源码中使用了性能更高的算法：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">i = (length - 1) &amp; hash</span><br></pre></td></tr></table></figure>
+
+<p>这个公式对hash和length进行了<strong>按位与</strong>运算，等价于<strong>取余。</strong></p>
+<h2 id="为什么底层数组的长度总要是2的n次方呢"><a href="#为什么底层数组的长度总要是2的n次方呢" class="headerlink" title="为什么底层数组的长度总要是2的n次方呢"></a>为什么底层数组的长度总要是2的n次方呢</h2><p>这时就能说清楚另外一件事情：<strong>为什么底层数组的长度总要是2的n次方呢？</strong></p>
+<p>下图是个示例：</p>
+<p><img src="https://pic2.zhimg.com/80/v2-417a388c7b8ae370fc1ede9e854e54a5_720w.jpg" alt="img"></p>
+<p>可以看到，如果数组长度是2的n次方，那么<strong>length-1</strong>的二进制表示中，一定所有位都是<strong>1</strong>，此时取&amp;运算则可以完整保留hash响应位置的二进制数据。相反的，如果数组长度不是2的n次方，则出现hash碰撞的可能性大大提高。</p>
+<h2 id="JDK8中HashMap的改进"><a href="#JDK8中HashMap的改进" class="headerlink" title="JDK8中HashMap的改进"></a>JDK8中HashMap的改进</h2><p>上文曾提到“<strong>桶</strong>”的概念。其实这个概念在JDK8中才是真正有意义的。因为JDK7中，原始数组的每个元素都一定是个链表（链表的节点一个或者多个），而到了JDK8的时候就不一定是链表了。</p>
+<p>JDK8对存储方式进行改进的原因很简单：如果在一个HashMap中，有很多Key发生了碰撞的时候，就会产生一个超级长的链表。那么在数据查询的时候就会花费O(n)的时间。所以，JDK8中HashMap采用了“<strong>桶</strong>+<strong>链表/红黑树</strong>”数据存储方式：如果链表的长度大于等于8时，其内部便会将链表转化为红黑树的结构。红黑树的查询时间是O(log n)。</p>
+<p>由于数据存储方式发生变化，因此列表扩容时也会发生一些变化。具体细节请看下一篇HashMap的扩容。</p>
+<h1 id="扩容机制"><a href="#扩容机制" class="headerlink" title="扩容机制"></a>扩容机制</h1><p>为了方便说明，这里明确几个名词：</p>
+<ul>
+<li>capacity 即容量，默认16。</li>
+<li>loadFactor 加载因子，默认是0.75</li>
+<li>threshold 阈值。阈值=容量*加载因子。默认12。当元素数量超过阈值时便会触发扩容。</li>
+</ul>
+<p><strong>什么时候触发扩容？</strong></p>
+<p>一般情况下，<strong>当元素数量超过阈值时</strong>便会触发扩容。每次扩容的容量都是之前容量的2倍。</p>
+<p>HashMap的容量是有上限的，必须小于<strong>1&lt;&lt;30</strong>，即1073741824。如果容量超出了这个数，则不再增长，且阈值会被设置为<strong>Integer.MAX_VALUE</strong>（2^31^  - 1) ，即永远不会超出阈值了)。</p>
+<h2 id="JDK7中的扩容机制"><a href="#JDK7中的扩容机制" class="headerlink" title="JDK7中的扩容机制"></a><strong>JDK7中的扩容机制</strong></h2><p>JDK7的扩容机制相对简单，有以下特性：</p>
+<ul>
+<li>空参数的构造函数：以默认容量、默认负载因子、默认阈值初始化数组。内部数组是<strong>空数组</strong>。</li>
+<li>有参构造函数：根据参数确定容量、负载因子、阈值等。</li>
+<li>第一次put时会初始化数组，其容量变为<strong>不小于指定容量的2的幂数</strong>。然后根据负载因子确定阈值。</li>
+<li>如果不是第一次扩容，则 <img src="https://www.zhihu.com/equation?tex=%E6%96%B0%E5%AE%B9%E9%87%8F=%E6%97%A7%E5%AE%B9%E9%87%8F%5Ctimes2" alt="[公式]"> ， <img src="https://www.zhihu.com/equation?tex=%E6%96%B0%E9%98%88%E5%80%BC=%E6%96%B0%E5%AE%B9%E9%87%8F%5Ctimes%E8%B4%9F%E8%BD%BD%E5%9B%A0%E5%AD%90" alt="[公式]"> 。</li>
+</ul>
+<h2 id="JDK8的扩容机制"><a href="#JDK8的扩容机制" class="headerlink" title="JDK8的扩容机制"></a><strong>JDK8的扩容机制</strong></h2><p>JDK8的扩容做了许多调整。</p>
+<p>HashMap的容量变化通常存在以下几种情况：</p>
+<ol>
+<li>空参数的构造函数：实例化的HashMap默认内部数组是null，即没有实例化。第一次调用put方法时，则会开始第一次初始化扩容，长度为16。</li>
+<li>有参构造函数：用于指定容量。会根据指定的正整数找到<strong>不小于指定容量的2的幂数</strong>，将这个数设置赋值给<strong>阈值</strong>（threshold）。第一次调用put方法时，会将阈值赋值给容量，然后让 <img src="https://www.zhihu.com/equation?tex=%E9%98%88%E5%80%BC=%E5%AE%B9%E9%87%8F%5Ctimes%E8%B4%9F%E8%BD%BD%E5%9B%A0%E5%AD%90" alt="[公式]"> 。（因此并不是我们手动指定了容量就一定不会触发扩容，超过阈值后一样会扩容！！）</li>
+<li>如果不是第一次扩容，则容量变为原来的2倍，阈值也变为原来的2倍。<em>（容量和阈值都变为原来的2倍时，负载因子还是不变）</em></li>
+</ol>
+<p>此外还有几个细节需要注意：</p>
+<ul>
+<li>首次put时，先会触发扩容（算是初始化），然后存入数据，然后判断是否需要扩容；</li>
+<li>不是首次put，则不再初始化，直接存入数据，然后判断是否需要扩容；</li>
+</ul>
+<h2 id="JDK7的元素迁移"><a href="#JDK7的元素迁移" class="headerlink" title="JDK7的元素迁移"></a><strong>JDK7的元素迁移</strong></h2><p>JDK7中，HashMap的内部数据保存的都是链表。因此逻辑相对简单：在准备好新的数组后，map会遍历数组的每个“桶”，然后遍历桶中的每个Entity，重新计算其hash值（也有可能不计算），找到新数组中的对应位置，以<strong>头插法</strong>插入新的链表。</p>
+<p>这里有几个注意点：</p>
+<ul>
+<li>是否要重新计算hash值的条件这里不深入讨论，读者可自行查阅源码。</li>
+<li>因为是头插法，因此新旧链表的元素位置会发生转置现象。</li>
+<li>元素迁移的过程中在多线程情境下有可能会触发死循环（无限进行链表反转）。</li>
+</ul>
+<h2 id="JDK8的元素迁移"><a href="#JDK8的元素迁移" class="headerlink" title="JDK8的元素迁移"></a><strong>JDK8的元素迁移</strong></h2><p>JDK8则因为巧妙的设计，性能有了大大的提升：由于数组的容量是以2的幂次方扩容的，那么一个Entity在扩容时，新的位置要么在<strong>原位置</strong>，要么在<strong>原长度+原位置</strong>的位置。原因如下图：</p>
+<p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/v2-da2df9ad67181daa328bb09515c1e1c8_720w.png" alt="img"></p>
+<p>数组长度变为原来的2倍，表现在二进制上就是<strong>多了一个高位参与数组下标确定</strong>。此时，一个元素通过hash转换坐标的方法计算后，恰好出现一个现象：最高位是0则坐标不变，最高位是1则坐标变为“10000+原坐标”，即“原长度+原坐标”。如下图：</p>
+<p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/v2-ac1017eb1b83ce5505bfc032ffbcc29a_720w.jpg" alt="img"></p>
+<p>因此，在扩容时，不需要重新计算元素的hash了，只需要判断最高位是1还是0就好了。</p>
+<p>JDK8的HashMap还有以下细节：</p>
+<ul>
+<li>JDK8在迁移元素时是正序的，不会出现链表转置的发生。</li>
+<li>如果某个桶内的元素超过8个，则会将链表转化成红黑树，加快数据查询效率。</li>
+</ul>
+<h2 id="HashMap扩容死循环问题"><a href="#HashMap扩容死循环问题" class="headerlink" title="HashMap扩容死循环问题"></a>HashMap扩容死循环问题</h2><ul>
+<li><p>当插入一个新的键值对时，会根据key对HashMap底层数组长度取模，得到键值对存放的数组下标，然后调用addEntry() 函数把这个键值对插入到这个下标所在的链表中</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">addEntry</span><span class="params">(<span class="keyword">int</span> hash, K key , V value, <span class="keyword">int</span> bucketIndex)</span></span>&#123;</span><br><span class="line">    Entry&lt;K, V&gt; e = table[bucketIndex];</span><br><span class="line">    table[bucketIndex] = <span class="keyword">new</span> Entry&lt;&gt;(hash, key , value, e);</span><br><span class="line">    <span class="keyword">if</span>(size++ &gt;= threshold)			<span class="comment">// 如果键值对个数超过hashmap当前的阈值</span></span><br><span class="line">        resize(<span class="number">2</span> * table.length)	<span class="comment">// 调整resize()函数进行扩容</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在这个addEntry() 函数中，会判断键值对个数是否超过了HashMap当前容量的阈值，如果超过了，则说明需要扩容，接下来就调用resize() 函数扩容为原来的两倍</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">resize</span><span class="params">(<span class="keyword">int</span> newCapacity)</span> </span>&#123;</span><br><span class="line">    Entry[] oldTable = table;</span><br><span class="line">    <span class="keyword">int</span> oldCapacity = oldTable.length;</span><br><span class="line">    <span class="keyword">if</span> (oldCapacity == MAXIMUM_CAPACITY) &#123;</span><br><span class="line">           threshold = Integer.MAX_VALUE;</span><br><span class="line">          <span class="keyword">return</span>;</span><br><span class="line">     &#125;</span><br><span class="line">    Entry[] newTable = <span class="keyword">new</span> Entry[newCapacity];  <span class="comment">// 创建一个新数组</span></span><br><span class="line">    transfer(newTable);        <span class="comment">// 把老数组中的所有键值对都拷贝到新数组中</span></span><br><span class="line">    table = newTable;        <span class="comment">// 修改老数组的指向，把老数组指向新数组，完成扩容</span></span><br><span class="line">    threshold = (<span class="keyword">int</span>)(newCapacity * loadFactor);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>resize()函数会先创建一个新数组，然后调用 transfer() 函数把老数组中的所有键值对都拷贝到新数组中，最后修改老数组的指向，把老数组指向新数组，完成扩容。</p>
+<p>扩容过程中会出现循环链表的情况就是多个线程在执行 transfer() 函数导致的，下面看看 transfer() 函数的代码</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">transfer</span><span class="params">(Entry[] newTable)</span> </span>&#123;</span><br><span class="line">    Entry[] src = table;        <span class="comment">// 老数组</span></span><br><span class="line">    <span class="keyword">int</span> newCapacity = newTable.length;     <span class="comment">// 新数组的长度</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; src.length; j++) <span class="comment">// 遍历老数组，把老数组中所有键值对拷贝到新数组</span></span><br><span class="line">        Entry&lt;K,V&gt; e = src[j];    <span class="comment">// 记录下老数组第 j 个链表，接下来会链表上的键值对都拷贝到新数组</span></span><br><span class="line">        <span class="keyword">if</span> (e != <span class="keyword">null</span>) &#123;        <span class="comment">// 如果链表不为空才需要拷贝</span></span><br><span class="line">            src[j] = <span class="keyword">null</span>;        <span class="comment">// 先老数组第j个链表置为空链表</span></span><br><span class="line">            <span class="keyword">do</span> &#123;                <span class="comment">// 循环遍历刚才记录下来的链表，把所有键值对都采用头插法插入到新数组对应链表</span></span><br><span class="line">                Entry&lt;K,V&gt; next = e.next;        <span class="comment">// 记录下当前结点的下个结点</span></span><br><span class="line">                <span class="keyword">int</span> i = indexFor(e.hash, newCapacity);    <span class="comment">// 求出该键值对在新数组的下标,即该键值对应该被插入到新数组第几个链表</span></span><br><span class="line">                e.next = newTable[i];    <span class="comment">// 把结点的next指针指向新数组的第i个链表头结点</span></span><br><span class="line">                newTable[i] = e;    <span class="comment">// 新数组第i个链表的头结点前移，指向当前结点</span></span><br><span class="line">                e = next;        <span class="comment">// 把指向当前结点的指针后移</span></span><br><span class="line">            &#125; <span class="keyword">while</span> (e != <span class="keyword">null</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>其中最关键的就是其中的 do while()循环，这里面就是会发生循环链表的代码。</p>
+</li>
+</ul>
+<p>现在先走一遍正常扩容的流程,假设有下面这个HashMap, 假设数组大小为2</p>
+<p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/1456655-20201211210822148-740596617.png" alt="img"></p>
+<p>现在需要对它进行扩容，扩容后数组大小为原来的两倍，创建一个大小为4的数组</p>
+<p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/1456655-20201211210822686-391022651.png" alt="img"></p>
+<p>假设a、b两个数扩容后刚好又hash冲突了，即又在同一个链表中，所在下标为3；c在下标为1的链表中。下面开始扩容。</p>
+<p>e指针指向了老数组的第1个链表</p>
+<h3 id="执行上面的do-while循环，第一轮循环："><a href="#执行上面的do-while循环，第一轮循环：" class="headerlink" title="执行上面的do while循环，第一轮循环："></a>执行上面的do while循环，第一轮循环：</h3><p><a target="_blank" rel="noopener" href="https://img2020.cnblogs.com/blog/1456655/202012/1456655-20201211210823926-116268729.png"><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/1456655-20201211210823926-116268729.png" alt="img"></a></p>
+<h3 id="第二轮循环："><a href="#第二轮循环：" class="headerlink" title="第二轮循环："></a>第二轮循环：</h3><h3 id=""><a href="#" class="headerlink" title=""></a><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/1456655-20210820225941991-619872774.png" alt="img"></h3><h3 id="第三轮也是最后一轮循环，前面已经假设结点-c-将在新数组中的第二个链表"><a href="#第三轮也是最后一轮循环，前面已经假设结点-c-将在新数组中的第二个链表" class="headerlink" title="第三轮也是最后一轮循环，前面已经假设结点 c 将在新数组中的第二个链表"></a>第三轮也是最后一轮循环，前面已经假设结点 c 将在新数组中的第二个链表</h3><p><a target="_blank" rel="noopener" href="https://img2020.cnblogs.com/blog/1456655/202012/1456655-20201211210826842-959746908.png"><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/1456655-20201211210826842-959746908.png" alt="img"></a></p>
+<p>至此，老数组中的健值对已全部拷贝到新数组中</p>
+<h3 id="多线程环境中扩容"><a href="#多线程环境中扩容" class="headerlink" title="多线程环境中扩容"></a>多线程环境中扩容</h3><p>假设在第 二 次循环中的第二步（执行完e.next = newTable[i]；）后当前线程的时间片刚好用完了，当前线程被挂起，这时刚好又有一个线程 P2 也来执行扩容操作，它并不会从第二步开始执行，而是重新从第一步开始执行，加入新线程后的扩容图为</p>
+<p><a target="_blank" rel="noopener" href="https://img2020.cnblogs.com/blog/1456655/202012/1456655-20201211210829300-1877613427.png"><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/1456655-20201211210829300-1877613427.png" alt="img"></a></p>
+<p>可以看到，线程2扩容之后的newTable中的单链表形成了一个环，后续执行get操作的时候，会触发死循环，引起CPU的100%问题。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>通过解读HashMap源码并结合实例可以发现，HashMap扩容导致死循环的主要原因在于<strong>扩容过程中使用头插法将oldTable中的单链表中的节点插入到newTable的单链表中</strong>，所以newTable中的单链表会倒置oldTable中的单链表。那么在多个线程同时扩容的情况下就可能导致<strong>扩容后的HashMap中存在一个有环的单链表</strong>，从而导致后续执行get操作的时候，会触发死循环，引起CPU的100%问题。所以一定要避免在并发环境下使用HashMap。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined">Leslie</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="https://leslieaibin.github.io/2021/09/05/Collection/4.HashMap%E7%9A%84%E6%89%A9%E5%AE%B9%E6%9C%BA%E5%88%B6/">https://leslieaibin.github.io/2021/09/05/Collection/4.HashMap%E7%9A%84%E6%89%A9%E5%AE%B9%E6%9C%BA%E5%88%B6/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Collection/">Collection</a></div><div class="post_share"><div class="social-share" data-image="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/39.jpg?raw=true" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2021/09/04/MySQL/02.%E7%B4%A2%E5%BC%95/"><img class="next-cover" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/36.jpg?raw=true" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">02.索引</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span> Related Articles</span></div><div class="relatedPosts-list"><div><a href="/2021/03/26/Collection/1.Java集合-框架/" title="1.Java集合-框架"><img class="cover" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/26.jpg?raw=true" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-03-26</div><div class="title">1.Java集合-框架</div></div></a></div><div><a href="/2021/08/20/Collection/2.集合[2]/" title="2.Java集合"><img class="cover" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/36.jpg?raw=true" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-08-20</div><div class="title">2.Java集合</div></div></a></div><div><a href="/2021/08/24/Collection/3.java集合[3]--HashMap、ConcurrentHashMap、HashTable的区别/" title="3.HashMap、ConcurrentHashMap、HashTable"><img class="cover" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/26.jpg?raw=true" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-08-24</div><div class="title">3.HashMap、ConcurrentHashMap、HashTable</div></div></a></div></div></div></div><div class="aside_content" id="aside_content"><div class="card-widget card-info"><div class="card-content"><div class="card-info-avatar is-center"><img class="avatar-img" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/01.jpg?raw=true" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/><div class="author-info__name">Leslie</div><div class="author-info__description"></div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">58</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">Tags</div><div class="length-num">18</div></a></div><div class="card-info-data-item is-center"><a href="/categories/"><div class="headline">Categories</div><div class="length-num">16</div></a></div></div><a class="button--animated" id="card-info-btn"><i class="fas fa-heart"></i><span>瓶中的水 青天的云</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/leslieAIbin" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="https://www.instagram.com/leslieaibin/" target="_blank" title="Ins"><i class="fab fa-instagram"></i></a><a class="social-icon" href="mailto:1915612226@qq.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a><a class="social-icon" href="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/image-20201122143121657.png" target="_blank" title="weixin"><i class="fab fa-weixin"></i></a></div></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="card-content"><div class="item-headline"><i class="fas fa-stream"></i><span>Catalog</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#HashMap%E7%9A%84%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86"><span class="toc-number">1.</span> <span class="toc-text">HashMap的实现原理</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A6%82%E8%BF%B0"><span class="toc-number">1.1.</span> <span class="toc-text">概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E5%BA%95%E5%B1%82%E6%95%B0%E7%BB%84%E7%9A%84%E9%95%BF%E5%BA%A6%E6%80%BB%E8%A6%81%E6%98%AF2%E7%9A%84n%E6%AC%A1%E6%96%B9%E5%91%A2"><span class="toc-number">1.2.</span> <span class="toc-text">为什么底层数组的长度总要是2的n次方呢</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JDK8%E4%B8%ADHashMap%E7%9A%84%E6%94%B9%E8%BF%9B"><span class="toc-number">1.3.</span> <span class="toc-text">JDK8中HashMap的改进</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%89%A9%E5%AE%B9%E6%9C%BA%E5%88%B6"><span class="toc-number">2.</span> <span class="toc-text">扩容机制</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#JDK7%E4%B8%AD%E7%9A%84%E6%89%A9%E5%AE%B9%E6%9C%BA%E5%88%B6"><span class="toc-number">2.1.</span> <span class="toc-text">JDK7中的扩容机制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JDK8%E7%9A%84%E6%89%A9%E5%AE%B9%E6%9C%BA%E5%88%B6"><span class="toc-number">2.2.</span> <span class="toc-text">JDK8的扩容机制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JDK7%E7%9A%84%E5%85%83%E7%B4%A0%E8%BF%81%E7%A7%BB"><span class="toc-number">2.3.</span> <span class="toc-text">JDK7的元素迁移</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JDK8%E7%9A%84%E5%85%83%E7%B4%A0%E8%BF%81%E7%A7%BB"><span class="toc-number">2.4.</span> <span class="toc-text">JDK8的元素迁移</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#HashMap%E6%89%A9%E5%AE%B9%E6%AD%BB%E5%BE%AA%E7%8E%AF%E9%97%AE%E9%A2%98"><span class="toc-number">2.5.</span> <span class="toc-text">HashMap扩容死循环问题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%89%A7%E8%A1%8C%E4%B8%8A%E9%9D%A2%E7%9A%84do-while%E5%BE%AA%E7%8E%AF%EF%BC%8C%E7%AC%AC%E4%B8%80%E8%BD%AE%E5%BE%AA%E7%8E%AF%EF%BC%9A"><span class="toc-number">2.5.1.</span> <span class="toc-text">执行上面的do while循环，第一轮循环：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E8%BD%AE%E5%BE%AA%E7%8E%AF%EF%BC%9A"><span class="toc-number">2.5.2.</span> <span class="toc-text">第二轮循环：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">2.5.3.</span> <span class="toc-text"></span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E8%BD%AE%E4%B9%9F%E6%98%AF%E6%9C%80%E5%90%8E%E4%B8%80%E8%BD%AE%E5%BE%AA%E7%8E%AF%EF%BC%8C%E5%89%8D%E9%9D%A2%E5%B7%B2%E7%BB%8F%E5%81%87%E8%AE%BE%E7%BB%93%E7%82%B9-c-%E5%B0%86%E5%9C%A8%E6%96%B0%E6%95%B0%E7%BB%84%E4%B8%AD%E7%9A%84%E7%AC%AC%E4%BA%8C%E4%B8%AA%E9%93%BE%E8%A1%A8"><span class="toc-number">2.5.4.</span> <span class="toc-text">第三轮也是最后一轮循环，前面已经假设结点 c 将在新数组中的第二个链表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%9A%E7%BA%BF%E7%A8%8B%E7%8E%AF%E5%A2%83%E4%B8%AD%E6%89%A9%E5%AE%B9"><span class="toc-number">2.5.5.</span> <span class="toc-text">多线程环境中扩容</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">2.5.6.</span> <span class="toc-text">总结</span></a></li></ol></li></ol></li></ol></div></div></div><div class="card-widget card-recent-post"><div class="card-content"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2021/09/05/Collection/4.HashMap%E7%9A%84%E6%89%A9%E5%AE%B9%E6%9C%BA%E5%88%B6/" title="4.HashMap实现原理"><img src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/39.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="4.HashMap实现原理"/></a><div class="content"><a class="title" href="/2021/09/05/Collection/4.HashMap%E7%9A%84%E6%89%A9%E5%AE%B9%E6%9C%BA%E5%88%B6/" title="4.HashMap实现原理">4.HashMap实现原理</a><time datetime="2021-09-04T16:15:42.000Z" title="Created 2021-09-05 00:15:42">2021-09-05</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/09/04/MySQL/02.%E7%B4%A2%E5%BC%95/" title="02.索引"><img src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/36.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="02.索引"/></a><div class="content"><a class="title" href="/2021/09/04/MySQL/02.%E7%B4%A2%E5%BC%95/" title="02.索引">02.索引</a><time datetime="2021-09-04T12:17:42.000Z" title="Created 2021-09-04 20:17:42">2021-09-04</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/09/04/MySQL/01.%E4%BA%8B%E5%8A%A1%E7%9A%84%E9%9A%94%E7%A6%BB%E6%80%A7/" title="01.事务的隔离性"><img src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/35.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="01.事务的隔离性"/></a><div class="content"><a class="title" href="/2021/09/04/MySQL/01.%E4%BA%8B%E5%8A%A1%E7%9A%84%E9%9A%94%E7%A6%BB%E6%80%A7/" title="01.事务的隔离性">01.事务的隔离性</a><time datetime="2021-09-04T11:17:42.000Z" title="Created 2021-09-04 19:17:42">2021-09-04</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/09/02/Spring/04.Spring-Bean/" title="04.Spring - Bean"><img src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/34.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="04.Spring - Bean"/></a><div class="content"><a class="title" href="/2021/09/02/Spring/04.Spring-Bean/" title="04.Spring - Bean">04.Spring - Bean</a><time datetime="2021-09-02T11:17:42.000Z" title="Created 2021-09-02 19:17:42">2021-09-02</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/09/02/Spring/03.Spring-AOP/" title="03.Spring - AOP"><img src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/31.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="03.Spring - AOP"/></a><div class="content"><a class="title" href="/2021/09/02/Spring/03.Spring-AOP/" title="03.Spring - AOP">03.Spring - AOP</a><time datetime="2021-09-02T01:19:42.000Z" title="Created 2021-09-02 09:19:42">2021-09-02</time></div></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/39.jpg?raw=true)"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021 By Leslie</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="Back To Top"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><div class="js-pjax"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></div></body></html>

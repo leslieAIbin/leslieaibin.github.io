@@ -1,0 +1,239 @@
+<!DOCTYPE html><html lang="zh-Hans" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>06.MySQL的主从复制 | Mr.Ai</title><meta name="keywords" content="MySQL"><meta name="author" content="Leslie"><meta name="copyright" content="Leslie"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><meta name="description" content="MySQL BinLogMySQL 的 Binlog 日志是一种二进制格式的日志，Binlog记录所有的DDL和DML语句（除了数据查询语句Select， show 等），以Event的形式记录，同时记录语句执行时间。 BInlog的 主要作用有两种：  数据恢复： 因为Binlog详细记录所有修改数据的SQL，当某一个时刻的数据误操作而导致出问题，或者数据库当局数据丢失，那么可以根据binlog">
+<meta property="og:type" content="article">
+<meta property="og:title" content="06.MySQL的主从复制">
+<meta property="og:url" content="https://leslieaibin.github.io/2021/09/21/MySQL/06.MySQL%E7%9A%84%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/index.html">
+<meta property="og:site_name" content="Mr.Ai">
+<meta property="og:description" content="MySQL BinLogMySQL 的 Binlog 日志是一种二进制格式的日志，Binlog记录所有的DDL和DML语句（除了数据查询语句Select， show 等），以Event的形式记录，同时记录语句执行时间。 BInlog的 主要作用有两种：  数据恢复： 因为Binlog详细记录所有修改数据的SQL，当某一个时刻的数据误操作而导致出问题，或者数据库当局数据丢失，那么可以根据binlog">
+<meta property="og:locale">
+<meta property="og:image" content="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/40.jpg?raw=true">
+<meta property="article:published_time" content="2021-09-21T12:17:42.000Z">
+<meta property="article:modified_time" content="2021-09-21T08:38:02.552Z">
+<meta property="article:author" content="Leslie">
+<meta property="article:tag" content="MySQL">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/40.jpg?raw=true"><link rel="shortcut icon" href="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/01.jpg?raw=true"><link rel="canonical" href="https://leslieaibin.github.io/2021/09/21/MySQL/06.MySQL%E7%9A%84%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":false},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  ClickShowText: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  justifiedGallery: {
+    js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+    css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+};
+
+var saveToLocal = {
+  set: function setWithExpiry(key, value, ttl) {
+    const now = new Date()
+    const expiryDay = ttl * 86400000
+    const item = {
+      value: value,
+      expiry: now.getTime() + expiryDay,
+    }
+    localStorage.setItem(key, JSON.stringify(item))
+  },
+
+  get: function getWithExpiry(key) {
+    const itemStr = localStorage.getItem(key)
+
+    if (!itemStr) {
+      return undefined
+    }
+    const item = JSON.parse(itemStr)
+    const now = new Date()
+
+    if (now.getTime() > item.expiry) {
+      localStorage.removeItem(key)
+      return undefined
+    }
+    return item.value
+  }
+}</script><script id="config_change">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2021-09-21 16:38:02'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(function () {  window.activateDarkMode = function () {
+    document.documentElement.setAttribute('data-theme', 'dark')
+    if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+    }
+  }
+  window.activateLightMode = function () {
+    document.documentElement.setAttribute('data-theme', 'light')
+   if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+    }
+  }
+  const autoChangeMode = 'false'
+  const t = saveToLocal.get('theme')
+  if (autoChangeMode === '1') {
+    const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+    const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+    const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+    const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+    if (t === undefined) {
+      if (isLightMode) activateLightMode()
+      else if (isDarkMode) activateDarkMode()
+      else if (isNotSpecified || hasNoSupport) {
+        const now = new Date()
+        const hour = now.getHours()
+        const isNight = hour <= 6 || hour >= 18
+        isNight ? activateDarkMode() : activateLightMode()
+      }
+      window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
+        if (saveToLocal.get('theme') === undefined) {
+          e.matches ? activateDarkMode() : activateLightMode()
+        }
+      })
+    } else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else if (autoChangeMode === '2') {
+    const now = new Date()
+    const hour = now.getHours()
+    const isNight = hour <= 6 || hour >= 18
+    if (t === undefined) isNight ? activateDarkMode() : activateLightMode()
+    else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else {
+    if (t === 'dark') activateDarkMode()
+    else if (t === 'light') activateLightMode()
+  }const asideStatus = saveToLocal.get('aside-status')
+if (asideStatus !== undefined) {
+   if (asideStatus === 'hide') {
+     document.documentElement.classList.add('hide-aside')
+   } else {
+     document.documentElement.classList.remove('hide-aside')
+   }
+}})()</script><meta name="generator" content="Hexo 5.2.0"><link rel="alternate" href="/atom.xml" title="Mr.Ai" type="application/atom+xml">
+</head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="author-avatar"><img class="avatar-img" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/01.jpg?raw=true" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">66</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">Tags</div><div class="length-num">17</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">Categories</div><div class="length-num">15</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/artitalk/"><i class="fa-fw fas fa-pen"></i><span> 自言自语</span></a></div></div></div></div><div id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/40.jpg?raw=true)"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Mr.Ai</a></span><span id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/artitalk/"><i class="fa-fw fas fa-pen"></i><span> 自言自语</span></a></div></div><span class="close" id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></span></span></nav><div id="post-info"><h1 class="post-title">06.MySQL的主从复制</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2021-09-21T12:17:42.000Z" title="Created 2021-09-21 20:17:42">2021-09-21</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2021-09-21T08:38:02.552Z" title="Updated 2021-09-21 16:38:02">2021-09-21</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/MySQL/">MySQL</a></span></div><div class="meta-secondline"> <span class="post-meta-separator">|</span><span class="post-meta-pv-cv"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post View:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="MySQL-BinLog"><a href="#MySQL-BinLog" class="headerlink" title="MySQL BinLog"></a>MySQL BinLog</h1><p>MySQL 的 Binlog 日志是一种二进制格式的日志，Binlog记录所有的DDL和DML语句（除了数据查询语句Select， show 等），以Event的形式记录，同时记录语句执行时间。</p>
+<p>BInlog的 主要作用有两种：</p>
+<ul>
+<li><p>数据恢复：</p>
+<p>因为Binlog详细记录所有修改数据的SQL，当某一个时刻的数据误操作而导致出问题，或者数据库当局数据丢失，那么可以根据binlog回放历史数据</p>
+</li>
+<li><p>主从复制</p>
+<p>想做多级备份的业务，可以去监听当前写库的Binlog日志，同步写库的所有更改</p>
+</li>
+</ul>
+<p>Binlog包括两类文件</p>
+<ul>
+<li>二进制日志索引文件（.index）：记录所有的二进制文件</li>
+<li>二进制日志文件(.00000*)：记录所有DDL和DML语句事件</li>
+</ul>
+<p>Binlog日志功能默认是开启的，线上情况下的Binlog日志的增长速度是很快的，在MySQL配置文件<code>my.cnf</code> 中提供一些参数来对 Binlog 进行设置。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">设置此参数表示启用binlog功能，并制定二进制日志的存储目录</span><br><span class="line">log-<span class="built_in">bin</span>=/home/mysql/binlog/</span><br><span class="line"></span><br><span class="line"><span class="comment">#mysql-bin.*日志文件最大字节（单位：字节）</span></span><br><span class="line"><span class="comment">#设置最大100MB</span></span><br><span class="line">max_binlog_size=<span class="number">104857600</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#设置了只保留7天BINLOG（单位：天）</span></span><br><span class="line">expire_logs_days = <span class="number">7</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#binlog日志只记录指定库的更新</span></span><br><span class="line"><span class="comment">#binlog-do-db=db_name</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#binlog日志不记录指定库的更新</span></span><br><span class="line"><span class="comment">#binlog-ignore-db=db_name</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#写缓冲多少次，刷一次磁盘，默认0</span></span><br><span class="line">sync_binlog=<span class="number">0</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>max_binlog_size</strong> ：Binlog 最大和默认值是 1G，该设置并不能严格控制 Binlog 的大小，尤其是 Binlog 比较靠近最大值而又遇到一个比较大事务时，为了保证事务的完整性不可能做切换日志的动作，只能将该事务的所有 SQL 都记录进当前日志直到事务结束。所以真实文件有时候会大于 max_binlog_size 设定值。</p>
+<p><strong>expire_logs_days</strong> ：Binlog 过期删除不是服务定时执行，是需要借助事件触发才执行，事件包括：</p>
+<ul>
+<li>服务器重启</li>
+<li>服务器被更新</li>
+<li>日志达到了最大日志长度 <code>max_binlog_size</code></li>
+<li>日志被刷新</li>
+</ul>
+<p>二进制日志由配置文件的 <code>log-bin</code> 选项负责启用，MySQL 服务器将在数据根目录创建两个新文件<code>mysql-bin.000001</code> 和 <code>mysql-bin.index</code>，若配置选项没有给出文件名，MySQL 将使用主机名称命名这两个文件，其中 <code>.index</code> 文件包含一份全体日志文件的清单。</p>
+<p><strong>sync_binlog</strong>：这个参数决定了 Binlog 日志的更新频率。默认 0 ，表示该操作由操作系统根据自身负载自行决定多久写一次磁盘。</p>
+<p>sync_binlog = 1 表示每一条事务提交都会立刻写盘。sync_binlog=n 表示 n 个事务提交才会写盘。</p>
+<p>根据 MySQL 文档，写 Binlog 的时机是：SQL transaction 执行完，但任何相关的 Locks 还未释放或事务还未最终 commit 前。这样保证了 Binlog 记录的操作时序与数据库实际的数据变更顺序一致。</p>
+<h1 id="MySQL主从复制"><a href="#MySQL主从复制" class="headerlink" title="MySQL主从复制"></a>MySQL主从复制</h1><p>Binlog 日志主要作用是数据恢复和主从复制。本身就是二进制格式的日志文件，网络传输无需进行协议转换。MySQL集群的高可用，负载均衡，读写分类等功能都是基于Binlog来实现的</p>
+<h2 id="MySQL主从复制主流架构模型"><a href="#MySQL主从复制主流架构模型" class="headerlink" title="MySQL主从复制主流架构模型"></a>MySQL主从复制主流架构模型</h2><p>我们基于 Binlog 可以复制出一台 MySQL 服务器，也可以复制出多台，取决于我们想实现什么功能。主流的系统架构有如下几种方式：</p>
+<h3 id="一主一从-一主多从"><a href="#一主一从-一主多从" class="headerlink" title="一主一从 / 一主多从"></a>一主一从 / 一主多从</h3><p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/007S8ZIlgy1gjx1mx9n5wj30lu0mwgne.jpg" alt="1"></p>
+<p>一主一从和一主多从是最常见的主从架构方式，一般实现主从配置或者读写分离都可以采用这种架构。</p>
+<p>如果是一主多从的模式，当 Slave 增加到一定数量时，Slave 对 Master 的负载以及网络带宽都会成为一个严重的问题。</p>
+<h3 id="多主一从"><a href="#多主一从" class="headerlink" title="多主一从"></a>多主一从</h3><p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/007S8ZIlgy1gjx1mt1km7j30m80l4407.jpg" alt="1"></p>
+<p>MySQL 5.7 开始支持多主一从的模式，将多个库的数据备份到一个库中存储。</p>
+<h3 id="双主复制"><a href="#双主复制" class="headerlink" title="双主复制"></a>双主复制</h3><p>理论上跟主从一样，但是两个MySQL服务器互做对方的从，任何一方有变更，都会复制对方的数据到自己的数据库。双主适用于写压力比较大的业务场景，或者 DBA 做维护需要主从切换的场景，通过双主架构避免了重复搭建从库的麻烦。（主从相互授权连接，读取对方binlog日志并更新到本地数据库的过程；只要对方数据改变，自己就跟着改变）</p>
+<h3 id="级联复制"><a href="#级联复制" class="headerlink" title="级联复制"></a>级联复制</h3><p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/007S8ZIlgy1gjx1mr6mxzj30z60hg40u.jpg" alt="1"></p>
+<p>级联模式下因为涉及到的 slave 节点很多，所以如果都连在 master 上对主服务器的压力肯定是不小的。所以部分 slave 节点连接到它上一级的从节点上。这样就缓解了主服务器的压力。</p>
+<p>级联复制解决了一主多从场景下多个从库复制对主库的压力，带来的弊端就是数据同步延迟比较大。</p>
+<h2 id="MySQL-主从复制原理"><a href="#MySQL-主从复制原理" class="headerlink" title="MySQL 主从复制原理"></a>MySQL 主从复制原理</h2><p>MySQL 主从复制涉及到三个线程：</p>
+<ul>
+<li>一个在主节点的线程：<code>log dump thread</code></li>
+<li>从库会生成两个线程：一个 I/O 线程，一个 SQL 线程</li>
+</ul>
+<p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/007S8ZIlgy1gjx1ms5ezhj312s0imtb5.jpg" alt="4"></p>
+<p>主库会生成一个 log dump 线程,用来给从库 I/O 线程传 Binlog 数据。</p>
+<p>从库的 I/O 线程会去请求主库的 Binlog，并将得到的 Binlog 写到本地的 relay log (中继日志)文件中。</p>
+<p>SQL 线程,会读取 relay log 文件中的日志，并解析成 SQL 语句逐一执行。</p>
+<h5 id="主节点-log-dump-线程"><a href="#主节点-log-dump-线程" class="headerlink" title="主节点 log dump 线程"></a>主节点 log dump 线程</h5><p>当从节点连接主节点时，主节点会为其创建一个 log dump 线程，用于发送和读取 Binlog 的内容。在读取 Binlog 中的操作时，log dump 线程会对主节点上的 Binlog 加锁；当读取完成发送给从节点之前，锁会被释放。<strong>主节点会为自己的每一个从节点创建一个 log dump 线程</strong>。</p>
+<h5 id="从节点I-O线程"><a href="#从节点I-O线程" class="headerlink" title="从节点I/O线程"></a>从节点I/O线程</h5><p>当从节点上执行<code>start slave</code>命令之后，从节点会创建一个 I/O 线程用来连接主节点，请求主库中更新的Binlog。I/O 线程接收到主节点的 log dump 进程发来的更新之后，保存在本地 relay-log（中继日志）中。</p>
+<h5 id="relay-log"><a href="#relay-log" class="headerlink" title="relay log"></a>relay log</h5><p>这里又引申出一个新的日志概念。MySQL 进行主主复制或主从复制的时候会在要复制的服务器下面产生相应的 relay log。</p>
+<p>relay log 是怎么产生的呢？</p>
+<p>从服务器 I/O 线程将主服务器的 Binlog 日志读取过来，解析到各类 Events 之后记录到从服务器本地文件，这个文件就被称为 relay log。然后 SQL 线程会读取 relay log 日志的内容并应用到从服务器，从而使从服务器和主服务器的数据保持一致。中继日志充当缓冲区，这样 master 就不必等待 slave 执行完成才发送下一个事件。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt;  show variables like &#39;%relay%&#39;;</span><br><span class="line">+---------------------------+------------------------------------------------------------+</span><br><span class="line">| Variable_name             | Value                                                      |</span><br><span class="line">+---------------------------+------------------------------------------------------------+</span><br><span class="line">| max_relay_log_size        | 0                                                          |</span><br><span class="line">| relay_log                 | yangyuedeMacBook-Pro-relay-bin                             |</span><br><span class="line">| relay_log_basename        | &#x2F;usr&#x2F;local&#x2F;mysql&#x2F;data&#x2F;yangyuedeMacBook-Pro-relay-bin       |</span><br><span class="line">| relay_log_index           | &#x2F;usr&#x2F;local&#x2F;mysql&#x2F;data&#x2F;yangyuedeMacBook-Pro-relay-bin.index |</span><br><span class="line">| relay_log_info_file       | relay-log.info                                             |</span><br><span class="line">| relay_log_info_repository | TABLE                                                      |</span><br><span class="line">| relay_log_purge           | ON                                                         |</span><br><span class="line">| relay_log_recovery        | OFF                                                        |</span><br><span class="line">| relay_log_space_limit     | 0                                                          |</span><br><span class="line">| sync_relay_log            | 10000                                                      |</span><br><span class="line">| sync_relay_log_info       | 10000                                                      |</span><br><span class="line">+---------------------------+------------------------------------------------------------+</span><br><span class="line">11 rows in set (0.03 sec)</span><br></pre></td></tr></table></figure>
+
+<p><strong>max_relay_log_size</strong></p>
+<p>标记 relay log 允许的最大值，如果该值为 0，则默认值为 max_binlog_size(1G)；如果不为 0，则max_relay_log_size 则为最大的 relay_log 文件大小。</p>
+<p><strong>relay_log_purge</strong></p>
+<p>是否自动清空不再需要中继日志时。默认值为1(启用)。</p>
+<p><strong>relay_log_recovery</strong></p>
+<p>当 slave 从库宕机后，假如 relay log 损坏了，导致一部分中继日志没有处理，则自动放弃所有未执行的 relay log，并且重新从 master 上获取日志，这样就保证了 relay log 的完整性。默认情况下该功能是关闭的，将 relay_log_recovery 的值设置为 1 时，可在 slave 从库上开启该功能，建议开启。</p>
+<p><strong>relay_log_space_limit</strong></p>
+<p>防止中继日志写满磁盘，这里设置中继日志最大限额。但此设置存在主库崩溃，从库中继日志不全的情况，不到万不得已，<strong>不推荐使用。</strong></p>
+<p><strong>sync_relay_log</strong></p>
+<p>这个参数和 Binlog 中的 <code>sync_binlog</code>作用相同。当设置为 1 时，slave 的 I/O 线程每次接收到 master 发送过来的 Binlog 日志都要写入系统缓冲区，然后刷入 relay log 中继日志里，这样是最安全的，因为在崩溃的时候，你最多会丢失一个事务，但会造成磁盘的大量 I/O。</p>
+<p>当设置为 0 时，并不是马上就刷入中继日志里，而是由操作系统决定何时来写入，虽然安全性降低了，但减少了大量的磁盘 I/O 操作。这个值默认是 0，可动态修改，建议采用默认值。</p>
+<p><strong>sync_relay_log_info</strong></p>
+<p>当设置为 1 时，slave 的 I/O 线程每次接收到 master 发送过来的 Binlog 日志都要写入系统缓冲区，然后刷入 relay-log.info 里，这样是最安全的，因为在崩溃的时候，你最多会丢失一个事务，但会造成磁盘的大量 I/O。当设置为 0 时，并不是马上就刷入 relay-log.info 里，而是由操作系统决定何时来写入，虽然安全性降低了，但减少了大量的磁盘 I/O 操作。这个值默认是0，可动态修改，建议采用默认值。</p>
+<h5 id="从节点-SQL-线程"><a href="#从节点-SQL-线程" class="headerlink" title="从节点 SQL 线程"></a>从节点 SQL 线程</h5><p>SQL 线程负责读取 relay log 中的内容，解析成具体的操作并执行，最终保证主从数据的一致性。</p>
+<p>对于每一个主从连接，都需要这三个进程来完成。当主节点有多个从节点时，主节点会为每一个当前连接的从节点建一个 log dump 进程，而每个从节点都有自己的 I/O 进程，SQL 进程。</p>
+<p>从节点用两个线程将从主库拉取更新和执行分成独立的任务，这样在执行同步数据任务的时候，不会降低读操作的性能。比如，如果从节点没有运行，此时 I/O 进程可以很快从主节点获取更新，尽管 SQL 进程还没有执行。如果在 SQL 进程执行之前从节点服务停止，至少 I/O 进程已经从主节点拉取到了最新的变更并且保存在本地 relay log 中，当服务再次起来之后就可以完成数据的同步。</p>
+<p>要实施复制，首先必须打开 Master 端的 Binlog 功能，否则无法实现。</p>
+<p>因为整个复制过程实际上就是 Slave 从 Master 端获取该日志然后再在自己身上完全顺序的执行日志中所记录的各种操作。如下图所示：</p>
+<p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/007S8ZIlgy1gjx1mvsnp5j31040iyad2.jpg" alt="5"></p>
+<h5 id="复制的基本过程"><a href="#复制的基本过程" class="headerlink" title="复制的基本过程"></a>复制的基本过程</h5><ol>
+<li>在从节点上执行 <code>sart slave</code> 命令开启主从复制开关，开始进行主从复制。从节点上的 I/O 进程连接主节点，并请求从指定日志文件的指定位置（或者从最开始的日志）之后的日志内容。</li>
+<li>主节点接收到来自从节点的 I/O 请求后，通过负责复制的 I/O 进程（log Dump Thread）根据请求信息读取指定日志指定位置之后的日志信息，返回给从节点。返回信息中除了日志所包含的信息之外，还包括本次返回的信息的 Binlog file 以及 Binlog position（Binlog 下一个数据读取位置）。</li>
+<li>从节点的 I/O 进程接收到主节点发送过来的日志内容、日志文件及位置点后，将接收到的日志内容更新到本机的 relay log 文件（Mysql-relay-bin.xxx）的最末端，并将读取到的 Binlog文件名和位置保存到<code>master-info</code> 文件中，以便在下一次读取的时候能够清楚的告诉 Master ：“ 我需要从哪个 Binlog 的哪个位置开始往后的日志内容，请发给我”。</li>
+<li>Slave 的 SQL 线程检测到relay log 中新增加了内容后，会将 relay log 的内容解析成在能够执行 SQL 语句，然后在本数据库中按照解析出来的顺序执行，并在 <code>relay log.info</code> 中记录当前应用中继日志的文件名和位置点。</li>
+</ol>
+<h2 id="MySQL-基于-Binlog-主从复制的模式介绍"><a href="#MySQL-基于-Binlog-主从复制的模式介绍" class="headerlink" title="MySQL 基于 Binlog 主从复制的模式介绍"></a>MySQL 基于 Binlog 主从复制的模式介绍</h2><p>MySQL 主从复制默认是 <strong>异步的模式</strong>。MySQL增删改操作会全部记录在 Binlog 中，当 slave 节点连接 master 时，会主动从 master 处获取最新的 Binlog 文件。并把 Binlog 存储到本地的 relay log 中，然后去执行 relay log 的更新内容。</p>
+<h3 id="异步模式-async-mode"><a href="#异步模式-async-mode" class="headerlink" title="异步模式 (async-mode)"></a>异步模式 (async-mode)</h3><p>异步模式如下图所示：</p>
+<p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/007S8ZIlgy1gjx1mu02wbj31160kk0vj.jpg" alt="6"></p>
+<p>这种模式下，主节点不会主动推送数据到从节点，主库在执行完客户端提交的事务后会立即将结果返给给客户端，并不关心从库是否已经接收并处理，这样就会有一个问题，主节点如果崩溃掉了，此时主节点上已经提交的事务可能并没有传到从节点上，如果此时，强行将从提升为主，可能导致新主节点上的数据不完整。</p>
+<h3 id="全同步模式"><a href="#全同步模式" class="headerlink" title="全同步模式"></a>全同步模式</h3><p>指当主库执行完一个事务，然后所有的从库都复制了该事务并成功执行完才返回成功信息给客户端。因为需要等待所有从库执行完该事务才能返回成功信息，所以全同步复制的性能必然会收到严重的影响。</p>
+<h3 id="半同步模式-semi-sync"><a href="#半同步模式-semi-sync" class="headerlink" title="半同步模式(semi-sync)"></a>半同步模式(semi-sync)</h3><p>介于异步复制和全同步复制之间，主库在执行完客户端提交的事务后不是立刻返回给客户端，而是等待至少一个从库接收到并写到 relay log 中才返回成功信息给客户端（只能保证主库的 Binlog 至少传输到了一个从节点上），否则需要等待直到超时时间然后切换成异步模式再提交。</p>
+<p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/007S8ZIlgy1gjx1muypwdj31420jg41q.jpg" alt="7"></p>
+<p>相对于异步复制，半同步复制提高了数据的安全性，一定程度的保证了数据能成功备份到从库，同时它也造成了一定程度的延迟，但是比全同步模式延迟要低，这个延迟最少是一个 TCP/IP 往返的时间。所以，半同步复制最好在低延时的网络中使用。</p>
+<p>半同步模式不是 MySQL 内置的，从 MySQL 5.5 开始集成，需要 master 和 slave 安装插件开启半同步模式。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined">Leslie</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="https://leslieaibin.github.io/2021/09/21/MySQL/06.MySQL%E7%9A%84%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">https://leslieaibin.github.io/2021/09/21/MySQL/06.MySQL%E7%9A%84%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/MySQL/">MySQL</a></div><div class="post_share"><div class="social-share" data-image="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/40.jpg?raw=true" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2021/09/15/Thread/11.Java%E7%9A%84%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%EF%BC%88JMM)/"><img class="next-cover" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/26.jpg?raw=true" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">10.Java内存模型</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span> Related Articles</span></div><div class="relatedPosts-list"><div><a href="/2021/09/04/MySQL/01.事务的隔离性/" title="01.事务的隔离性"><img class="cover" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/35.jpg?raw=true" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-09-04</div><div class="title">01.事务的隔离性</div></div></a></div><div><a href="/2021/09/09/MySQL/03.MySQL查询过程/" title="03.一条SQL查询语句如何执行"><img class="cover" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/37.jpg?raw=true" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-09-09</div><div class="title">03.一条SQL查询语句如何执行</div></div></a></div><div><a href="/2021/09/04/MySQL/02.索引/" title="02.索引"><img class="cover" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/36.jpg?raw=true" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-09-04</div><div class="title">02.索引</div></div></a></div><div><a href="/2021/09/11/MySQL/05.分布式锁/" title="05.分布式锁"><img class="cover" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/39.jpg?raw=true" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-09-11</div><div class="title">05.分布式锁</div></div></a></div><div><a href="/2021/09/10/MySQL/04.MySQL索引原理及慢查询优化/" title="04.MySQL索引原理及慢查询优化"><img class="cover" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/38.jpg?raw=true" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-09-10</div><div class="title">04.MySQL索引原理及慢查询优化</div></div></a></div></div></div></div><div class="aside_content" id="aside_content"><div class="card-widget card-info"><div class="card-content"><div class="card-info-avatar is-center"><img class="avatar-img" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/01.jpg?raw=true" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/><div class="author-info__name">Leslie</div><div class="author-info__description"></div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">66</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">Tags</div><div class="length-num">17</div></a></div><div class="card-info-data-item is-center"><a href="/categories/"><div class="headline">Categories</div><div class="length-num">15</div></a></div></div><a class="button--animated" id="card-info-btn"><i class="fas fa-heart"></i><span>瓶中的水 青天的云</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/leslieAIbin" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="https://www.instagram.com/leslieaibin/" target="_blank" title="Ins"><i class="fab fa-instagram"></i></a><a class="social-icon" href="mailto:1915612226@qq.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a><a class="social-icon" href="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/image-20201122143121657.png" target="_blank" title="weixin"><i class="fab fa-weixin"></i></a></div></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="card-content"><div class="item-headline"><i class="fas fa-stream"></i><span>Catalog</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#MySQL-BinLog"><span class="toc-number">1.</span> <span class="toc-text">MySQL BinLog</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6"><span class="toc-number">2.</span> <span class="toc-text">MySQL主从复制</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E4%B8%BB%E6%B5%81%E6%9E%B6%E6%9E%84%E6%A8%A1%E5%9E%8B"><span class="toc-number">2.1.</span> <span class="toc-text">MySQL主从复制主流架构模型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E4%B8%BB%E4%B8%80%E4%BB%8E-%E4%B8%80%E4%B8%BB%E5%A4%9A%E4%BB%8E"><span class="toc-number">2.1.1.</span> <span class="toc-text">一主一从 &#x2F; 一主多从</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%9A%E4%B8%BB%E4%B8%80%E4%BB%8E"><span class="toc-number">2.1.2.</span> <span class="toc-text">多主一从</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%8C%E4%B8%BB%E5%A4%8D%E5%88%B6"><span class="toc-number">2.1.3.</span> <span class="toc-text">双主复制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BA%A7%E8%81%94%E5%A4%8D%E5%88%B6"><span class="toc-number">2.1.4.</span> <span class="toc-text">级联复制</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MySQL-%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%8E%9F%E7%90%86"><span class="toc-number">2.2.</span> <span class="toc-text">MySQL 主从复制原理</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%B8%BB%E8%8A%82%E7%82%B9-log-dump-%E7%BA%BF%E7%A8%8B"><span class="toc-number">2.2.0.0.1.</span> <span class="toc-text">主节点 log dump 线程</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%BB%8E%E8%8A%82%E7%82%B9I-O%E7%BA%BF%E7%A8%8B"><span class="toc-number">2.2.0.0.2.</span> <span class="toc-text">从节点I&#x2F;O线程</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#relay-log"><span class="toc-number">2.2.0.0.3.</span> <span class="toc-text">relay log</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%BB%8E%E8%8A%82%E7%82%B9-SQL-%E7%BA%BF%E7%A8%8B"><span class="toc-number">2.2.0.0.4.</span> <span class="toc-text">从节点 SQL 线程</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%A4%8D%E5%88%B6%E7%9A%84%E5%9F%BA%E6%9C%AC%E8%BF%87%E7%A8%8B"><span class="toc-number">2.2.0.0.5.</span> <span class="toc-text">复制的基本过程</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MySQL-%E5%9F%BA%E4%BA%8E-Binlog-%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E7%9A%84%E6%A8%A1%E5%BC%8F%E4%BB%8B%E7%BB%8D"><span class="toc-number">2.3.</span> <span class="toc-text">MySQL 基于 Binlog 主从复制的模式介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BC%82%E6%AD%A5%E6%A8%A1%E5%BC%8F-async-mode"><span class="toc-number">2.3.1.</span> <span class="toc-text">异步模式 (async-mode)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%A8%E5%90%8C%E6%AD%A5%E6%A8%A1%E5%BC%8F"><span class="toc-number">2.3.2.</span> <span class="toc-text">全同步模式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8D%8A%E5%90%8C%E6%AD%A5%E6%A8%A1%E5%BC%8F-semi-sync"><span class="toc-number">2.3.3.</span> <span class="toc-text">半同步模式(semi-sync)</span></a></li></ol></li></ol></li></ol></div></div></div><div class="card-widget card-recent-post"><div class="card-content"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2021/09/21/MySQL/06.MySQL%E7%9A%84%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/" title="06.MySQL的主从复制"><img src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/40.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="06.MySQL的主从复制"/></a><div class="content"><a class="title" href="/2021/09/21/MySQL/06.MySQL%E7%9A%84%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/" title="06.MySQL的主从复制">06.MySQL的主从复制</a><time datetime="2021-09-21T12:17:42.000Z" title="Created 2021-09-21 20:17:42">2021-09-21</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/09/15/Thread/11.Java%E7%9A%84%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%EF%BC%88JMM)/" title="10.Java内存模型"><img src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/26.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="10.Java内存模型"/></a><div class="content"><a class="title" href="/2021/09/15/Thread/11.Java%E7%9A%84%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%EF%BC%88JMM)/" title="10.Java内存模型">10.Java内存模型</a><time datetime="2021-09-15T02:15:42.000Z" title="Created 2021-09-15 10:15:42">2021-09-15</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/09/11/MySQL/05.%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81/" title="05.分布式锁"><img src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/39.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="05.分布式锁"/></a><div class="content"><a class="title" href="/2021/09/11/MySQL/05.%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81/" title="05.分布式锁">05.分布式锁</a><time datetime="2021-09-11T12:17:42.000Z" title="Created 2021-09-11 20:17:42">2021-09-11</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/09/10/MySQL/04.MySQL%E7%B4%A2%E5%BC%95%E5%8E%9F%E7%90%86%E5%8F%8A%E6%85%A2%E6%9F%A5%E8%AF%A2%E4%BC%98%E5%8C%96/" title="04.MySQL索引原理及慢查询优化"><img src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/38.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="04.MySQL索引原理及慢查询优化"/></a><div class="content"><a class="title" href="/2021/09/10/MySQL/04.MySQL%E7%B4%A2%E5%BC%95%E5%8E%9F%E7%90%86%E5%8F%8A%E6%85%A2%E6%9F%A5%E8%AF%A2%E4%BC%98%E5%8C%96/" title="04.MySQL索引原理及慢查询优化">04.MySQL索引原理及慢查询优化</a><time datetime="2021-09-10T12:17:42.000Z" title="Created 2021-09-10 20:17:42">2021-09-10</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/09/09/MySQL/03.MySQL%E6%9F%A5%E8%AF%A2%E8%BF%87%E7%A8%8B/" title="03.一条SQL查询语句如何执行"><img src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/37.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="03.一条SQL查询语句如何执行"/></a><div class="content"><a class="title" href="/2021/09/09/MySQL/03.MySQL%E6%9F%A5%E8%AF%A2%E8%BF%87%E7%A8%8B/" title="03.一条SQL查询语句如何执行">03.一条SQL查询语句如何执行</a><time datetime="2021-09-09T12:17:42.000Z" title="Created 2021-09-09 20:17:42">2021-09-09</time></div></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/40.jpg?raw=true)"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021 By Leslie</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="Back To Top"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><div class="js-pjax"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></div></body></html>

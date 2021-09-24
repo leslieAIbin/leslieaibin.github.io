@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://leslieaibin.github.io/2021/09/24/Collection/5.ConcurrentHashMap%E8%AF%A6%E8%A7%A3/</loc>
+    
+    <lastmod>2021-09-24</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://leslieaibin.github.io/2021/09/24/Thread/12.ThreadLocal%E5%88%86%E6%9E%90/</loc>
     
     <lastmod>2021-09-24</lastmod>

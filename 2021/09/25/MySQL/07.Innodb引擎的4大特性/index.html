@@ -1,0 +1,426 @@
+<!DOCTYPE html><html lang="zh-Hans" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>07.Innodb引擎特性和日志 | Mr.Ai</title><meta name="keywords" content="MySQL"><meta name="author" content="Leslie"><meta name="copyright" content="Leslie"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><meta name="description" content="Innodb引擎的4大特性插入缓存（Insert Buffer&#x2F;Change Buffer)插入缓存之前版本叫insert buffer，现版本Change Buffer，主要提升插入性能，change buffer 是insert buffer的加强，insert buffer 只针对insert有效，change buffering 对insert、delete、update（delete +">
+<meta property="og:type" content="article">
+<meta property="og:title" content="07.Innodb引擎特性和日志">
+<meta property="og:url" content="https://leslieaibin.github.io/2021/09/25/MySQL/07.Innodb%E5%BC%95%E6%93%8E%E7%9A%844%E5%A4%A7%E7%89%B9%E6%80%A7/index.html">
+<meta property="og:site_name" content="Mr.Ai">
+<meta property="og:description" content="Innodb引擎的4大特性插入缓存（Insert Buffer&#x2F;Change Buffer)插入缓存之前版本叫insert buffer，现版本Change Buffer，主要提升插入性能，change buffer 是insert buffer的加强，insert buffer 只针对insert有效，change buffering 对insert、delete、update（delete +">
+<meta property="og:locale">
+<meta property="og:image" content="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/24.jpg?raw=true">
+<meta property="article:published_time" content="2021-09-25T12:17:42.000Z">
+<meta property="article:modified_time" content="2021-09-25T13:16:55.140Z">
+<meta property="article:author" content="Leslie">
+<meta property="article:tag" content="MySQL">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/24.jpg?raw=true"><link rel="shortcut icon" href="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/01.jpg?raw=true"><link rel="canonical" href="https://leslieaibin.github.io/2021/09/25/MySQL/07.Innodb%E5%BC%95%E6%93%8E%E7%9A%844%E5%A4%A7%E7%89%B9%E6%80%A7/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":false},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  ClickShowText: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  justifiedGallery: {
+    js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+    css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+};
+
+var saveToLocal = {
+  set: function setWithExpiry(key, value, ttl) {
+    const now = new Date()
+    const expiryDay = ttl * 86400000
+    const item = {
+      value: value,
+      expiry: now.getTime() + expiryDay,
+    }
+    localStorage.setItem(key, JSON.stringify(item))
+  },
+
+  get: function getWithExpiry(key) {
+    const itemStr = localStorage.getItem(key)
+
+    if (!itemStr) {
+      return undefined
+    }
+    const item = JSON.parse(itemStr)
+    const now = new Date()
+
+    if (now.getTime() > item.expiry) {
+      localStorage.removeItem(key)
+      return undefined
+    }
+    return item.value
+  }
+}</script><script id="config_change">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2021-09-25 21:16:55'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(function () {  window.activateDarkMode = function () {
+    document.documentElement.setAttribute('data-theme', 'dark')
+    if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+    }
+  }
+  window.activateLightMode = function () {
+    document.documentElement.setAttribute('data-theme', 'light')
+   if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+    }
+  }
+  const autoChangeMode = 'false'
+  const t = saveToLocal.get('theme')
+  if (autoChangeMode === '1') {
+    const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+    const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+    const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+    const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+    if (t === undefined) {
+      if (isLightMode) activateLightMode()
+      else if (isDarkMode) activateDarkMode()
+      else if (isNotSpecified || hasNoSupport) {
+        const now = new Date()
+        const hour = now.getHours()
+        const isNight = hour <= 6 || hour >= 18
+        isNight ? activateDarkMode() : activateLightMode()
+      }
+      window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
+        if (saveToLocal.get('theme') === undefined) {
+          e.matches ? activateDarkMode() : activateLightMode()
+        }
+      })
+    } else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else if (autoChangeMode === '2') {
+    const now = new Date()
+    const hour = now.getHours()
+    const isNight = hour <= 6 || hour >= 18
+    if (t === undefined) isNight ? activateDarkMode() : activateLightMode()
+    else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else {
+    if (t === 'dark') activateDarkMode()
+    else if (t === 'light') activateLightMode()
+  }const asideStatus = saveToLocal.get('aside-status')
+if (asideStatus !== undefined) {
+   if (asideStatus === 'hide') {
+     document.documentElement.classList.add('hide-aside')
+   } else {
+     document.documentElement.classList.remove('hide-aside')
+   }
+}})()</script><meta name="generator" content="Hexo 5.2.0"><link rel="alternate" href="/atom.xml" title="Mr.Ai" type="application/atom+xml">
+</head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="author-avatar"><img class="avatar-img" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/01.jpg?raw=true" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">69</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">Tags</div><div class="length-num">17</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">Categories</div><div class="length-num">15</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/artitalk/"><i class="fa-fw fas fa-pen"></i><span> 自言自语</span></a></div></div></div></div><div id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/24.jpg?raw=true)"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Mr.Ai</a></span><span id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/artitalk/"><i class="fa-fw fas fa-pen"></i><span> 自言自语</span></a></div></div><span class="close" id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></span></span></nav><div id="post-info"><h1 class="post-title">07.Innodb引擎特性和日志</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2021-09-25T12:17:42.000Z" title="Created 2021-09-25 20:17:42">2021-09-25</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2021-09-25T13:16:55.140Z" title="Updated 2021-09-25 21:16:55">2021-09-25</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/MySQL/">MySQL</a></span></div><div class="meta-secondline"> <span class="post-meta-separator">|</span><span class="post-meta-pv-cv"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post View:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="Innodb引擎的4大特性"><a href="#Innodb引擎的4大特性" class="headerlink" title="Innodb引擎的4大特性"></a>Innodb引擎的4大特性</h1><h2 id="插入缓存（Insert-Buffer-Change-Buffer"><a href="#插入缓存（Insert-Buffer-Change-Buffer" class="headerlink" title="插入缓存（Insert Buffer/Change Buffer)"></a>插入缓存（Insert Buffer/Change Buffer)</h2><p>插入缓存之前版本叫insert buffer，现版本Change Buffer，主要提升插入性能，change buffer 是insert buffer的加强，insert buffer 只针对insert有效，change buffering 对insert、delete、update（delete + insert）、purge都有效</p>
+<p>对于非聚聚索引来说，比如存在用户购买金额这样一个字段，索引是普通索引，每个用户的购买的金额不相同的概率比较大，这样导致可能出现购买记录的数据在数据里的排序可能是1000，3，499，35…，这种不连续的数据，一会插入这个数据页，一会插入那个数据页，这样造成的IO是很耗时的，所以出现了Insert Buffer。</p>
+<p>Insert Buffer是怎么做的呢？mysql对于非聚集索引的插入，先去判断要插入的索引页是否已经在内存中了，如果不在，暂时不着急先把索引页加载到内存中，而是把它放到了一个Insert Buffer对象中，临时先放在这，然后等待情况，等待很多和现在情况一样的非聚集索引，再和要插入的非聚集索引页合并，比如说现在Insert Buffer中有1，99，2，100，合并之前可能要4次插入，合并之后1，2可能是一个页的，99，100可能是一个页的，这样就减少到了2次插入。这样就提升了效率和插入性能，减少了随机IO带来性能损耗。</p>
+<p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/20210330151746375.png" alt="在这里插入图片描述"></p>
+<p>综合上述，Insert Buffer 只对于非聚集索引（非唯一）的插入和更新有效，对于每一次的插入不是写到索引页中，而是先判断插入的非聚集索引页是否在缓冲池中，如果在则直接插入；若不在，则先放到Insert Buffer 中，再按照一定的频率进行合并操作，再写回disk。这样通常能将多个插入合并到一个操作中，目的还是减少了随机IO带来性能损耗。</p>
+<p>使用插入缓冲的条件：</p>
+<ul>
+<li>非聚集索引</li>
+<li>非唯一索引</li>
+</ul>
+<p>innodb_change_buffer设置的值有：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">all: 默认值，缓存insert, delete, purges操作</span><br><span class="line">none: 不缓存</span><br><span class="line">inserts: 缓存insert操作</span><br><span class="line">deletes: 缓存delete操作</span><br><span class="line">changes: 缓存insert和delete操作</span><br><span class="line">purges: 缓存后台执行的物理删除操作</span><br></pre></td></tr></table></figure>
+
+<p>可以通过参数控制其使用的大小：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; show variables like <span class="string">&#x27;innodb_change_buffer_max_size&#x27;</span>;</span><br><span class="line">+-------------------------------+-------+</span><br><span class="line">| Variable_name                 | Value |</span><br><span class="line">+-------------------------------+-------+</span><br><span class="line">| innodb_change_buffer_max_size | <span class="number">25</span>    |</span><br><span class="line">+-------------------------------+-------+</span><br><span class="line"><span class="number">1</span> <span class="function">row in <span class="title">set</span> <span class="params">(<span class="number">0.05</span> sec)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>innodb_change_buffer_max_size，默认是25%，即缓冲池的1/4。最大可设置为50%。当MySQL实例中有大量的修改操作时，要考虑增大innodb_change_buffer_max_size</p>
+<p>上面提过在一定频率下进行合并，那所谓的频率是什么条件？</p>
+<ul>
+<li><p>辅助索引页被读取到缓冲池中。正常的select先检查Insert Buffer是否有该非聚集索引页存在，若有则合并插入。</p>
+</li>
+<li><p>辅助索引页没有可用空间。空间小于1/32页的大小，则会强制合并操作。</p>
+</li>
+<li><p>Master Thread 每秒和每10秒的合并操作。</p>
+</li>
+</ul>
+<h2 id="双写机制（Double-Write）"><a href="#双写机制（Double-Write）" class="headerlink" title="双写机制（Double Write）"></a><strong>双写机制（Double Write）</strong></h2><ol>
+<li>doublewrite缓存位于系统表空间的存储区域，用来缓存innodb的数据页从innodb buffer pool中flush之后并写入到数据文件之前；</li>
+<li>当操作系统或数据库进程在数据页写入磁盘的过程中崩溃，可以在doublewrite缓存中找到数据页的备份，用来执行crash恢复；</li>
+<li>数据页写入到doublewrite缓存的动作所需要的io消耗要小于写入到数据文件的消耗，因为此写入操作会以一次大的连续块的方式写入<img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/20210330151850245.png" alt="在这里插入图片描述"></li>
+</ol>
+<p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/v2-8dc0d0503cc0075578d896ae71ed1609_720w.jpg" alt="img"></p>
+<p>根据上图知道：</p>
+<ol>
+<li><ol>
+<li><p>内存中doublewrite buffer大小2M；物理磁盘上共享表空间中连续的128个页，也就是2个区（extent）大小同样为2M；</p>
+</li>
+<li><p>对缓冲池脏页进行刷新时，不是直接写磁盘。</p>
+</li>
+<li><ol>
+<li>第一步：通过memcpy()函数将脏页先复制到内存中的doublewrite buffer；</li>
+<li>第二步：通过doublewrite分两次，每次1M顺序的写入共享表空间的物理磁盘上。这个过程中，doublewrite页是连续的，因此这个过程是顺序的，所以开销并不大；</li>
+<li>第三步：完成doublewrite页的写入后，再将doublewrite buffer中的页写入各个表空间文件中，此时写入是离散的，可能会较慢；</li>
+<li>如果操作系统在第三步的过程中发生了崩溃，在恢复过程中，可以从共享表空间中的doublewrite中找到该页的一个副本，将其复制到表空间文件中，再应用重做日志；</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+<h2 id="自适应hash索引ahi"><a href="#自适应hash索引ahi" class="headerlink" title="自适应hash索引ahi"></a>自适应hash索引ahi</h2><ol>
+<li>innodb存储引擎会监控对表上二级索引的查找，如果发现某二级索引被频繁访问，此索引成为热数据，建立hash索引以提升查询速度，此建立是自动建立哈希索引，故称为自适应哈希索引（adaptive hash index）；</li>
+<li>自适应哈希索引会占用innodb buffer pool；</li>
+<li>只适合搜索等值（=）的查询，对于范围查找等操作，是不能使用的；</li>
+</ol>
+<h2 id="预读"><a href="#预读" class="headerlink" title="预读"></a>预读</h2><p>预读（read-ahead)操作是一种IO操作，用于异步将磁盘的页读取到buffer pool中，预料这些页会马上被读取到。预读请求的所有页集中在一个范围内。InnoDB使用两种预读算法：</p>
+<ol>
+<li><p>两种预读算法来提高性能：</p>
+</li>
+<li><ol>
+<li>线性预读：以extent为单位，将下一个extent提前读取到buffer pool中；</li>
+<li>随机预读：以extent中的page为单位，将当前extent中的剩余的page提前读取到buffer pool中；</li>
+</ol>
+</li>
+<li><p>线性预读一个重要参数：innodb_read_ahead_threshold，控制什么时间（访问extent中多少页的阈值）触发预读；</p>
+</li>
+<li><ol>
+<li>默认：56，范围：0～64，值越高，访问模式检查越严格；</li>
+<li>没有该变量之前，当访问到extent最后一个page时，innodb会决定是否将下一个extent放入到buffer pool中；</li>
+</ol>
+</li>
+<li><p>随机预读说明：</p>
+</li>
+<li><ol>
+<li>当同一个extent的一些page在buffer pool中发现时，innodb会将extent中剩余page一并读取到buffer pool中；</li>
+<li>随机预读给innodb code带来一些不必要的复杂性，性能上也不稳定，在5.5版本已经废弃，如果启用，需要修改变量：innodb_random_read_ahead为ON；</li>
+</ol>
+</li>
+</ol>
+<h1 id="mysql三大日志-binlog、redo-log和undo-log"><a href="#mysql三大日志-binlog、redo-log和undo-log" class="headerlink" title="mysql三大日志-binlog、redo log和undo log"></a>mysql三大日志-binlog、redo log和undo log</h1><h2 id="binlog"><a href="#binlog" class="headerlink" title="binlog"></a>binlog</h2><p><code>binlog </code>用于记录数据库执行的写入性操作(不包括查询)信息，以二进制的形式保存在磁盘中。 <code>binlog </code>是 <code>mysql</code>的逻辑日志，并且由 <code>Server </code>层进行记录，使用任何存储引擎的 <code>mysql </code>数据库都会记录 <code>binlog </code>日志。</p>
+<ul>
+<li><strong>逻辑日志</strong>： 可以简单理解为记录的就是sql语句 。</li>
+<li><strong>物理日志</strong>： <code>mysql </code>数据最终是保存在数据页中的，物理日志记录的就是数据页变更 </li>
+</ul>
+<p><code>binlog </code>是通过追加的方式进行写入的，可以通过 <code>max_binlog_size </code>参数设置每个 <code>binlog</code><br>文件的大小，当文件大小达到给定值之后，会生成新的文件来保存日志。</p>
+<h3 id="binlog使用场景"><a href="#binlog使用场景" class="headerlink" title="binlog使用场景"></a>binlog使用场景</h3><p>在实际应用中， <code>binlog </code>的主要使用场景有两个，分别是 <strong>主从复制</strong> 和 <strong>数据恢复</strong> 。</p>
+<ol>
+<li><strong>主从复制</strong> ：在 <code>Master </code>端开启 <code>binlog </code>，然后将 <code>binlog </code>发送到各个 <code>Slave </code>端， <code>Slave </code>端重放 <code>binlog </code>从而达到主从数据一致。</li>
+<li><strong>数据恢复</strong> ：通过使用 <code>mysqlbinlog </code>工具来恢复数据。</li>
+</ol>
+<h3 id="binlog刷盘时机"><a href="#binlog刷盘时机" class="headerlink" title="binlog刷盘时机"></a>binlog刷盘时机</h3><p>对于 <code>InnoDB </code>存储引擎而言，只有在事务提交时才会记录 <code>biglog </code>，此时记录还在内存中，那么 <code>biglog</code><br>是什么时候刷到磁盘中的呢？ <code>mysql </code>通过 <code>sync_binlog </code>参数控制 <code>biglog </code>的刷盘时机，取值范围是 <code>0-N</code><br>：</p>
+<ul>
+<li>0：不去强制要求，由系统自行判断何时写入磁盘；</li>
+<li>1：每次 <code>commit </code>的时候都要将 <code>binlog </code>写入磁盘；</li>
+<li>N：每N个事务，才会将 <code>binlog </code>写入磁盘。</li>
+</ul>
+<p>从上面可以看出， <code>sync_binlog </code>最安全的是设置是 <code>1 </code>，这也是 <code>MySQL 5.7.7</code><br>之后版本的默认值。但是设置一个大一些的值可以提升数据库性能，因此实际情况下也可以将值适当调大，牺牲一定的一致性来获取更好的性能。</p>
+<h3 id="binlog日志格式"><a href="#binlog日志格式" class="headerlink" title="binlog日志格式"></a>binlog日志格式</h3><p><code>binlog </code>日志有三种格式，分别为 <code>STATMENT </code>、 <code>ROW </code>和 <code>MIXED </code>。</p>
+<blockquote>
+<p>在 <code>MySQL 5.7.7 </code>之前，默认的格式是 <code>STATEMENT </code>， <code>MySQL 5.7.7 </code>之后，默认值是 <code>ROW </code>。日志格式通过 <code>binlog-format </code>指定。</p>
+</blockquote>
+<ul>
+<li><p><code>STATMENT </code>： 基于<code>SQL</code>语句的复制( <code>statement-based replication, SBR </code>)，每一条会修改数据的sql语句会记录到 <code>binlog </code>中 。</p>
+<figure class="highlight autohotkey"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">* 优点： 不需要记录每一行的变化，减少了` binlog ` 日志量，节约了 ` IO ` , 从而提高了性能； </span><br><span class="line">* 缺点： 在某些情况下会导致主从数据不一致，比如执行` sysdate() ` 、 ` slepp() ` 等 。 </span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>ROW </code>： 基于行的复制(<code>row-based replication, RBR</code>)，不记录每条sql语句的上下文信息，仅需记录哪条数据被修改了 。</p>
+<ul>
+<li>优点： 不会出现某些特定情况下的存储过程、或function、或trigger的调用和触发无法被正确复制的问题 ；</li>
+<li>缺点： 会产生大量的日志，尤其是<code>alter table</code>的时候会让日志暴涨</li>
+</ul>
+</li>
+<li><p><code>MIXED </code>： 基于<code>STATMENT</code>和 <code>ROW </code>两种模式的混合复制( <code>mixed-based replication, MBR </code>)，一般的复制使用 <code>STATEMENT </code>模式保存 <code>binlog </code>，对于 <code>STATEMENT </code>模式无法复制的操作使用 <code>ROW </code>模式保存 <code>binlog</code></p>
+</li>
+</ul>
+<h2 id="redo-log"><a href="#redo-log" class="headerlink" title="redo log"></a>redo log</h2><h3 id="为什么需要redo-log"><a href="#为什么需要redo-log" class="headerlink" title="为什么需要redo log"></a>为什么需要redo log</h3><p>我们都知道，事务的四大特性里面有一个是 <strong>持久性</strong> ，具体来说就是<br><strong>只要事务提交成功，那么对数据库做的修改就被永久保存下来了，不可能因为任何原因再回到原来的状态</strong> 。那么 <code>mysql</code><br>是如何保证一致性的呢？最简单的做法是在每次事务提交的时候，将该事务涉及修改的数据页全部刷新到磁盘中。但是这么做会有严重的性能问题，主要体现在两个方面：</p>
+<ol>
+<li>因为 <code>Innodb </code>是以 <code>页 </code>为单位进行磁盘交互的，而一个事务很可能只修改一个数据页里面的几个字节，这个时候将完整的数据页刷到磁盘的话，太浪费资源了！</li>
+<li>一个事务可能涉及修改多个数据页，并且这些数据页在物理上并不连续，使用随机IO写入性能太差！</li>
+</ol>
+<p>因此 <code>mysql </code>设计了 <code>redo log </code>， <strong>具体来说就是只记录事务对数据页做了哪些修改</strong><br>，这样就能完美地解决性能问题了(相对而言文件更小并且是顺序IO)</p>
+<h3 id="redo-log基本概念"><a href="#redo-log基本概念" class="headerlink" title="redo log基本概念"></a>redo log基本概念</h3><p><code>redo log </code>包括两部分：一个是内存中的日志缓冲( <code>redo log buffer </code>)，另一个是磁盘上的日志文件( <code>redo log file</code>)。 <code>mysql </code>每执行一条 <code>DML </code>语句，先将记录写入 <code>redo log buffer </code><br>，后续某个时间点再一次性将多个操作记录写到 <code>redo log file </code>。这种 <strong>先写日志，再写磁盘</strong> 的技术就是 <code>MySQL</code><br>里经常说到的 <code>WAL(Write-Ahead Logging) </code>技术。</p>
+<p>在计算机操作系统中，用户空间( <code>user space </code>)下的缓冲区数据一般情况下是无法直接写入磁盘的，中间必须经过操作系统内核空间( <code>kernel space</code>)缓冲区( <code>OS Buffer </code>)。因此， <code>redo log buffer </code>写入 <code>redo log file </code>实际上是先写入 <code>OS Buffer </code>，然后再通过系统调用 <code>fsync() </code>将其刷到 <code>redo log file </code><br>中，过程如下：</p>
+<p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/1460000023827701" alt="img"></p>
+<p><code>mysql </code>支持三种将 <code>redo log buffer </code>写入 <code>redo log file </code>的时机，可以通过 <code>innodb_flush_log_at_trx_commit</code> 参数配置，各参数值含义如下：</p>
+<table>
+<thead>
+<tr>
+<th>参数值</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0（延迟写）</td>
+<td>事务提交时不会将 <code>redo log buffer </code>中日志写入到 <code>os buffer </code>，而是每秒写入 <code>os buffer </code>并调用 <code>fsync() </code>写入到 <code>redo log file </code>中。也就是说设置为0时是(大约)每秒刷新写入到磁盘中的，当系统崩溃，会丢失1秒钟的数据。</td>
+</tr>
+<tr>
+<td>1（实时写，实时刷）</td>
+<td>事务每次提交都会将 <code>redo log buffer </code>中的日志写入 <code>os buffer </code>并调用 <code>fsync() </code>刷到 <code>redo log file </code>中。这种方式即使系统崩溃也不会丢失任何数据，但是因为每次提交都写入磁盘，IO的性能较差。</td>
+</tr>
+<tr>
+<td>2（实时写，延迟刷）</td>
+<td>每次提交都仅写入到 <code>os buffer </code>，然后是每秒调用 <code>fsync() </code>将 <code>os buffer </code>中的日志写入到 <code>redo log file </code>。</td>
+</tr>
+</tbody></table>
+<p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/1460000023827700" alt="img"></p>
+<h3 id="redo-log记录形式"><a href="#redo-log记录形式" class="headerlink" title="redo log记录形式"></a>redo log记录形式</h3><p>前面说过， <code>redo log </code>实际上记录数据页的变更，而这种变更记录是没必要全部保存，因此 <code>redo log</code><br>实现上采用了大小固定，循环写入的方式，当写到结尾时，会回到开头循环写日志。如下图：</p>
+<p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/1460000023827699" alt="img"></p>
+<p>同时我们很容易得知， 在innodb中，既有<code>redo log</code>需要刷盘，还有 <code>数据页 </code>也需要刷盘， <code>redo log </code>存在的意义主要就是降低对 <code>数据页 </code>刷盘的要求 <strong>。在上图中， <code>write pos </code>表示 <code>redo log </code>当前记录的 <code>LSN</code> (逻辑序列号)位置， <code>check point </code>表示</strong> 数据页更改记录** 刷盘后对应 <code>redo log </code>所处的 <code>LSN </code>(逻辑序列号)位置。 <code>write pos </code>到 <code>check point </code>之间的部分是 <code>redo log </code>空着的部分，用于记录新的记录；<code>check point</code>到 <code>write pos </code>之间是 <code>redo log </code>待落盘的数据页更改记录。当 <code>write pos </code>追上 <code>check point </code>时，会先推动 <code>check point </code>向前移动，空出位置再记录新的日志。</p>
+<p>启动 <code>innodb </code>的时候，不管上次是正常关闭还是异常关闭，总是会进行恢复操作。因为 <code>redo log </code>记录的是数据页的物理变化，因此恢复的时候速度比逻辑日志(如 <code>binlog </code>)要快很多。 重启 <code>innodb </code>时，首先会检查磁盘中数据页的 <code>LSN </code>，如果数据页的 <code>LSN </code>小于日志中的 <code>LSN </code>，则会从 <code>checkpoint </code>开始恢复。 还有一种情况，在宕机前正处于<br><code>checkpoint </code>的刷盘过程，且数据页的刷盘进度超过了日志页的刷盘进度，此时会出现数据页中记录的 <code>LSN </code>大于日志中的 <code>LSN</code><br>，这时超出日志进度的部分将不会重做，因为这本身就表示已经做过的事情，无需再重做。</p>
+<h3 id="redo-log与binlog区别"><a href="#redo-log与binlog区别" class="headerlink" title="redo log与binlog区别"></a>redo log与binlog区别</h3><table>
+<thead>
+<tr>
+<th></th>
+<th>redo log</th>
+<th>binlog</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>文件大小</td>
+<td><code>redo log </code>的大小是固定的。</td>
+<td><code>binlog </code>可通过配置参数 <code>max_binlog_size </code>设置每个<code>binlog</code>文件的大小。</td>
+</tr>
+<tr>
+<td>实现方式</td>
+<td><code>redo log </code>是 <code>InnoDB </code>引擎层实现的，并不是所有引擎都有。</td>
+<td><code>binlog </code>是 <code>Server</code> 层实现的，所有引擎都可以使用 <code>binlog </code>日志</td>
+</tr>
+<tr>
+<td>记录方式</td>
+<td>redo log 采用循环写的方式记录，当写到结尾时，会回到开头循环写日志。</td>
+<td>binlog通过追加的方式记录，当文件大小大于给定值后，后续的日志会记录到新的文件上</td>
+</tr>
+<tr>
+<td>适用场景</td>
+<td><code>redo log </code>适用于崩溃恢复(crash-safe)</td>
+<td><code>binlog </code>适用于主从复制和数据恢复</td>
+</tr>
+</tbody></table>
+<p>由 <code>binlog </code>和 <code>redo log </code>的区别可知： <code>binlog </code>日志只用于归档，只依靠 <code>binlog </code>是没有 <code>crash-safe</code>能力的。但只有 <code>redo log </code>也不行，因为 <code>redo log </code>是 <code>InnoDB </code><br>特有的，且日志上的记录落盘后会被覆盖掉。因此需要 <code>binlog </code>和 <code>redo log</code><br>二者同时记录，才能保证当数据库发生宕机重启时，数据不会丢失。</p>
+<h2 id="redo-log是什么，为什么需要redo-log"><a href="#redo-log是什么，为什么需要redo-log" class="headerlink" title="redo log是什么，为什么需要redo log"></a>redo log是什么，为什么需要redo log</h2><ul>
+<li>redo log 是<strong>重做日志</strong>。</li>
+<li>它记录了<strong>数据页</strong>上的改动。</li>
+<li>它指<strong>事务</strong>中修改了的数据，将会备份存储。</li>
+<li>发生数据库服务器宕机、或者脏页未写入磁盘，可以通过redo log恢复。</li>
+<li>它是<strong>Innodb存储</strong>引擎独有的</li>
+</ul>
+<h3 id="为什么需要-redo-log？"><a href="#为什么需要-redo-log？" class="headerlink" title="为什么需要 redo log？"></a>为什么需要 redo log？</h3><ul>
+<li>redo log主要用于MySQL异常重启后的一种数据恢复手段，确保了数据的一致性。</li>
+<li>其实是为了配合MySQL的WAL机制。因为MySQL进行更新操作，为了能够快速响应，所以采用了异步写回磁盘的技术，写入内存后就</li>
+<li>返回。但是这样，会存在<strong>crash后</strong>内存数据丢失的隐患，而redo log具备crash safe的能力。</li>
+</ul>
+<h2 id="什么是WAL技术-好处是什么"><a href="#什么是WAL技术-好处是什么" class="headerlink" title="什么是WAL技术, 好处是什么."></a>什么是WAL技术, 好处是什么.</h2><ul>
+<li>WAL，中文全称是Write-Ahead Logging，它的关键点就是日志先写内存，再写磁盘。MySQL执行更新操作后，<strong>在真正把数据写入到磁盘前，先记录日志</strong>。</li>
+<li>好处是不用每一次操作都实时把数据写盘，就算crash后也可以通过redo log恢复，所以能够实现快速响应SQL语句。</li>
+</ul>
+<h2 id="redo-log的写入方式"><a href="#redo-log的写入方式" class="headerlink" title="redo log的写入方式"></a>redo log的写入方式</h2><p>redo log包括两部分内容，分别是内存中的<strong>日志缓冲</strong>(redo log buffer)和磁盘上的<strong>日志文件</strong>(redo log file)。</p>
+<p>mysql每执行一条DML语句，会先把记录写入<strong>redo log buffer</strong>，后续某个时间点再一次性将多个操作记录写到<strong>redo log file</strong>。这种先写日志，再写磁盘的技术，就是<strong>WAL</strong>。</p>
+<p>在计算机操作系统中，用户空间(user space)下的缓冲区数据，一般是无法直接写入磁盘的，必须经过操作系统内核空间缓冲区(即OS Buffer)。</p>
+<ul>
+<li>日志最开始会写入位于存储引擎Innodb的redo log buffer，这个是在用户空间完成的。</li>
+<li>然后再将日志保存到操作系统内核空间的缓冲区(OS buffer)中。</li>
+<li>最后，通过系统调用<code>fsync()</code>，从<strong>OS buffer</strong>写入到磁盘上的<strong>redo log file</strong>中，完成写入操作。这个写入磁盘的操作，就叫做<strong>刷盘</strong>。</li>
+</ul>
+<p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/640" alt="图片"></p>
+<p>我们可以发现，redo log buffer写入到redo log file，是经过OS buffer中转的。其实可以通过参数<code>innodb_flush_log_at_trx_commit</code>进行配置，参数值含义如下：</p>
+<ul>
+<li>0：称为<strong>延迟写</strong>，事务提交时不会将redo log buffer中日志写入到OS buffer，而是每秒写入OS buffer并调用写入到redo log file中。</li>
+<li>1：称为<strong>实时写</strong>，实时刷”，事务每次提交都会将redo log buffer中的日志写入OS buffer并保存到redo log file中。</li>
+<li>2：称为<strong>实时写，延迟刷</strong>。每次事务提交写入到OS buffer，然后是每秒将日志写入到redo log file。</li>
+</ul>
+<h2 id="Redo-log的执行流程"><a href="#Redo-log的执行流程" class="headerlink" title="Redo log的执行流程"></a>Redo log的执行流程</h2><p>我们来看下Redo log的执行流程，假设执行的SQL如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">update T set a &#x3D;1 where id &#x3D;666</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/640" alt="图片">Redo log的执行流程</p>
+<ol>
+<li>MySQL客户端将请求语句<code>update T set a =1 where id =666</code>，发往MySQL Server层。</li>
+<li>MySQL Server 层接收到SQL请求后，对其进行分析、优化、执行等处理工作，将生成的SQL执行计划发到InnoDb存储引擎层执行。</li>
+<li>InnoDb存储引擎层将<strong>a修改为1</strong>的这个操作记录到内存中。</li>
+<li>记录到内存以后会修改redo log 的记录，会在添加一行记录，其内容是<strong>需要在哪个数据页上做什么修改</strong>。</li>
+<li>此后，将事务的状态设置为prepare ，说明已经准备好提交事务了。</li>
+<li>等到MySQL Server层处理完事务以后，会将事务的状态设置为<strong>commit</strong>，也就是提交该事务。</li>
+<li>在收到事务提交的请求以后，<strong>redo log</strong>会把刚才写入内存中的操作记录写入到磁盘中，从而完成整个日志的记录过程。</li>
+</ol>
+<h2 id="redo-log-为什么可以保证crash-safe机制呢？"><a href="#redo-log-为什么可以保证crash-safe机制呢？" class="headerlink" title="redo log 为什么可以保证crash safe机制呢？"></a>redo log 为什么可以保证crash safe机制呢？</h2><ul>
+<li>因为redo log每次更新操作完成后，就一定会写入的，如果<strong>写入失败</strong>，说明此次操作失败，事务也不可能提交。</li>
+<li>redo log内部结构是基于页的，记录了这个页的字段值变化，只要crash后读取redo log进行重放，就可以恢复数据。</li>
+</ul>
+<h2 id="binlog的概念是什么-起到什么作用-可以保证crash-safe吗"><a href="#binlog的概念是什么-起到什么作用-可以保证crash-safe吗" class="headerlink" title="binlog的概念是什么, 起到什么作用, 可以保证crash-safe吗?"></a>binlog的概念是什么, 起到什么作用, 可以保证crash-safe吗?</h2><ul>
+<li>bin log是归档日志，属于MySQL Server层的日志。可以实现<strong>主从复制</strong>和<strong>数据恢复</strong>两个作用。</li>
+<li>当需要<strong>恢复数据</strong>时，可以取出某个时间范围内的bin log进行重放恢复。</li>
+<li>但是bin log不可以做crash safe，因为crash之前，bin log<strong>可能没有写入完全</strong>MySQL就挂了。所以需要配合<strong>redo log</strong>才可以进行crash safe。</li>
+</ul>
+<h2 id="binlog和redolog的不同点有哪些"><a href="#binlog和redolog的不同点有哪些" class="headerlink" title="binlog和redolog的不同点有哪些?"></a>binlog和redolog的不同点有哪些?</h2><p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/image-20210925210728980.png" alt="image-20210925210728980"></p>
+<h2 id="执行器和innoDB在执行update语句时候的流程是什么样的"><a href="#执行器和innoDB在执行update语句时候的流程是什么样的" class="headerlink" title="执行器和innoDB在执行update语句时候的流程是什么样的?"></a>执行器和innoDB在执行update语句时候的流程是什么样的?</h2><ul>
+<li>执行器在优化器选择了索引后，会调用InnoDB读接口，读取要更新的行到内存中</li>
+<li>执行SQL操作后，更新到内存，然后写redo log，写bin log，此时即为完成。</li>
+<li>后续InnoDB会在合适的时候把此次操作的结果写回到磁盘。</li>
+</ul>
+<h2 id="如果数据库误操作-如何执行数据恢复"><a href="#如果数据库误操作-如何执行数据恢复" class="headerlink" title="如果数据库误操作, 如何执行数据恢复?"></a>如果数据库误操作, 如何执行数据恢复?</h2><p>数据库在某个时候误操作，就可以找到距离误操作最近的时间节点的bin log，重放到临时数据库里，然后选择误删的数据节点，恢复到线上数据库。</p>
+<h2 id="什么是MySQL两阶段提交-为什么需要两阶段提交"><a href="#什么是MySQL两阶段提交-为什么需要两阶段提交" class="headerlink" title="什么是MySQL两阶段提交, 为什么需要两阶段提交?"></a>什么是MySQL两阶段提交, 为什么需要两阶段提交?</h2><p>其实所谓的两阶段就是把一个事务分成两个阶段来提交。</p>
+<p>两阶段提交</p>
+<p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/image-20210925211124058.png" alt="image-20210925211124058"></p>
+<p>两阶段提交主要有三步曲：</p>
+<ol>
+<li>redo log在写入后，进入prepare状态</li>
+<li>执行器写入bin log</li>
+<li>进入commit状态，事务可以提交。</li>
+</ol>
+<p><strong>为什么需要两阶段提交呢?</strong></p>
+<ul>
+<li>如果不用两阶段提交的话，可能会出现这样情况：bin log写入之前，机器crash导致需要重启。重启后redo log继续重放crash之前的操作，而当bin log后续需要作为备份恢复时，会出现数据不一致的情况。</li>
+<li>如果是bin log commit之前crash，那么重启后，发现redo log是prepare状态且bin log完整（bin log写入成功后，redo log会有bin log的标记），就会自动commit，让存储引擎提交事务。</li>
+<li>两阶段提交就是为了保证redo log和binlog数据的安全一致性。只有在这两个日志文件逻辑上高度一致了。你才能放心的使用redo log帮你将数据库中的状态恢复成crash之前的状态，使用binlog实现数据备份、恢复、以及主从复制。</li>
+</ul>
+<h2 id="如果不是两阶段提交-先写redo-log和先写bin-log两种情况各会遇到什么问题"><a href="#如果不是两阶段提交-先写redo-log和先写bin-log两种情况各会遇到什么问题" class="headerlink" title="如果不是两阶段提交, 先写redo log和先写bin log两种情况各会遇到什么问题?"></a>如果不是两阶段提交, 先写redo log和先写bin log两种情况各会遇到什么问题?</h2><ul>
+<li>先写redo log，crash后bin log备份恢复时少了一次更新，与当前数据不一致。</li>
+<li>先写bin log，crash后，由于redo log没写入，事务无效，所以后续bin log备份恢复时，数据不一致。</li>
+</ul>
+<h2 id="binlog刷盘机制"><a href="#binlog刷盘机制" class="headerlink" title="binlog刷盘机制"></a>binlog刷盘机制</h2><p>所有未提交的事务产生的binlog，都会被先记录到binlog的缓存中。等该事务提交时，再将缓存中的数据写入binlog日志文件中。缓存的大小由参数<code>binlog_chache_size</code>控制。</p>
+<p>binlog什么时候刷新到磁盘呢？由参数<code>sync_binlog</code>控制</p>
+<ul>
+<li>当<code>sync_binlog</code>为0时，表示MySQL不控制binlog的刷新，而是由系统自行判断何时写入磁盘。选这种策略，一旦操作系统宕机，缓存中的binlog就会丢失。</li>
+<li><code>sync_binlog</code>为N时，每N个事务，才会将binlog写入磁盘。。</li>
+<li>当<code>sync_binlog</code>为1时，则表示每次commit，都将binlog 写入磁盘。</li>
+</ul>
+<p>来看一个比较完整的流程图吧：</p>
+<p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/640" alt="图片"></p>
+<h2 id="说说Redo-log的记录方式"><a href="#说说Redo-log的记录方式" class="headerlink" title="说说Redo log的记录方式"></a>说说Redo log的记录方式</h2><p>redo log的大小是固定。它采用循环写的方式记录，当写到结尾时，会回到开头循环写日志。如下图（图片来源网络）：</p>
+<p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/640" alt="图片">redo log 循环写入</p>
+<p>redo log buffer(内存中)是由首尾相连的四个文件组成的，它们分别是：ib_logfile_1、ib_logfile_2、ib_logfile_3、ib_logfile_4。</p>
+<blockquote>
+<ul>
+<li>write pos表示当前写入记录位置(写入磁盘的数据页的逻辑序列位置)</li>
+<li>check point表示刷盘(写入磁盘)后对应的位置。</li>
+<li>write pos到check point之间的部分用来记录新日志，也就是留给新记录的空间。</li>
+<li>check point到write pos之间是待刷盘的记录，如果不刷盘会被新记录覆盖。</li>
+</ul>
+</blockquote>
+<p>有了 redo log，当数据库发生宕机重启后，可通过 redo log将未落盘的数据（check point之后的数据）恢复，保证已经提交的事务记录不会丢失，这种能力称为<strong>crash-safe</strong>。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined">Leslie</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="https://leslieaibin.github.io/2021/09/25/MySQL/07.Innodb%E5%BC%95%E6%93%8E%E7%9A%844%E5%A4%A7%E7%89%B9%E6%80%A7/">https://leslieaibin.github.io/2021/09/25/MySQL/07.Innodb%E5%BC%95%E6%93%8E%E7%9A%844%E5%A4%A7%E7%89%B9%E6%80%A7/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/MySQL/">MySQL</a></div><div class="post_share"><div class="social-share" data-image="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/24.jpg?raw=true" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2021/09/24/Thread/12.ThreadLocal%E5%88%86%E6%9E%90/"><img class="next-cover" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/26.jpg?raw=true" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">12.ThreadLocal 分析</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span> Related Articles</span></div><div class="relatedPosts-list"><div><a href="/2021/09/04/MySQL/01.事务的隔离性/" title="01.事务的隔离性"><img class="cover" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/35.jpg?raw=true" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-09-04</div><div class="title">01.事务的隔离性</div></div></a></div><div><a href="/2021/09/09/MySQL/03.MySQL查询过程/" title="03.一条SQL查询语句如何执行"><img class="cover" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/37.jpg?raw=true" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-09-09</div><div class="title">03.一条SQL查询语句如何执行</div></div></a></div><div><a href="/2021/09/04/MySQL/02.索引/" title="02.索引"><img class="cover" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/36.jpg?raw=true" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-09-04</div><div class="title">02.索引</div></div></a></div><div><a href="/2021/09/11/MySQL/05.分布式锁/" title="05.分布式锁"><img class="cover" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/39.jpg?raw=true" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-09-11</div><div class="title">05.分布式锁</div></div></a></div><div><a href="/2021/09/10/MySQL/04.MySQL索引原理及慢查询优化/" title="04.MySQL索引原理及慢查询优化"><img class="cover" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/38.jpg?raw=true" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-09-10</div><div class="title">04.MySQL索引原理及慢查询优化</div></div></a></div><div><a href="/2021/09/21/MySQL/06.MySQL的主从复制/" title="06.MySQL的主从复制"><img class="cover" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/40.jpg?raw=true" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-09-21</div><div class="title">06.MySQL的主从复制</div></div></a></div></div></div></div><div class="aside_content" id="aside_content"><div class="card-widget card-info"><div class="card-content"><div class="card-info-avatar is-center"><img class="avatar-img" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/01.jpg?raw=true" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/><div class="author-info__name">Leslie</div><div class="author-info__description"></div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">69</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">Tags</div><div class="length-num">17</div></a></div><div class="card-info-data-item is-center"><a href="/categories/"><div class="headline">Categories</div><div class="length-num">15</div></a></div></div><a class="button--animated" id="card-info-btn"><i class="fas fa-heart"></i><span>瓶中的水 青天的云</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/leslieAIbin" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="https://www.instagram.com/leslieaibin/" target="_blank" title="Ins"><i class="fab fa-instagram"></i></a><a class="social-icon" href="mailto:1915612226@qq.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a><a class="social-icon" href="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/image-20201122143121657.png" target="_blank" title="weixin"><i class="fab fa-weixin"></i></a></div></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="card-content"><div class="item-headline"><i class="fas fa-stream"></i><span>Catalog</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Innodb%E5%BC%95%E6%93%8E%E7%9A%844%E5%A4%A7%E7%89%B9%E6%80%A7"><span class="toc-number">1.</span> <span class="toc-text">Innodb引擎的4大特性</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8F%92%E5%85%A5%E7%BC%93%E5%AD%98%EF%BC%88Insert-Buffer-Change-Buffer"><span class="toc-number">1.1.</span> <span class="toc-text">插入缓存（Insert Buffer&#x2F;Change Buffer)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%8C%E5%86%99%E6%9C%BA%E5%88%B6%EF%BC%88Double-Write%EF%BC%89"><span class="toc-number">1.2.</span> <span class="toc-text">双写机制（Double Write）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%87%AA%E9%80%82%E5%BA%94hash%E7%B4%A2%E5%BC%95ahi"><span class="toc-number">1.3.</span> <span class="toc-text">自适应hash索引ahi</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A2%84%E8%AF%BB"><span class="toc-number">1.4.</span> <span class="toc-text">预读</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#mysql%E4%B8%89%E5%A4%A7%E6%97%A5%E5%BF%97-binlog%E3%80%81redo-log%E5%92%8Cundo-log"><span class="toc-number">2.</span> <span class="toc-text">mysql三大日志-binlog、redo log和undo log</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#binlog"><span class="toc-number">2.1.</span> <span class="toc-text">binlog</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#binlog%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="toc-number">2.1.1.</span> <span class="toc-text">binlog使用场景</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#binlog%E5%88%B7%E7%9B%98%E6%97%B6%E6%9C%BA"><span class="toc-number">2.1.2.</span> <span class="toc-text">binlog刷盘时机</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#binlog%E6%97%A5%E5%BF%97%E6%A0%BC%E5%BC%8F"><span class="toc-number">2.1.3.</span> <span class="toc-text">binlog日志格式</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#redo-log"><span class="toc-number">2.2.</span> <span class="toc-text">redo log</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81redo-log"><span class="toc-number">2.2.1.</span> <span class="toc-text">为什么需要redo log</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#redo-log%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="toc-number">2.2.2.</span> <span class="toc-text">redo log基本概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#redo-log%E8%AE%B0%E5%BD%95%E5%BD%A2%E5%BC%8F"><span class="toc-number">2.2.3.</span> <span class="toc-text">redo log记录形式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#redo-log%E4%B8%8Ebinlog%E5%8C%BA%E5%88%AB"><span class="toc-number">2.2.4.</span> <span class="toc-text">redo log与binlog区别</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#redo-log%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%8C%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81redo-log"><span class="toc-number">2.3.</span> <span class="toc-text">redo log是什么，为什么需要redo log</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81-redo-log%EF%BC%9F"><span class="toc-number">2.3.1.</span> <span class="toc-text">为什么需要 redo log？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFWAL%E6%8A%80%E6%9C%AF-%E5%A5%BD%E5%A4%84%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-number">2.4.</span> <span class="toc-text">什么是WAL技术, 好处是什么.</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#redo-log%E7%9A%84%E5%86%99%E5%85%A5%E6%96%B9%E5%BC%8F"><span class="toc-number">2.5.</span> <span class="toc-text">redo log的写入方式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redo-log%E7%9A%84%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B"><span class="toc-number">2.6.</span> <span class="toc-text">Redo log的执行流程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#redo-log-%E4%B8%BA%E4%BB%80%E4%B9%88%E5%8F%AF%E4%BB%A5%E4%BF%9D%E8%AF%81crash-safe%E6%9C%BA%E5%88%B6%E5%91%A2%EF%BC%9F"><span class="toc-number">2.7.</span> <span class="toc-text">redo log 为什么可以保证crash safe机制呢？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#binlog%E7%9A%84%E6%A6%82%E5%BF%B5%E6%98%AF%E4%BB%80%E4%B9%88-%E8%B5%B7%E5%88%B0%E4%BB%80%E4%B9%88%E4%BD%9C%E7%94%A8-%E5%8F%AF%E4%BB%A5%E4%BF%9D%E8%AF%81crash-safe%E5%90%97"><span class="toc-number">2.8.</span> <span class="toc-text">binlog的概念是什么, 起到什么作用, 可以保证crash-safe吗?</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#binlog%E5%92%8Credolog%E7%9A%84%E4%B8%8D%E5%90%8C%E7%82%B9%E6%9C%89%E5%93%AA%E4%BA%9B"><span class="toc-number">2.9.</span> <span class="toc-text">binlog和redolog的不同点有哪些?</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%89%A7%E8%A1%8C%E5%99%A8%E5%92%8CinnoDB%E5%9C%A8%E6%89%A7%E8%A1%8Cupdate%E8%AF%AD%E5%8F%A5%E6%97%B6%E5%80%99%E7%9A%84%E6%B5%81%E7%A8%8B%E6%98%AF%E4%BB%80%E4%B9%88%E6%A0%B7%E7%9A%84"><span class="toc-number">2.10.</span> <span class="toc-text">执行器和innoDB在执行update语句时候的流程是什么样的?</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A6%82%E6%9E%9C%E6%95%B0%E6%8D%AE%E5%BA%93%E8%AF%AF%E6%93%8D%E4%BD%9C-%E5%A6%82%E4%BD%95%E6%89%A7%E8%A1%8C%E6%95%B0%E6%8D%AE%E6%81%A2%E5%A4%8D"><span class="toc-number">2.11.</span> <span class="toc-text">如果数据库误操作, 如何执行数据恢复?</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFMySQL%E4%B8%A4%E9%98%B6%E6%AE%B5%E6%8F%90%E4%BA%A4-%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E4%B8%A4%E9%98%B6%E6%AE%B5%E6%8F%90%E4%BA%A4"><span class="toc-number">2.12.</span> <span class="toc-text">什么是MySQL两阶段提交, 为什么需要两阶段提交?</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A6%82%E6%9E%9C%E4%B8%8D%E6%98%AF%E4%B8%A4%E9%98%B6%E6%AE%B5%E6%8F%90%E4%BA%A4-%E5%85%88%E5%86%99redo-log%E5%92%8C%E5%85%88%E5%86%99bin-log%E4%B8%A4%E7%A7%8D%E6%83%85%E5%86%B5%E5%90%84%E4%BC%9A%E9%81%87%E5%88%B0%E4%BB%80%E4%B9%88%E9%97%AE%E9%A2%98"><span class="toc-number">2.13.</span> <span class="toc-text">如果不是两阶段提交, 先写redo log和先写bin log两种情况各会遇到什么问题?</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#binlog%E5%88%B7%E7%9B%98%E6%9C%BA%E5%88%B6"><span class="toc-number">2.14.</span> <span class="toc-text">binlog刷盘机制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AF%B4%E8%AF%B4Redo-log%E7%9A%84%E8%AE%B0%E5%BD%95%E6%96%B9%E5%BC%8F"><span class="toc-number">2.15.</span> <span class="toc-text">说说Redo log的记录方式</span></a></li></ol></li></ol></div></div></div><div class="card-widget card-recent-post"><div class="card-content"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2021/09/25/MySQL/07.Innodb%E5%BC%95%E6%93%8E%E7%9A%844%E5%A4%A7%E7%89%B9%E6%80%A7/" title="07.Innodb引擎特性和日志"><img src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/24.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="07.Innodb引擎特性和日志"/></a><div class="content"><a class="title" href="/2021/09/25/MySQL/07.Innodb%E5%BC%95%E6%93%8E%E7%9A%844%E5%A4%A7%E7%89%B9%E6%80%A7/" title="07.Innodb引擎特性和日志">07.Innodb引擎特性和日志</a><time datetime="2021-09-25T12:17:42.000Z" title="Created 2021-09-25 20:17:42">2021-09-25</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/09/24/Thread/12.ThreadLocal%E5%88%86%E6%9E%90/" title="12.ThreadLocal 分析"><img src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/26.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="12.ThreadLocal 分析"/></a><div class="content"><a class="title" href="/2021/09/24/Thread/12.ThreadLocal%E5%88%86%E6%9E%90/" title="12.ThreadLocal 分析">12.ThreadLocal 分析</a><time datetime="2021-09-24T02:15:42.000Z" title="Created 2021-09-24 10:15:42">2021-09-24</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/09/24/Collection/5.ConcurrentHashMap%E8%AF%A6%E8%A7%A3/" title="5.ConcurrentHashMap详解"><img src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/40.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="5.ConcurrentHashMap详解"/></a><div class="content"><a class="title" href="/2021/09/24/Collection/5.ConcurrentHashMap%E8%AF%A6%E8%A7%A3/" title="5.ConcurrentHashMap详解">5.ConcurrentHashMap详解</a><time datetime="2021-09-23T16:15:42.000Z" title="Created 2021-09-24 00:15:42">2021-09-24</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/09/21/MySQL/06.MySQL%E7%9A%84%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/" title="06.MySQL的主从复制"><img src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/40.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="06.MySQL的主从复制"/></a><div class="content"><a class="title" href="/2021/09/21/MySQL/06.MySQL%E7%9A%84%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/" title="06.MySQL的主从复制">06.MySQL的主从复制</a><time datetime="2021-09-21T12:17:42.000Z" title="Created 2021-09-21 20:17:42">2021-09-21</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/09/15/Thread/11.Java%E7%9A%84%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%EF%BC%88JMM)/" title="10.Java内存模型"><img src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/26.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="10.Java内存模型"/></a><div class="content"><a class="title" href="/2021/09/15/Thread/11.Java%E7%9A%84%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%EF%BC%88JMM)/" title="10.Java内存模型">10.Java内存模型</a><time datetime="2021-09-15T02:15:42.000Z" title="Created 2021-09-15 10:15:42">2021-09-15</time></div></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/24.jpg?raw=true)"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021 By Leslie</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="Back To Top"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><div class="js-pjax"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></div></body></html>

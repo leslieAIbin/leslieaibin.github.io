@@ -6,7 +6,7 @@
   <link href="https://leslieaibin.github.io/atom.xml" rel="self"/>
   
   <link href="https://leslieaibin.github.io/"/>
-  <updated>2021-09-30T08:44:26.803Z</updated>
+  <updated>2021-10-06T10:21:53.353Z</updated>
   <id>https://leslieaibin.github.io/</id>
   
   <author>
@@ -15,6 +15,27 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title></title>
+    <link href="https://leslieaibin.github.io/2021/10/06/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/MQ%E7%9A%84%E4%BD%9C%E7%94%A8%E6%80%BB%E7%BB%93/"/>
+    <id>https://leslieaibin.github.io/2021/10/06/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/MQ%E7%9A%84%E4%BD%9C%E7%94%A8%E6%80%BB%E7%BB%93/</id>
+    <published>2021-10-06T10:05:31.068Z</published>
+    <updated>2021-10-06T10:21:53.353Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="MQ的作用"><a href="#MQ的作用" class="headerlink" title="MQ的作用"></a>MQ的作用</h1><p>消息队列在大型电子商务类网站，如京东、淘宝、去哪儿等网站有着深入的应用，</p><p>队列的主要作用是消除高并发访问高峰，加快网站的响应速度。</p><p>在不使用消息队列的情况下，用户的请求数据直接写入数据库，在高并发的情况下，会对数据库造成巨大的压力，同时也使得系统响应延迟加剧。</p><p>在使用队列后，用户的请求发给队列后立即返回,</p><p>（例如: 当然不能直接给用户提示订单提交成功，京东上提示：您“您提交了订单，请等待系统确认”），</p><p>再由消息队列的消费者进程从消息队列中获取数据，异步写入数据库。</p><p>由于消息队列的服务处理速度远快于数据库，因此用户的响应延迟可得到有效改善。</p><p>图解说明:</p><p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/20180608110300965" alt="img"></p><h2 id="消息队列说明"><a href="#消息队列说明" class="headerlink" title="消息队列说明"></a>消息队列说明</h2><p>消息队列中间件是分布式系统中重要的组件，主要解决应用耦合，异步消息，流量削锋等问题。</p><p>实现高性能，高可用，可伸缩和最终一致性架构。是大型分布式系统不可缺少的中间件。</p><p>目前在生产环境，使用较多的消息队列有ActiveMQ，RabbitMQ，ZeroMQ，Kafka，MetaMQ，RocketMQ等。</p><h2 id="消息队列应用场景"><a href="#消息队列应用场景" class="headerlink" title="消息队列应用场景"></a>消息队列应用场景</h2><p>消息队列在实际应用中常用的使用场景。异步处理，应用解耦，流量削峰和消息通讯四个场景。</p><h2 id="异步处理"><a href="#异步处理" class="headerlink" title="异步处理"></a>异步处理</h2><p>场景说明：用户注册后，需要发注册邮件和注册短信。传统的做法有两种1.串行的方式；2.并行方式。</p><ul><li>串行方式：将注册信息写入数据库成功后，发送注册邮件，再发送注册短信。以上三个任务全部完成后，返回给客户端。</li></ul><p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/20180608110336376" alt="img"></p><ul><li>并行方式：将注册信息写入数据库成功后，发送注册邮件的同时，发送注册短信。以上三个任务完成后，返回给客户端。与串行的差别是，并行的方式可以提高处理的时间。</li></ul><p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/20180608110405511" alt="img"></p><p>假设三个业务节点每个使用50毫秒钟，不考虑网络等其他开销，则串行方式的时间是150毫秒，并行的时间可能是100毫秒。</p><p>因为CPU在单位时间内处理的请求数是一定的，假设CPU1秒内吞吐量是100次。</p><p>则串行方式1秒内CPU可处理的请求量是7次（1000/150）。并行方式处理的请求量是10次（1000/100）。</p><p>小结：如以上案例描述，传统的方式系统的性能（并发量，吞吐量，响应时间）会有瓶颈。如何解决这个问题呢？</p><p>引入消息队列，将不是必须的业务逻辑，异步处理。改造后的架构如下：</p><p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/2018060811044171" alt="img"></p><p>按照以上约定，用户的响应时间相当于是注册信息写入数据库的时间，也就是50毫秒。</p><p>注册邮件，发送短信写入消息队列后，直接返回，因此写入消息队列的速度很快，基本可以忽略，</p><p>因此用户的响应时间可能是50毫秒。所以基于此架构改变后，系统的吞吐量提高到每秒20 QPS。比串行提高了3倍，比并行提高了两倍。</p><h2 id="应用解耦"><a href="#应用解耦" class="headerlink" title="应用解耦"></a>应用解耦</h2><p>场景说明：用户下单后，订单系统需要通知库存系统。传统的做法是，订单系统调用库存系统的接口。如下图：</p><p> <img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/2018060811050932" alt="img"></p><p>传统模式的缺点：</p><p>1） 假如库存系统无法访问，则订单减库存将失败，从而导致订单失败；</p><p>2） 订单系统与库存系统耦合；</p><p>如何解决以上问题呢？引入应用消息队列后的方案，如下图：</p><p> <img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/20180608110546334" alt="img"></p><ul><li>订单系统：用户下单后，订单系统完成持久化处理，将消息写入消息队列，返回用户订单下单成功,请等待物流配送。</li><li>库存系统：订阅下单的消息，采用拉/推的方式，获取下单信息，库存系统根据下单信息，进行库存操作。</li><li>假如：在下单时库存系统不能正常使用。也不影响正常下单，</li><li>因为下单后，订单系统写入消息队列就不再关心其他的后续操作了。实现订单系统与库存系统的应用解耦。</li></ul><h2 id="流量削锋"><a href="#流量削锋" class="headerlink" title="流量削锋"></a>流量削锋</h2><p>流量削锋也是消息队列中的常用场景，一般在秒杀或团抢活动中使用广泛。</p><p>应用场景：秒杀活动，一般会因为流量过大，导致流量暴增，应用容易挂掉。为解决这个问题，一般需要在应用前端加入消息队列。</p><ol><li><p>可以控制活动的人数.</p></li><li><p>可以缓解短时间内高流量压垮应用；</p><p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/20180608110744677" alt="img"></p></li><li><p>用户的请求，服务器接收后，首先写入消息队列。假如消息队列长度超过最大数量，则直接抛弃用户请求或跳转到错误页面；</p></li><li><p>秒杀业务根据消息队列中的请求信息，再做后续处理。</p></li></ol><h2 id="消息通讯"><a href="#消息通讯" class="headerlink" title="消息通讯"></a>消息通讯</h2><p>消息通讯是指，消息队列一般都内置了高效的通信机制，因此也可以用在纯的消息通讯。比如实现点对点消息队列，或者聊天室等。</p><p>点对点通讯：</p><p> <img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/20180608111245390" alt="img"></p><p>客户端A和客户端B使用同一队列，进行消息通讯。</p><p>聊天室通讯：</p><p> <img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/20180608111307382" alt="img"></p><p>客户端A，客户端B，客户端N订阅同一主题，进行消息发布和接收。实现类似聊天室效果。</p><p>以上实际是消息队列的两种消息模式，点对点或发布订阅模式。</p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;h1 id=&quot;MQ的作用&quot;&gt;&lt;a href=&quot;#MQ的作用&quot; class=&quot;headerlink&quot; title=&quot;MQ的作用&quot;&gt;&lt;/a&gt;MQ的作用&lt;/h1&gt;&lt;p&gt;消息队列在大型电子商务类网站，如京东、淘宝、去哪儿等网站有着深入的应用，&lt;/p&gt;
+&lt;p&gt;队列的主要作用是消除高并发访</summary>
+      
+    
+    
+    
+    
+  </entry>
   
   <entry>
     <title>Redis分布式限流</title>
@@ -473,30 +494,6 @@
     
     
     <category term="二叉树" scheme="https://leslieaibin.github.io/tags/%E4%BA%8C%E5%8F%89%E6%A0%91/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>如何保证消息队列的可靠性传输</title>
-    <link href="https://leslieaibin.github.io/2021/08/26/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/%E5%A6%82%E4%BD%95%E4%BF%9D%E8%AF%81%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E7%9A%84%E5%8F%AF%E9%9D%A0%E6%80%A7%E4%BC%A0%E8%BE%93/"/>
-    <id>https://leslieaibin.github.io/2021/08/26/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/%E5%A6%82%E4%BD%95%E4%BF%9D%E8%AF%81%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E7%9A%84%E5%8F%AF%E9%9D%A0%E6%80%A7%E4%BC%A0%E8%BE%93/</id>
-    <published>2021-08-26T01:15:42.000Z</published>
-    <updated>2021-08-26T13:09:45.108Z</updated>
-    
-    <content type="html"><![CDATA[<h1 id="RabbitMQ如何保证消息队列的可靠性传输"><a href="#RabbitMQ如何保证消息队列的可靠性传输" class="headerlink" title="RabbitMQ如何保证消息队列的可靠性传输"></a>RabbitMQ如何保证消息队列的可靠性传输</h1><p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/v2-6303e69011255831c54d605250a6aa67_720w.jpg" alt="img"></p><h2 id="生产者弄丢数据"><a href="#生产者弄丢数据" class="headerlink" title="生产者弄丢数据"></a>生产者弄丢数据</h2><p>生产者将数据发送到RabbitMQ的时候，可能数据就在半路丢失。此时RabbitMQ提供事务功能，就是生产者发送数据之前开启RabbitMQ事务channel.txSelect，然后发送消息，如果消息没有成功被RabbitMQ接受到，那么生产者就会异常报错，此时回滚事务channel.txRollback，然后重发消息，如果收到消息就可以提交事务channel.txCommit</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 开启事务</span></span><br><span class="line">channel.txSelect</span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">    <span class="comment">// 这里发送消息</span></span><br><span class="line">&#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">    channel.txRollback</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 这里再次重发这条消息</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 提交事务</span></span><br><span class="line">channel.txCommit</span><br></pre></td></tr></table></figure><p>但是问题是，RabbitMQ 事务机制（同步）一搞，基本上<strong>吞吐量会下来，因为太耗性能</strong>。</p><p>所以一般来说，如果你要确保说写 RabbitMQ 的消息别丢，可以开启 <code>confirm</code> 模式，在生产者那里设置开启 <code>confirm</code> 模式之后，你每次写的消息都会分配一个唯一的 id，然后如果写入了 RabbitMQ 中，RabbitMQ 会给你回传一个 <code>ack</code> 消息，告诉你说这个消息 ok 了。如果 RabbitMQ 没能处理这个消息，会回调你的一个 <code>nack</code> 接口，告诉你这个消息接收失败，你可以重试。而且你可以结合这个机制自己在内存里维护每个消息 id 的状态，如果超过一定时间还没接收到这个消息的回调，那么你可以重发。</p><p>事务机制和 <code>cnofirm</code> 机制最大的不同在于，<strong>事务机制是同步的</strong>，你提交一个事务之后会<strong>阻塞</strong>在那儿，但是 <code>confirm</code> 机制是<strong>异步</strong>的，你发送个消息之后就可以发送下一个消息，然后那个消息 RabbitMQ 接收了之后会异步回调你的一个接口通知你这个消息接收到了。</p><p>所以一般在生产者这块<strong>避免数据丢失</strong>，都是用 <code>confirm</code> 机制的。</p><h2 id="RabbitMQ-弄丢了数据"><a href="#RabbitMQ-弄丢了数据" class="headerlink" title="RabbitMQ 弄丢了数据"></a><strong>RabbitMQ 弄丢了数据</strong></h2><p>就是 RabbitMQ 自己弄丢了数据，这个你必须<strong>开启 RabbitMQ 的持久化</strong>，就是消息写入之后会持久化到磁盘，哪怕是 RabbitMQ 自己挂了，<strong>恢复之后会自动读取之前存储的数据</strong>，一般数据不会丢。除非极其罕见的是，RabbitMQ 还没持久化，自己就挂了，<strong>可能导致少量数据丢失</strong>，但是这个概率较小。</p><p>设置持久化有<strong>两个步骤</strong>：</p><ul><li>创建 queue 的时候将其设置为持久化<br>这样就可以保证 RabbitMQ 持久化 queue 的元数据，但是它是不会持久化 queue 里的数据的。</li><li>第二个是发送消息的时候将消息的 <code>deliveryMode</code> 设置为 2<br>就是将消息设置为持久化的，此时 RabbitMQ 就会将消息持久化到磁盘上去。</li></ul><p>必须要同时设置这两个持久化才行，RabbitMQ 哪怕是挂了，再次重启，也会从磁盘上重启恢复 queue，恢复这个 queue 里的数据。</p><p>注意，哪怕是你给 RabbitMQ 开启了持久化机制，也有一种可能，就是这个消息写到了 RabbitMQ 中，但是还没来得及持久化到磁盘上，结果不巧，此时 RabbitMQ 挂了，就会导致内存里的一点点数据丢失。</p><p>所以，持久化可以跟生产者那边的 <code>confirm</code> 机制配合起来，只有消息被持久化到磁盘之后，才会通知生产者 <code>ack</code> 了，所以哪怕是在持久化到磁盘之前，RabbitMQ 挂了，数据丢了，生产者收不到 <code>ack</code>，你也是可以自己重发的。</p><h2 id="消费端弄丢了数据"><a href="#消费端弄丢了数据" class="headerlink" title="消费端弄丢了数据"></a><strong>消费端弄丢了数据</strong></h2><p>RabbitMQ 如果丢失了数据，主要是因为你消费的时候，<strong>刚消费到，还没处理，结果进程挂了</strong>，比如重启了，那么就尴尬了，RabbitMQ 认为你都消费了，这数据就丢了。</p><p>这个时候得用 RabbitMQ 提供的 <code>ack</code> 机制，简单来说，就是你必须关闭 RabbitMQ 的自动 <code>ack</code>，可以通过一个 api 来调用就行，然后每次你自己代码里确保处理完的时候，再在程序里 <code>ack</code> 一把。这样的话，如果你还没处理完，不就没有 <code>ack</code> 了？那 RabbitMQ 就认为你还没处理完，这个时候 RabbitMQ 会把这个消费分配给别的 consumer 去处理，消息是不会丢的。</p><p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/v2-83213e2ac79cd8899b09a66a5cf71669_720w.jpg" alt="img"></p>]]></content>
-    
-    
-      
-      
-    <summary type="html">&lt;h1 id=&quot;RabbitMQ如何保证消息队列的可靠性传输&quot;&gt;&lt;a href=&quot;#RabbitMQ如何保证消息队列的可靠性传输&quot; class=&quot;headerlink&quot; title=&quot;RabbitMQ如何保证消息队列的可靠性传输&quot;&gt;&lt;/a&gt;RabbitMQ如何保证消息队列的可靠性</summary>
-      
-    
-    
-    
-    <category term="消息队列" scheme="https://leslieaibin.github.io/categories/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/"/>
-    
-    
-    <category term="消息队列" scheme="https://leslieaibin.github.io/tags/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/"/>
     
   </entry>
   

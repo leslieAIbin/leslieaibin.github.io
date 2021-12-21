@@ -1,0 +1,169 @@
+<!DOCTYPE html><html lang="zh-Hans" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Mr.Ai - 春暖花开去见你</title><meta name="author" content="Leslie"><meta name="copyright" content="Leslie"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><meta property="og:type" content="website">
+<meta property="og:title" content="Mr.Ai">
+<meta property="og:url" content="https://leslieaibin.github.io/page/9/index.html">
+<meta property="og:site_name" content="Mr.Ai">
+<meta property="og:locale">
+<meta property="og:image" content="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/01.jpg?raw=true">
+<meta property="article:author" content="Leslie">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/01.jpg?raw=true"><link rel="shortcut icon" href="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/01.jpg?raw=true"><link rel="canonical" href="https://leslieaibin.github.io/page/9/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":false},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  ClickShowText: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  justifiedGallery: {
+    js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+    css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+};
+
+var saveToLocal = {
+  set: function setWithExpiry(key, value, ttl) {
+    const now = new Date()
+    const expiryDay = ttl * 86400000
+    const item = {
+      value: value,
+      expiry: now.getTime() + expiryDay,
+    }
+    localStorage.setItem(key, JSON.stringify(item))
+  },
+
+  get: function getWithExpiry(key) {
+    const itemStr = localStorage.getItem(key)
+
+    if (!itemStr) {
+      return undefined
+    }
+    const item = JSON.parse(itemStr)
+    const now = new Date()
+
+    if (now.getTime() > item.expiry) {
+      localStorage.removeItem(key)
+      return undefined
+    }
+    return item.value
+  }
+}</script><script id="config_change">var GLOBAL_CONFIG_SITE = { 
+  isPost: false,
+  isHome: true,
+  isHighlightShrink: false,
+  isToc: false,
+  postUpdate: '2021-12-21 22:37:31'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(function () {  window.activateDarkMode = function () {
+    document.documentElement.setAttribute('data-theme', 'dark')
+    if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+    }
+  }
+  window.activateLightMode = function () {
+    document.documentElement.setAttribute('data-theme', 'light')
+   if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+    }
+  }
+  const autoChangeMode = 'false'
+  const t = saveToLocal.get('theme')
+  if (autoChangeMode === '1') {
+    const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+    const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+    const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+    const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+    if (t === undefined) {
+      if (isLightMode) activateLightMode()
+      else if (isDarkMode) activateDarkMode()
+      else if (isNotSpecified || hasNoSupport) {
+        const now = new Date()
+        const hour = now.getHours()
+        const isNight = hour <= 6 || hour >= 18
+        isNight ? activateDarkMode() : activateLightMode()
+      }
+      window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
+        if (saveToLocal.get('theme') === undefined) {
+          e.matches ? activateDarkMode() : activateLightMode()
+        }
+      })
+    } else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else if (autoChangeMode === '2') {
+    const now = new Date()
+    const hour = now.getHours()
+    const isNight = hour <= 6 || hour >= 18
+    if (t === undefined) isNight ? activateDarkMode() : activateLightMode()
+    else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else {
+    if (t === 'dark') activateDarkMode()
+    else if (t === 'light') activateLightMode()
+  }const asideStatus = saveToLocal.get('aside-status')
+if (asideStatus !== undefined) {
+   if (asideStatus === 'hide') {
+     document.documentElement.classList.add('hide-aside')
+   } else {
+     document.documentElement.classList.remove('hide-aside')
+   }
+}})()</script><meta name="generator" content="Hexo 5.2.0"><link rel="alternate" href="/atom.xml" title="Mr.Ai" type="application/atom+xml">
+</head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="author-avatar"><img class="avatar-img" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/01.jpg?raw=true" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">81</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">Tags</div><div class="length-num">17</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">Categories</div><div class="length-num">15</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/artitalk/"><i class="fa-fw fas fa-pen"></i><span> 自言自语</span></a></div></div></div></div><div id="body-wrap"><header class="full_page" id="page-header" style="background-image: url(https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/02.jpg?raw=true)"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Mr.Ai</a></span><span id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/artitalk/"><i class="fa-fw fas fa-pen"></i><span> 自言自语</span></a></div></div><span class="close" id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></span></span></nav><div id="site-info"><h1 id="site-title">Mr.Ai</h1><div id="site-subtitle"><span id="subtitle"></span></div><div id="site_social_icons"><a class="social-icon" href="https://github.com/leslieAIbin" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="https://www.instagram.com/leslieaibin/" target="_blank" title="Ins"><i class="fab fa-instagram"></i></a><a class="social-icon" href="mailto:1915612226@qq.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a><a class="social-icon" href="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/image-20201122143121657.png" target="_blank" title="weixin"><i class="fab fa-weixin"></i></a></div></div><div id="scroll-down"><i class="fas fa-angle-down scroll-down-effects"></i></div></header><main class="layout" id="content-inner"><div class="recent-posts" id="recent-posts"><div class="recent-post-item"><div class="post_cover left_radius"><a href="/2020/10/28/Reboot/" title="从新开始">     <img class="post_bg" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/12.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="从新开始"></a></div><div class="recent-post-info"><a class="article-title" href="/2020/10/28/Reboot/" title="从新开始">从新开始</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">Created</span><time datetime="2020-10-28T12:15:42.000Z" title="Created 2020-10-28 20:15:42">2020-10-28</time></span></div><div class="content">天下熙熙，皆为利来；天下攘攘，皆为利往。周书曰：「农不出则乏其食，工不出则乏其事，商不出则三宝绝，虞不出则财匮少。」财匮少而山泽不辟矣。此四者，民所衣食之原也。原大则饶，原小则鲜。上则富国，下则富家。贫富之道，莫之夺予，而巧者有馀，拙者不足。故太公望封於营丘，地潟卤，人民寡，於是太公劝其女功，极技巧，通鱼盐，则人物归之，繦至而辐凑。故齐冠带衣履天下，海岱之间敛袂而往朝焉。其後齐中衰，管子修之，设轻重九府，则桓公以霸，九合诸侯，一匡天下；而管氏亦有三归，位在陪臣，富於列国之君。是以齐富彊至於威、宣也。
+故曰：「仓廪实而知礼节，衣食足而知荣辱。」礼生於有而废於无。故君子富，好行其德；小人富，以適其力。渊深而鱼生之，山深而兽往之，人富而仁义附焉。富者得埶益彰，失埶则客无所之，以而不乐。夷狄益甚。谚曰：「千金之子，不死於市。」此非空言也。故曰：「天下熙熙，皆为利来；天下壤壤，皆为利往。」夫千乘之王，万家之侯，百室之君，尚犹患贫，而况匹夫编户之民乎！
+</div></div></div><nav id="pagination"><div class="pagination"><a class="extend prev" rel="prev" href="/page/8/"><i class="fas fa-chevron-left fa-fw"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><span class="page-number current">9</span></div></nav></div><div class="aside_content" id="aside_content"><div class="card-widget card-info"><div class="card-content"><div class="card-info-avatar is-center"><img class="avatar-img" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/01.jpg?raw=true" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/><div class="author-info__name">Leslie</div><div class="author-info__description"></div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">81</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">Tags</div><div class="length-num">17</div></a></div><div class="card-info-data-item is-center"><a href="/categories/"><div class="headline">Categories</div><div class="length-num">15</div></a></div></div><a class="button--animated" id="card-info-btn"><i class="fas fa-heart"></i><span>瓶中的水 青天的云</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/leslieAIbin" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="https://www.instagram.com/leslieaibin/" target="_blank" title="Ins"><i class="fab fa-instagram"></i></a><a class="social-icon" href="mailto:1915612226@qq.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a><a class="social-icon" href="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/image-20201122143121657.png" target="_blank" title="weixin"><i class="fab fa-weixin"></i></a></div></div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="card-content"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2021/12/19/Spring/06.Spring-Bean(2)/" title="05.Spring-Bean(2)"><img src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/22.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="05.Spring-Bean(2)"/></a><div class="content"><a class="title" href="/2021/12/19/Spring/06.Spring-Bean(2)/" title="05.Spring-Bean(2)">05.Spring-Bean(2)</a><time datetime="2021-12-19T11:17:42.000Z" title="Created 2021-12-19 19:17:42">2021-12-19</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/12/18/Spring/05.Spring-IoC(2)/" title="05.Spring-IoC(2)"><img src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/21.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="05.Spring-IoC(2)"/></a><div class="content"><a class="title" href="/2021/12/18/Spring/05.Spring-IoC(2)/" title="05.Spring-IoC(2)">05.Spring-IoC(2)</a><time datetime="2021-12-18T11:17:42.000Z" title="Created 2021-12-18 19:17:42">2021-12-18</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/12/14/java%E5%9F%BA%E7%A1%80/bitMap%E8%AE%B2%E8%A7%A3/" title="bitMap讲解"><img src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/20.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="bitMap讲解"/></a><div class="content"><a class="title" href="/2021/12/14/java%E5%9F%BA%E7%A1%80/bitMap%E8%AE%B2%E8%A7%A3/" title="bitMap讲解">bitMap讲解</a><time datetime="2021-12-14T01:15:42.000Z" title="Created 2021-12-14 09:15:42">2021-12-14</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/11/30/Redis/%E5%A6%82%E4%BD%95%E4%BF%9D%E8%AF%81%20Redis%20%E7%BC%93%E5%AD%98%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E5%8F%8C%E5%86%99%E4%B8%80%E8%87%B4%E6%80%A7%EF%BC%9F/" title="Redis缓存与数据库一致性问题"><img src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/27.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Redis缓存与数据库一致性问题"/></a><div class="content"><a class="title" href="/2021/11/30/Redis/%E5%A6%82%E4%BD%95%E4%BF%9D%E8%AF%81%20Redis%20%E7%BC%93%E5%AD%98%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E5%8F%8C%E5%86%99%E4%B8%80%E8%87%B4%E6%80%A7%EF%BC%9F/" title="Redis缓存与数据库一致性问题">Redis缓存与数据库一致性问题</a><time datetime="2021-11-30T01:15:42.000Z" title="Created 2021-11-30 09:15:42">2021-11-30</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/11/29/Authorization/01.%20Cookie%E3%80%81Session%E3%80%81Token%E3%80%81JWT/" title="No title"><img src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/07.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="No title"/></a><div class="content"><a class="title" href="/2021/11/29/Authorization/01.%20Cookie%E3%80%81Session%E3%80%81Token%E3%80%81JWT/" title="No title">No title</a><time datetime="2021-11-29T15:16:44.637Z" title="Created 2021-11-29 23:16:44">2021-11-29</time></div></div></div></div></div><div class="card-widget card-categories"><div class="card-content"><div class="item-headline"><i class="fas fa-folder-open"></i><span>Categories</span></div><ul class="card-category-list" id="aside-cat-list">
+            <li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Collection/"><span class="card-category-list-name">Collection</span><span class="card-category-list-count">5</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/JVM/"><span class="card-category-list-name">JVM</span><span class="card-category-list-count">18</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/MySQL/"><span class="card-category-list-name">MySQL</span><span class="card-category-list-count">7</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Redis/"><span class="card-category-list-name">Redis</span><span class="card-category-list-count">6</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Spring/"><span class="card-category-list-name">Spring</span><span class="card-category-list-count">6</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Video-Analysis/"><span class="card-category-list-name">Video Analysis</span><span class="card-category-list-count">1</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/ssh/"><span class="card-category-list-name">ssh</span><span class="card-category-list-count">1</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E4%B8%8E%E5%B9%B6%E5%8F%91/"><span class="card-category-list-name">多线程与并发</span><span class="card-category-list-count">12</span></a></li>
+            <li class="card-category-list-item more is-center"><a class="card-category-list-link-more" href="/categories/">
+                <span>More</span><i class="fas fa-angle-right"></i></a></li>
+            </ul></div></div><div class="card-widget card-tags"><div class="card-content"><div class="item-headline"><i class="fas fa-tags"></i><span>Tags</span></div><div class="card-tag-cloud"><a href="/tags/BFS/" style="font-size: 1.1em; color: #999">BFS</a> <a href="/tags/Collection/" style="font-size: 1.23em; color: #999ea6">Collection</a> <a href="/tags/DFS/" style="font-size: 1.1em; color: #999">DFS</a> <a href="/tags/ElasticSearch/" style="font-size: 1.1em; color: #999">ElasticSearch</a> <a href="/tags/HTTP/" style="font-size: 1.37em; color: #99a4b2">HTTP</a> <a href="/tags/JVM/" style="font-size: 1.5em; color: #99a9bf">JVM</a> <a href="/tags/Java/" style="font-size: 1.17em; color: #999c9f">Java</a> <a href="/tags/MySQL/" style="font-size: 1.37em; color: #99a4b2">MySQL</a> <a href="/tags/Redis/" style="font-size: 1.3em; color: #99a1ac">Redis</a> <a href="/tags/Spring/" style="font-size: 1.3em; color: #99a1ac">Spring</a> <a href="/tags/TCP-IP/" style="font-size: 1.37em; color: #99a4b2">TCP/IP</a> <a href="/tags/Video-Analysis/" style="font-size: 1.1em; color: #999">Video Analysis</a> <a href="/tags/ssh/" style="font-size: 1.1em; color: #999">ssh</a> <a href="/tags/%E4%BA%8C%E5%8F%89%E6%A0%91/" style="font-size: 1.17em; color: #999c9f">二叉树</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E4%B8%8E%E5%B9%B6%E5%8F%91/" style="font-size: 1.43em; color: #99a6b9">多线程与并发</a> <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" style="font-size: 1.23em; color: #999ea6">操作系统</a> <a href="/tags/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/" style="font-size: 1.17em; color: #999c9f">消息队列</a></div></div></div><div class="card-widget card-archives"><div class="card-content"><div class="item-headline"><i class="fas fa-archive"></i><span>Archives</span></div><ul class="card-archive-list"><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2021/12/"><span class="card-archive-list-date">December 2021</span><span class="card-archive-list-count">3</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2021/11/"><span class="card-archive-list-date">November 2021</span><span class="card-archive-list-count">2</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2021/10/"><span class="card-archive-list-date">October 2021</span><span class="card-archive-list-count">3</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2021/09/"><span class="card-archive-list-date">September 2021</span><span class="card-archive-list-count">16</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2021/08/"><span class="card-archive-list-date">August 2021</span><span class="card-archive-list-count">12</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2021/07/"><span class="card-archive-list-date">July 2021</span><span class="card-archive-list-count">5</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2021/06/"><span class="card-archive-list-date">June 2021</span><span class="card-archive-list-count">2</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2021/05/"><span class="card-archive-list-date">May 2021</span><span class="card-archive-list-count">15</span></a></li><li class="card-archive-list-item more is-center"><a class="card-archive-list-link-more" href="/archives/">
+              <span>More</span><i class="fas fa-angle-right"  ></i></a></li></ul></div></div><div class="card-widget card-webinfo"><div class="card-content"><div class="item-headline"><i class="fas fa-chart-line"></i><span>Info</span></div><div class="webinfo"><div class="webinfo-item"><div class="item-name">Article :</div><div class="item-count">81</div></div><div class="webinfo-item"><div class="item-name">UV :</div><div class="item-count" id="busuanzi_value_site_uv"></div></div><div class="webinfo-item"><div class="item-name">PV :</div><div class="item-count" id="busuanzi_value_site_pv"></div></div><div class="webinfo-item"><div class="item-name">Last Push :</div><div class="item-count" id="last-push-date" data-lastPushDate="2021-12-21T14:37:30.720Z"></div></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/02.jpg?raw=true)"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021 By Leslie</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog"></i></button><button id="go-up" type="button" title="Back To Top"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><div class="js-pjax"><script>function subtitleType () {
+  if (false) { 
+    var typed = new Typed("#subtitle", {
+      strings: "天下熙熙，皆为利来；天下攘攘，皆为利往".split(","),
+      startDelay: 300,
+      typeSpeed: 150,
+      loop: true,
+      backSpeed: 50
+    })
+  } else {
+    document.getElementById("subtitle").innerHTML = '天下熙熙，皆为利来；天下攘攘，皆为利往'
+  }
+}
+
+if (false) {
+  if (typeof Typed === 'function') subtitleType()
+  else $.getScript('https://cdn.jsdelivr.net/npm/typed.js/lib/typed.min.js', subtitleType)
+} else {
+  subtitleType()
+}</script><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></div></body></html>

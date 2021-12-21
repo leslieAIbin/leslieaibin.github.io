@@ -6,7 +6,7 @@
   <link href="https://leslieaibin.github.io/atom.xml" rel="self"/>
   
   <link href="https://leslieaibin.github.io/"/>
-  <updated>2021-12-21T14:37:24.007Z</updated>
+  <updated>2021-12-21T14:55:40.051Z</updated>
   <id>https://leslieaibin.github.io/</id>
   
   <author>
@@ -15,6 +15,39 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title></title>
+    <link href="https://leslieaibin.github.io/2021/12/21/06.Spring-Aop(2)/"/>
+    <id>https://leslieaibin.github.io/2021/12/21/06.Spring-Aop(2)/</id>
+    <published>2021-12-21T14:42:59.586Z</published>
+    <updated>2021-12-21T14:55:40.051Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="Spring-Aop"><a href="#Spring-Aop" class="headerlink" title="Spring Aop"></a>Spring Aop</h1><h2 id="Aop"><a href="#Aop" class="headerlink" title="Aop"></a>Aop</h2><p>AOP(Aspect-Oriented Programming)，一般称为面向切面编程，用于将那些与业务无关，但却对多个对象产生影响的公共行为和逻辑，抽取并封装为一个可重用的模块，这个模块被命名为“切面”（Aspect），减少系统中的重复代码，降低了模块间的耦合度，同时提高了系统的可维护性。可用于权限认证、日志、事务处理等。<br>AOP、OOP在字面上虽然非常类似，但却是面向不同领域的两种设计思想。OOP（面向对象编程）针对业务处理过程的实体及其属性和行为进行抽象封装，以获得更加清晰高效的逻辑单元划分。 而AOP作为面向对象的一种补充，则是针对业务处理过程中的切面进行提取，已达到业务代码和公共行为代码之间低耦合性的隔离效果。这两种设计思想在目标上有着本质的差异。</p><h2 id="Aop-的名词"><a href="#Aop-的名词" class="headerlink" title="Aop 的名词"></a>Aop 的名词</h2>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;h1 id=&quot;Spring-Aop&quot;&gt;&lt;a href=&quot;#Spring-Aop&quot; class=&quot;headerlink&quot; title=&quot;Spring Aop&quot;&gt;&lt;/a&gt;Spring Aop&lt;/h1&gt;&lt;h2 id=&quot;Aop&quot;&gt;&lt;a href=&quot;#Aop&quot; class=&quot;header</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title></title>
+    <link href="https://leslieaibin.github.io/2021/12/21/%E6%9C%AA%E5%91%BD%E5%90%8D/"/>
+    <id>https://leslieaibin.github.io/2021/12/21/%E6%9C%AA%E5%91%BD%E5%90%8D/</id>
+    <published>2021-12-21T14:38:24.522Z</published>
+    <updated>2021-12-21T14:38:24.522Z</updated>
+    
+    
+    
+    
+    
+  </entry>
   
   <entry>
     <title>05.Spring-Bean(2)</title>
@@ -439,54 +472,6 @@
       
       
     <summary type="html">&lt;h1 id=&quot;分布式锁&quot;&gt;&lt;a href=&quot;#分布式锁&quot; class=&quot;headerlink&quot; title=&quot;分布式锁&quot;&gt;&lt;/a&gt;分布式锁&lt;/h1&gt;&lt;h2 id=&quot;什么是锁&quot;&gt;&lt;a href=&quot;#什么是锁&quot; class=&quot;headerlink&quot; title=&quot;什么是锁&quot;&gt;&lt;/a</summary>
-      
-    
-    
-    
-    <category term="MySQL" scheme="https://leslieaibin.github.io/categories/MySQL/"/>
-    
-    
-    <category term="MySQL" scheme="https://leslieaibin.github.io/tags/MySQL/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>04.MySQL索引原理及慢查询优化</title>
-    <link href="https://leslieaibin.github.io/2021/09/10/MySQL/04.MySQL%E7%B4%A2%E5%BC%95%E5%8E%9F%E7%90%86%E5%8F%8A%E6%85%A2%E6%9F%A5%E8%AF%A2%E4%BC%98%E5%8C%96/"/>
-    <id>https://leslieaibin.github.io/2021/09/10/MySQL/04.MySQL%E7%B4%A2%E5%BC%95%E5%8E%9F%E7%90%86%E5%8F%8A%E6%85%A2%E6%9F%A5%E8%AF%A2%E4%BC%98%E5%8C%96/</id>
-    <published>2021-09-10T12:17:42.000Z</published>
-    <updated>2021-09-11T02:30:25.218Z</updated>
-    
-    <content type="html"><![CDATA[<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>MySQL凭借着出色的性能、低廉的成本、丰富的资源，已经成为绝大多数互联网公司的首选关系型数据库。虽然性能出色，但所谓“好马配好鞍”，如何能够更好的使用它，已经成为开发工程师的必修课，我们经常会从职位描述上看到诸如“精通MySQL”、“SQL语句优化”、“了解数据库原理”等要求。我们知道一般的应用系统，读写比例在10:1左右，而且插入操作和一般的更新操作很少出现性能问题，遇到最多的，也是最容易出问题的，还是一些复杂的查询操作，所以查询语句的优化显然是重中之重。背景</p><h2 id="MySQL索引原理"><a href="#MySQL索引原理" class="headerlink" title="MySQL索引原理"></a>MySQL索引原理</h2><h3 id="索引目的"><a href="#索引目的" class="headerlink" title="索引目的"></a>索引目的</h3><p>索引的目的在于提高查询效率，可以类比字典，如果要查“mysql”这个单词，我们肯定需要定位到m字母，然后从下往下找到y字母，再找到剩下的sql。如果没有索引，那么你可能需要把所有单词看一遍才能找到你想要的，如果我想找到m开头的单词呢？或者ze开头的单词呢？是不是觉得如果没有索引，这个事情根本无法完成？</p><h3 id="索引原理"><a href="#索引原理" class="headerlink" title="索引原理"></a>索引原理</h3><p>除了词典，生活中随处可见索引的例子，如火车站的车次表、图书的目录等。它们的原理都是一样的，通过不断的缩小想要获得数据的范围来筛选出最终想要的结果，同时把随机的事件变成顺序的事件，也就是我们总是通过同一种查找方式来锁定数据。</p><p>数据库也是一样，但显然要复杂许多，因为不仅面临着等值查询，还有范围查询(&gt;、&lt;、between、in)、模糊查询(like)、并集查询(or)等等。数据库应该选择怎么样的方式来应对所有的问题呢？我们回想字典的例子，能不能把数据分成段，然后分段查询呢？最简单的如果1000条数据，1到100分成第一段，101到200分成第二段，201到300分成第三段……这样查第250条数据，只要找第三段就可以了，一下子去除了90%的无效数据。但如果是1千万的记录呢，分成几段比较好？稍有算法基础的同学会想到搜索树，其平均复杂度是lgN，具有不错的查询性能。但这里我们忽略了一个关键的问题，复杂度模型是基于每次相同的操作成本来考虑的，数据库实现比较复杂，数据保存在磁盘上，而为了提高性能，每次又可以把部分数据读入内存来计算，因为我们知道访问磁盘的成本大概是访问内存的十万倍左右，所以简单的搜索树难以满足复杂的应用场景。</p><h3 id="磁盘IO与预读"><a href="#磁盘IO与预读" class="headerlink" title="磁盘IO与预读"></a>磁盘IO与预读</h3><p>前面提到了访问磁盘，那么这里先介绍下磁盘IO和预读，磁盘读取数据靠的是机械运动，每次读取数据花费的时间可以分为寻道时间、旋转延迟、传输时间三个部分，寻道时间指的是磁臂移动到指定磁道所需要的时间，主流磁盘一般在5ms以下；旋转延迟就是我们经常听说的磁盘转速，比如一个磁盘7200转，表示每分钟能转7200次，也就是说1秒钟能转120次，旋转延迟就是1/120/2 = 4.17ms；传输时间指的是从磁盘读出或将数据写入磁盘的时间，一般在零点几毫秒，相对于前两个时间可以忽略不计。那么访问一次磁盘的时间，即一次磁盘IO的时间约等于5+4.17 = 9ms左右，听起来还挺不错的，但要知道一台500 -MIPS的机器每秒可以执行5亿条指令，因为指令依靠的是电的性质，换句话说执行一次IO的时间可以执行40万条指令，数据库动辄十万百万乃至千万级数据，每次9毫秒的时间，显然是个灾难。下图是计算机硬件延迟的对比图，供大家参考：</p><p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/7f46a0a4.png" alt="various-system-software-hardware-latencies"></p><p>考虑到磁盘IO是非常高昂的操作，计算机操作系统做了一些优化，当一次IO时，不光把当前磁盘地址的数据，而是把相邻的数据也都读取到内存缓冲区内，因为局部预读性原理告诉我们，当计算机访问一个地址的数据的时候，与其相邻的数据也会很快被访问到。每一次IO读取的数据我们称之为一页(page)。具体一页有多大数据跟操作系统有关，一般为4k或8k，也就是我们读取一页内的数据时候，实际上才发生了一次IO，这个理论对于索引的数据结构设计非常有帮助。</p><h3 id="索引的数据结构"><a href="#索引的数据结构" class="headerlink" title="索引的数据结构"></a>索引的数据结构</h3><p>前面讲了生活中索引的例子，索引的基本原理，数据库的复杂性，又讲了操作系统的相关知识，目的就是让大家了解，任何一种数据结构都不是凭空产生的，一定会有它的背景和使用场景，我们现在总结一下，我们需要这种数据结构能够做些什么，其实很简单，那就是：每次查找数据时把磁盘IO次数控制在一个很小的数量级，最好是常数数量级。那么我们就想到如果一个高度可控的多路搜索树是否能满足需求呢？就这样，b+树应运而生。</p><p><strong>详解B+树</strong></p><p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/7af22798.jpg" alt="b+树"></p><p>如上图，是一颗b+树，关于b+树的定义可以参见<a href="http://zh.wikipedia.org/wiki/B%2B%E6%A0%91">B+树</a>，这里只说一些重点，浅蓝色的块我们称之为一个磁盘块，可以看到每个磁盘块包含几个数据项（深蓝色所示）和指针（黄色所示），如磁盘块1包含数据项17和35，包含指针P1、P2、P3，P1表示小于17的磁盘块，P2表示在17和35之间的磁盘块，P3表示大于35的磁盘块。真实的数据存在于叶子节点即3、5、9、10、13、15、28、29、36、60、75、79、90、99。非叶子节点只不存储真实的数据，只存储指引搜索方向的数据项，如17、35并不真实存在于数据表中。</p><h4 id="b-树的查找过程"><a href="#b-树的查找过程" class="headerlink" title="b+树的查找过程"></a>b+树的查找过程</h4><p>如图所示，如果要查找数据项29，那么首先会把磁盘块1由磁盘加载到内存，此时发生一次IO，在内存中用二分查找确定29在17和35之间，锁定磁盘块1的P2指针，内存时间因为非常短（相比磁盘的IO）可以忽略不计，通过磁盘块1的P2指针的磁盘地址把磁盘块3由磁盘加载到内存，发生第二次IO，29在26和30之间，锁定磁盘块3的P2指针，通过指针加载磁盘块8到内存，发生第三次IO，同时内存中做二分查找找到29，结束查询，总计三次IO。真实的情况是，3层的b+树可以表示上百万的数据，如果上百万的数据查找只需要三次IO，性能提高将是巨大的，如果没有索引，每个数据项都要发生一次IO，那么总共需要百万次的IO，显然成本非常非常高。</p><h4 id="b-树性质"><a href="#b-树性质" class="headerlink" title="b+树性质"></a>b+树性质</h4><p>1.通过上面的分析，我们知道IO次数取决于b+数的高度h，假设当前数据表的数据为N，每个磁盘块的数据项的数量是m，则有h=㏒(m+1)N，当数据量N一定的情况下，m越大，h越小；而m = 磁盘块的大小 / 数据项的大小，磁盘块的大小也就是一个数据页的大小，是固定的，如果数据项占的空间越小，数据项的数量越多，树的高度越低。这就是为什么每个数据项，即索引字段要尽量的小，比如int占4字节，要比bigint8字节少一半。这也是为什么b+树要求把真实的数据放到叶子节点而不是内层节点，一旦放到内层节点，磁盘块的数据项会大幅度下降，导致树增高。当数据项等于1时将会退化成线性表。</p><p>2.当b+树的数据项是复合的数据结构，比如(name,age,sex)的时候，b+数是按照从左到右的顺序来建立搜索树的，比如当(张三,20,F)这样的数据来检索的时候，b+树会优先比较name来确定下一步的所搜方向，如果name相同再依次比较age和sex，最后得到检索的数据；但当(20,F)这样的没有name的数据来的时候，b+树就不知道下一步该查哪个节点，因为建立搜索树的时候name就是第一个比较因子，必须要先根据name来搜索才能知道下一步去哪里查询。比如当(张三,F)这样的数据来检索时，b+树可以用name来指定搜索方向，但下一个字段age的缺失，所以只能把名字等于张三的数据都找到，然后再匹配性别是F的数据了， 这个是非常重要的性质，即索引的最左匹配特性。</p><h2 id="慢查询优化"><a href="#慢查询优化" class="headerlink" title="慢查询优化"></a>慢查询优化</h2><p>关于MySQL索引原理是比较枯燥的东西，大家只需要有一个感性的认识，并不需要理解得非常透彻和深入。我们回头来看看一开始我们说的慢查询，了解完索引原理之后，大家是不是有什么想法呢？先总结一下索引的几大基本原则：</p><h3 id="建索引的几大原则："><a href="#建索引的几大原则：" class="headerlink" title="建索引的几大原则："></a>建索引的几大原则：</h3><ul><li><p>最左前缀匹配原则，非常重要的原则，mysql会一直向右匹配直到遇到范围查询(&gt;、&lt;、between、like)就停止匹配，比如a = 1 and b = 2 and c &gt; 3 and d = 4 如果建立(a,b,c,d)顺序的索引，d是用不到索引的，如果建立(a,b,d,c)的索引则都可以用到，a,b,d的顺序可以任意调整。</p></li><li><p>=和in可以乱序，比如a = 1 and b = 2 and c = 3 建立(a,b,c)索引可以任意顺序，mysql的查询优化器会帮你优化成索引可以识别的形式。</p></li><li><p>尽量选择区分度高的列作为索引，区分度的公式是count(distinct col)/count(*)，表示字段不重复的比例，比例越大我们扫描的记录数越少，唯一键的区分度是1，而一些状态、性别字段可能在大数据面前区分度就是0，那可能有人会问，这个比例有什么经验值吗？使用场景不同，这个值也很难确定，一般需要join的字段我们都要求是0.1以上，即平均1条扫描10条记录。</p></li><li><p>索引列不能参与计算，保持列“干净”，比如from_unixtime(create_time) = ’2014-05-29’就不能使用到索引，原因很简单，b+树中存的都是数据表中的字段值，但进行检索时，需要把所有元素都应用函数才能比较，显然成本太大。所以语句应该写成create_time = unix_timestamp(’2014-05-29’)。</p></li><li><p>尽量的扩展索引，不要新建索引。比如表中已经有a的索引，现在要加(a,b)的索引，那么只需要修改原来的索引即可</p></li></ul><h2 id="回到开始的慢查询"><a href="#回到开始的慢查询" class="headerlink" title="回到开始的慢查询"></a>回到开始的慢查询</h2><p>根据最左匹配原则，最开始的sql语句的索引应该是status、operator_id、type、operate_time的联合索引；其中status、operator_id、type的顺序可以颠倒，所以我才会说，把这个表的所有相关查询都找到，会综合分析；比如还有如下查询：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">select * from task where status &#x3D; 0 and type &#x3D; 12 limit 10;</span><br><span class="line">select count(*) from task where status &#x3D; 0 ;</span><br></pre></td></tr></table></figure><p>那么索引建立成(status,type,operator_id,operate_time)就是非常正确的，因为可以覆盖到所有情况。这个就是利用了索引的最左匹配的原则</p><h3 id="查询优化神器-explain命令"><a href="#查询优化神器-explain命令" class="headerlink" title="查询优化神器 - explain命令"></a>查询优化神器 - explain命令</h3><p>关于explain命令相信大家并不陌生，具体用法和字段含义可以参考官网<a href="http://dev.mysql.com/doc/refman/5.5/en/explain-output.html">explain-output</a>，这里需要强调rows是核心指标，绝大部分rows小的语句执行一定很快（有例外，下面会讲到）。所以优化语句基本上都是在优化rows。</p><h3 id="慢查询优化基本步骤"><a href="#慢查询优化基本步骤" class="headerlink" title="慢查询优化基本步骤"></a>慢查询优化基本步骤</h3><p>0.先运行看看是否真的很慢，注意设置SQL_NO_CACHE</p><p>1.where条件单表查，锁定最小返回记录表。这句话的意思是把查询语句的where都应用到表中返回的记录数最小的表开始查起，单表每个字段分别查询，看哪个字段的区分度最高</p><p>2.explain查看执行计划，是否与1预期一致（从锁定记录较少的表开始查询）</p><p>3.order by limit 形式的sql语句让排序的表优先查</p><p>4.了解业务方使用场景</p><p>5.加索引时参照建索引的几大原则</p><p>6.观察结果，不符合预期继续从0分析</p>]]></content>
-    
-    
-      
-      
-    <summary type="html">&lt;h2 id=&quot;背景&quot;&gt;&lt;a href=&quot;#背景&quot; class=&quot;headerlink&quot; title=&quot;背景&quot;&gt;&lt;/a&gt;背景&lt;/h2&gt;&lt;p&gt;MySQL凭借着出色的性能、低廉的成本、丰富的资源，已经成为绝大多数互联网公司的首选关系型数据库。虽然性能出色，但所谓“好马配好鞍”，如何能</summary>
-      
-    
-    
-    
-    <category term="MySQL" scheme="https://leslieaibin.github.io/categories/MySQL/"/>
-    
-    
-    <category term="MySQL" scheme="https://leslieaibin.github.io/tags/MySQL/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>03.一条SQL查询语句如何执行</title>
-    <link href="https://leslieaibin.github.io/2021/09/09/MySQL/03.MySQL%E6%9F%A5%E8%AF%A2%E8%BF%87%E7%A8%8B/"/>
-    <id>https://leslieaibin.github.io/2021/09/09/MySQL/03.MySQL%E6%9F%A5%E8%AF%A2%E8%BF%87%E7%A8%8B/</id>
-    <published>2021-09-09T12:17:42.000Z</published>
-    <updated>2021-09-11T02:30:12.521Z</updated>
-    
-    <content type="html"><![CDATA[<h1 id="一条SQL查询语句如何执行"><a href="#一条SQL查询语句如何执行" class="headerlink" title="一条SQL查询语句如何执行"></a>一条SQL查询语句如何执行</h1><p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/image-20210910095617441.png" alt="image-20210910095617441"></p><p>MySQL可以分为Server层和存储引擎层两部分</p><p>Server层包括 <strong>连接器、查询缓存、分析器、优化器、执行器</strong>等，涵盖了MySQL的大多数核心功能，以及所有的内置函数（如日期、时间、数学和加密函数等），所有跨存储引擎的功能都在这一层实现，比如存储过程，触发器，视图等。</p><p>而存储引擎层负责数据的存储和提取。其架构模式是插件式的，支持InnoDB、MyISAM、Memory等多个存储引擎。现在最常用的存储引擎InnoDB，它从MySQL5.5.5版本开始成为默认存储引擎。</p><p>也就是说，你执行create table建表的时候，如果不执行搜索引擎，默认的是innodb，不过，你也可以通过执行存储引擎的类型来选择别的引擎，比如在create table 语句中使用 engine=memory，来执行使用内存引擎创建表。不同存储引擎的表数据存取方式不同，支持的功能也不同。</p><h2 id="连接器"><a href="#连接器" class="headerlink" title="连接器"></a>连接器</h2><p>第一步，你会先连接到这数据库上，这时候接待你的就是连接器。连接器负责跟客户端建立连接，获取权限，位置和管理连接。连接命令一般是这么写的：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql -h$ip -P$port -u$user -p</span><br></pre></td></tr></table></figure><p>输完命令后，你就需要在交互对话里面输入密码。虽然密码也可以直接在-p后面卸载命令行中，但这样可能会导致你的密码泄露。</p><ul><li>如果用户名或密码不对，你就会收到一个”Access denied for user的错误，然后客户端程序结束执行。</li><li>如果用户名密码认证通过，连接器会到权限表里面查出你拥有的权限。之后，这个连接里面的权限判断逻辑，都将依赖于此时读到的权限。</li></ul><p>这就意味着，一个用户成功建立连接后，即使你用管理员账号对这个用户的权限做了修改，也不会影响已经存在连接的权限。修改完成后，只有再新建的连接才会使用新的权限设置。<br>连接完成后，如果你没有后续的动作，这个连接就处于空闲状态，你可以在 show processlist令中看到它。文本中这个图是 show processlist的结果，其中的 Command列显示为Sleep的这一行，就表示现在系统里面有一个空闲连接</p><p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/image-20210910103606002.png" alt="image-20210910103606002"></p><p>客户端如果太长时间没动静，连接器就会自动将它断开。这个时间是由参数 wait timeout控制的，默认值是8小时。</p><p>如果在连接被断开之后，客户端再次发送请求的话，就会收到一个错误提醒：Lost connection to MySQL server during query.这时候如果你要继续，就需要重连，然后再执行请求了数据库里面，长连接是指连接成功后，如果客户端持续有请求，则一直使用同一个连接。短连接则是指每次执行完很少的几次查询就断连接，下次查询再重新建立一个</p><h2 id="查询缓存"><a href="#查询缓存" class="headerlink" title="查询缓存"></a>查询缓存</h2><p>连接建立完成后，你就可以执行 select语句了执行逻辑就会来到第二步：查询缓存MySQL拿到一个查询请求后，会先到查询缓存看看，之前是不是执行过这条语句。之前执行过的语句及其结果可能会以key- -value对的形式，被直接缓存在内存中。key是查询的语句， value是查询的结果。如果你的查询能够直接在这个缓存中找到key.那么这个 value就会被直接返回给客户端。<br>如果语句不在查询缓存中，就会继续后面的执行阶段执行完成后，执行结果会被存入查询缓存中。你可以看到，如果查询命中缓存， MySQ不需要执行后面的复杂操作，就可以直接返回结果，这个效率会很高。</p><p>但是大多数情况下我会建议你不要使用查询缓存，为什么呢？因为查询缓存往往弊大于利。<br>查询缓存的失效非常频繁，只要有对一个表的更新，这个表上所有的查询缓存都会被清空。因此很可能你费劲地把结果存起来，还没使用呢，就被一个更新全清空了。对于更新压力大的数据库来说，查询缓存的命中率会非常低。除非你的业务就是有一张静态表，很长时间才会史新一次。</p><p>比如，一个系统配置表，那这张表上的查询才适合使用查询缓存。<br>好在MSQL也提供了这种“按需使用”的方式。你可以将参数query cache_type设置成DEMAND，这样对于默认的SQL语句都不使用查询缓存。而对于你确定要使用查询缓存的语句，可以用 SQL CACHE显式指定，像下面这个语句一样：</p> <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select SQL_CACHE from T where ID&#x3D;10：</span><br></pre></td></tr></table></figure><p><strong>需要注意的是， MySQL8.0版本直接将查询缓存的整块功能删掉了，也就是说8.0开始彻底没有这个功能了。</strong></p><h2 id="分析器"><a href="#分析器" class="headerlink" title="分析器"></a>分析器</h2><p>如果没有命中查询缓存，就要开始真正执行语句了。首先，MQL需要知道你要做什么，因此需要对SQL语句做解析。</p><p>分析器先会做“词法分析”。你输入的是由多个字符串和空格组成的一条SQL语句， MySQL需要识别出里面的字符串分别是什么，代表什么</p><p>MySQL从你输入的”select这个关键字识别出来，这是一个查询语句。它也要把字符串“T识别成“名T，把字符串识别成列D做完了这些识别以后，就要做“语法分析”。根据词法分析的结果，语法分析器会根据语法规则，判断你输入的这个SQL语句是否满足MSQL语法</p><p>如果你的语句不对，就会收到You have an error in your SQL syntax的错误提醒，比如下面这个语句 select少打了开头的字母s”。</p><h2 id="优化器"><a href="#优化器" class="headerlink" title="优化器"></a>优化器</h2><p>经过了分析器，MySQL就知道你要做什么，在开始执行之前，要经过优化器的处理</p><p>优化器是在表里面有多个索引的时候，决定使用哪个索引，或者在一个语句有多表关联（join）的时候，决定各个表的连接顺序。</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select * <span class="function">from t1 join t2 <span class="title">using</span><span class="params">(ID)</span> where t1.c</span>=<span class="number">10</span> and t2.d = <span class="number">20</span>;</span><br></pre></td></tr></table></figure><ul><li>既可以先从表t1里面取出 c = 10的记录的ID值，在根据ID关联到表t2，再判断t2里面d的值是否等于20</li><li>也可以先从表t2里面取出d=20的记录的id值，在根据ID值关联到t1，在判断t1里面c的值是否等于10</li></ul><p>这两种执行方法的逻辑结果是一样的，但执行的效率会有不同，而优化器的作用是决定选择使用哪个方案</p><h2 id="执行器"><a href="#执行器" class="headerlink" title="执行器"></a>执行器</h2><p>MSQL通过分析器知道了你要做什么，通过优化器知道了该怎么做，于是就进入了执行器阶段，开始执行语句。</p><p>开始执行的时候，要先判断一下你对这个表T有没有执行查询的权限，如果没有，就会返回没有权限的错误，如下所示</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select * from where ID=<span class="number">10</span>;</span><br></pre></td></tr></table></figure><p>如果有权限，就打开表继续执行，打开表的时候，执行器就会根据表的引擎定义，去使用这个引擎提供的接口</p><p>比如我们这个例子中的表T中，D字段没有索引那么执行器的执行流程是这样的：</p><ul><li>调用InnoDB引擎接口取这个表的第一行，判断D值是不是10，如果不是则跳过，如果是则将这行存在结果集中</li><li>调用引擎接口取“下一行”，重复相同的判断逻辑，直到取到这个表的最后一行。</li><li>执行器将上述遍历过程中所有满足条件的行组成的记录集作为结果集返回给客户端至此，这个语句就执行完成了。</li></ul><p>对于有索引的表，执行的逻辑也差不多。第一次调用的是“取满足条件的第一行”这个接口，之后循环取“满足条件的下一行”这个接口，这些接口都是引擎中已经定义好的你会在数据库的慢查询日志中看到一个 rows examined的字段，表示这个语句执行过程中扫描了多少行。这个值就是在执行器每次调用引擎获取数据行的时候累加的。</p><p>在有些场景下，执行器调用一次，在引擎内部则扫描了多行，因此引擎扫描行数跟rowsexamined并不是完全相同的。我们后面会专门有一篇文章来讲存储引擎的内部机制，里面会有详细的说明。</p>]]></content>
-    
-    
-      
-      
-    <summary type="html">&lt;h1 id=&quot;一条SQL查询语句如何执行&quot;&gt;&lt;a href=&quot;#一条SQL查询语句如何执行&quot; class=&quot;headerlink&quot; title=&quot;一条SQL查询语句如何执行&quot;&gt;&lt;/a&gt;一条SQL查询语句如何执行&lt;/h1&gt;&lt;p&gt;&lt;img src=&quot;http://test-1874</summary>
       
     
     

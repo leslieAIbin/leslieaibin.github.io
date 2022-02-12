@@ -1,0 +1,229 @@
+<!DOCTYPE html><html lang="zh-Hans" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>100的阶乘是0？ | Mr.Ai</title><meta name="keywords" content="Java"><meta name="author" content="Leslie"><meta name="copyright" content="Leslie"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><meta name="description" content="常见写法安全性及效率分析假设我们的商品表的schema是下面这样的： 12345678910111213CREATE TABLE &#96;goods&#96; (&#96;&#96;&#96;&#96;&#96;&#96; &#96;id&#96; int(10) NOT NULL AUTO_INCREMENT COMMENT&#96;&#96;&#96; &#96;&amp;#x27;自增id&amp;#x27;&#96;&#96;,&#96;&#96;&#96;&#96; &#96;name&#96; varchar(256) NOT NULL DEFAULT&#96;&#96;&#96; &#96;&amp;#x27">
+<meta property="og:type" content="article">
+<meta property="og:title" content="100的阶乘是0？">
+<meta property="og:url" content="https://leslieaibin.github.io/2021/11/18/%E9%A1%B9%E7%9B%AE%E7%9B%B8%E5%85%B3/%E7%A7%92%E6%9D%80%E9%A1%B9%E7%9B%AE%E8%B6%85%E5%8D%96%E8%AE%A8%E8%AE%BA/index.html">
+<meta property="og:site_name" content="Mr.Ai">
+<meta property="og:description" content="常见写法安全性及效率分析假设我们的商品表的schema是下面这样的： 12345678910111213CREATE TABLE &#96;goods&#96; (&#96;&#96;&#96;&#96;&#96;&#96; &#96;id&#96; int(10) NOT NULL AUTO_INCREMENT COMMENT&#96;&#96;&#96; &#96;&amp;#x27;自增id&amp;#x27;&#96;&#96;,&#96;&#96;&#96;&#96; &#96;name&#96; varchar(256) NOT NULL DEFAULT&#96;&#96;&#96; &#96;&amp;#x27">
+<meta property="og:locale">
+<meta property="og:image" content="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/21.jpg?raw=true">
+<meta property="article:published_time" content="2021-11-17T16:15:42.000Z">
+<meta property="article:modified_time" content="2022-02-12T12:13:53.796Z">
+<meta property="article:author" content="Leslie">
+<meta property="article:tag" content="Java">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/21.jpg?raw=true"><link rel="shortcut icon" href="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/01.jpg?raw=true"><link rel="canonical" href="https://leslieaibin.github.io/2021/11/18/%E9%A1%B9%E7%9B%AE%E7%9B%B8%E5%85%B3/%E7%A7%92%E6%9D%80%E9%A1%B9%E7%9B%AE%E8%B6%85%E5%8D%96%E8%AE%A8%E8%AE%BA/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":false},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  ClickShowText: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  justifiedGallery: {
+    js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+    css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+};
+
+var saveToLocal = {
+  set: function setWithExpiry(key, value, ttl) {
+    const now = new Date()
+    const expiryDay = ttl * 86400000
+    const item = {
+      value: value,
+      expiry: now.getTime() + expiryDay,
+    }
+    localStorage.setItem(key, JSON.stringify(item))
+  },
+
+  get: function getWithExpiry(key) {
+    const itemStr = localStorage.getItem(key)
+
+    if (!itemStr) {
+      return undefined
+    }
+    const item = JSON.parse(itemStr)
+    const now = new Date()
+
+    if (now.getTime() > item.expiry) {
+      localStorage.removeItem(key)
+      return undefined
+    }
+    return item.value
+  }
+}</script><script id="config_change">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-02-12 20:13:53'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(function () {  window.activateDarkMode = function () {
+    document.documentElement.setAttribute('data-theme', 'dark')
+    if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+    }
+  }
+  window.activateLightMode = function () {
+    document.documentElement.setAttribute('data-theme', 'light')
+   if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+    }
+  }
+  const autoChangeMode = 'false'
+  const t = saveToLocal.get('theme')
+  if (autoChangeMode === '1') {
+    const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+    const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+    const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+    const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+    if (t === undefined) {
+      if (isLightMode) activateLightMode()
+      else if (isDarkMode) activateDarkMode()
+      else if (isNotSpecified || hasNoSupport) {
+        const now = new Date()
+        const hour = now.getHours()
+        const isNight = hour <= 6 || hour >= 18
+        isNight ? activateDarkMode() : activateLightMode()
+      }
+      window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
+        if (saveToLocal.get('theme') === undefined) {
+          e.matches ? activateDarkMode() : activateLightMode()
+        }
+      })
+    } else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else if (autoChangeMode === '2') {
+    const now = new Date()
+    const hour = now.getHours()
+    const isNight = hour <= 6 || hour >= 18
+    if (t === undefined) isNight ? activateDarkMode() : activateLightMode()
+    else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else {
+    if (t === 'dark') activateDarkMode()
+    else if (t === 'light') activateLightMode()
+  }const asideStatus = saveToLocal.get('aside-status')
+if (asideStatus !== undefined) {
+   if (asideStatus === 'hide') {
+     document.documentElement.classList.add('hide-aside')
+   } else {
+     document.documentElement.classList.remove('hide-aside')
+   }
+}})()</script><meta name="generator" content="Hexo 5.2.0"><link rel="alternate" href="/atom.xml" title="Mr.Ai" type="application/atom+xml">
+</head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="author-avatar"><img class="avatar-img" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/01.jpg?raw=true" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">86</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">Tags</div><div class="length-num">17</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">Categories</div><div class="length-num">15</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/artitalk/"><i class="fa-fw fas fa-pen"></i><span> 自言自语</span></a></div></div></div></div><div id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/21.jpg?raw=true)"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Mr.Ai</a></span><span id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/artitalk/"><i class="fa-fw fas fa-pen"></i><span> 自言自语</span></a></div></div><span class="close" id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></span></span></nav><div id="post-info"><h1 class="post-title">100的阶乘是0？</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2021-11-17T16:15:42.000Z" title="Created 2021-11-18 00:15:42">2021-11-18</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2022-02-12T12:13:53.796Z" title="Updated 2022-02-12 20:13:53">2022-02-12</time></span></div><div class="meta-secondline"> <span class="post-meta-separator">|</span><span class="post-meta-pv-cv"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post View:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="常见写法安全性及效率分析"><a href="#常见写法安全性及效率分析" class="headerlink" title="常见写法安全性及效率分析"></a>常见写法安全性及效率分析</h1><p>假设我们的商品表的schema是下面这样的：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> <span class="string">`goods`</span> (<span class="string">``</span><span class="string">`</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">`</span><span class="string">``</span> <span class="string">`id`</span> <span class="built_in">int</span>(<span class="number">10</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span> AUTO_INCREMENT <span class="keyword">COMMENT</span><span class="string">``</span><span class="string">` `</span><span class="string">&#x27;自增id&#x27;</span><span class="string">``</span>,<span class="string">`</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">`</span><span class="string">``</span> <span class="string">`name`</span> <span class="built_in">varchar</span>(<span class="number">256</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">DEFAULT</span><span class="string">``</span><span class="string">` `</span><span class="string">&#x27;&#x27;</span><span class="string">` `</span><span class="keyword">COMMENT</span><span class="string">` `</span><span class="string">&#x27;商品名称&#x27;</span><span class="string">``</span>,<span class="string">`</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">`</span><span class="string">``</span> <span class="string">`available`</span> <span class="built_in">int</span>(<span class="number">11</span>) <span class="keyword">unsigned</span> <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">DEFAULT</span><span class="string">``</span><span class="string">` `</span><span class="string">&#x27;0&#x27;</span><span class="string">` `</span><span class="keyword">COMMENT</span><span class="string">` `</span><span class="string">&#x27;库存剩余量&#x27;</span><span class="string">``</span>,<span class="string">`</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">`</span><span class="string">``</span> <span class="string">`stock`</span> <span class="built_in">int</span>(<span class="number">11</span>) <span class="keyword">unsigned</span> <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">DEFAULT</span><span class="string">``</span><span class="string">` `</span><span class="string">&#x27;0&#x27;</span><span class="string">` `</span><span class="keyword">COMMENT</span><span class="string">` `</span><span class="string">&#x27;总库存量&#x27;</span><span class="string">``</span>,<span class="string">`</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">`</span><span class="string">``</span>PRIMARY <span class="keyword">KEY</span> (<span class="string">`id`</span>)<span class="string">``</span><span class="string">`</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">`</span>) <span class="keyword">ENGINE</span>=<span class="keyword">InnoDB</span> <span class="keyword">DEFAULT</span> <span class="keyword">CHARSET</span>=utf8 <span class="keyword">COMMENT</span>=<span class="string">``</span><span class="string">&#x27;商品表&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="设置为字段无符号解决"><a href="#设置为字段无符号解决" class="headerlink" title="设置为字段无符号解决"></a>设置为字段无符号解决</h2><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">num = <span class="keyword">select</span> available <span class="keyword">from</span> goods <span class="keyword">where</span> <span class="keyword">id</span> = xx ;</span><br><span class="line">if(num &gt; 0)&#123;</span><br><span class="line">   affectRows = udpate goods <span class="keyword">set</span> available = available - <span class="number">1</span> <span class="keyword">where</span> <span class="keyword">id</span> = xx ;</span><br><span class="line">   if(affectRows == 1)&#123;</span><br><span class="line">       return ok ;</span><br><span class="line">   &#125;else&#123;</span><br><span class="line">       return fatal ;</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>这种做法大家的想法是我们将库存字段设置成无符号类型，这样当库存字段在sql执行时候被置为负数的时候mysql就会报错，那么affectRow就会是0或者可以捕获到这个异常，从而实现并发下的数据安全。</strong></p>
+<h4 id="解法释义"><a href="#解法释义" class="headerlink" title="解法释义"></a>解法释义</h4><p>实际上这段代码是危险的，因为在不同版本的mysql和配置下，这段代码的表现完全不同。具体的情况会出现3种不同的结果：</p>
+<ul>
+<li>  代码正常运行，执行update的时候报错</li>
+<li>  代码最终执行结果出现了 -1</li>
+<li>  最终update操作之后，available变成了一个很大的数目</li>
+</ul>
+<p>为什么会出现这三种情况呢？</p>
+<p>我想在学习开始学习计算机的时候都讲过计算机的加减法计算方法。</p>
+<p><code>思考一下，无符号2 减去 无符号3 在计算机中的运算是什么样的？</code></p>
+<p><code>2 - 3 = 2 + (-3)</code></p>
+<p><code>假设我们的计算机是4位的,2的补码表示:0010,-3的补码表示为1011</code></p>
+<p><code>那么加和的结果是</code></p>
+<p><code>0010</code></p>
+<p><code>1011 +</code></p>
+<p><code>------</code></p>
+<p><code>1111 =</code></p>
+<p><code>1111解释为有符号数是多少呢？ -1</code></p>
+<p><code>1111解释为无符号数是多少呢？ 15</code></p>
+<p>所以呢？如果mysql不做任何处理的话，你的无符号数减法的结果不会报错，最终你算出来的库存还是一个非常大的值(可怕)。<br>但是幸运的是mysql 后来的版本帮你做了这件事情(具体哪个版本我也不清楚)，所以如果是mysql做了无符号检测的话，如果减出的结果是负值，会报错，这是大多数人期待的结果。-1这种情况是需要你设置一下sqlmode的，这也是会出现的情况。</p>
+<h4 id="解法总结"><a href="#解法总结" class="headerlink" title="解法总结"></a>解法总结</h4><ul>
+<li>  这个办法很多人用的时候没问题，那只能说明可能是机缘巧合，但是对于业务代码而言，不能靠碰运气，需要消除不确定性、缩小迁移成本。</li>
+<li>  如果你想采用这种办法，辛苦你把你们msyql相应的版本及配置搞清楚，确定无符号在你所在的版本会出现什么结果。</li>
+</ul>
+<h2 id="select-for-update（感觉并不能保证原子性）"><a href="#select-for-update（感觉并不能保证原子性）" class="headerlink" title="select for update（感觉并不能保证原子性）"></a>select for update（感觉并不能保证原子性）</h2><h4 id="解法释义-1"><a href="#解法释义-1" class="headerlink" title="解法释义"></a>解法释义</h4><p>读取时候就开始加排他锁也是网上常见的办法之一，具体实现如下：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">begin</span> tran ;</span><br><span class="line">num = <span class="keyword">select</span> avaliable <span class="keyword">from</span> goods <span class="keyword">where</span> <span class="keyword">id</span> = xxx <span class="keyword">for</span> <span class="keyword">update</span>;</span><br><span class="line">if (num &gt;= 0)&#123;</span><br><span class="line">   affectNum = udpate goods <span class="keyword">set</span> available = available - <span class="number">1</span> <span class="keyword">where</span> <span class="keyword">id</span> = xx ;</span><br><span class="line">   <span class="keyword">commit</span> ;</span><br><span class="line"> return affectNum ;</span><br><span class="line">&#125;else&#123;</span><br><span class="line"> <span class="keyword">rollback</span> ;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>该解法在用户读取的时候对相应的数据加排他锁，保证自己在更新的时候该行的数据不会被别的进程更改.所有写请求及排他锁加锁都会被阻塞。</p>
+<p>想想这样的情况，A进程执行过程中，出现死机的情况导致commit/rollback请求没有被发送到mysqlserver，那么所有请求都会锁等待。</p>
+<h4 id="解法总结-1"><a href="#解法总结-1" class="headerlink" title="解法总结"></a>解法总结</h4><ul>
+<li><p>  低流量可以采用这种办法来保证数据的安全性</p>
+</li>
+<li><p>性能低下，平均需要发送4次mysql请求，同时会造成所有同类请求锁等待。</p>
+<h3 id="常见问题"><a href="#常见问题" class="headerlink" title="常见问题"></a>常见问题</h3></li>
+<li><p>  select for udpate 需要在显式的指定在事务代码块执行，不然不会起作用。很多网友都理所当然的人为select for update直接就可以加排他锁</p>
+</li>
+<li><p>  排他锁的释放是在rollback/commit 动作完成才会释放，不是在update操作之后。mysql innodb执行两段锁协议，加锁阶段只加锁，解锁阶段只解锁。</p>
+</li>
+</ul>
+<h2 id="采用事务，先查后写再查，确保没问题"><a href="#采用事务，先查后写再查，确保没问题" class="headerlink" title="采用事务，先查后写再查，确保没问题"></a>采用事务，先查后写再查，确保没问题</h2><h4 id="解法释义-2"><a href="#解法释义-2" class="headerlink" title="解法释义"></a>解法释义</h4><p>这时候的available设置为有符号类型，解决方案一的问题</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">begin</span> tran ;</span><br><span class="line"></span><br><span class="line">num = <span class="keyword">select</span> available <span class="keyword">from</span> goods <span class="keyword">where</span> <span class="keyword">id</span> = xx ;</span><br><span class="line"></span><br><span class="line">if(num &gt; 0)&#123;</span><br><span class="line">   //实际需要关心这里的返回值，这里不考虑</span><br><span class="line"></span><br><span class="line">   udpate goods <span class="keyword">set</span> available = available - <span class="number">1</span> <span class="keyword">where</span> <span class="keyword">id</span> = xx ;</span><br><span class="line"></span><br><span class="line">   num_afterupdate = <span class="keyword">select</span> available <span class="keyword">from</span> goods <span class="keyword">where</span> <span class="keyword">id</span> = xx ;</span><br><span class="line"></span><br><span class="line">   if(num_afterupdate &lt; 0 )&#123;</span><br><span class="line"></span><br><span class="line">       <span class="keyword">rollback</span> ;</span><br><span class="line"></span><br><span class="line">   &#125;else&#123;</span><br><span class="line"></span><br><span class="line">       <span class="keyword">commit</span> ;</span><br><span class="line"></span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<p>这种解法区分于第一种的办法在于，加了事务、available类型更改、采用了更新后确认的形式，尝试解决问题。</p>
+<p>我们都知道数据库的事务隔离级别有4种：<br><strong>RU，RC，RR，Serializable。</strong><br>我们常见的innodb中RR模式是可以保证可重复读，意思是在同一个事务内部，多次读取的结果是一致的。那么最后一次的读取对于RR隔离级别实际上是无效的。<br>RC模式下，这个代码是可用的，每次请求可以确保自己的进程不会超发。</p>
+<h4 id="解法总结-2"><a href="#解法总结-2" class="headerlink" title="解法总结"></a>解法总结</h4><ul>
+<li>  RR、RC模式下结果不一致.RR下不可保证安全、RC可以。</li>
+<li>  性能不高，一次业务请求到mysql的转化为 1 : 5。</li>
+<li>  这种解法就像老奶奶锁门，总是不放心自己到底锁了没有，走了几步再回来看看，实际上有些时候是徒劳。</li>
+</ul>
+<h2 id="update语句增加available查询条件"><a href="#update语句增加available查询条件" class="headerlink" title="update语句增加available查询条件"></a>update语句增加available查询条件</h2><h4 id="解法释义-3"><a href="#解法释义-3" class="headerlink" title="解法释义"></a>解法释义</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">udpate goods <span class="keyword">set</span> available = available - <span class="number">1</span> <span class="keyword">where</span> <span class="keyword">id</span> = xx<span class="string">` `</span><span class="keyword">and</span><span class="string">` `</span>available - <span class="number">1</span> &gt;= <span class="number">0</span> ;</span><br></pre></td></tr></table></figure>
+
+
+<p>大家有的另一个误区是单条语句不是事务，实际上单条sql也是一个事务。-<br>问题的关键就集中在怎么证明这句的安全性的。-<br>我们都知道update操作对于id为主键索引的情况下，是会对数据加行锁。-<br>其实update操作在mysql内部也是一个先查后改的过程，这个过程如果是原子的，那么可以保证update语句是串行的，那我们就来看一下update语句在mysql内部的执行过程。-</p>
+<p>那么对于上面这个语句，一样遵循两段锁协议。-<br>update执行的过程，会去查询满足条件的行并加锁，这个加锁是innodb做的，那么就可以保证别的事务必须等到该事务执行完了之后才能获得锁，此时拿到最新数据。</p>
+<h4 id="解法总结-3"><a href="#解法总结-3" class="headerlink" title="解法总结"></a>解法总结</h4><ul>
+<li>  语句安全、效率最优（我的认知里）</li>
+</ul>
+<h2 id="采用设置库存而不是扣减库存"><a href="#采用设置库存而不是扣减库存" class="headerlink" title="采用设置库存而不是扣减库存"></a>采用设置库存而不是扣减库存</h2><p>这几天我把类似的文章几乎翻了一遍，唯一看到批评我的上一条做法的是我的那个做法是不具备幂等性的。</p>
+<blockquote>
+<ul>
+<li>  所谓幂等性就是，同一个用户对同一连接的访问不会产生副作用。比如上一条的方案，如果记录用户的操作和扣减库存不是原子操作的话，就有可能出现的问题是，库存扣减成功了，但是用户记录失败了，那么用户重复请求，就会出现多次减库存的问题。</li>
+</ul>
+</blockquote>
+<p>那么他们的解法是这样的，采用设置而不是扣减，代码如下：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">num_old = <span class="keyword">select</span> available <span class="keyword">from</span> goods <span class="keyword">where</span> <span class="keyword">id</span> = xx<span class="string">` `</span><span class="keyword">and</span><span class="string">` `</span>available &gt;= <span class="number">1</span> ;</span><br><span class="line">num_new = num_old - 1 ;</span><br><span class="line"><span class="keyword">update</span> goods <span class="keyword">set</span> <span class="keyword">num</span>=num_new <span class="keyword">where</span> <span class="keyword">id</span>=xx<span class="string">` `</span><span class="keyword">and</span><span class="string">` `</span><span class="keyword">num</span>=num_old ;</span><br></pre></td></tr></table></figure>
+
+<p>这段代码也是安全的，采用的是乐观锁的理念来完成的操作。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ul>
+<li>  上面的做法，最后两个是相对安全的，但是你的库存字段还是要设置为无符号，关于是否幂等，要看结合请求看，不是单个扣减块代码。</li>
+</ul>
+<h2 id="引用"><a href="#引用" class="headerlink" title="引用"></a>引用</h2><ul>
+<li>  <a target="_blank" rel="noopener" href="http://hedengcheng.com/?p=771">何登成的技术博客</a>mysql udpate流程学习</li>
+<li>  <a target="_blank" rel="noopener" href="http://www.10tiao.com/html/249/201706/2651960197/1.html">幂等性做法来源</a>使用设置库存代替库存扣减</li>
+<li>  <a target="_blank" rel="noopener" href="http://www.cnblogs.com/blankqdb/archive/2012/11/03/blank_qdb.html">mysql 无符号问题</a></li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined">Leslie</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="https://leslieaibin.github.io/2021/11/18/%E9%A1%B9%E7%9B%AE%E7%9B%B8%E5%85%B3/%E7%A7%92%E6%9D%80%E9%A1%B9%E7%9B%AE%E8%B6%85%E5%8D%96%E8%AE%A8%E8%AE%BA/">https://leslieaibin.github.io/2021/11/18/%E9%A1%B9%E7%9B%AE%E7%9B%B8%E5%85%B3/%E7%A7%92%E6%9D%80%E9%A1%B9%E7%9B%AE%E8%B6%85%E5%8D%96%E8%AE%A8%E8%AE%BA/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Java/">Java</a></div><div class="post_share"><div class="social-share" data-image="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/21.jpg?raw=true" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2021/11/29/Authorization/01.%20Cookie%E3%80%81Session%E3%80%81Token%E3%80%81JWT/"><img class="prev-cover" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/07.jpg?raw=true" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">Previous Post</div><div class="prev_info"></div></div></a></div><div class="next-post pull-right"><a href="/2021/10/04/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/5.%E8%BF%9B%E7%A8%8B%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95/"><img class="next-cover" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/35.jpg?raw=true" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">5.操作系统-进程调度算法</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span> Related Articles</span></div><div class="relatedPosts-list"><div><a href="/2020/11/20/ElasticSearch/ElasticSearch入门到实战/" title="ElasticSearch7.6.1 入门到实战"><img class="cover" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/22.jpg?raw=true" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-11-20</div><div class="title">ElasticSearch7.6.1 入门到实战</div></div></a></div><div><a href="/2020/11/18/项目相关/100阶乘/" title="100的阶乘是0？"><img class="cover" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/21.jpg?raw=true" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-11-18</div><div class="title">100的阶乘是0？</div></div></a></div></div></div></div><div class="aside_content" id="aside_content"><div class="card-widget card-info"><div class="card-content"><div class="card-info-avatar is-center"><img class="avatar-img" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/01.jpg?raw=true" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/><div class="author-info__name">Leslie</div><div class="author-info__description"></div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">86</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">Tags</div><div class="length-num">17</div></a></div><div class="card-info-data-item is-center"><a href="/categories/"><div class="headline">Categories</div><div class="length-num">15</div></a></div></div><a class="button--animated" id="card-info-btn"><i class="fas fa-heart"></i><span>瓶中的水 青天的云</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/leslieAIbin" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="https://www.instagram.com/leslieaibin/" target="_blank" title="Ins"><i class="fab fa-instagram"></i></a><a class="social-icon" href="mailto:1915612226@qq.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a><a class="social-icon" href="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/image-20201122143121657.png" target="_blank" title="weixin"><i class="fab fa-weixin"></i></a></div></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="card-content"><div class="item-headline"><i class="fas fa-stream"></i><span>Catalog</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E5%86%99%E6%B3%95%E5%AE%89%E5%85%A8%E6%80%A7%E5%8F%8A%E6%95%88%E7%8E%87%E5%88%86%E6%9E%90"><span class="toc-number">1.</span> <span class="toc-text">常见写法安全性及效率分析</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AE%BE%E7%BD%AE%E4%B8%BA%E5%AD%97%E6%AE%B5%E6%97%A0%E7%AC%A6%E5%8F%B7%E8%A7%A3%E5%86%B3"><span class="toc-number">1.1.</span> <span class="toc-text">设置为字段无符号解决</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A7%A3%E6%B3%95%E9%87%8A%E4%B9%89"><span class="toc-number">1.1.0.1.</span> <span class="toc-text">解法释义</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A7%A3%E6%B3%95%E6%80%BB%E7%BB%93"><span class="toc-number">1.1.0.2.</span> <span class="toc-text">解法总结</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#select-for-update%EF%BC%88%E6%84%9F%E8%A7%89%E5%B9%B6%E4%B8%8D%E8%83%BD%E4%BF%9D%E8%AF%81%E5%8E%9F%E5%AD%90%E6%80%A7%EF%BC%89"><span class="toc-number">1.2.</span> <span class="toc-text">select for update（感觉并不能保证原子性）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A7%A3%E6%B3%95%E9%87%8A%E4%B9%89-1"><span class="toc-number">1.2.0.1.</span> <span class="toc-text">解法释义</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A7%A3%E6%B3%95%E6%80%BB%E7%BB%93-1"><span class="toc-number">1.2.0.2.</span> <span class="toc-text">解法总结</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98"><span class="toc-number">1.2.1.</span> <span class="toc-text">常见问题</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%87%87%E7%94%A8%E4%BA%8B%E5%8A%A1%EF%BC%8C%E5%85%88%E6%9F%A5%E5%90%8E%E5%86%99%E5%86%8D%E6%9F%A5%EF%BC%8C%E7%A1%AE%E4%BF%9D%E6%B2%A1%E9%97%AE%E9%A2%98"><span class="toc-number">1.3.</span> <span class="toc-text">采用事务，先查后写再查，确保没问题</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A7%A3%E6%B3%95%E9%87%8A%E4%B9%89-2"><span class="toc-number">1.3.0.1.</span> <span class="toc-text">解法释义</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A7%A3%E6%B3%95%E6%80%BB%E7%BB%93-2"><span class="toc-number">1.3.0.2.</span> <span class="toc-text">解法总结</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#update%E8%AF%AD%E5%8F%A5%E5%A2%9E%E5%8A%A0available%E6%9F%A5%E8%AF%A2%E6%9D%A1%E4%BB%B6"><span class="toc-number">1.4.</span> <span class="toc-text">update语句增加available查询条件</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A7%A3%E6%B3%95%E9%87%8A%E4%B9%89-3"><span class="toc-number">1.4.0.1.</span> <span class="toc-text">解法释义</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A7%A3%E6%B3%95%E6%80%BB%E7%BB%93-3"><span class="toc-number">1.4.0.2.</span> <span class="toc-text">解法总结</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%87%87%E7%94%A8%E8%AE%BE%E7%BD%AE%E5%BA%93%E5%AD%98%E8%80%8C%E4%B8%8D%E6%98%AF%E6%89%A3%E5%87%8F%E5%BA%93%E5%AD%98"><span class="toc-number">1.5.</span> <span class="toc-text">采用设置库存而不是扣减库存</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">1.6.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BC%95%E7%94%A8"><span class="toc-number">1.7.</span> <span class="toc-text">引用</span></a></li></ol></li></ol></div></div></div><div class="card-widget card-recent-post"><div class="card-content"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2022/01/11/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/%E6%B6%88%E6%81%AF%E5%A0%86%E7%A7%AF%E5%A4%AA%E5%A4%9A%E6%80%8E%E4%B9%88%E5%8A%9E/" title="消息队列问题"><img src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/38.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="消息队列问题"/></a><div class="content"><a class="title" href="/2022/01/11/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/%E6%B6%88%E6%81%AF%E5%A0%86%E7%A7%AF%E5%A4%AA%E5%A4%9A%E6%80%8E%E4%B9%88%E5%8A%9E/" title="消息队列问题">消息队列问题</a><time datetime="2022-01-11T01:15:42.000Z" title="Created 2022-01-11 09:15:42">2022-01-11</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/12/19/Spring/06.Spring-Bean(2)/" title="05.Spring-Bean(2)"><img src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/22.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="05.Spring-Bean(2)"/></a><div class="content"><a class="title" href="/2021/12/19/Spring/06.Spring-Bean(2)/" title="05.Spring-Bean(2)">05.Spring-Bean(2)</a><time datetime="2021-12-19T11:17:42.000Z" title="Created 2021-12-19 19:17:42">2021-12-19</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/12/18/Spring/05.Spring-IoC(2)/" title="05.Spring-IoC(2)"><img src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/21.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="05.Spring-IoC(2)"/></a><div class="content"><a class="title" href="/2021/12/18/Spring/05.Spring-IoC(2)/" title="05.Spring-IoC(2)">05.Spring-IoC(2)</a><time datetime="2021-12-18T11:17:42.000Z" title="Created 2021-12-18 19:17:42">2021-12-18</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/12/14/java%E5%9F%BA%E7%A1%80/bitMap%E8%AE%B2%E8%A7%A3/" title="bitMap讲解"><img src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/20.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="bitMap讲解"/></a><div class="content"><a class="title" href="/2021/12/14/java%E5%9F%BA%E7%A1%80/bitMap%E8%AE%B2%E8%A7%A3/" title="bitMap讲解">bitMap讲解</a><time datetime="2021-12-14T01:15:42.000Z" title="Created 2021-12-14 09:15:42">2021-12-14</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/11/30/Redis/%E5%A6%82%E4%BD%95%E4%BF%9D%E8%AF%81%20Redis%20%E7%BC%93%E5%AD%98%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E5%8F%8C%E5%86%99%E4%B8%80%E8%87%B4%E6%80%A7%EF%BC%9F/" title="Redis缓存与数据库一致性问题"><img src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/27.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Redis缓存与数据库一致性问题"/></a><div class="content"><a class="title" href="/2021/11/30/Redis/%E5%A6%82%E4%BD%95%E4%BF%9D%E8%AF%81%20Redis%20%E7%BC%93%E5%AD%98%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E5%8F%8C%E5%86%99%E4%B8%80%E8%87%B4%E6%80%A7%EF%BC%9F/" title="Redis缓存与数据库一致性问题">Redis缓存与数据库一致性问题</a><time datetime="2021-11-30T01:15:42.000Z" title="Created 2021-11-30 09:15:42">2021-11-30</time></div></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/21.jpg?raw=true)"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By Leslie</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="Back To Top"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><div class="js-pjax"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></div></body></html>

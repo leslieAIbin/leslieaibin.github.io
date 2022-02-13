@@ -66,26 +66,6 @@
   </entry>
   
   <entry>
-    <title></title>
-    <link href="https://leslieaibin.github.io/2021/11/29/Authorization/01.%20Cookie%E3%80%81Session%E3%80%81Token%E3%80%81JWT/"/>
-    <id>https://leslieaibin.github.io/2021/11/29/Authorization/01.%20Cookie%E3%80%81Session%E3%80%81Token%E3%80%81JWT/</id>
-    <published>2021-11-29T15:16:44.637Z</published>
-    <updated>2021-11-29T15:17:48.322Z</updated>
-    
-    <content type="html"><![CDATA[<h1 id="01-Cookie、Session、Token、JWT"><a href="#01-Cookie、Session、Token、JWT" class="headerlink" title="01.Cookie、Session、Token、JWT"></a>01.Cookie、Session、Token、JWT</h1><h2 id="什么是认证（Authentication"><a href="#什么是认证（Authentication" class="headerlink" title="什么是认证（Authentication)"></a>什么是认证（Authentication)</h2><ul><li><p>通俗地讲就是<strong>验证当前用户的身份</strong>，证明“你是你自己”（比如：你每天上下班打卡，都需要通过指纹打卡，当你的指纹和系统里录入的指纹相匹配时，就打卡成功）</p></li><li><p>互联网中的认证：</p><ul><li>用户名密码登录</li><li>邮箱发送登录链接</li><li>手机号接收验证码</li><li>只要你能收到邮箱/验证码，就默认你是账号的主人</li></ul></li></ul><h2 id="什么是授权（Authorization）"><a href="#什么是授权（Authorization）" class="headerlink" title="什么是授权（Authorization）"></a>什么是授权（Authorization）</h2><ul><li>用户授予第三方应用访问该用户某些资源的权限<ul><li>你在安装手机应用的时候，APP 会询问是否允许授予权限（访问相册、地理位置等权限）</li><li>你在访问微信小程序时，当登录时，小程序会询问是否允许授予权限（获取昵称、头像、地区、性别等个人信息）</li></ul></li><li>实现授权的方式有：cookie、session、token、OAuth</li></ul><h2 id="什么是凭证（Credentials）"><a href="#什么是凭证（Credentials）" class="headerlink" title="什么是凭证（Credentials）"></a>什么是凭证（Credentials）</h2><ul><li>实现认证和授权的前提是需要一种媒介（证书）来标记访问者的身份<ul><li>在战国时期，商鞅变法，发明了照身帖。照身帖由官府发放，是一块打磨光滑细密的竹板，上面刻有持有人的头像和籍贯信息。国人必须持有，如若没有就被认为是黑户，或者间谍之类的。</li><li>在现实生活中，每个人都会有一张专属的<a href="https://link.juejin.cn/?target=https://baike.baidu.com/item/%E5%B1%85%E6%B0%91%E8%BA%AB%E4%BB%BD%E8%AF%81/2080960">居民身份证</a>，是用于证明持有人身份的一种法定<a href="https://link.juejin.cn/?target=https://baike.baidu.com/item/%E8%AF%81%E4%BB%B6/5804999">证件</a>。通过身份证，我们可以办理手机卡/银行卡/个人贷款/交通出行等等，这就是<strong>认证的凭证。</strong></li><li>在互联网应用中，一般网站（如掘金）会有两种模式，游客模式和登录模式。游客模式下，可以正常浏览网站上面的文章，一旦想要点赞/收藏/分享文章，就需要登录或者注册账号。当用户登录成功后，服务器会给该用户使用的浏览器颁发一个令牌（token），这个令牌用来表明你的身份，每次浏览器发送请求时会带上这个令牌，就可以使用游客模式下无法使用的功能。</li></ul></li></ul>]]></content>
-    
-    
-      
-      
-    <summary type="html">&lt;h1 id=&quot;01-Cookie、Session、Token、JWT&quot;&gt;&lt;a href=&quot;#01-Cookie、Session、Token、JWT&quot; class=&quot;headerlink&quot; title=&quot;01.Cookie、Session、Token、JWT&quot;&gt;&lt;/a&gt;01.Co</summary>
-      
-    
-    
-    
-    
-  </entry>
-  
-  <entry>
     <title>超卖问题</title>
     <link href="https://leslieaibin.github.io/2021/11/18/%E9%A1%B9%E7%9B%AE%E7%9B%B8%E5%85%B3/%E7%A7%92%E6%9D%80%E9%A1%B9%E7%9B%AE%E8%B6%85%E5%8D%96%E8%AE%A8%E8%AE%BA/"/>
     <id>https://leslieaibin.github.io/2021/11/18/%E9%A1%B9%E7%9B%AE%E7%9B%B8%E5%85%B3/%E7%A7%92%E6%9D%80%E9%A1%B9%E7%9B%AE%E8%B6%85%E5%8D%96%E8%AE%A8%E8%AE%BA/</id>
@@ -146,6 +126,30 @@
       
       
     <summary type="html">&lt;h2 id=&quot;1-为什么要拆分数据库？&quot;&gt;&lt;a href=&quot;#1-为什么要拆分数据库？&quot; class=&quot;headerlink&quot; title=&quot;1. 为什么要拆分数据库？&quot;&gt;&lt;/a&gt;&lt;strong&gt;1. 为什么要拆分数据库？&lt;/strong&gt;&lt;/h2&gt;&lt;p&gt;单体项目在构建之初，&lt;</summary>
+      
+    
+    
+    
+    <category term="MySQL" scheme="https://leslieaibin.github.io/categories/MySQL/"/>
+    
+    
+    <category term="MySQL" scheme="https://leslieaibin.github.io/tags/MySQL/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>11.数据库优化</title>
+    <link href="https://leslieaibin.github.io/2021/10/25/MySQL/11.%E6%95%B0%E6%8D%AE%E5%BA%93%E4%BC%98%E5%8C%96/"/>
+    <id>https://leslieaibin.github.io/2021/10/25/MySQL/11.%E6%95%B0%E6%8D%AE%E5%BA%93%E4%BC%98%E5%8C%96/</id>
+    <published>2021-10-25T12:17:42.000Z</published>
+    <updated>2022-02-13T03:09:55.938Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="数据库优化和查询优化方案"><a href="#数据库优化和查询优化方案" class="headerlink" title="数据库优化和查询优化方案"></a>数据库优化和查询优化方案</h1><h4 id="数据库优化方案"><a href="#数据库优化方案" class="headerlink" title="数据库优化方案"></a>数据库优化方案</h4><ol><li> 优化索引，sql语句，分析慢查询</li><li> 设计表的时候严格按照数据库设计规范来设计数据库</li><li> 使用缓存，把经常访问并且不需要经常变化的数据放在缓存中，能够节约磁盘IO</li><li> 优化硬件，采用ssd，使用磁盘队列技术（RAID0， RAID1，RAID5）</li><li> 采用mysql自带的表分区技术，把数据分析分成不同文件，能够磁盘的读写效率</li><li> 垂直分表，把一些不经常读的数据放在一张表当中，节约磁盘IO</li><li> 主从分离读写，采用主从复制把数据库的读操作和写操作分离开来</li><li> 分库分表分机器，数据量特别大的时候，主要的原理是数据路由</li><li> 选择合适的表引擎，参数上的优化</li><li> 进行架构级别的缓存，静态化和分布式</li><li> 不采用全文检索</li><li> 采用更快的存储方恨少，例如nosql存储经常访问的数据</li></ol><h4 id="优化数据库的查询效率"><a href="#优化数据库的查询效率" class="headerlink" title="优化数据库的查询效率"></a>优化数据库的查询效率</h4><ol><li> 存储引擎的选择，如果数据表需要事务处理，应该考虑Innodb，因为它完全符合ACID的特性，如果不需要食物处理，使用默认存储引擎MyISAM是比较明智的</li><li> 分表分库主从</li><li> 对查询进行优化，要尽量避免全表扫描，首先应考虑在shere以及orderby涉及的列上建立索引</li><li> 应尽量避免在where子句当中使用，不等于或者大于小于操作符，否则将导致引擎放弃使用索引而进行全表扫描</li><li> 应尽量避免在where子句当中使用null值判断，否则将导致引擎放弃使用索引而进行全表扫描</li><li> 应尽量避免在where子句当中使用or的判断，如果一个字段有索引，一个字段没有索引，将会导致引擎放弃使用索引而进行全表扫描</li><li> update语句如果只改一两个字段，不要update全部字段，否则频繁调用，会引起明显的性能消耗，同时带来的大量的日志</li><li> 对于多张数据量的表进行join，要先分页在做join，否则逻辑读写高，性能差</li></ol><hr><p>详细的优化方案</p><ul><li><p>1）数据库设计方面：</p><ul><li><p>  a. 对查询进行优化，应尽量避免全表扫描，首先应考虑在 where 及 order by 涉及的列上建立索引。</p></li><li><p>  b. 应尽量避免在 where 子句中对字段进行 null 值判断，否则将导致引擎放弃使用索引而进行全表扫描，如： select id from t where num is null 可以在num上设置默认值0，确保表中num列没有null值，然后这样查询： select id from t where num=0</p></li><li><p>  c. 并不是所有索引对查询都有效，SQL是根据表中数据来进行查询优化的，当索引列有大量数据重复时,查询可能不会去利用索引，如一表中有字段sex，male、female几乎各一半，那么即使在sex上建了索引也对查询效率起不了作用。</p></li><li><p>  d. 索引并不是越多越好，索引固然可以提高相应的 select 的效率，但同时也降低了 insert 及 update 的效率，因为 insert 或 update 时有可能会重建索引，所以怎样建索引需要慎重考虑，视具体情况而定。一个表的索引数最好不要超过6个，若太多则应考虑一些不常使用到的列上建的索引是否有必要。</p></li><li><p>  e. 应尽可能的避免更新索引数据列，因为索引数据列的顺序就是表记录的物理存储顺序，一旦该列值改变将导致整个表记录的顺序的调整，会耗费相当大的资源。若应用系统需要频繁更新索引数据列，那么需要考虑是否应将该索引建为索引。</p></li><li><p>  f. 尽量使用数字型字段，若只含数值信息的字段尽量不要设计为字符型，这会降低查询和连接的性能，并会增加存储开销。这是因为引擎在处理查询和连接时会逐个比较字符串中每一个字符，而对于数字型而言只需要比较一次就够了。</p></li><li><p>  g. 尽可能的使用 varchar/nvarchar 代替 char/nchar ，因为首先变长字段存储空间小，可以节省存储空间，其次对于查询来说，在一个相对较小的字段内搜索效率显然要高些。</p></li><li><p>  h. 尽量使用表变量来代替临时表。如果表变量包含大量数据，请注意索引非常有限（只有主键索引）。</p></li><li><p>  i. 避免频繁创建和删除临时表，以减少系统表资源的消耗。</p></li><li><p>  j. 临时表并不是不可使用，适当地使用它们可以使某些例程更有效，例如，当需要重复引用大型表或常用表中的某个数据集时。但是，对于一次性事件，最好使用导出表。</p></li><li><p>  k. 在新建临时表时，如果一次性插入数据量很大，那么可以使用 select into 代替 create table，避免造成大量 log ，以提高速度；如果数据量不大，为了缓和系统表的资源，应先create table，然后insert。</p></li><li><p>  l. 如果使用到了临时表，在存储过程的最后务必将所有的临时表显式删除，先 truncate table ，然后 drop table ，这样可以避免系统表的较长时间锁定。</p></li></ul></li></ul><ul><li><p>2)SQL语句方面：</p><ul><li><p>  a. 应尽量避免在 where 子句中使用!=或&lt;&gt;操作符，否则将引擎放弃使用索引而进行全表扫描。</p></li><li><p>  b. 应尽量避免在 where 子句中使用 or 来连接条件，否则将导致引擎放弃使用索引而进行全表扫描，如：</p></li></ul></li></ul><p><code>select id from t where num=10 or num=20</code></p><p>可以这样查询：</p><p><code>select id from t where num=10 union all select id from t where num=20</code></p><pre><code>- c. in 和 not in 也要慎用，否则会导致全表扫描，如： </code></pre><p><code>select id from t where num in(1,2,3)</code></p><p>对于连续的数值，能用 between 就不要用 in 了：</p><p><code>select id from t where num between 1 and 3</code></p><pre><code>- d. 下面的查询也将导致全表扫描： </code></pre><p><code>select id from t where name like ‘%abc%’</code></p><pre><code>- e. 如果在 where 子句中使用参数，也会导致全表扫描。因为SQL只有在运行时才会解析局部变量，但优化程序不能将访问计划的选择推迟到运行时；它必须在编译时进行选择。</code></pre><p>然而，如果在编译时建立访问计划，变量的值还是未知的，因而无法作为索引选择的输入项。如下面语句将进行全表扫描：</p><p><code>select id from t where num=@num</code></p><p>可以改为强制查询使用索引：</p><p><code>select id from t with(index(索引名)) where num=@num</code></p><pre><code>- f. 应尽量避免在 where 子句中对字段进行表达式操作，这将导致引擎放弃使用索引而进行全表扫描。如： </code></pre><p><code>select id from t where num/2=100</code></p><p>应改为:</p><p><code>select id from t where num=100*2</code></p><pre><code>- g. 应尽量避免在where子句中对字段进行函数操作，这将导致引擎放弃使用索引而进行全表扫描。如： </code></pre><p><code>select id from t where substring(name,1,3)=’abc’</code></p><p>–name以abc开头的id</p><p><code>select id from t where datediff(day,createdate,’2005-11-30′)=0</code></p><p>–‘2005-11-30’生成的id</p><p>应改为:</p><p><code>select id from t where name like ‘abc%’ select id from t where createdate&gt;=’2005-11-30′ and createdate&lt;’2005-12-1′</code></p><pre><code>- h. 不要在 where 子句中的“=”左边进行函数、算术运算或其他表达式运算，否则系统将可能无法正确使用索引。- i. 不要写一些没有意义的查询，如需要生成一个空表结构： </code></pre><p><code>select col1,col2 into #t from t where 1=0</code></p><p>这类代码不会返回任何结果集，但是会消耗系统资源的，应改成这样：</p><p>create table #t(…)</p><pre><code>- j. 很多时候用 exists 代替 in 是一个好的选择： </code></pre><p><code>select num from a where num in(select num from b)</code></p><p>用下面的语句替换：</p><p><code>select num from a where exists(select 1 from b where num=a.num)</code></p><pre><code>- k. 任何地方都不要使用 select * from t ，用具体的字段列表代替“*”，不要返回用不到的任何字段。- l. 尽量避免使用游标，因为游标的效率较差，如果游标操作的数据超过1万行，那么就应该考虑改写。- m. 尽量避免向客户端返回大数据量，若数据量过大，应该考虑相应需求是否合理。- n. 尽量避免大事务操作，提高系统并发能力。</code></pre><ul><li><p>3)java方面：重点内容</p><ul><li><p>  a.尽可能的少造对象。</p></li><li><p>  b.合理摆正系统设计的位置。大量数据操作，和少量数据操作一定是分开的。大量的数据操作，肯定不是ORM框架搞定的。，</p></li><li><p>  c.使用jDBC链接数据库操作数据</p></li><li><p>  d.控制好内存，让数据流起来，而不是全部读到内存再处理，而是边读取边处理；</p></li><li><p>  e.合理利用内存，有的数据要缓存</p></li></ul></li></ul><p>如何优化数据库，如何提高数据库的性能?</p><p>1） 硬件调整性能 </p><p>最有可能影响性能的是磁盘和网络吞吐量,解决办法扩大虚拟内存，并保证有足够可以扩充的空间；把数据库服务器上的不必要服务关闭掉；把数据库服务器和主域服务器分开；把SQL数据库服务器的吞吐量调为最大；在具有一个以上处理器的机器上运行SQL。</p><p>2）调整数据库</p><p>若对该表的查询频率比较高，则建立索引；建立索引时，想尽对该表的所有查询搜索操作， 按照where选择条件建立索引，尽量为整型键建立为有且只有一个簇集索引，数据在物理上按顺序在数据页上，缩短查找范围，为在查询经常使用的全部列建立非簇集索引，能最大地覆盖查询；但是索引不可太多，执行UPDATE DELETE INSERT语句需要用于维护这些索引的开销量急剧增加；避免在索引中有太多的索引键；避免使用大型数据类型的列为索引；保证每个索引键值有少数行。</p><p>3）使用存储过程</p><p>应用程序的实现过程中，能够采用存储过程实现的对数据库的操作尽量通过存储过程来实现，因为存储过程是存放在数据库服务器上的一次性被设计、编码、测试，并被再次使用，需要执行该任务的应用可以简单地执行存储过程，并且只返回结果集或者数值，这样不仅可以使程序模块化，同时提高响应速度，减少网络流量，并且通过输入参数接受输入，使得在应用中完成逻辑的一致性实现。</p><p>4）应用程序结构和算法</p><p>建立查询条件索引仅仅是提高速度的前提条件，响应速度的提高还依赖于对索引的使用。因为人们在使用SQL时往往会陷入一个误区，即太关注于所得的结果是否正确，特别是对数据量不是特别大的数据库操作时，是否建立索引和使用索引的好坏对程序的响应速度并不大，因此程序员在书写程序时就忽略了不同的实现方法之间可能存在的性能差异，这种性能差异在数据量特别大时或者大型的或是复杂的数据库环境中（如联机事务处理OLTP或决策支持系统DSS）中表现得尤为明显。在工作实践中发现，不良的SQL往往来自于不恰当的索引设计、不充份的连接条件和不可优化的where子句。在对它们进行适当的优化后，其运行速度有了明显地提高！</p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;h1 id=&quot;数据库优化和查询优化方案&quot;&gt;&lt;a href=&quot;#数据库优化和查询优化方案&quot; class=&quot;headerlink&quot; title=&quot;数据库优化和查询优化方案&quot;&gt;&lt;/a&gt;数据库优化和查询优化方案&lt;/h1&gt;&lt;h4 id=&quot;数据库优化方案&quot;&gt;&lt;a href=&quot;#数据库优化方</summary>
       
     
     

@@ -1,0 +1,222 @@
+<!DOCTYPE html><html lang="zh-Hans" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>消息队列问题 | Mr.Ai</title><meta name="keywords" content="消息队列"><meta name="author" content="Leslie"><meta name="copyright" content="Leslie"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><meta name="description" content="MQ 的问题任何技术都会有利有弊，MQ 给整体系统架构带来很多好处，但也会付出一定的代价。 MQ 主要引入了以下问题：  系统可用性降低：引入了 MQ 后，通信需要基于 MQ 完成，如果 MQ 宕机，则服务不可用。  系统复杂度提高 使用 MQ，需要关注一些新的问题：  如何保证消息没有 重复消费？ 如何处理 消息丢失 的问题？ 如何保证传递 消息的顺序性？ 如何处理大量 消息积压 的问题？">
+<meta property="og:type" content="article">
+<meta property="og:title" content="消息队列问题">
+<meta property="og:url" content="https://leslieaibin.github.io/2021/11/11/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/%E6%B6%88%E6%81%AF%E5%A0%86%E7%A7%AF%E5%A4%AA%E5%A4%9A%E6%80%8E%E4%B9%88%E5%8A%9E/index.html">
+<meta property="og:site_name" content="Mr.Ai">
+<meta property="og:description" content="MQ 的问题任何技术都会有利有弊，MQ 给整体系统架构带来很多好处，但也会付出一定的代价。 MQ 主要引入了以下问题：  系统可用性降低：引入了 MQ 后，通信需要基于 MQ 完成，如果 MQ 宕机，则服务不可用。  系统复杂度提高 使用 MQ，需要关注一些新的问题：  如何保证消息没有 重复消费？ 如何处理 消息丢失 的问题？ 如何保证传递 消息的顺序性？ 如何处理大量 消息积压 的问题？">
+<meta property="og:locale">
+<meta property="og:image" content="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/38.jpg?raw=true">
+<meta property="article:published_time" content="2021-11-11T01:15:42.000Z">
+<meta property="article:modified_time" content="2022-02-13T02:03:43.435Z">
+<meta property="article:author" content="Leslie">
+<meta property="article:tag" content="消息队列">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/38.jpg?raw=true"><link rel="shortcut icon" href="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/01.jpg?raw=true"><link rel="canonical" href="https://leslieaibin.github.io/2021/11/11/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/%E6%B6%88%E6%81%AF%E5%A0%86%E7%A7%AF%E5%A4%AA%E5%A4%9A%E6%80%8E%E4%B9%88%E5%8A%9E/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":false},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  ClickShowText: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  justifiedGallery: {
+    js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+    css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+};
+
+var saveToLocal = {
+  set: function setWithExpiry(key, value, ttl) {
+    const now = new Date()
+    const expiryDay = ttl * 86400000
+    const item = {
+      value: value,
+      expiry: now.getTime() + expiryDay,
+    }
+    localStorage.setItem(key, JSON.stringify(item))
+  },
+
+  get: function getWithExpiry(key) {
+    const itemStr = localStorage.getItem(key)
+
+    if (!itemStr) {
+      return undefined
+    }
+    const item = JSON.parse(itemStr)
+    const now = new Date()
+
+    if (now.getTime() > item.expiry) {
+      localStorage.removeItem(key)
+      return undefined
+    }
+    return item.value
+  }
+}</script><script id="config_change">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-02-13 10:03:43'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(function () {  window.activateDarkMode = function () {
+    document.documentElement.setAttribute('data-theme', 'dark')
+    if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+    }
+  }
+  window.activateLightMode = function () {
+    document.documentElement.setAttribute('data-theme', 'light')
+   if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+    }
+  }
+  const autoChangeMode = 'false'
+  const t = saveToLocal.get('theme')
+  if (autoChangeMode === '1') {
+    const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+    const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+    const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+    const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+    if (t === undefined) {
+      if (isLightMode) activateLightMode()
+      else if (isDarkMode) activateDarkMode()
+      else if (isNotSpecified || hasNoSupport) {
+        const now = new Date()
+        const hour = now.getHours()
+        const isNight = hour <= 6 || hour >= 18
+        isNight ? activateDarkMode() : activateLightMode()
+      }
+      window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
+        if (saveToLocal.get('theme') === undefined) {
+          e.matches ? activateDarkMode() : activateLightMode()
+        }
+      })
+    } else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else if (autoChangeMode === '2') {
+    const now = new Date()
+    const hour = now.getHours()
+    const isNight = hour <= 6 || hour >= 18
+    if (t === undefined) isNight ? activateDarkMode() : activateLightMode()
+    else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else {
+    if (t === 'dark') activateDarkMode()
+    else if (t === 'light') activateLightMode()
+  }const asideStatus = saveToLocal.get('aside-status')
+if (asideStatus !== undefined) {
+   if (asideStatus === 'hide') {
+     document.documentElement.classList.add('hide-aside')
+   } else {
+     document.documentElement.classList.remove('hide-aside')
+   }
+}})()</script><meta name="generator" content="Hexo 5.2.0"><link rel="alternate" href="/atom.xml" title="Mr.Ai" type="application/atom+xml">
+</head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="author-avatar"><img class="avatar-img" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/01.jpg?raw=true" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">91</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">Tags</div><div class="length-num">17</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">Categories</div><div class="length-num">15</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/artitalk/"><i class="fa-fw fas fa-pen"></i><span> 自言自语</span></a></div></div></div></div><div id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/38.jpg?raw=true)"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Mr.Ai</a></span><span id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/artitalk/"><i class="fa-fw fas fa-pen"></i><span> 自言自语</span></a></div></div><span class="close" id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></span></span></nav><div id="post-info"><h1 class="post-title">消息队列问题</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2021-11-11T01:15:42.000Z" title="Created 2021-11-11 09:15:42">2021-11-11</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2022-02-13T02:03:43.435Z" title="Updated 2022-02-13 10:03:43">2022-02-13</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/">消息队列</a></span></div><div class="meta-secondline"> <span class="post-meta-separator">|</span><span class="post-meta-pv-cv"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post View:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h2 id="MQ-的问题"><a href="#MQ-的问题" class="headerlink" title="MQ 的问题"></a>MQ 的问题</h2><p>任何技术都会有利有弊，MQ 给整体系统架构带来很多好处，但也会付出一定的代价。</p>
+<p>MQ 主要引入了以下问题：</p>
+<ul>
+<li><p><strong>系统可用性降低</strong>：引入了 MQ 后，通信需要基于 MQ 完成，如果 MQ 宕机，则服务不可用。</p>
+</li>
+<li><p>系统复杂度提高</p>
+<p>使用 MQ，需要关注一些新的问题：</p>
+<ul>
+<li>如何保证消息没有 <strong>重复消费</strong>？</li>
+<li>如何处理 <strong>消息丢失</strong> 的问题？</li>
+<li>如何保证传递 <strong>消息的顺序性</strong>？</li>
+<li>如何处理大量 <strong>消息积压</strong> 的问题？</li>
+</ul>
+</li>
+<li><p><strong>一致性问题</strong>：假设系统 A 处理完直接返回成功的结果给用户，用户认为请求成功。但如果此时，系统 BCD 中只要有任意一个写库失败，那么数据就不一致了。这种情况如何处理？</p>
+</li>
+</ul>
+<p>下面，我们针对以上问题来一一分析。</p>
+<h3 id="1-重复消费"><a href="#1-重复消费" class="headerlink" title="1. 重复消费"></a>1. 重复消费</h3><p><strong>如何保证消息不被重复消费</strong> 和 <strong>如何保证消息消费的幂等性</strong> 是同一个问题。</p>
+<p>必须先明确产生重复消费的原因，才能对症下药。</p>
+<h4 id="重复消费问题原因"><a href="#重复消费问题原因" class="headerlink" title="重复消费问题原因"></a>重复消费问题原因</h4><p>重复消费问题通常不是 MQ 来处理，而是由开发来处理的。</p>
+<p>以 Kafka 举例，Kafka 每个 Partition 都是一个有序的、不可变的记录序列，不断追加到结构化的提交日志中。Partition 中为每条记录分配一个连续的 id 号，称为偏移量（Offset），用于唯一标识 Partition 内的记录。</p>
+<p>Kafka 的客户端和 Broker 都会保存 Offset。客户端消费消息后，每隔一段时间，就把已消费的 Offset 提交给 Kafka Broker，表示已消费。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/dev/snap/20210427194009.png" alt="img"></p>
+<p>在这个过程中，如果客户端应用消费消息后，因为宕机、重启等情况而没有提交已消费的 Offset 。当系统恢复后，会继续消费消息，由于 Offset 未提交，就会出现重复消费的问题。</p>
+<h4 id="重复消费解决方案"><a href="#重复消费解决方案" class="headerlink" title="重复消费解决方案"></a>重复消费解决方案</h4><p>应对重复消费问题，需要在业务层面，通过 <strong>幂等性设计</strong> 来解决。</p>
+<p>MQ 重复消费不可怕，可怕的是没有应对机制，可以借鉴的思路有：</p>
+<ul>
+<li>如果是写关系型数据库，可以先根据主键查询，判断数据是否已存在，存在则更新，不存在则插入；</li>
+<li>如果是写 Redis，由于 set 操作天然具有幂等性，所以什么都不用做；</li>
+<li>如果是根据消息做较复杂的逻辑处理，可以在消息中加入全局唯一 ID，例如：订单 ID 等。在客户端存储中（Mysql、Redis 等）保存已消费消息的 ID。一旦接受到新消息，先判断消息中的 ID 是否在已消费消息 ID 表中存在，存在则不再处理，不存在则处理。</li>
+</ul>
+<p>在实际开发中，可以参考上面的例子，结合现实场景，设计合理的幂等性方案。</p>
+<h3 id="2-消息丢失"><a href="#2-消息丢失" class="headerlink" title="2. 消息丢失"></a>2. 消息丢失</h3><p><strong>如何处理消息丢失的问题</strong> 和 <strong>如何保证消息不被重复消费</strong> 是同一个问题。关注点有：</p>
+<ul>
+<li>MQ Server 丢失数据</li>
+<li>消费方丢失数据</li>
+<li>生产方丢失数据</li>
+</ul>
+<h4 id="消费方丢失数据"><a href="#消费方丢失数据" class="headerlink" title="消费方丢失数据"></a>消费方丢失数据</h4><p>唯一可能导致消费方丢失数据的情况是：消费方设置了<strong>自动提交 Offset</strong>。一旦设置了自动提交 Offset，接受到消息后就会自动提交 Offset 给 Kafka ，Kafka 就认为消息已被消费。如果此时，消费方尚未来得及处理消息就挂了，那么消息就丢了。</p>
+<p>解决方法就是：消费方关闭自动提交 Offset，处理完消息后<strong>手动提交 Offset</strong>。但这种情况下可能会出现重复消费的情形，需要自行保证幂等性。</p>
+<h4 id="RabbitMq弄丢了数据"><a href="#RabbitMq弄丢了数据" class="headerlink" title="RabbitMq弄丢了数据"></a><strong>RabbitMq弄丢了数据</strong></h4><p>就是 RabbitMQ 自己弄丢了数据，这个你必须<strong>开启 RabbitMQ 的持久化</strong>，就是消息写入之后会持久化到磁盘，哪怕是 RabbitMQ 自己挂了，<strong>恢复之后会自动读取之前存储的数据</strong>，一般数据不会丢。除非极其罕见的是，RabbitMQ 还没持久化，自己就挂了，<strong>可能导致少量数据丢失</strong>，但是这个概率较小。</p>
+<p>设置持久化有<strong>两个步骤</strong>：</p>
+<ul>
+<li>创建 queue 的时候将其设置为持久化<br>这样就可以保证 RabbitMQ 持久化 queue 的元数据，但是它是不会持久化 queue 里的数据的。</li>
+<li>第二个是发送消息的时候将消息的 <code>deliveryMode</code> 设置为 2<br>就是将消息设置为持久化的，此时 RabbitMQ 就会将消息持久化到磁盘上去。</li>
+</ul>
+<p>必须要同时设置这两个持久化才行，RabbitMQ 哪怕是挂了，再次重启，也会从磁盘上重启恢复 queue，恢复这个 queue 里的数据。</p>
+<p>注意，哪怕是你给 RabbitMQ 开启了持久化机制，也有一种可能，就是这个消息写到了 RabbitMQ 中，但是还没来得及持久化到磁盘上，结果不巧，此时 RabbitMQ 挂了，就会导致内存里的一点点数据丢失。</p>
+<p>所以，持久化可以跟生产者那边的 <code>confirm</code> 机制配合起来，只有消息被持久化到磁盘之后，才会通知生产者 <code>ack</code> 了，所以哪怕是在持久化到磁盘之前，RabbitMQ 挂了，数据丢了，生产者收不到 <code>ack</code>，你也是可以自己重发的。</p>
+<h4 id="生产方丢失数据"><a href="#生产方丢失数据" class="headerlink" title="生产方丢失数据"></a>生产方丢失数据</h4><p>如果按照上述的思路设置了 <code>acks=all</code>，生产方一定不会丢数据。</p>
+<p>要求是，你的 Leader 接收到消息，所有的 Follower 都同步到了消息之后，才认为本生产消息成功了。如果未满足这个条件，生产者会自动不断的重试，重试无限次。</p>
+<h3 id="3-消息的顺序性"><a href="#3-消息的顺序性" class="headerlink" title="3. 消息的顺序性"></a>3. 消息的顺序性</h3><p>要保证 MQ 的顺序性，势必要付出一定的代价，所以实施方案前，要先明确业务场景是不是有必要保证消息的顺序性。只有那些明确对消息处理顺序有要求的业务场景才值得去保证消息顺序性。</p>
+<p>方案一</p>
+<p>一个 Topic，一个 Partition，一个 Consumer，内部单线程消费，单线程吞吐量太低，一般不会用这个。</p>
+<p>方案二</p>
+<ul>
+<li>写入数据到 Partition 时指定一个全局唯一的 ID，例如订单 ID。发送方保证相同 ID 的消息有序的发送到同一个 Partition。</li>
+<li>基于上一点，消费方从 Kafka Partition 中消费消息时，此刻一定是顺序的。但如果消费方式以并发方式消费消息，顺序就可能会被打乱。为此，还有做到以下几点：<ul>
+<li>消费方维护 N 个缓存队列，具有相同 ID 的数据都写入同一个队列中；</li>
+<li>创建 N 个线程，每个线程只负责从指定的一个队列中取数据。</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/dev/snap/20210427194215.png" alt="img"></p>
+<h3 id="4-消息积压"><a href="#4-消息积压" class="headerlink" title="4. 消息积压"></a>4. 消息积压</h3><p>假设一个 MQ 消费者可以一秒处理 1000 条消息，三个 MQ 消费者可以一秒处理 3000 条消息，那么一分钟的处理量是 18 万条。如果 MQ 中积压了几百万到上千万的数据，即使消费者恢复了，也需要大概很长的时间才能恢复过来。</p>
+<p>对于产线环境来说，漫长的等待是不可接受的，所以面临这种窘境时，只能临时紧急扩容以应对了，具体操作步骤和思路如下：</p>
+<ul>
+<li>先修复 Consumer 的问题，确保其恢复消费速度，然后将现有 Consumer 都停掉。</li>
+<li>新建一个 Topic，Partition 是原来的 10 倍，临时建立好原先 10 倍的 Queue 数量。</li>
+<li>然后写一个临时的分发数据的 Consumer 程序，这个程序部署上去消费积压的数据，<strong>消费之后不做耗时的处理</strong>，直接均匀轮询写入临时建立好的 10 倍数量的 Queue。</li>
+<li>接着临时征用 10 倍的机器来部署 Consumer ，每一批 Consumer 消费一个临时 Queue 的数据。这种做法相当于是临时将 Queue 资源和 Consumer 资源扩大 10 倍，以正常的 10 倍速度来消费数据。</li>
+<li>等快速消费完积压数据之后，<strong>得恢复原先部署的架构</strong>，<strong>重新</strong>用原先的 consumer 机器来消费消息。</li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined">Leslie</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="https://leslieaibin.github.io/2021/11/11/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/%E6%B6%88%E6%81%AF%E5%A0%86%E7%A7%AF%E5%A4%AA%E5%A4%9A%E6%80%8E%E4%B9%88%E5%8A%9E/">https://leslieaibin.github.io/2021/11/11/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/%E6%B6%88%E6%81%AF%E5%A0%86%E7%A7%AF%E5%A4%AA%E5%A4%9A%E6%80%8E%E4%B9%88%E5%8A%9E/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/">消息队列</a></div><div class="post_share"><div class="social-share" data-image="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/38.jpg?raw=true" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2021/11/18/%E9%A1%B9%E7%9B%AE%E7%9B%B8%E5%85%B3/%E7%A7%92%E6%9D%80%E9%A1%B9%E7%9B%AE%E8%B6%85%E5%8D%96%E8%AE%A8%E8%AE%BA/"><img class="prev-cover" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/21.jpg?raw=true" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">Previous Post</div><div class="prev_info">超卖问题</div></div></a></div><div class="next-post pull-right"><a href="/2021/10/25/MySQL/10.%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8/"><img class="next-cover" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/30.jpg?raw=true" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">10.分库分表</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span> Related Articles</span></div><div class="relatedPosts-list"><div><a href="/2021/08/26/消息队列/如何保证消息队列的可靠性传输/" title="如何保证消息队列的可靠性传输"><img class="cover" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/47.jpg?raw=true" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-08-26</div><div class="title">如何保证消息队列的可靠性传输</div></div></a></div><div><a href="/2021/09/26/消息队列/MQ的作用总结/" title="MQ的作用"><img class="cover" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/37.jpg?raw=true" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-09-26</div><div class="title">MQ的作用</div></div></a></div></div></div></div><div class="aside_content" id="aside_content"><div class="card-widget card-info"><div class="card-content"><div class="card-info-avatar is-center"><img class="avatar-img" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/01.jpg?raw=true" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/><div class="author-info__name">Leslie</div><div class="author-info__description"></div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">91</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">Tags</div><div class="length-num">17</div></a></div><div class="card-info-data-item is-center"><a href="/categories/"><div class="headline">Categories</div><div class="length-num">15</div></a></div></div><a class="button--animated" id="card-info-btn"><i class="fas fa-heart"></i><span>瓶中的水 青天的云</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/leslieAIbin" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="https://www.instagram.com/leslieaibin/" target="_blank" title="Ins"><i class="fab fa-instagram"></i></a><a class="social-icon" href="mailto:1915612226@qq.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a><a class="social-icon" href="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/image-20201122143121657.png" target="_blank" title="weixin"><i class="fab fa-weixin"></i></a></div></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="card-content"><div class="item-headline"><i class="fas fa-stream"></i><span>Catalog</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#MQ-%E7%9A%84%E9%97%AE%E9%A2%98"><span class="toc-number">1.</span> <span class="toc-text">MQ 的问题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E9%87%8D%E5%A4%8D%E6%B6%88%E8%B4%B9"><span class="toc-number">1.1.</span> <span class="toc-text">1. 重复消费</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%87%8D%E5%A4%8D%E6%B6%88%E8%B4%B9%E9%97%AE%E9%A2%98%E5%8E%9F%E5%9B%A0"><span class="toc-number">1.1.1.</span> <span class="toc-text">重复消费问题原因</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%87%8D%E5%A4%8D%E6%B6%88%E8%B4%B9%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="toc-number">1.1.2.</span> <span class="toc-text">重复消费解决方案</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E6%B6%88%E6%81%AF%E4%B8%A2%E5%A4%B1"><span class="toc-number">1.2.</span> <span class="toc-text">2. 消息丢失</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B6%88%E8%B4%B9%E6%96%B9%E4%B8%A2%E5%A4%B1%E6%95%B0%E6%8D%AE"><span class="toc-number">1.2.1.</span> <span class="toc-text">消费方丢失数据</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#RabbitMq%E5%BC%84%E4%B8%A2%E4%BA%86%E6%95%B0%E6%8D%AE"><span class="toc-number">1.2.2.</span> <span class="toc-text">RabbitMq弄丢了数据</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%94%9F%E4%BA%A7%E6%96%B9%E4%B8%A2%E5%A4%B1%E6%95%B0%E6%8D%AE"><span class="toc-number">1.2.3.</span> <span class="toc-text">生产方丢失数据</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E6%B6%88%E6%81%AF%E7%9A%84%E9%A1%BA%E5%BA%8F%E6%80%A7"><span class="toc-number">1.3.</span> <span class="toc-text">3. 消息的顺序性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E6%B6%88%E6%81%AF%E7%A7%AF%E5%8E%8B"><span class="toc-number">1.4.</span> <span class="toc-text">4. 消息积压</span></a></li></ol></li></ol></div></div></div><div class="card-widget card-recent-post"><div class="card-content"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2021/12/14/java%E5%9F%BA%E7%A1%80/bitMap%E8%AE%B2%E8%A7%A3/" title="bitMap讲解"><img src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/20.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="bitMap讲解"/></a><div class="content"><a class="title" href="/2021/12/14/java%E5%9F%BA%E7%A1%80/bitMap%E8%AE%B2%E8%A7%A3/" title="bitMap讲解">bitMap讲解</a><time datetime="2021-12-14T01:15:42.000Z" title="Created 2021-12-14 09:15:42">2021-12-14</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/11/30/Redis/%E5%A6%82%E4%BD%95%E4%BF%9D%E8%AF%81%20Redis%20%E7%BC%93%E5%AD%98%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E5%8F%8C%E5%86%99%E4%B8%80%E8%87%B4%E6%80%A7%EF%BC%9F/" title="Redis缓存与数据库一致性问题"><img src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/27.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Redis缓存与数据库一致性问题"/></a><div class="content"><a class="title" href="/2021/11/30/Redis/%E5%A6%82%E4%BD%95%E4%BF%9D%E8%AF%81%20Redis%20%E7%BC%93%E5%AD%98%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E5%8F%8C%E5%86%99%E4%B8%80%E8%87%B4%E6%80%A7%EF%BC%9F/" title="Redis缓存与数据库一致性问题">Redis缓存与数据库一致性问题</a><time datetime="2021-11-30T01:15:42.000Z" title="Created 2021-11-30 09:15:42">2021-11-30</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/11/29/Authorization/01.%20Cookie%E3%80%81Session%E3%80%81Token%E3%80%81JWT/" title="No title"><img src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/07.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="No title"/></a><div class="content"><a class="title" href="/2021/11/29/Authorization/01.%20Cookie%E3%80%81Session%E3%80%81Token%E3%80%81JWT/" title="No title">No title</a><time datetime="2021-11-29T15:16:44.637Z" title="Created 2021-11-29 23:16:44">2021-11-29</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/11/18/%E9%A1%B9%E7%9B%AE%E7%9B%B8%E5%85%B3/%E7%A7%92%E6%9D%80%E9%A1%B9%E7%9B%AE%E8%B6%85%E5%8D%96%E8%AE%A8%E8%AE%BA/" title="超卖问题"><img src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/21.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="超卖问题"/></a><div class="content"><a class="title" href="/2021/11/18/%E9%A1%B9%E7%9B%AE%E7%9B%B8%E5%85%B3/%E7%A7%92%E6%9D%80%E9%A1%B9%E7%9B%AE%E8%B6%85%E5%8D%96%E8%AE%A8%E8%AE%BA/" title="超卖问题">超卖问题</a><time datetime="2021-11-17T16:15:42.000Z" title="Created 2021-11-18 00:15:42">2021-11-18</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/11/11/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/%E6%B6%88%E6%81%AF%E5%A0%86%E7%A7%AF%E5%A4%AA%E5%A4%9A%E6%80%8E%E4%B9%88%E5%8A%9E/" title="消息队列问题"><img src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/38.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="消息队列问题"/></a><div class="content"><a class="title" href="/2021/11/11/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/%E6%B6%88%E6%81%AF%E5%A0%86%E7%A7%AF%E5%A4%AA%E5%A4%9A%E6%80%8E%E4%B9%88%E5%8A%9E/" title="消息队列问题">消息队列问题</a><time datetime="2021-11-11T01:15:42.000Z" title="Created 2021-11-11 09:15:42">2021-11-11</time></div></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/38.jpg?raw=true)"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By Leslie</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="Back To Top"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><div class="js-pjax"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></div></body></html>

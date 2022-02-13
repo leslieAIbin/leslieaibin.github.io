@@ -1,0 +1,261 @@
+<!DOCTYPE html><html lang="zh-Hans" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>海量数据处理 | Mr.Ai</title><meta name="keywords" content="Java"><meta name="author" content="Leslie"><meta name="copyright" content="Leslie"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><meta name="description" content="海量数据处理的问题总结所谓海量数据处理，无非就是基于海量数据上的存储、处理、操作。何谓海量，就是数据量太大，所以导致要么是无法在较短时间内迅速解决，要么是数据太大，导致无法一次性装入内存。 解决办法呢？针对时间，需要采用巧妙的算法配合合适的数据结构，如Bloom filter&#x2F;Hash&#x2F;bit-map&#x2F;堆&#x2F;数据库或倒排索引&#x2F;trie树。针对空间，大而化小，分而治之（hash映射可以做到）。 至于所">
+<meta property="og:type" content="article">
+<meta property="og:title" content="海量数据处理">
+<meta property="og:url" content="https://leslieaibin.github.io/2021/12/19/%E9%A1%B9%E7%9B%AE%E7%9B%B8%E5%85%B3/%E6%B5%B7%E9%87%8F%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86/index.html">
+<meta property="og:site_name" content="Mr.Ai">
+<meta property="og:description" content="海量数据处理的问题总结所谓海量数据处理，无非就是基于海量数据上的存储、处理、操作。何谓海量，就是数据量太大，所以导致要么是无法在较短时间内迅速解决，要么是数据太大，导致无法一次性装入内存。 解决办法呢？针对时间，需要采用巧妙的算法配合合适的数据结构，如Bloom filter&#x2F;Hash&#x2F;bit-map&#x2F;堆&#x2F;数据库或倒排索引&#x2F;trie树。针对空间，大而化小，分而治之（hash映射可以做到）。 至于所">
+<meta property="og:locale">
+<meta property="og:image" content="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/22.jpg?raw=true">
+<meta property="article:published_time" content="2021-12-18T16:15:42.000Z">
+<meta property="article:modified_time" content="2022-02-13T08:08:24.988Z">
+<meta property="article:author" content="Leslie">
+<meta property="article:tag" content="Java">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/22.jpg?raw=true"><link rel="shortcut icon" href="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/01.jpg?raw=true"><link rel="canonical" href="https://leslieaibin.github.io/2021/12/19/%E9%A1%B9%E7%9B%AE%E7%9B%B8%E5%85%B3/%E6%B5%B7%E9%87%8F%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":false},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  ClickShowText: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  justifiedGallery: {
+    js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+    css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+};
+
+var saveToLocal = {
+  set: function setWithExpiry(key, value, ttl) {
+    const now = new Date()
+    const expiryDay = ttl * 86400000
+    const item = {
+      value: value,
+      expiry: now.getTime() + expiryDay,
+    }
+    localStorage.setItem(key, JSON.stringify(item))
+  },
+
+  get: function getWithExpiry(key) {
+    const itemStr = localStorage.getItem(key)
+
+    if (!itemStr) {
+      return undefined
+    }
+    const item = JSON.parse(itemStr)
+    const now = new Date()
+
+    if (now.getTime() > item.expiry) {
+      localStorage.removeItem(key)
+      return undefined
+    }
+    return item.value
+  }
+}</script><script id="config_change">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-02-13 16:08:24'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(function () {  window.activateDarkMode = function () {
+    document.documentElement.setAttribute('data-theme', 'dark')
+    if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+    }
+  }
+  window.activateLightMode = function () {
+    document.documentElement.setAttribute('data-theme', 'light')
+   if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+    }
+  }
+  const autoChangeMode = 'false'
+  const t = saveToLocal.get('theme')
+  if (autoChangeMode === '1') {
+    const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+    const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+    const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+    const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+    if (t === undefined) {
+      if (isLightMode) activateLightMode()
+      else if (isDarkMode) activateDarkMode()
+      else if (isNotSpecified || hasNoSupport) {
+        const now = new Date()
+        const hour = now.getHours()
+        const isNight = hour <= 6 || hour >= 18
+        isNight ? activateDarkMode() : activateLightMode()
+      }
+      window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
+        if (saveToLocal.get('theme') === undefined) {
+          e.matches ? activateDarkMode() : activateLightMode()
+        }
+      })
+    } else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else if (autoChangeMode === '2') {
+    const now = new Date()
+    const hour = now.getHours()
+    const isNight = hour <= 6 || hour >= 18
+    if (t === undefined) isNight ? activateDarkMode() : activateLightMode()
+    else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else {
+    if (t === 'dark') activateDarkMode()
+    else if (t === 'light') activateLightMode()
+  }const asideStatus = saveToLocal.get('aside-status')
+if (asideStatus !== undefined) {
+   if (asideStatus === 'hide') {
+     document.documentElement.classList.add('hide-aside')
+   } else {
+     document.documentElement.classList.remove('hide-aside')
+   }
+}})()</script><meta name="generator" content="Hexo 5.2.0"><link rel="alternate" href="/atom.xml" title="Mr.Ai" type="application/atom+xml">
+</head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="author-avatar"><img class="avatar-img" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/01.jpg?raw=true" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">95</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">Tags</div><div class="length-num">17</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">Categories</div><div class="length-num">15</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/artitalk/"><i class="fa-fw fas fa-pen"></i><span> 自言自语</span></a></div></div></div></div><div id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/22.jpg?raw=true)"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Mr.Ai</a></span><span id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/artitalk/"><i class="fa-fw fas fa-pen"></i><span> 自言自语</span></a></div></div><span class="close" id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></span></span></nav><div id="post-info"><h1 class="post-title">海量数据处理</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2021-12-18T16:15:42.000Z" title="Created 2021-12-19 00:15:42">2021-12-19</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2022-02-13T08:08:24.988Z" title="Updated 2022-02-13 16:08:24">2022-02-13</time></span></div><div class="meta-secondline"> <span class="post-meta-separator">|</span><span class="post-meta-pv-cv"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post View:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="海量数据处理的问题总结"><a href="#海量数据处理的问题总结" class="headerlink" title="海量数据处理的问题总结"></a>海量数据处理的问题总结</h1><p>所谓海量数据处理，无非就是基于海量数据上的存储、处理、操作。何谓海量，就是数据量太大，所以导致要么是无法在较短时间内迅速解决，要么是数据太大，导致无法一次性装入内存。</p>
+<p>解决办法呢？针对时间，需要采用巧妙的算法配合合适的数据结构，如<code>Bloom filter</code>/<code>Hash</code>/<code>bit-map</code>/<code>堆</code>/<code>数据库</code>或<code>倒排索引</code>/<code>trie</code>树。针对空间，大而化小，分而治之（<code>hash</code>映射可以做到）。</p>
+<p>至于所谓的单机及集群问题，单机就是处理装载数据的机器有限(只要考虑CPU、内存、硬盘间的数据交互)。而集群，机器有多台，适合分布式处理、并行计算(更多考虑节点和节点间的数据交互)。</p>
+<h1 id="题目1"><a href="#题目1" class="headerlink" title="题目1"></a>题目1</h1><h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>给定 a、b 两个文件，各存放 50 亿个 URL，每个 URL 各占 64B，内存限制是 4G。请找出 a、b 两个文件共同的 URL。</p>
+<h2 id="解答思路"><a href="#解答思路" class="headerlink" title="解答思路"></a>解答思路</h2><p>每个 URL 占 64B，那么 50 亿个 URL占用的空间大小约为 320GB。</p>
+<pre><code>5,000,000,000 * 64B ≈ 5GB * 64 = 320GB</code></pre>
+<p>由于内存大小只有 4G，因此，我们不可能一次性把所有 URL 加载到内存中处理。对于这种类型的题目，一般采用分治策略，即：把一个文件中的 URL 按照某个特征划分为多个小文件，使得每个小文件大小不超过 4G，这样就可以把这个小文件读到内存中进行处理了。</p>
+<p>思路如下：</p>
+<p>首先遍历文件 a，对遍历到的 URL 求<code>hash(URL) % 1000</code>，根据计算结果把遍历到的 URL 存储到 a0, a1, a2, …, a999，这样每个大小约为 300MB。使用同样的方法遍历文件 b，把文件 b 中的 URL 分别存储到文件 b0, b1, b2, …, b999 中。这样处理过后，所有可能相同的 URL 都在对应的小文件中，即 a0 对应 b0, …, a999 对应 b999，不对应的小文件不可能有相同的 URL。那么接下来，我们只需要求出这 1000 对小文件中相同的 URL 就好了。</p>
+<p>接着遍历<code>ai (i∈[0,999])</code>，把 URL 存储到一个<code>HashSet</code>集合中。然后遍历 bi 中每个 URL，看在<code>HashSet</code>集合中是否存在，若存在，说明这就是共同的 URL，可以把这个 URL 保存到一个单独的文件中。</p>
+<p>方法总结</p>
+<ul>
+<li>  分而治之，进行哈希取余；</li>
+<li>  对每个子文件进行<code>HashSet</code>统计。</li>
+</ul>
+<h1 id="题目2"><a href="#题目2" class="headerlink" title="题目2"></a>题目2</h1><h2 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h2><p>有一个 1GB 大小的文件，文件里每一行是一个词，每个词的大小不超过 16B，内存大小限制是 1MB，要求返回频数最高的 100 个词(Top 100)。</p>
+<h2 id="解答思路-1"><a href="#解答思路-1" class="headerlink" title="解答思路"></a>解答思路</h2><p>由于内存限制，我们依然无法直接将大文件的所有词一次读到内存中。因此，同样可以采用分治策略，把一个大文件分解成多个小文件，保证每个文件的大小小于 1MB，进而直接将单个小文件读取到内存中进行处理。</p>
+<p>思路如下：</p>
+<p>首先遍历大文件，对遍历到的每个词x，执行<code>hash(x) % 5000</code>，将结果为 i 的词存放到文件 ai 中。遍历结束后，我们可以得到 5000 个小文件。每个小文件的大小为 200KB 左右。如果有的小文件大小仍然超过 1MB，则采用同样的方式继续进行分解。</p>
+<p>接着统计每个小文件中出现频数最高的 100 个词。最简单的方式是使用<code>HashMap</code>来实现。其中 key 为词，value 为该词出现的频率。具体方法是：对于遍历到的词 x，如果在 map 中不存在，则执行 map.put(x, 1)；若存在，则执行<code>map.put(x, map.get(x) + 1)</code>，将该词频数加 1。</p>
+<p>上面我们统计了每个小文件单词出现的频数。接下来，我们可以通过维护一个小顶堆来找出所有词中出现频数最高的 100 个。具体方法是：依次遍历每个小文件，构建一个小顶堆，堆大小为 100。如果遍历到的词的出现次数大于堆顶词的出现次数，则用新词替换堆顶的词，然后重新调整为小顶堆，遍历结束后，小顶堆上的词就是出现频数最高的 100 个词。</p>
+<h2 id="方法总结"><a href="#方法总结" class="headerlink" title="方法总结"></a>方法总结</h2><ul>
+<li>  分而治之，进行哈希取余；</li>
+<li>  使用<code>HashMap</code>统计频数；</li>
+<li>  求解最大的<code>TopN</code>个，用小顶堆；求解最小的<code>TopN</code>个，用大顶堆。</li>
+</ul>
+<h1 id="题目3"><a href="#题目3" class="headerlink" title="题目3"></a>题目3</h1><h2 id="题目描述-1"><a href="#题目描述-1" class="headerlink" title="题目描述"></a>题目描述</h2><p>现有海量日志数据保存在一个超大文件中，该文件无法直接读入内存，要求从中提取某天访问百度次数最多的那个 IP。</p>
+<h2 id="解答思路-2"><a href="#解答思路-2" class="headerlink" title="解答思路"></a>解答思路</h2><p>这道题只关心某一天访问百度最多的 IP，因此，可以首先对文件进行一次遍历，把这一天访问百度 IP 的相关信息记录到一个单独的大文件中。接下来采用的方法与上一题一样，大致就是先对 IP 进行哈希映射，接着使用<code>HashMap</code>统计重复 IP 的次数，最后计算出重复次数最多的 IP。</p>
+<p>注：这里只需要找出出现次数最多的 IP，可以不必使用堆，直接用一个变量 max 即可。</p>
+<h2 id="方法总结-1"><a href="#方法总结-1" class="headerlink" title="方法总结"></a>方法总结</h2><ul>
+<li>  分而治之，进行哈希取余；</li>
+<li>  使用<code>HashMap</code>统计频数；</li>
+<li>  求解最大的 TopN 个，用小顶堆；求解最小的 TopN 个，用大顶堆。</li>
+</ul>
+<h1 id="题目4"><a href="#题目4" class="headerlink" title="题目4"></a>题目4</h1><h2 id="题目描述-2"><a href="#题目描述-2" class="headerlink" title="题目描述"></a>题目描述</h2><p>在 2.5 亿个整数中找出不重复的整数。注意：内存不足以容纳这 2.5 亿个整数。</p>
+<h2 id="解答思路-3"><a href="#解答思路-3" class="headerlink" title="解答思路"></a>解答思路</h2><h3 id="方法一：分治法"><a href="#方法一：分治法" class="headerlink" title="方法一：分治法"></a>方法一：分治法</h3><p>与前面的题目方法类似，先将 2.5 亿个数划分到多个小文件，用<code>HashSet</code>/<code>HashMap</code>找出每个小文件中不重复的整数，再合并每个子结果，即为最终结果。</p>
+<h3 id="方法二：位图法"><a href="#方法二：位图法" class="headerlink" title="方法二：位图法"></a>方法二：位图法</h3><p>位图，就是用一个或多个<code>bit</code>来标记某个元素对应的值，而键就是该元素。采用位作为单位来存储数据，可以大大节省存储空间。</p>
+<p>位图通过使用位数组来表示某些元素是否存在。它可以用于快速查找，判重，排序等。不是很清楚？我先举个小例子。</p>
+<p>假设我们要对 [0,7] 中的 5 个元素 (6, 4, 2, 1, 5) 进行排序，可以采用位图法。0~7 范围总共有 8 个数，只需要 8bit，即 1 个字节。首先将每个位都置 0：</p>
+<pre><code>0 0 0 0 0 0 0 0</code></pre>
+<p>然后遍历 5 个元素，首先遇到 6，那么将下标为 6 的位的 0 置为 1；接着遇到 4，把下标为 4 的位 的 0 置为 1：</p>
+<pre><code>0 0 0 0 1 0 1 0</code></pre>
+<p>依次遍历，结束后，位数组是这样的：</p>
+<pre><code>0 1 1 0 1 1 1 0</code></pre>
+<p>每个为 1 的位，它的下标都表示了一个数：</p>
+<pre><code>for i in range(8):
+    if bits[i] == 1:
+        print(i)</code></pre>
+<p>这样我们其实就已经实现了排序。</p>
+<p>对于整数相关的算法的求解，位图法是一种非常实用的算法。假设 int 整数占用 4B，即 32bit，那么我们可以表示的整数的个数为 2^32。</p>
+<p>那么对于这道题，我们用 2 个 bit 来表示各个数字的状态：</p>
+<ul>
+<li>  00 表示这个数字没出现过；</li>
+<li>  01 表示这个数字出现过一次（即为题目所找的不重复整数）；</li>
+<li>  10 表示这个数字出现了多次。</li>
+</ul>
+<p>那么这 2^32 个整数，总共所需内存为 2^32*2b=1GB。因此，当可用内存超过 1GB 时，可以采用位图法。假设内存满足位图法需求，进行下面的操作：</p>
+<p>遍历 2.5 亿个整数，查看位图中对应的位，如果是 00，则变为 01，如果是 01 则变为 10，如果是 10 则保持不变。遍历结束后，查看位图，把对应位是 01 的整数输出即可。</p>
+<h2 id="方法总结-2"><a href="#方法总结-2" class="headerlink" title="方法总结"></a>方法总结</h2><p>判断数字是否重复的问题，位图法是一种非常高效的方法。</p>
+<h1 id="题目5"><a href="#题目5" class="headerlink" title="题目5"></a>题目5</h1><h2 id="题目描述-3"><a href="#题目描述-3" class="headerlink" title="题目描述"></a>题目描述</h2><p>给定 40 亿个不重复的没排过序的<code>unsigned int</code>型整数，然后再给定一个数，如何快速判断这个数是否在这 40 亿个整数当中？</p>
+<h2 id="解答思路-4"><a href="#解答思路-4" class="headerlink" title="解答思路"></a>解答思路</h2><h3 id="方法一：分治法-1"><a href="#方法一：分治法-1" class="headerlink" title="方法一：分治法"></a>方法一：分治法</h3><p>依然可以用分治法解决，方法与前面类似，就不再次赘述了。</p>
+<h3 id="方法二：位图法-1"><a href="#方法二：位图法-1" class="headerlink" title="方法二：位图法"></a>方法二：位图法</h3><p>40 亿个不重复整数，我们用 40 亿个 bit 来表示，初始位均为 0，那么总共需要内存：4,000,000,000b ≈ 512M。</p>
+<p>我们读取这 40 亿个整数，将对应的 bit 设置为 1。接着读取要查询的数，查看相应位是否为 1，如果为 1 表示存在，如果为 0 表示不存在。</p>
+<h2 id="方法总结-3"><a href="#方法总结-3" class="headerlink" title="方法总结"></a>方法总结</h2><p>判断数字是否存在、判断数字是否重复的问题，位图法是一种非常高效的方法。</p>
+<h1 id="题目6"><a href="#题目6" class="headerlink" title="题目6"></a>题目6</h1><h2 id="题目描述-4"><a href="#题目描述-4" class="headerlink" title="题目描述"></a>题目描述</h2><p>搜索引擎会通过日志文件把用户每次检索使用的所有查询串都记录下来，每个查询床的长度不超过 255 字节。</p>
+<p>假设目前有 1000w 个记录（这些查询串的重复度比较高，虽然总数是 1000w，但如果除去重复后，则不超过 300w 个）。请统计最热门的 10 个查询串，要求使用的内存不能超过 1G。（一个查询串的重复度越高，说明查询它的用户越多，也就越热门。）</p>
+<h2 id="解答思路-5"><a href="#解答思路-5" class="headerlink" title="解答思路"></a>解答思路</h2><p>每个查询串最长为 255B，1000w 个串需要占用 约 2.55G 内存，因此，我们无法将所有字符串全部读入到内存中处理。</p>
+<h3 id="方法一：分治法-2"><a href="#方法一：分治法-2" class="headerlink" title="方法一：分治法"></a>方法一：分治法</h3><p>分治法依然是一个非常实用的方法。</p>
+<p>划分为多个小文件，保证单个小文件中的字符串能被直接加载到内存中处理，然后求出每个文件中出现次数最多的 10 个字符串；最后通过一个小顶堆统计出所有文件中出现最多的 10 个字符串。</p>
+<p>方法可行，但不是最好，下面介绍其他方法。</p>
+<h3 id="方法二：HashMap-法"><a href="#方法二：HashMap-法" class="headerlink" title="方法二：HashMap 法"></a>方法二：HashMap 法</h3><p>虽然字符串总数比较多，但去重后不超过 300w，因此，可以考虑把所有字符串及出现次数保存在一个<code>HashMap</code>中，所占用的空间为 300w*(255+4)≈777M（其中，4表示整数占用的4个字节）。由此可见，1G 的内存空间完全够用。</p>
+<p>思路如下：</p>
+<p>首先，遍历字符串，若不在 map 中，直接存入 map，value 记为 1；若在 map 中，则把对应的 value 加 1，这一步时间复杂度 O(N)。</p>
+<p>接着遍历 map，构建一个 10 个元素的小顶堆，若遍历到的字符串的出现次数大于堆顶字符串的出现次数，则进行替换，并将堆调整为小顶堆。</p>
+<p>遍历结束后，堆中 10 个字符串就是出现次数最多的字符串。这一步时间复杂度 O(Nlog10)。</p>
+<h3 id="方法三：前缀树法"><a href="#方法三：前缀树法" class="headerlink" title="方法三：前缀树法"></a>方法三：前缀树法</h3><p>方法二使用了<code>HashMap</code>来统计次数，当这些字符串有大量相同前缀时，可以考虑使用前缀树来统计字符串出现的次数，树的结点保存字符串出现次数，0 表示没有出现。</p>
+<p>思路如下：</p>
+<p>在遍历字符串时，在前缀树中查找，如果找到，则把结点中保存的字符串次数加 1，否则为这个字符串构建新结点，构建完成后把叶子结点中字符串的出现次数置为 1。</p>
+<p>最后依然使用小顶堆来对字符串的出现次数进行排序。</p>
+<h2 id="方法总结-4"><a href="#方法总结-4" class="headerlink" title="方法总结"></a>方法总结</h2><p>前缀树经常被用来统计字符串的出现次数。它的另外一个大的用途是字符串查找，判断是否有重复的字符串等。</p>
+<h1 id="题目7"><a href="#题目7" class="headerlink" title="题目7"></a>题目7</h1><h2 id="题目描述-5"><a href="#题目描述-5" class="headerlink" title="题目描述"></a>题目描述</h2><p>已知某个文件内包含一些电话号码，每个号码为 8 位数字，统计不同号码的个数。</p>
+<h2 id="解答思路-6"><a href="#解答思路-6" class="headerlink" title="解答思路"></a>解答思路</h2><p>这道题本质还是求解数据重复的问题，对于这类问题，一般首先考虑位图法。</p>
+<p>对于本题，8 位电话号码可以表示的号码个数为 108 个，即 1 亿个。我们每个号码用一个 bit 来表示，则总共需要 1 亿个 bit，内存占用约 100M。</p>
+<p>思路如下：</p>
+<p>申请一个位图数组，长度为 1 亿，初始化为 0。然后遍历所有电话号码，把号码对应的位图中的位置置为 1。遍历完成后，如果 bit 为 1，则表示这个电话号码在文件中存在，否则不存在。bit 值为 1 的数量即为 不同电话号码的个数。</p>
+<h2 id="方法总结-5"><a href="#方法总结-5" class="headerlink" title="方法总结"></a>方法总结</h2><p>求解数据重复问题，记得考虑位图法。</p>
+<h1 id="题目8"><a href="#题目8" class="headerlink" title="题目8"></a>题目8</h1><p>题目描述 从 5 亿个数中找出中位数。数据排序后，位置在最中间的数就是中位数。当样本数为奇数时，中位数为 第 (N+1)/2 个数；当样本数为偶数时，中位数为 第 N/2 个数与第 1+N/2 个数的均值。</p>
+<h2 id="解答思路-7"><a href="#解答思路-7" class="headerlink" title="解答思路"></a>解答思路</h2><p>如果这道题没有内存大小限制，则可以把所有数读到内存中排序后找出中位数。但是最好的排序算法的时间复杂度都为 O(NlogN)。这里使用其他方法。</p>
+<h3 id="方法一：双堆法"><a href="#方法一：双堆法" class="headerlink" title="方法一：双堆法"></a>方法一：双堆法</h3><p>维护两个堆，一个大顶堆，一个小顶堆。大顶堆中最大的数小于等于小顶堆中最小的数；保证这两个堆中的元素个数的差不超过 1。</p>
+<p>若数据总数为偶数，当这两个堆建好之后，中位数就是这两个堆顶元素的平均值。当数据总数为奇数时，根据两个堆的大小，中位数一定在数据多的堆的堆顶。</p>
+<p>以上这种方法，需要把所有数据都加载到内存中。当数据量很大时，就不能这样了，因此，这种方法适用于数据量较小的情况。5 亿个数，每个数字占用 4B，总共需要 2G 内存。如果可用内存不足 2G，就不能使用这种方法了，下面介绍另一种方法。</p>
+<h3 id="方法二：分治法"><a href="#方法二：分治法" class="headerlink" title="方法二：分治法"></a>方法二：分治法</h3><p>分治法的思想是把一个大的问题逐渐转换为规模较小的问题来求解。</p>
+<p>对于这道题，顺序读取这 5 亿个数字，对于读取到的数字 num，如果它对应的二进制中最高位为1，则把这个数字写到 f1 中，否则写入 f0 中。通过这一步，可以把这 5 亿个数划分为两部分，而且 f0 中的数都大于 f1 中的数（最高位是符号位）。</p>
+<p>划分之后，可以非常容易地知道中位数是在 f0 还是 f1 中。假设 f1 中有 1 亿个数，那么中位数一定在 f0 中，且是在 f0 中，从小到大排列的第 1.5 亿个数与它后面的一个数的平均值。</p>
+<p>提示，5 亿数的中位数是第 2.5 亿与右边相邻一个数求平均值。若 f1 有一亿个数，那么中位数就是 f0 中从第 1.5 亿个数开始的两个数求得的平均值。 对于 f0 可以用次高位的二进制继续将文件一分为二，如此划分下去，直到划分后的文件可以被加载到内存中，把数据加载到内存中以后直接排序，找出中位数。</p>
+<p>注意，当数据总数为偶数，如果划分后两个文件中的数据有相同个数，那么中位数就是数据较小的文件中的最大值与数据较大的文件中的最小值的平均值。</p>
+<h2 id="方法总结-6"><a href="#方法总结-6" class="headerlink" title="方法总结"></a>方法总结</h2><p>分治法，真香！</p>
+<h1 id="题目9"><a href="#题目9" class="headerlink" title="题目9"></a>题目9</h1><h2 id="题目描述-6"><a href="#题目描述-6" class="headerlink" title="题目描述"></a>题目描述</h2><p>有 10 个文件，每个文件大小为 1G，每个文件的每一行存放的都是用户的 query，每个文件的 query 都可能重复。要求按照 query 的频度排序。</p>
+<h2 id="解答思路-8"><a href="#解答思路-8" class="headerlink" title="解答思路"></a>解答思路</h2><p>如果 query 的重复度比较大，可以考虑一次性把所有 query 读入内存中处理；如果 query 的重复率不高，那么可用内存不足以容纳所有的 query，这时候就需要采用分治法或其他的方法来解决。</p>
+<h3 id="方法一：HashMap法"><a href="#方法一：HashMap法" class="headerlink" title="方法一：HashMap法"></a>方法一：<code>HashMap</code>法</h3><p>如果 query 重复率高，说明不同 query 总数比较小，可以考虑把所有的 query 都加载到内存中的<code>HashMap</code>中。接着就可以按照 query 出现的次数进行排序。</p>
+<h3 id="方法二：分治法-1"><a href="#方法二：分治法-1" class="headerlink" title="方法二：分治法"></a>方法二：分治法</h3><p>分治法需要根据数据量大小以及可用内存的大小来确定问题划分的规模。对于这道题，可以顺序遍历 10 个文件中的 query，通过 Hash 函数 hash(query) % 10 把这些 query 划分到 10 个小文件中。之后对每个小文件使用<code>HashMap</code>统计 query 出现次数，根据次数排序并写入到零外一个单独文件中。</p>
+<p>接着对所有文件按照 query 的次数进行排序，这里可以使用归并排序（由于无法把所有 query 都读入内存，因此需要使用外排序）。</p>
+<h2 id="方法总结-7"><a href="#方法总结-7" class="headerlink" title="方法总结"></a>方法总结</h2><ul>
+<li>  内存若够，直接读入进行排序；</li>
+<li>  内存不够，先划分为小文件，小文件排好序后，整理使用外排序进行归并。</li>
+</ul>
+<h1 id="题目10"><a href="#题目10" class="headerlink" title="题目10"></a>题目10</h1><h2 id="题目描述-7"><a href="#题目描述-7" class="headerlink" title="题目描述"></a>题目描述</h2><p>有 20 个数组，每个数组有 500 个元素，并且有序排列。如何在这 20*500 个数中找出前 500 的数？</p>
+<h2 id="解答思路-9"><a href="#解答思路-9" class="headerlink" title="解答思路"></a>解答思路</h2><p>对于 TopK 问题，最常用的方法是使用堆排序。对本题而言，假设数组降序排列，可以采用以下方法：</p>
+<p>首先建立大顶堆，堆的大小为数组的个数，即为 20，把每个数组最大的值存到堆中。</p>
+<p>接着删除堆顶元素，保存到另一个大小为 500 的数组中，然后向大顶堆插入删除的元素所在数组的下一个元素。</p>
+<p>重复上面的步骤，直到删除完第 500 个元素，也即找出了最大的前 500 个数。</p>
+<p>为了在堆中取出一个数据后，能知道它是从哪个数组中取出的，从而可以从这个数组中取下一个值，可以把数组的指针存放到堆中，对这个指针提供比较大小的方法。</p>
+<h2 id="方法总结-8"><a href="#方法总结-8" class="headerlink" title="方法总结"></a>方法总结</h2><p>求 TopK，不妨考虑一下堆排序？</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined">Leslie</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="https://leslieaibin.github.io/2021/12/19/%E9%A1%B9%E7%9B%AE%E7%9B%B8%E5%85%B3/%E6%B5%B7%E9%87%8F%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86/">https://leslieaibin.github.io/2021/12/19/%E9%A1%B9%E7%9B%AE%E7%9B%B8%E5%85%B3/%E6%B5%B7%E9%87%8F%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Java/">Java</a></div><div class="post_share"><div class="social-share" data-image="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/22.jpg?raw=true" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2021/12/18/%E9%A1%B9%E7%9B%AE%E7%9B%B8%E5%85%B3/%E5%AE%9A%E4%BD%8D%E9%97%AE%E9%A2%98/"><img class="next-cover" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/21.jpg?raw=true" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">超卖问题</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span> Related Articles</span></div><div class="relatedPosts-list"><div><a href="/2020/11/20/ElasticSearch/ElasticSearch入门到实战/" title="ElasticSearch7.6.1 入门到实战"><img class="cover" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/22.jpg?raw=true" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-11-20</div><div class="title">ElasticSearch7.6.1 入门到实战</div></div></a></div><div><a href="/2020/11/18/项目相关/100阶乘/" title="100的阶乘是0？"><img class="cover" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/21.jpg?raw=true" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-11-18</div><div class="title">100的阶乘是0？</div></div></a></div><div><a href="/2021/11/18/项目相关/秒杀项目超卖讨论/" title="超卖问题"><img class="cover" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/21.jpg?raw=true" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-11-18</div><div class="title">超卖问题</div></div></a></div><div><a href="/2021/12/18/项目相关/定位问题/" title="超卖问题"><img class="cover" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/21.jpg?raw=true" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-12-18</div><div class="title">超卖问题</div></div></a></div></div></div></div><div class="aside_content" id="aside_content"><div class="card-widget card-info"><div class="card-content"><div class="card-info-avatar is-center"><img class="avatar-img" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/01.jpg?raw=true" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/><div class="author-info__name">Leslie</div><div class="author-info__description"></div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">95</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">Tags</div><div class="length-num">17</div></a></div><div class="card-info-data-item is-center"><a href="/categories/"><div class="headline">Categories</div><div class="length-num">15</div></a></div></div><a class="button--animated" id="card-info-btn"><i class="fas fa-heart"></i><span>瓶中的水 青天的云</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/leslieAIbin" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="https://www.instagram.com/leslieaibin/" target="_blank" title="Ins"><i class="fab fa-instagram"></i></a><a class="social-icon" href="mailto:1915612226@qq.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a><a class="social-icon" href="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/image-20201122143121657.png" target="_blank" title="weixin"><i class="fab fa-weixin"></i></a></div></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="card-content"><div class="item-headline"><i class="fas fa-stream"></i><span>Catalog</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%B5%B7%E9%87%8F%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86%E7%9A%84%E9%97%AE%E9%A2%98%E6%80%BB%E7%BB%93"><span class="toc-number">1.</span> <span class="toc-text">海量数据处理的问题总结</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%A2%98%E7%9B%AE1"><span class="toc-number">2.</span> <span class="toc-text">题目1</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%97%AE%E9%A2%98%E6%8F%8F%E8%BF%B0"><span class="toc-number">2.1.</span> <span class="toc-text">问题描述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A7%A3%E7%AD%94%E6%80%9D%E8%B7%AF"><span class="toc-number">2.2.</span> <span class="toc-text">解答思路</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%A2%98%E7%9B%AE2"><span class="toc-number">3.</span> <span class="toc-text">题目2</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A2%98%E7%9B%AE%E6%8F%8F%E8%BF%B0"><span class="toc-number">3.1.</span> <span class="toc-text">题目描述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A7%A3%E7%AD%94%E6%80%9D%E8%B7%AF-1"><span class="toc-number">3.2.</span> <span class="toc-text">解答思路</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%96%B9%E6%B3%95%E6%80%BB%E7%BB%93"><span class="toc-number">3.3.</span> <span class="toc-text">方法总结</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%A2%98%E7%9B%AE3"><span class="toc-number">4.</span> <span class="toc-text">题目3</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A2%98%E7%9B%AE%E6%8F%8F%E8%BF%B0-1"><span class="toc-number">4.1.</span> <span class="toc-text">题目描述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A7%A3%E7%AD%94%E6%80%9D%E8%B7%AF-2"><span class="toc-number">4.2.</span> <span class="toc-text">解答思路</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%96%B9%E6%B3%95%E6%80%BB%E7%BB%93-1"><span class="toc-number">4.3.</span> <span class="toc-text">方法总结</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%A2%98%E7%9B%AE4"><span class="toc-number">5.</span> <span class="toc-text">题目4</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A2%98%E7%9B%AE%E6%8F%8F%E8%BF%B0-2"><span class="toc-number">5.1.</span> <span class="toc-text">题目描述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A7%A3%E7%AD%94%E6%80%9D%E8%B7%AF-3"><span class="toc-number">5.2.</span> <span class="toc-text">解答思路</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B9%E6%B3%95%E4%B8%80%EF%BC%9A%E5%88%86%E6%B2%BB%E6%B3%95"><span class="toc-number">5.2.1.</span> <span class="toc-text">方法一：分治法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B9%E6%B3%95%E4%BA%8C%EF%BC%9A%E4%BD%8D%E5%9B%BE%E6%B3%95"><span class="toc-number">5.2.2.</span> <span class="toc-text">方法二：位图法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%96%B9%E6%B3%95%E6%80%BB%E7%BB%93-2"><span class="toc-number">5.3.</span> <span class="toc-text">方法总结</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%A2%98%E7%9B%AE5"><span class="toc-number">6.</span> <span class="toc-text">题目5</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A2%98%E7%9B%AE%E6%8F%8F%E8%BF%B0-3"><span class="toc-number">6.1.</span> <span class="toc-text">题目描述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A7%A3%E7%AD%94%E6%80%9D%E8%B7%AF-4"><span class="toc-number">6.2.</span> <span class="toc-text">解答思路</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B9%E6%B3%95%E4%B8%80%EF%BC%9A%E5%88%86%E6%B2%BB%E6%B3%95-1"><span class="toc-number">6.2.1.</span> <span class="toc-text">方法一：分治法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B9%E6%B3%95%E4%BA%8C%EF%BC%9A%E4%BD%8D%E5%9B%BE%E6%B3%95-1"><span class="toc-number">6.2.2.</span> <span class="toc-text">方法二：位图法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%96%B9%E6%B3%95%E6%80%BB%E7%BB%93-3"><span class="toc-number">6.3.</span> <span class="toc-text">方法总结</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%A2%98%E7%9B%AE6"><span class="toc-number">7.</span> <span class="toc-text">题目6</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A2%98%E7%9B%AE%E6%8F%8F%E8%BF%B0-4"><span class="toc-number">7.1.</span> <span class="toc-text">题目描述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A7%A3%E7%AD%94%E6%80%9D%E8%B7%AF-5"><span class="toc-number">7.2.</span> <span class="toc-text">解答思路</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B9%E6%B3%95%E4%B8%80%EF%BC%9A%E5%88%86%E6%B2%BB%E6%B3%95-2"><span class="toc-number">7.2.1.</span> <span class="toc-text">方法一：分治法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B9%E6%B3%95%E4%BA%8C%EF%BC%9AHashMap-%E6%B3%95"><span class="toc-number">7.2.2.</span> <span class="toc-text">方法二：HashMap 法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B9%E6%B3%95%E4%B8%89%EF%BC%9A%E5%89%8D%E7%BC%80%E6%A0%91%E6%B3%95"><span class="toc-number">7.2.3.</span> <span class="toc-text">方法三：前缀树法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%96%B9%E6%B3%95%E6%80%BB%E7%BB%93-4"><span class="toc-number">7.3.</span> <span class="toc-text">方法总结</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%A2%98%E7%9B%AE7"><span class="toc-number">8.</span> <span class="toc-text">题目7</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A2%98%E7%9B%AE%E6%8F%8F%E8%BF%B0-5"><span class="toc-number">8.1.</span> <span class="toc-text">题目描述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A7%A3%E7%AD%94%E6%80%9D%E8%B7%AF-6"><span class="toc-number">8.2.</span> <span class="toc-text">解答思路</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%96%B9%E6%B3%95%E6%80%BB%E7%BB%93-5"><span class="toc-number">8.3.</span> <span class="toc-text">方法总结</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%A2%98%E7%9B%AE8"><span class="toc-number">9.</span> <span class="toc-text">题目8</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A7%A3%E7%AD%94%E6%80%9D%E8%B7%AF-7"><span class="toc-number">9.1.</span> <span class="toc-text">解答思路</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B9%E6%B3%95%E4%B8%80%EF%BC%9A%E5%8F%8C%E5%A0%86%E6%B3%95"><span class="toc-number">9.1.1.</span> <span class="toc-text">方法一：双堆法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B9%E6%B3%95%E4%BA%8C%EF%BC%9A%E5%88%86%E6%B2%BB%E6%B3%95"><span class="toc-number">9.1.2.</span> <span class="toc-text">方法二：分治法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%96%B9%E6%B3%95%E6%80%BB%E7%BB%93-6"><span class="toc-number">9.2.</span> <span class="toc-text">方法总结</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%A2%98%E7%9B%AE9"><span class="toc-number">10.</span> <span class="toc-text">题目9</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A2%98%E7%9B%AE%E6%8F%8F%E8%BF%B0-6"><span class="toc-number">10.1.</span> <span class="toc-text">题目描述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A7%A3%E7%AD%94%E6%80%9D%E8%B7%AF-8"><span class="toc-number">10.2.</span> <span class="toc-text">解答思路</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B9%E6%B3%95%E4%B8%80%EF%BC%9AHashMap%E6%B3%95"><span class="toc-number">10.2.1.</span> <span class="toc-text">方法一：HashMap法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B9%E6%B3%95%E4%BA%8C%EF%BC%9A%E5%88%86%E6%B2%BB%E6%B3%95-1"><span class="toc-number">10.2.2.</span> <span class="toc-text">方法二：分治法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%96%B9%E6%B3%95%E6%80%BB%E7%BB%93-7"><span class="toc-number">10.3.</span> <span class="toc-text">方法总结</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%A2%98%E7%9B%AE10"><span class="toc-number">11.</span> <span class="toc-text">题目10</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A2%98%E7%9B%AE%E6%8F%8F%E8%BF%B0-7"><span class="toc-number">11.1.</span> <span class="toc-text">题目描述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A7%A3%E7%AD%94%E6%80%9D%E8%B7%AF-9"><span class="toc-number">11.2.</span> <span class="toc-text">解答思路</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%96%B9%E6%B3%95%E6%80%BB%E7%BB%93-8"><span class="toc-number">11.3.</span> <span class="toc-text">方法总结</span></a></li></ol></li></ol></div></div></div><div class="card-widget card-recent-post"><div class="card-content"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2021/12/19/%E9%A1%B9%E7%9B%AE%E7%9B%B8%E5%85%B3/%E6%B5%B7%E9%87%8F%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86/" title="海量数据处理"><img src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/22.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="海量数据处理"/></a><div class="content"><a class="title" href="/2021/12/19/%E9%A1%B9%E7%9B%AE%E7%9B%B8%E5%85%B3/%E6%B5%B7%E9%87%8F%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86/" title="海量数据处理">海量数据处理</a><time datetime="2021-12-18T16:15:42.000Z" title="Created 2021-12-19 00:15:42">2021-12-19</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/12/18/%E9%A1%B9%E7%9B%AE%E7%9B%B8%E5%85%B3/%E5%AE%9A%E4%BD%8D%E9%97%AE%E9%A2%98/" title="超卖问题"><img src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/21.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="超卖问题"/></a><div class="content"><a class="title" href="/2021/12/18/%E9%A1%B9%E7%9B%AE%E7%9B%B8%E5%85%B3/%E5%AE%9A%E4%BD%8D%E9%97%AE%E9%A2%98/" title="超卖问题">超卖问题</a><time datetime="2021-12-17T16:15:42.000Z" title="Created 2021-12-18 00:15:42">2021-12-18</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/12/14/java%E5%9F%BA%E7%A1%80/bitMap%E8%AE%B2%E8%A7%A3/" title="bitMap讲解"><img src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/20.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="bitMap讲解"/></a><div class="content"><a class="title" href="/2021/12/14/java%E5%9F%BA%E7%A1%80/bitMap%E8%AE%B2%E8%A7%A3/" title="bitMap讲解">bitMap讲解</a><time datetime="2021-12-14T01:15:42.000Z" title="Created 2021-12-14 09:15:42">2021-12-14</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/11/30/Redis/%E5%A6%82%E4%BD%95%E4%BF%9D%E8%AF%81%20Redis%20%E7%BC%93%E5%AD%98%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E5%8F%8C%E5%86%99%E4%B8%80%E8%87%B4%E6%80%A7%EF%BC%9F/" title="Redis缓存与数据库一致性问题"><img src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/27.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Redis缓存与数据库一致性问题"/></a><div class="content"><a class="title" href="/2021/11/30/Redis/%E5%A6%82%E4%BD%95%E4%BF%9D%E8%AF%81%20Redis%20%E7%BC%93%E5%AD%98%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E5%8F%8C%E5%86%99%E4%B8%80%E8%87%B4%E6%80%A7%EF%BC%9F/" title="Redis缓存与数据库一致性问题">Redis缓存与数据库一致性问题</a><time datetime="2021-11-30T01:15:42.000Z" title="Created 2021-11-30 09:15:42">2021-11-30</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/11/18/%E9%A1%B9%E7%9B%AE%E7%9B%B8%E5%85%B3/%E7%A7%92%E6%9D%80%E9%A1%B9%E7%9B%AE%E8%B6%85%E5%8D%96%E8%AE%A8%E8%AE%BA/" title="超卖问题"><img src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/21.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="超卖问题"/></a><div class="content"><a class="title" href="/2021/11/18/%E9%A1%B9%E7%9B%AE%E7%9B%B8%E5%85%B3/%E7%A7%92%E6%9D%80%E9%A1%B9%E7%9B%AE%E8%B6%85%E5%8D%96%E8%AE%A8%E8%AE%BA/" title="超卖问题">超卖问题</a><time datetime="2021-11-17T16:15:42.000Z" title="Created 2021-11-18 00:15:42">2021-11-18</time></div></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/22.jpg?raw=true)"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By Leslie</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="Back To Top"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><div class="js-pjax"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></div></body></html>

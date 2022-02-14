@@ -301,6 +301,30 @@
   </entry>
   
   <entry>
+    <title>6.死锁的概念</title>
+    <link href="https://leslieaibin.github.io/2021/10/04/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/6.%E6%AD%BB%E9%94%81/"/>
+    <id>https://leslieaibin.github.io/2021/10/04/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/6.%E6%AD%BB%E9%94%81/</id>
+    <published>2021-10-03T16:15:42.000Z</published>
+    <updated>2022-02-14T00:11:18.501Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="死锁概念，死锁产生的四个必要条件，如何避免和预防死锁"><a href="#死锁概念，死锁产生的四个必要条件，如何避免和预防死锁" class="headerlink" title="死锁概念，死锁产生的四个必要条件，如何避免和预防死锁"></a>死锁概念，死锁产生的四个必要条件，如何避免和预防死锁</h1><h2 id="一、死锁概念"><a href="#一、死锁概念" class="headerlink" title="一、死锁概念"></a>一、死锁概念</h2><p>死锁是指两个或多个进程在执行的过程中，因为竞争资源而造成互相等待的现象，若无外力作用，它们都无法推进下去。-<br>1.在等待对方时占有不可抢占的资源-<br>举个例子，假设有P1，P2两个进程，都需要A和B两个资源，两个都等待另一个资源而不肯释放资源，就这样无限等待中，这就形成死锁。这只是死锁的一种情况，就是在等待对方时占有不可抢占的资源。-<br>2.竞争可消耗资源引起死锁-<br>有P1，P2，P3三个进程，P1向P2发送消息并接受P3消息，P2向P3发送消息并接受P2消息，P3向P1发送消息并接受P2消息，如果设置是先接到消息后发送消息，则所有的消息都不能发送，也造成了死锁。-<br>3.进程推进顺序不当引起死锁-<br>有进程P1，P2，都需要资源A,B，本来可以P1运行A，P1运行B，P2运行B，P2运行A，P2运行B，但顺序换了，P1运行A时P2运行B，容易引发死锁，属于第一种的资源抢占问题。</p><h2 id="二、产生死锁的四个必要条件"><a href="#二、产生死锁的四个必要条件" class="headerlink" title="二、产生死锁的四个必要条件"></a>二、产生死锁的四个必要条件</h2><p>1.互斥条件-<br>一个资源每次只能被一个进程使用，即在一段时间内某资源仅为一个进程所使用。此时如果有其他进程请求该资源，则请求进程只能等待。-<br>2.请求与保持条件-<br>进程中已经保持了至少一个资源，但又提出了新的资源请求，而该资源已经被其他进程占有，此时请求进程被阻塞，但对自己已经获得资源保持不放。-<br>3.不可剥夺条件-<br>进程未使用完的资源在未使用完毕之前，不能被其他进程强行夺走，即只能由获得该资源的进程自己来释放。-<br>4.循环等待条件-<br>若干进程间形成首尾相接循环等待资源的关系。在发生死锁时必然存在一个进程等待队列{P1，P2，…,Pn},其中P1等待P2占有的资源，P2等待P3占有的资源，…，Pn等待P1占有的资源，形成一个进程等待环路，环路中每一个进程所占有的资源同时被另一个申请。</p><p>注意：这四个条件是死锁的必然条件，只要系统发生死锁，这些条件必然成立。只要有上述条件有一条不满足，就不会发生死锁。</p><h2 id="三、死锁的预防"><a href="#三、死锁的预防" class="headerlink" title="三、死锁的预防"></a>三、死锁的预防</h2><p>我们可以通过破坏产生死锁的四个必要条件来预防死锁，由于资源互斥是固有特性无法改变的。-<br>1.破坏“请求与保持”条件-<br>方法一：静态分配，每个进程在开始执行时就申请他所需要的全部资源。-<br>方法二：动态分配，每个进程在申请所需要的资源时他本身不占用系统资源。-<br>2.破坏“不可剥夺”条件-<br>一个进程不可获得其所需要的全部资源便处于等待状态，等待期间他占用的资源将被隐式的释放重新加入到系统的资源列表中，可以被其他进程使用，而等待的进程只有重新获得自己原有的资源以及新申请的资源才可以重新启动，执行。-<br>3.破坏“循环等待”条件-<br>采用资源有序分配的基本思想。将系统中的资源顺序进行编号，将紧缺的、稀少的资源采用较大的编号，申请资源时必须按照编号的顺序执行，一个进程只有较小编号的进程才能申请较大编号的进程。</p><h2 id="四、死锁的避免"><a href="#四、死锁的避免" class="headerlink" title="四、死锁的避免"></a>四、死锁的避免</h2><p>基本思想：系统对进程发出每一个系统能够满足的资源申请进行动态检查，并根据检查结果决定是否分配资源，如果分配后系统可能发生死锁，则不予分配，否则分配。这是一种动态策略。典型的避免死锁的算法试银行家算法。</p><h2 id="五、死锁的检测及解除"><a href="#五、死锁的检测及解除" class="headerlink" title="五、死锁的检测及解除"></a>五、死锁的检测及解除</h2><p>无需采取任何措施，允许进程在运行过程中发生死锁。通过系统的检测机构及时的检测出死锁的发生，然后采取某种措施解除死锁。<br><img src="https://cubox.pro/c/filters:no_upscale()?imageUrl=https://img-blog.csdn.net/20180410144930427?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1pXRTc2MTYxNzU=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70">-<br>死锁的预防和避免都属于事先预防策略，但预防死锁的限制条件较为严格，实现起来较为简单，但往往导致资源利用率低。避免死锁的限制条件相对宽松，资源分配后需要通过算法来判断是否进入不安全状态，实现起来较为复杂。</p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;h1 id=&quot;死锁概念，死锁产生的四个必要条件，如何避免和预防死锁&quot;&gt;&lt;a href=&quot;#死锁概念，死锁产生的四个必要条件，如何避免和预防死锁&quot; class=&quot;headerlink&quot; title=&quot;死锁概念，死锁产生的四个必要条件，如何避免和预防死锁&quot;&gt;&lt;/a&gt;死锁概念，死锁产</summary>
+      
+    
+    
+    
+    <category term="操作系统" scheme="https://leslieaibin.github.io/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/"/>
+    
+    
+    <category term="操作系统" scheme="https://leslieaibin.github.io/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/"/>
+    
+  </entry>
+  
+  <entry>
     <title>4.操作系统-页面置换算法</title>
     <link href="https://leslieaibin.github.io/2021/10/03/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/4.%E9%A1%B5%E9%9D%A2%E7%BD%AE%E6%8D%A2%E7%AE%97%E6%B3%95/"/>
     <id>https://leslieaibin.github.io/2021/10/03/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/4.%E9%A1%B5%E9%9D%A2%E7%BD%AE%E6%8D%A2%E7%AE%97%E6%B3%95/</id>
@@ -462,30 +486,6 @@
       
       
     <summary type="html">&lt;h1 id=&quot;Innodb引擎的4大特性&quot;&gt;&lt;a href=&quot;#Innodb引擎的4大特性&quot; class=&quot;headerlink&quot; title=&quot;Innodb引擎的4大特性&quot;&gt;&lt;/a&gt;Innodb引擎的4大特性&lt;/h1&gt;&lt;h2 id=&quot;插入缓存（Insert-Buffer-Ch</summary>
-      
-    
-    
-    
-    <category term="MySQL" scheme="https://leslieaibin.github.io/categories/MySQL/"/>
-    
-    
-    <category term="MySQL" scheme="https://leslieaibin.github.io/tags/MySQL/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>08.ABC联合索引生效问题</title>
-    <link href="https://leslieaibin.github.io/2021/09/25/MySQL/08.%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E7%94%9F%E6%95%88%E9%97%AE%E9%A2%98/"/>
-    <id>https://leslieaibin.github.io/2021/09/25/MySQL/08.%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E7%94%9F%E6%95%88%E9%97%AE%E9%A2%98/</id>
-    <published>2021-09-25T12:17:42.000Z</published>
-    <updated>2022-02-12T07:14:42.002Z</updated>
-    
-    <content type="html"><![CDATA[<h1 id="ABC联合索引生效问题"><a href="#ABC联合索引生效问题" class="headerlink" title="ABC联合索引生效问题"></a>ABC联合索引生效问题</h1><p>对于复合索引：Mysql从左到右的使用索引中的字段，一个查询可以只使用索引中的一部份，但只能是最左侧部分。例如索引是key index （a,b,c）。 可以支持<strong>a | a,b| a,b,c</strong> 3种组合进行查找，但不支持 b,c进行查找 .当最左侧字段是常量引用时，索引就十分有效。</p><p>以下是一些<strong>例子：</strong></p><ul><li><pre><code class="sql">select * from myTest where a=3 and b=5 and c=4; <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">  **abc顺序**</span><br><span class="line">  abc三个索引都在where条件里面用到了，而且**都发挥了作用**</span><br><span class="line"></span><br><span class="line">- &#96;&#96;&#96;sql</span><br><span class="line">  select * from myTest where c&#x3D;4 and b&#x3D;6 and a&#x3D;3</span><br></pre></td></tr></table></figure>**abc顺序**where里面的条件顺序在查询之前会被mysql自动优化，**效果跟上一句一样**</code></pre></li><li><pre><code class="sql">select * from myTest where a=3 and c=7<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">  索引abc_index:(a,b,c)，只会在where条件中带有(a)、(a,b)、(a,b,c)的三种类型的查询中使用。其实这里说的有一点歧义，其实当where条件只有(a,c)时也会走，但是只走a字段索引，不会走c字段。</span><br><span class="line"></span><br><span class="line">- &#96;&#96;&#96;sql</span><br><span class="line">  select * from myTest where a&#x3D;3 and b&gt;7 and c&#x3D;3</span><br></pre></td></tr></table></figure> b范围值，断点，阻塞了c的索引a用到了，b也用到了，c没有用到，这个地方**b是范围值，也算断点，只不过自身用到了索引**</code></pre></li><li><pre><code class="sql">select * from myTest where b=3 and c=4<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">  联合索引必须按照顺序使用，并且需要全部使用**因为a索引没有使用，所以这里 bc都没有用上索引效果**</span><br><span class="line"></span><br><span class="line">- select \* from myTest where a&gt;4 and b&#x3D;7 and c&#x3D;9;-</span><br><span class="line">  **a用到了** b没有使用，c没有使用（a用了范围所以，相当于断点，之后的b，c都没有用到索引）</span><br><span class="line"></span><br><span class="line">- &#96;&#96;&#96;sql</span><br><span class="line">  select * from myTest where a&#x3D;3 order by b</span><br></pre></td></tr></table></figure>a用到了索引，b在结果排序中也用到了索引的效果，a下面任意一段的b是排好序的</code></pre></li><li><pre><code class="sql">select * from myTest where a=3 order by c<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">  a用到了索引，但是这个地方c没有发挥排序效果，因为中间断点了，使用 explain 可以看到 filesort</span><br><span class="line"></span><br><span class="line">- &#96;&#96;&#96;sql</span><br><span class="line">  select * from mytable where b&#x3D;3 order by a</span><br></pre></td></tr></table></figure>b没有用到索引，排序中a也没有发挥索引效果</code></pre></li></ul><h2 id="以下条件会导致索引失效"><a href="#以下条件会导致索引失效" class="headerlink" title="以下条件会导致索引失效:"></a>以下条件会导致索引失效:</h2><ul><li>不在索引列上做任何操作（计算、函数、（自动or手动）类型转换），会导致索引失效而转向全表扫描-</li><li>存储引擎不能使用索引范围条件右边的列（例如 只用到b ， c）</li><li>尽量使用覆盖索引（<strong>只访问索引的查询</strong>（索引列和查询列一致）），**减少select **</li><li><strong>mysql在</strong>使用不等于（！=或者&lt;&gt;）的时候**无法使用索引会导致全表扫描</li><li>is null,is not null也无法使用索引</li><li>ike以通配符开头（’%abc…’）mysql索引失效会变成全表扫描的操作。问题：解决like‘%字符串%’时索引不被使用的方法-<br><img src="https://cubox.pro/c/filters:no_upscale()?imageUrl=https://img-blog.csdnimg.cn/20190724194210412.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQyNjMwODg3,size_16,color_FFFFFF,t_70"></li><li>字符串不加单引号索引失效</li></ul><p><strong>建议：</strong></p><ol><li><p> 对于单键索引，尽量选择针对当前query过滤性更好的索引</p></li><li><p> 在选择组合索引的时候，当前Query中过滤性最好的字段在索引字段顺序中，位置越靠前越好。</p></li><li><p> . 在选择组合索引的时候，尽量选择可以能够包含当前query中的where子句中更多字段的索引</p></li><li><p> . 在选择组合索引的时候，尽量选择可以能够包含当前query中的where子句中更多字段的索引</p></li><li><p> 尽可能通过分析统计信息和调整query的写法来达到选择合适索引的目的</p></li></ol>]]></content>
-    
-    
-      
-      
-    <summary type="html">&lt;h1 id=&quot;ABC联合索引生效问题&quot;&gt;&lt;a href=&quot;#ABC联合索引生效问题&quot; class=&quot;headerlink&quot; title=&quot;ABC联合索引生效问题&quot;&gt;&lt;/a&gt;ABC联合索引生效问题&lt;/h1&gt;&lt;p&gt;对于复合索引：Mysql从左到右的使用索引中的字段，一个查询可以只使</summary>
       
     
     

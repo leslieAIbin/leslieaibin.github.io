@@ -324,6 +324,31 @@
   </entry>
   
   <entry>
+    <title>7.CPU密集型和IO密集型</title>
+    <link href="https://leslieaibin.github.io/2021/10/24/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/7.CPU%E5%AF%86%E9%9B%86%E5%9E%8B%E5%92%8CIO%E5%AF%86%E9%9B%86%E5%9E%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B%E6%B1%A0/"/>
+    <id>https://leslieaibin.github.io/2021/10/24/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/7.CPU%E5%AF%86%E9%9B%86%E5%9E%8B%E5%92%8CIO%E5%AF%86%E9%9B%86%E5%9E%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B%E6%B1%A0/</id>
+    <published>2021-10-23T16:15:42.000Z</published>
+    <updated>2022-02-18T00:53:02.793Z</updated>
+    
+    <content type="html"><![CDATA[<p>在看《Java并发编程的艺术》线程池这一块时，提到了要合理地配置线程池，要分析任务特性。任务的性质：CPU密集型、IO密集型和混合型。</p><h1 id="CPU密集型和IO密集型"><a href="#CPU密集型和IO密集型" class="headerlink" title="CPU密集型和IO密集型"></a>CPU密集型和IO密集型</h1><p>CPU密集型也是指计算密集型，大部分时间用来做计算逻辑判断等CPU动作的程序称为CPU密集型任务。该类型的任务需要进行大量的计算，主要消耗CPU资源。这种计算密集型任务虽然也可以用多任务完成，但是任务越多，花在任务切换的时间就越多，CPU执行任务的效率就越低，所以，要最高效地利用CPU，计算密集型任务同时进行的数量应当等于CPU的核心数。</p><p>IO密集型任务指任务需要执行大量的IO操作，涉及到网络、磁盘IO操作，对CPU消耗较少。</p><h1 id="和线程池配置的关系"><a href="#和线程池配置的关系" class="headerlink" title="和线程池配置的关系"></a>和线程池配置的关系</h1><p>CPU密集型任务应配置尽可能小的线程，如配置CPU数目+1个线程的线程池。由于IO密集型任务线程并不是一直在执行任务，则应配置尽可能多的线程，如2*CPU数目。</p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;在看《Java并发编程的艺术》线程池这一块时，提到了要合理地配置线程池，要分析任务特性。任务的性质：CPU密集型、IO密集型和混合型。&lt;/p&gt;
+&lt;h1 id=&quot;CPU密集型和IO密集型&quot;&gt;&lt;a href=&quot;#CPU密集型和IO密集型&quot; class=&quot;headerlink&quot; </summary>
+      
+    
+    
+    
+    <category term="操作系统" scheme="https://leslieaibin.github.io/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/"/>
+    
+    
+    <category term="操作系统" scheme="https://leslieaibin.github.io/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/"/>
+    
+  </entry>
+  
+  <entry>
     <title>代理</title>
     <link href="https://leslieaibin.github.io/2021/10/12/java%E5%9F%BA%E7%A1%80/%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86/"/>
     <id>https://leslieaibin.github.io/2021/10/12/java%E5%9F%BA%E7%A1%80/%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86/</id>
@@ -456,31 +481,6 @@
     <summary type="html">&lt;h1 id=&quot;Redis支持三种集群方案&quot;&gt;&lt;a href=&quot;#Redis支持三种集群方案&quot; class=&quot;headerlink&quot; title=&quot;Redis支持三种集群方案&quot;&gt;&lt;/a&gt;Redis支持三种集群方案&lt;/h1&gt;&lt;ul&gt;
 &lt;li&gt;主从复制模式&lt;/li&gt;
 &lt;li&gt;Sent</summary>
-      
-    
-    
-    
-    <category term="Redis" scheme="https://leslieaibin.github.io/categories/Redis/"/>
-    
-    
-    <category term="Redis" scheme="https://leslieaibin.github.io/tags/Redis/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Redis分布式限流</title>
-    <link href="https://leslieaibin.github.io/2021/09/30/Redis/Redis%E5%88%86%E5%B8%83%E5%BC%8F%E9%99%90%E6%B5%81/"/>
-    <id>https://leslieaibin.github.io/2021/09/30/Redis/Redis%E5%88%86%E5%B8%83%E5%BC%8F%E9%99%90%E6%B5%81/</id>
-    <published>2021-09-30T01:15:42.000Z</published>
-    <updated>2021-09-30T08:44:26.803Z</updated>
-    
-    <content type="html"><![CDATA[<p>由于互联网公司的流量巨大，系统上线会做一个流量峰值的评估，尤其是像各种秒杀促销活动，为了保证系统不被巨大的流量压垮，会在系统流量到达一定阈值时，拒绝掉一部分流量。</p><p>限流会导致用户在短时间内（这个时间段是毫秒级的）系统不可用，一般我们衡量系统处理能力的指标是每秒的<code>QPS</code>或者<code>TPS</code>，假设系统每秒的流量阈值是1000，理论上一秒内有第1001个请求进来时，那么这个请求就会被限流。</p><h1 id="限流方案"><a href="#限流方案" class="headerlink" title="限流方案"></a>限流方案</h1><h2 id="计数器"><a href="#计数器" class="headerlink" title="计数器"></a>计数器</h2><p>Java内部可以通过原子类计数器<code>AtomicInteger</code>、<code>Semaphore</code>信号量来做简单的限流。</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 限流的个数</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">int</span> maxCount = <span class="number">10</span>;</span><br><span class="line"><span class="comment">// 指定时间内</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">long</span> interval = <span class="number">60</span>;</span><br><span class="line"><span class="comment">// 原子类计数器</span></span><br><span class="line"><span class="keyword">private</span> AtomicInteger atomicInteger = <span class="keyword">new</span> AtomicInteger(<span class="number">0</span>);</span><br><span class="line"><span class="comment">// 起始时间</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">long</span> startTime = System.currentTimeMills();</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">limit</span><span class="params">(<span class="keyword">int</span> maxCount, <span class="keyword">int</span> interval)</span> </span>&#123;</span><br><span class="line">    atomicInteger.addAndGet(<span class="number">1</span>);</span><br><span class="line">    <span class="keyword">if</span> (atomicInteger.get() == <span class="number">1</span>) &#123;</span><br><span class="line">        startTime = System.currentTimeMillis();</span><br><span class="line">        atomicInteger.addAndGet(<span class="number">1</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 超过了间隔时间，直接重新开始计数</span></span><br><span class="line">    <span class="keyword">if</span> (System.currentTimeMillis() - startTime &gt; interval * <span class="number">1000</span>) &#123;</span><br><span class="line">        startTime = System.currentTimeMillis();</span><br><span class="line">        atomicInteger.set(<span class="number">1</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 还在间隔时间内,check有没有超过限流的个数</span></span><br><span class="line">    <span class="keyword">if</span> (atomicInteger.get() &gt; maxCount) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h2 id="漏桶算法"><a href="#漏桶算法" class="headerlink" title="漏桶算法"></a>漏桶算法</h2><p>漏桶算法思路很简单，我们把水比做请求，漏桶比做是系统处理能力极限，水先进入到漏桶里，漏桶里的水按一定速率流出，当流出速率小于流入的速率时，由于漏桶容量有限，后续进入的水直接溢出（拒绝请求），以此实现限流。</p><p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/image-20210930162736284.png" alt="image-20210930162736284"></p><h2 id="令牌桶算法"><a href="#令牌桶算法" class="headerlink" title="令牌桶算法"></a>令牌桶算法</h2><p>令牌桶算法的原理也比较简单，可以理解成医院的挂号看病，只要拿到号以后才可以进行诊病。</p><p>系统会维护 一个令牌（token）桶，以一个恒定的速度往桶里放入令牌（token），这时如果有请求进来想要被处理，则需要先从桶里获取一个令牌（token）, 当桶里没有令牌（token）可取时，则该请求将被拒绝服务。令牌桶算法通过控制桶的容量，发放令牌的速率，来达到对请求的限制。</p><p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/image-20210930163437254.png" alt="image-20210930163437254"></p><h2 id="Redis-Lua"><a href="#Redis-Lua" class="headerlink" title="Redis + Lua"></a>Redis + Lua</h2><p>个人理解，<code>Lua</code>脚本和 <code>MySQL</code>数据库的存储过程比较相似，他们执行一组命令，所有命令的执行要么全部成功或者失败，以此达到原子性。也可以把<code>Lua</code>脚本理解为，一段具有业务逻辑的代码块。</p><p>而<code>Lua</code>本身就是一种编程语言，虽然<code>redis</code> 官方没有直接提供限流相应的<code>API</code>，但却支持了 <code>Lua</code> 脚本的功能，可以使用它实现复杂的令牌桶或漏桶算法，也是分布式系统中实现限流的主要方式之一。</p><p>相比<code>Redis</code>事务，<code>Lua脚本</code>的优点：</p><ul><li>减少网络开销：使用<code>Lua</code>脚本，无需向<code>Redis</code> 发送多次请求，执行一次即可，减少网络传输</li><li>原子操作：<code>Redis</code> 将整个<code>Lua</code>脚本作为一个命令执行，原子，无需担心并发</li><li>复用：<code>Lua</code>脚本一旦执行，会永久保存 <code>Redis</code> 中,，其他客户端可复用</li></ul><p><code>Lua</code>脚本大致逻辑如下：</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">-- 获取调用脚本时传入的第一个key值（用作限流的 key）</span><br><span class="line">local key = KEYS[<span class="number">1</span>]</span><br><span class="line">-- 获取调用脚本时传入的第一个参数值（限流大小）</span><br><span class="line">local limit = tonumber(ARGV[<span class="number">1</span>])</span><br><span class="line"></span><br><span class="line">-- 获取当前流量大小</span><br><span class="line">local curentLimit = tonumber(redis.call(<span class="string">&#x27;get&#x27;</span>, key) or <span class="string">&quot;0&quot;</span>)</span><br><span class="line"></span><br><span class="line">-- 是否超出限流</span><br><span class="line"><span class="keyword">if</span> curentLimit + <span class="number">1</span> &gt; limit then</span><br><span class="line">    -- 返回(拒绝)</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">    -- 没有超出 value + <span class="number">1</span></span><br><span class="line">    redis.call(<span class="string">&quot;INCRBY&quot;</span>, key, <span class="number">1</span>)</span><br><span class="line">    -- 设置过期时间</span><br><span class="line">    redis.call(<span class="string">&quot;EXPIRE&quot;</span>, key, <span class="number">2</span>)</span><br><span class="line">    -- 返回(放行)</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span></span><br><span class="line">end</span><br></pre></td></tr></table></figure><ul><li>通过<code>KEYS[1]</code> 获取传入的key参数</li><li>通过<code>ARGV[1]</code>获取传入的<code>limit</code>参数</li><li><code>redis.call</code>方法，从缓存中<code>get</code>和<code>key</code>相关的值，如果为<code>null</code>那么就返回0</li><li>接着判断缓存中记录的数值是否会大于限制大小，如果超出表示该被限流，返回0</li><li>如果未超过，那么该key的缓存值+1，并设置过期时间为1秒钟以后，并返回缓存值+1</li></ul><p>这种方式是本文推荐的方案，具体实现会在后边做细说。</p><h2 id="网关层限流"><a href="#网关层限流" class="headerlink" title="网关层限流"></a>网关层限流</h2><p>限流常在网关这一层做，比如<code>Nginx</code>、<code>Openresty</code>、<code>kong</code>、<code>zuul</code>、<code>Spring Cloud Gateway</code>等，而像<code>spring cloud - gateway</code>网关限流底层实现原理，就是基于<code>Redis + Lua</code>，通过内置<code>Lua</code>限流脚本的方式。</p><p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/640" alt="图片"></p>]]></content>
-    
-    
-      
-      
-    <summary type="html">&lt;p&gt;由于互联网公司的流量巨大，系统上线会做一个流量峰值的评估，尤其是像各种秒杀促销活动，为了保证系统不被巨大的流量压垮，会在系统流量到达一定阈值时，拒绝掉一部分流量。&lt;/p&gt;
-&lt;p&gt;限流会导致用户在短时间内（这个时间段是毫秒级的）系统不可用，一般我们衡量系统处理能力的指标是每秒</summary>
       
     
     

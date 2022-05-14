@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://leslieaibin.github.io/2022/05/14/Netty/02.%20IO%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6/</loc>
+    
+    <lastmod>2022-05-14</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://leslieaibin.github.io/2022/03/11/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/8.select%20poll%20%E5%92%8C%20epoll%E5%8C%BA%E5%88%AB/</loc>
     
     <lastmod>2022-05-14</lastmod>
@@ -809,21 +816,14 @@
   </url>
   
   <url>
+    <loc>https://leslieaibin.github.io/tags/JVM/</loc>
+    <lastmod>2022-05-14</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://leslieaibin.github.io/tags/MySQL/</loc>
-    <lastmod>2022-05-14</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://leslieaibin.github.io/tags/RocketMQ/</loc>
-    <lastmod>2022-05-14</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://leslieaibin.github.io/tags/Redis/</loc>
     <lastmod>2022-05-14</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -837,7 +837,7 @@
   </url>
   
   <url>
-    <loc>https://leslieaibin.github.io/tags/JVM/</loc>
+    <loc>https://leslieaibin.github.io/tags/Redis/</loc>
     <lastmod>2022-05-14</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -845,6 +845,13 @@
   
   <url>
     <loc>https://leslieaibin.github.io/tags/Spring/</loc>
+    <lastmod>2022-05-14</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://leslieaibin.github.io/tags/RocketMQ/</loc>
     <lastmod>2022-05-14</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -951,14 +958,14 @@
   </url>
   
   <url>
-    <loc>https://leslieaibin.github.io/categories/Netty/</loc>
+    <loc>https://leslieaibin.github.io/categories/MySQL/</loc>
     <lastmod>2022-05-14</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://leslieaibin.github.io/categories/MySQL/</loc>
+    <loc>https://leslieaibin.github.io/categories/Netty/</loc>
     <lastmod>2022-05-14</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -972,14 +979,14 @@
   </url>
   
   <url>
-    <loc>https://leslieaibin.github.io/categories/RocketMQ/</loc>
+    <loc>https://leslieaibin.github.io/categories/Spring/</loc>
     <lastmod>2022-05-14</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://leslieaibin.github.io/categories/Spring/</loc>
+    <loc>https://leslieaibin.github.io/categories/RocketMQ/</loc>
     <lastmod>2022-05-14</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -993,13 +1000,6 @@
   </url>
   
   <url>
-    <loc>https://leslieaibin.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/</loc>
-    <lastmod>2022-05-14</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>https://leslieaibin.github.io/categories/Video-Analysis/</loc>
     <lastmod>2022-05-14</lastmod>
     <changefreq>daily</changefreq>
@@ -1007,7 +1007,7 @@
   </url>
   
   <url>
-    <loc>https://leslieaibin.github.io/categories/ssh/</loc>
+    <loc>https://leslieaibin.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/</loc>
     <lastmod>2022-05-14</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -1015,6 +1015,13 @@
   
   <url>
     <loc>https://leslieaibin.github.io/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/</loc>
+    <lastmod>2022-05-14</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://leslieaibin.github.io/categories/ssh/</loc>
     <lastmod>2022-05-14</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>

@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://leslieaibin.github.io/2022/05/17/Netty/04.%E7%BC%96%E5%86%99Netty%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F/</loc>
+    
+    <lastmod>2022-05-17</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://leslieaibin.github.io/2022/05/17/Netty/03.%20Java%20NIO%E7%9A%84%E6%A0%B8%E5%BF%83%E7%BB%84%E4%BB%B6/</loc>
     
     <lastmod>2022-05-17</lastmod>

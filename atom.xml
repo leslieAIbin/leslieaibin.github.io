@@ -96,11 +96,11 @@
     
     
     
-    <category term="Claude Code" scheme="https://leslieaibin.github.io/tags/Claude-Code/"/>
+    <category term="AI" scheme="https://leslieaibin.github.io/tags/AI/"/>
     
     <category term="Skills" scheme="https://leslieaibin.github.io/tags/Skills/"/>
     
-    <category term="AI" scheme="https://leslieaibin.github.io/tags/AI/"/>
+    <category term="Claude Code" scheme="https://leslieaibin.github.io/tags/Claude-Code/"/>
     
     <category term="gstack" scheme="https://leslieaibin.github.io/tags/gstack/"/>
     
@@ -128,11 +128,11 @@
     
     
     
-    <category term="Claude Code" scheme="https://leslieaibin.github.io/tags/Claude-Code/"/>
+    <category term="AI" scheme="https://leslieaibin.github.io/tags/AI/"/>
     
     <category term="Skills" scheme="https://leslieaibin.github.io/tags/Skills/"/>
     
-    <category term="AI" scheme="https://leslieaibin.github.io/tags/AI/"/>
+    <category term="Claude Code" scheme="https://leslieaibin.github.io/tags/Claude-Code/"/>
     
     <category term="开源" scheme="https://leslieaibin.github.io/tags/%E5%BC%80%E6%BA%90/"/>
     
@@ -160,13 +160,13 @@
     
     
     
-    <category term="Agent" scheme="https://leslieaibin.github.io/tags/Agent/"/>
-    
-    <category term="Claude Code" scheme="https://leslieaibin.github.io/tags/Claude-Code/"/>
-    
     <category term="OpenClaw" scheme="https://leslieaibin.github.io/tags/OpenClaw/"/>
     
     <category term="Skills" scheme="https://leslieaibin.github.io/tags/Skills/"/>
+    
+    <category term="Agent" scheme="https://leslieaibin.github.io/tags/Agent/"/>
+    
+    <category term="Claude Code" scheme="https://leslieaibin.github.io/tags/Claude-Code/"/>
     
     <category term="AI 社交" scheme="https://leslieaibin.github.io/tags/AI-%E7%A4%BE%E4%BA%A4/"/>
     
@@ -190,11 +190,11 @@
     
     
     
-    <category term="Agent" scheme="https://leslieaibin.github.io/tags/Agent/"/>
+    <category term="Claude" scheme="https://leslieaibin.github.io/tags/Claude/"/>
     
     <category term="Skills" scheme="https://leslieaibin.github.io/tags/Skills/"/>
     
-    <category term="Claude" scheme="https://leslieaibin.github.io/tags/Claude/"/>
+    <category term="Agent" scheme="https://leslieaibin.github.io/tags/Agent/"/>
     
     <category term="AI自动化" scheme="https://leslieaibin.github.io/tags/AI%E8%87%AA%E5%8A%A8%E5%8C%96/"/>
     
@@ -250,11 +250,11 @@
     
     
     
+    <category term="Skills" scheme="https://leslieaibin.github.io/tags/Skills/"/>
+    
     <category term="Agent" scheme="https://leslieaibin.github.io/tags/Agent/"/>
     
     <category term="Claude Code" scheme="https://leslieaibin.github.io/tags/Claude-Code/"/>
-    
-    <category term="Skills" scheme="https://leslieaibin.github.io/tags/Skills/"/>
     
     <category term="效率" scheme="https://leslieaibin.github.io/tags/%E6%95%88%E7%8E%87/"/>
     

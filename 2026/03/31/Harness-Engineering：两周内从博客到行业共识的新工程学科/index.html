@@ -1,0 +1,605 @@
+<!DOCTYPE html><html lang="zh-Hans" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Harness Engineering：两周内从博客到行业共识的新工程学科 | Mr.Ai</title><meta name="keywords" content="Agent,Harness Engineering,Claude Code,AI 工程,Context Engineering"><meta name="author" content="Leslie"><meta name="copyright" content="Leslie"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><meta name="description" content="Harness Engineering：两周内从博客到行业共识的新工程学科引言2026 年 2 月 5 日，Mitchell Hashimoto（HashiCorp 创始人、Ghostty 终端作者）发了一篇博客，标题很朴素——“My AI Adoption Journey”。文中第五步，他写了这么一段话：  “I don’t know if there is a broad industry-a">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Harness Engineering：两周内从博客到行业共识的新工程学科">
+<meta property="og:url" content="https://leslieaibin.github.io/2026/03/31/Harness-Engineering%EF%BC%9A%E4%B8%A4%E5%91%A8%E5%86%85%E4%BB%8E%E5%8D%9A%E5%AE%A2%E5%88%B0%E8%A1%8C%E4%B8%9A%E5%85%B1%E8%AF%86%E7%9A%84%E6%96%B0%E5%B7%A5%E7%A8%8B%E5%AD%A6%E7%A7%91/index.html">
+<meta property="og:site_name" content="Mr.Ai">
+<meta property="og:description" content="Harness Engineering：两周内从博客到行业共识的新工程学科引言2026 年 2 月 5 日，Mitchell Hashimoto（HashiCorp 创始人、Ghostty 终端作者）发了一篇博客，标题很朴素——“My AI Adoption Journey”。文中第五步，他写了这么一段话：  “I don’t know if there is a broad industry-a">
+<meta property="og:locale">
+<meta property="og:image" content="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/07.jpg?raw=true">
+<meta property="article:published_time" content="2026-03-30T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-04-12T08:42:47.720Z">
+<meta property="article:author" content="Leslie">
+<meta property="article:tag" content="Agent">
+<meta property="article:tag" content="Harness Engineering">
+<meta property="article:tag" content="Claude Code">
+<meta property="article:tag" content="AI 工程">
+<meta property="article:tag" content="Context Engineering">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/07.jpg?raw=true"><link rel="shortcut icon" href="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/01.jpg?raw=true"><link rel="canonical" href="https://leslieaibin.github.io/2026/03/31/Harness-Engineering%EF%BC%9A%E4%B8%A4%E5%91%A8%E5%86%85%E4%BB%8E%E5%8D%9A%E5%AE%A2%E5%88%B0%E8%A1%8C%E4%B8%9A%E5%85%B1%E8%AF%86%E7%9A%84%E6%96%B0%E5%B7%A5%E7%A8%8B%E5%AD%A6%E7%A7%91/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":false},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  ClickShowText: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  justifiedGallery: {
+    js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+    css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+};
+
+var saveToLocal = {
+  set: function setWithExpiry(key, value, ttl) {
+    const now = new Date()
+    const expiryDay = ttl * 86400000
+    const item = {
+      value: value,
+      expiry: now.getTime() + expiryDay,
+    }
+    localStorage.setItem(key, JSON.stringify(item))
+  },
+
+  get: function getWithExpiry(key) {
+    const itemStr = localStorage.getItem(key)
+
+    if (!itemStr) {
+      return undefined
+    }
+    const item = JSON.parse(itemStr)
+    const now = new Date()
+
+    if (now.getTime() > item.expiry) {
+      localStorage.removeItem(key)
+      return undefined
+    }
+    return item.value
+  }
+}</script><script id="config_change">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2026-04-12 16:42:47'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(function () {  window.activateDarkMode = function () {
+    document.documentElement.setAttribute('data-theme', 'dark')
+    if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+    }
+  }
+  window.activateLightMode = function () {
+    document.documentElement.setAttribute('data-theme', 'light')
+   if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+    }
+  }
+  const autoChangeMode = 'false'
+  const t = saveToLocal.get('theme')
+  if (autoChangeMode === '1') {
+    const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+    const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+    const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+    const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+    if (t === undefined) {
+      if (isLightMode) activateLightMode()
+      else if (isDarkMode) activateDarkMode()
+      else if (isNotSpecified || hasNoSupport) {
+        const now = new Date()
+        const hour = now.getHours()
+        const isNight = hour <= 6 || hour >= 18
+        isNight ? activateDarkMode() : activateLightMode()
+      }
+      window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
+        if (saveToLocal.get('theme') === undefined) {
+          e.matches ? activateDarkMode() : activateLightMode()
+        }
+      })
+    } else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else if (autoChangeMode === '2') {
+    const now = new Date()
+    const hour = now.getHours()
+    const isNight = hour <= 6 || hour >= 18
+    if (t === undefined) isNight ? activateDarkMode() : activateLightMode()
+    else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else {
+    if (t === 'dark') activateDarkMode()
+    else if (t === 'light') activateLightMode()
+  }const asideStatus = saveToLocal.get('aside-status')
+if (asideStatus !== undefined) {
+   if (asideStatus === 'hide') {
+     document.documentElement.classList.add('hide-aside')
+   } else {
+     document.documentElement.classList.remove('hide-aside')
+   }
+}})()</script><meta name="generator" content="Hexo 5.2.0"><link rel="alternate" href="/atom.xml" title="Mr.Ai" type="application/atom+xml">
+</head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="author-avatar"><img class="avatar-img" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/01.jpg?raw=true" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">135</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">Tags</div><div class="length-num">51</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">Categories</div><div class="length-num">17</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/artitalk/"><i class="fa-fw fas fa-pen"></i><span> 自言自语</span></a></div></div></div></div><div id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/07.jpg?raw=true)"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Mr.Ai</a></span><span id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/artitalk/"><i class="fa-fw fas fa-pen"></i><span> 自言自语</span></a></div></div><span class="close" id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></span></span></nav><div id="post-info"><h1 class="post-title">Harness Engineering：两周内从博客到行业共识的新工程学科</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2026-03-30T16:00:00.000Z" title="Created 2026-03-31 00:00:00">2026-03-31</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2026-04-12T08:42:47.720Z" title="Updated 2026-04-12 16:42:47">2026-04-12</time></span></div><div class="meta-secondline"> <span class="post-meta-separator">|</span><span class="post-meta-pv-cv"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post View:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="Harness-Engineering：两周内从博客到行业共识的新工程学科"><a href="#Harness-Engineering：两周内从博客到行业共识的新工程学科" class="headerlink" title="Harness Engineering：两周内从博客到行业共识的新工程学科"></a>Harness Engineering：两周内从博客到行业共识的新工程学科</h1><h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p>2026 年 2 月 5 日，Mitchell Hashimoto（HashiCorp 创始人、Ghostty 终端作者）发了一篇博客，标题很朴素——“My AI Adoption Journey”。文中第五步，他写了这么一段话：</p>
+<blockquote>
+<p>“I don’t know if there is a broad industry-accepted term for this yet, but I’ve grown to calling this <strong>harness engineering</strong>. It is the idea that anytime you find an agent makes a mistake, you take the time to engineer a solution such that the agent never makes that mistake again.”</p>
+</blockquote>
+<p>两周后，OpenAI、Anthropic、Martin Fowler、Ethan Mollick、LangChain 全部跟进。一个月后，清华大学发了论文，把它正式化为学术研究方向。</p>
+<p><strong>一个人在博客里随手造的词，变成了 2026 年 AI 工程领域最重要的新概念。</strong></p>
+<p>这篇文章试图把这件事的来龙去脉讲清楚。</p>
+<hr>
+<h2 id="一、前史：从-Prompt-Engineering-到-Context-Engineering"><a href="#一、前史：从-Prompt-Engineering-到-Context-Engineering" class="headerlink" title="一、前史：从 Prompt Engineering 到 Context Engineering"></a>一、前史：从 Prompt Engineering 到 Context Engineering</h2><p><img src="01-infographic-three-eras.png" alt="三个时代的范式演进：Prompt → Context → Harness Engineering"></p>
+<p>在理解 Harness Engineering 之前，先回顾一下我们是怎么走到这里的。</p>
+<table>
+<thead>
+<tr>
+<th>阶段</th>
+<th>时间</th>
+<th>核心问题</th>
+<th>做法</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Prompt Engineering</strong></td>
+<td>2022-2024</td>
+<td>怎么让模型给出更好的回答？</td>
+<td>精心设计单条 prompt：few-shot、CoT、角色扮演</td>
+</tr>
+<tr>
+<td><strong>Context Engineering</strong></td>
+<td>2025</td>
+<td>怎么给模型更好的上下文？</td>
+<td>管理整个对话窗口：RAG、system prompt 分层、工具描述优化</td>
+</tr>
+<tr>
+<td><strong>Harness Engineering</strong></td>
+<td>2026</td>
+<td>怎么让 agent 在真实环境中持续可靠地工作？</td>
+<td>设计 agent 周围的整套约束系统：测试、架构、反馈回路、状态管理</td>
+</tr>
+</tbody></table>
+<p>注意这三个阶段的抽象层次在不断上升：</p>
+<ul>
+<li>Prompt Engineering 管的是<strong>一句话</strong></li>
+<li>Context Engineering 管的是<strong>一个对话窗口</strong></li>
+<li>Harness Engineering 管的是<strong>一整套运行环境</strong></li>
+</ul>
+<p>Karpathy 在 2026 年 2 月 4 日（比 Hashimoto 早一天）发推用了另一个词——“Agentic Engineering”：</p>
+<blockquote>
+<p>“You are not writing the code directly 99% of the time, you are orchestrating agents who do and acting as oversight.”</p>
+</blockquote>
+<p>功能上说的是同一件事。但最终是 Hashimoto 的 “Harness Engineering” 这个名字流传开了，大概因为 “harness”（马具/挽具）这个隐喻更精准——你不是在写代码，你在给 AI 套上缰绳和马鞍。</p>
+<hr>
+<h2 id="二、命名时刻：Hashimoto-的六步旅程"><a href="#二、命名时刻：Hashimoto-的六步旅程" class="headerlink" title="二、命名时刻：Hashimoto 的六步旅程"></a>二、命名时刻：Hashimoto 的六步旅程</h2><p><img src="02-infographic-hashimoto-journey.png" alt="Hashimoto 的六步 AI 采纳旅程"></p>
+<p>Hashimoto 的那篇文章之所以有影响力，不是因为他造了一个词，而是因为他以一个<strong>不卖 AI 产品的独立工程师</strong>的身份，写了一份极其务实的操作手册。</p>
+<p>他自称”babysitting my kind of stupid and yet mysteriously productive robot friend”（照看我那个蠢萌又莫名高产的机器人朋友）。</p>
+<p>他的六步旅程：</p>
+<p><strong>Step 1：选 Agent，不选 Chatbot。</strong> 浏览器里的 ChatGPT 是死胡同，必须用能读文件、执行命令、循环操作的 Agent 工具。</p>
+<p><strong>Step 2：强迫自己把手写的 commit 全部用 agent 重做一遍。</strong> 原话：”I literally did the work twice.” 目的是建立对 agent 能力边界的直觉。</p>
+<p><strong>Step 3：利用闲时跑 agent。</strong> 每天留 30 分钟，在下班前启动 agent 跑深度调研、PR triage、模糊探索。第二天早上拿到”热启动”的结果。核心逻辑：</p>
+<blockquote>
+<p>“Instead of trying to do more in the time I have, try to do more in the time I don’t have.”</p>
+</blockquote>
+<p><strong>Step 4：把”板上钉钉”的任务外包给 agent。</strong> 每天先处理 triage 报告，把高确定性任务分配给后台 agent，自己做需要深度思考的工作。关键纪律：<strong>关掉 agent 的桌面通知</strong>——“it was my job as a human to be in control of when I interrupt the agent, not the other way around.”</p>
+<p><strong>Step 5：Engineer the Harness。</strong> 核心方法论。两种形式：</p>
+<ul>
+<li><strong>隐式约束</strong>：通过 AGENTS.md 规范 agent 行为。他贴了 Ghostty 项目的 AGENTS.md 链接，说”each line in that file is based on a bad agent behavior, and it almost completely resolved them all”</li>
+<li><strong>显式工具</strong>：写脚本让 agent 能截图、跑筛选过的测试等</li>
+</ul>
+<p><strong>Step 6：始终保持一个 agent 在跑。</strong> 目标是工作日的 10%-20% 时间有一个后台 agent 在干活。</p>
+<p>这六步的价值在于：它不是理论框架，而是一个<strong>实际在用 Agent 做独立项目的工程师的操作日志</strong>。</p>
+<hr>
+<h2 id="三、百万行实验：OpenAI-的极端验证"><a href="#三、百万行实验：OpenAI-的极端验证" class="headerlink" title="三、百万行实验：OpenAI 的极端验证"></a>三、百万行实验：OpenAI 的极端验证</h2><p><img src="03-infographic-openai-experiment.png" alt="OpenAI 百万行零手写代码实验数据"></p>
+<p>如果 Hashimoto 是点燃火柴的人，OpenAI 就是往上浇了一桶汽油。</p>
+<p>2026 年 2 月 11 日（Hashimoto 发文 6 天后），OpenAI 发布了一篇标题就叫 “Harness Engineering” 的文章，报告了一个极端实验：</p>
+<table>
+<thead>
+<tr>
+<th>指标</th>
+<th>数据</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>团队规模</td>
+<td>3 人起步，扩展到 7 人</td>
+</tr>
+<tr>
+<td>时间跨度</td>
+<td>5 个月（2025.8 首次 commit）</td>
+</tr>
+<tr>
+<td>代码量</td>
+<td>~100 万行</td>
+</tr>
+<tr>
+<td>PR 数量</td>
+<td>~1,500 个</td>
+</tr>
+<tr>
+<td>每人每天 PR</td>
+<td>3.5 个</td>
+</tr>
+<tr>
+<td>人工手写代码</td>
+<td><strong>零</strong></td>
+</tr>
+<tr>
+<td>效率对比</td>
+<td>约为手写的 <strong>10 倍</strong></td>
+</tr>
+<tr>
+<td>单次 Codex 运行时间</td>
+<td>有时超过 <strong>6 小时</strong></td>
+</tr>
+</tbody></table>
+<p><strong>零手写代码。</strong> 所有逻辑、测试、CI、文档、可观测性、内部工具——全部由 Codex agent 生成。</p>
+<p>他们的核心结论：</p>
+<blockquote>
+<p><strong>“Humans steer. Agents execute.”</strong></p>
+</blockquote>
+<p>工程师的工作从写代码变成了<strong>设计环境、明确意图、构建反馈回路</strong>。当 agent 遇到困难时，解法永远不是”再试试”，而是问”缺什么能力，怎么让 agent 感知到并遵守”。</p>
+<h3 id="AGENTS-md-是目录，不是百科全书"><a href="#AGENTS-md-是目录，不是百科全书" class="headerlink" title="AGENTS.md 是目录，不是百科全书"></a>AGENTS.md 是目录，不是百科全书</h3><p>OpenAI 明确拒绝了把所有信息塞进 AGENTS.md 的做法：</p>
+<blockquote>
+<p>“Give Codex a map, not a 1,000-page manual.”</p>
+</blockquote>
+<p>他们的 AGENTS.md 只有 ~100 行，像一个目录页，指向结构化的 <code>docs/</code> 目录。里面包含：设计文档（带验证状态）、架构文档、每个域的质量评分卡、带进度日志的执行计划。</p>
+<p>原则是<strong>渐进式披露</strong>——agent 从一个小而稳定的入口出发，按需深入。</p>
+<h3 id="“垃圾回收”-Agent"><a href="#“垃圾回收”-Agent" class="headerlink" title="“垃圾回收” Agent"></a>“垃圾回收” Agent</h3><p>最初团队每周五花一整天（20% 工时）清理”AI 生成的垃圾代码”——不可持续。后来他们用一组后台 Codex 任务替代：定期扫描漂移、更新质量评分、开针对性重构 PR。大部分 PR 一分钟内就能审完自动合并。</p>
+<blockquote>
+<p>“Technical debt is like a high-interest loan: better to pay it down continuously in small installments than let it compound.”</p>
+</blockquote>
+<hr>
+<h2 id="四、两周引爆：Martin-Fowler、Ethan-Mollick-的放大效应"><a href="#四、两周引爆：Martin-Fowler、Ethan-Mollick-的放大效应" class="headerlink" title="四、两周引爆：Martin Fowler、Ethan Mollick 的放大效应"></a>四、两周引爆：Martin Fowler、Ethan Mollick 的放大效应</h2><p><img src="04-infographic-two-week-spread.png" alt="两周内从个人博客到行业共识的传播时间线"></p>
+<p>Hashimoto 2 月 5 日发文，OpenAI 2 月 11 日跟进。接下来的事情像连锁反应：</p>
+<p><strong>2 月 17 日</strong>，Martin Fowler 网站上 Birgitta Böckeler 发布分析文章。她把 Harness Engineering 拆成三个组成部分：Context Engineering（上下文工程）、Architectural Constraints（架构约束）、Garbage Collection（垃圾回收）。她还指出 OpenAI 文章标题里的 “Harness Engineering” 很可能就是从 Hashimoto 那借来的。</p>
+<p>Böckeler 有一个特别有价值的观点：<strong>AI 理解代码的能力比生成代码的能力更有价值。</strong> 用 AI 来导航和理解不熟悉的代码库，往往比让它写新代码更划算。</p>
+<blockquote>
+<p>“I still care about the code.”</p>
+</blockquote>
+<p>她直接反驳了 “vibe coding” 的潮流——因为 AI 输出是非确定性的，使用 AI 生成的代码本质上是<strong>持续的风险评估</strong>。</p>
+<p><strong>2 月 18 日</strong>，Ethan Mollick（沃顿商学院教授、AI 领域最有影响力的科普作者之一）提出了 <strong>Models / Apps / Harnesses</strong> 三分框架：</p>
+<blockquote>
+<p>“The harness takes the raw power of the horse and lets it pull a cart.”</p>
+</blockquote>
+<p>他把使用 AI agent 的技能重新定义为更接近<strong>管理</strong>（写需求、委派任务、评估产出），而非 prompt engineering。</p>
+<p><strong>2 月 21 日</strong>，InfoQ 报道了 OpenAI 的文章，把概念送到了企业开发者群体面前。</p>
+<p>从一篇个人博客到行业共识——整个过程大约<strong>两周</strong>。</p>
+<hr>
+<h2 id="五、数据说话：同一个模型，不同的-Harness"><a href="#五、数据说话：同一个模型，不同的-Harness" class="headerlink" title="五、数据说话：同一个模型，不同的 Harness"></a>五、数据说话：同一个模型，不同的 Harness</h2><p><img src="05-infographic-same-model-different-harness.png" alt="同一个模型，不同 Harness 的性能对比"></p>
+<p>Harness Engineering 之所以能快速获得共识，因为有一个极其直观的论证：<strong>同一个模型，只改 harness，性能天差地别。</strong></p>
+<table>
+<thead>
+<tr>
+<th>实验</th>
+<th>模型</th>
+<th>变量</th>
+<th>结果</th>
+<th>出处</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>LangChain TerminalBench 2.0</td>
+<td>GPT-5.2-Codex（固定）</td>
+<td>只改 harness</td>
+<td>52.8% → **66.5%**（top30→top5）</td>
+<td>LangChain Blog</td>
+</tr>
+<tr>
+<td>Latent.Space 汇总</td>
+<td>同一模型</td>
+<td>不同 harness</td>
+<td>42% → <strong>78%</strong></td>
+<td>Latent.Space</td>
+</tr>
+<tr>
+<td>Can Boluk (@_can1357)</td>
+<td>Grok</td>
+<td>只改 edit format</td>
+<td>6.7% → <strong>68.3%</strong></td>
+<td>X/Twitter</td>
+</tr>
+<tr>
+<td>LangChain 对比</td>
+<td>Claude Opus 4.6 vs GPT-5.2-Codex</td>
+<td>Opus 用旧 harness</td>
+<td>Opus 59.6% &lt; GPT 66.5%（更好的 harness）</td>
+<td>LangChain Blog</td>
+</tr>
+</tbody></table>
+<p>最后一行特别说明问题：<strong>更强的模型 + 更差的 harness，打不过更弱的模型 + 更好的 harness。</strong></p>
+<p>LangChain 的总结很精确：</p>
+<blockquote>
+<p>“The goal of a harness is to mold the inherently spiky intelligence of a model for tasks we care about.”</p>
+</blockquote>
+<p>模型的能力是”尖刺状”的——某些方面很强，某些方面莫名其妙地弱。Harness 的作用就是把这些尖刺修剪到你需要的形状。</p>
+<hr>
+<h2 id="六、各家的做法"><a href="#六、各家的做法" class="headerlink" title="六、各家的做法"></a>六、各家的做法</h2><p><img src="06-infographic-three-approaches.png" alt="Anthropic、LangChain、HumanLayer 三家的 Harness 做法"></p>
+<p>理论讲完了，看看实际怎么做。</p>
+<h3 id="Anthropic：双-Agent-和三-Agent-架构"><a href="#Anthropic：双-Agent-和三-Agent-架构" class="headerlink" title="Anthropic：双 Agent 和三 Agent 架构"></a>Anthropic：双 Agent 和三 Agent 架构</h3><p>Anthropic 发了两篇工程博客，分享了两种不同的架构设计。</p>
+<p><strong>双 Agent 架构</strong>（用于长时间运行的编码任务）：</p>
+<ul>
+<li><strong>Initializer Agent</strong>：首次运行，把用户的高层描述展开成 200+ 结构化 feature（用 JSON 而非 Markdown——“模型不太会乱改 JSON”），创建 <code>init.sh</code>，写初始 <code>claude-progress.txt</code></li>
+<li><strong>Coding Agent</strong>：后续每次运行，读 <code>claude-progress.txt</code> + <code>git log</code>，选最高优先级的未完成 feature，增量实现，测试，commit，更新进度</li>
+</ul>
+<p>两个 agent 唯一的区别是 user prompt；system prompt、工具集和 harness 完全一样。</p>
+<p><strong>三 Agent 架构</strong>（灵感来自 GAN）：</p>
+<ul>
+<li><strong>Planner</strong>：把 1-4 句话的需求展开成完整产品规格</li>
+<li><strong>Generator</strong>：按 sprint 实现 feature</li>
+<li><strong>Evaluator</strong>：用 Playwright 像真实用户一样点击测试，按设计质量、原创性、工艺和功能四个维度打分。低于阈值就打回</li>
+</ul>
+<p>两个重要发现：</p>
+<p><strong>Context Anxiety（上下文焦虑）</strong>：模型在 context window 快满的时候会”急于收工”，提前草草结束任务。Sonnet 4.5 严重到需要完全重置上下文（compaction 不够，因为”doesn’t give the agent a clean slate”）。Opus 4.5 之后这个问题基本消失。</p>
+<p><strong>Self-Evaluation Bias（自评偏差）</strong>：让 agent 评价自己的产出，它会”confidently praising the work — even when, to a human observer, the quality is obviously mediocre.” 解法：把做事的 agent 和评判的 agent 分开。</p>
+<p>Anthropic 总结的核心原则：</p>
+<blockquote>
+<p>“Every component in a harness encodes an assumption about what the model can’t do on its own, and those assumptions are worth stress testing.”</p>
+</blockquote>
+<h3 id="LangChain：中间件模式"><a href="#LangChain：中间件模式" class="headerlink" title="LangChain：中间件模式"></a>LangChain：中间件模式</h3><p>LangChain 的方法更工程化——他们设计了可插拔的 <strong>middleware</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>中间件</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>PreCompletionChecklist</strong></td>
+<td>agent 退出前强制验证，对照原始任务 spec 检查一遍</td>
+</tr>
+<tr>
+<td><strong>LoopDetection</strong></td>
+<td>追踪每个文件的编辑次数，超过 N 次就注入”换个思路”的提示</td>
+</tr>
+<tr>
+<td><strong>LocalContext</strong></td>
+<td>启动时扫描工作目录和可用工具，帮 agent “入职”</td>
+</tr>
+</tbody></table>
+<p>还有一个 <strong>Reasoning Sandwich</strong> 策略：用 <code>xhigh</code> 推理模式做规划和验证，用 <code>high</code> 做具体实现——平衡质量和超时风险。</p>
+<h3 id="HumanLayer：Skill-Issue"><a href="#HumanLayer：Skill-Issue" class="headerlink" title="HumanLayer：Skill Issue"></a>HumanLayer：Skill Issue</h3><p>HumanLayer 的 slogan 最直白：</p>
+<blockquote>
+<p>“当你的 coding agent 表现不好，通常是 harness 问题，不是模型问题——是你的 skill issue。”</p>
+</blockquote>
+<p>几个实操经验：</p>
+<ol>
+<li><strong>“Success should be silent.”</strong> 他们一开始把 4000 条通过的测试结果都灌进 context，导致模型产生幻觉。后来改成只展示失败。</li>
+<li><strong>Sub-agent 是上下文防火墙，不是角色扮演。</strong> “前端工程师”/“后端工程师” 这种分法失败了。有效的做法：隔离独立任务，防止中间噪音污染父线程上下文。</li>
+<li><strong>Hook 脚本自动化</strong>：agent 停止时自动跑格式化 + 类型检查，通过就静默，失败就重新激活 agent。</li>
+<li><strong>每次 agent 犯错，就工程化 harness 让它不再犯。</strong> 这是 harness engineering 的核心循环。</li>
+</ol>
+<hr>
+<h2 id="七、学术正式化：清华和-ETH-的研究"><a href="#七、学术正式化：清华和-ETH-的研究" class="headerlink" title="七、学术正式化：清华和 ETH 的研究"></a>七、学术正式化：清华和 ETH 的研究</h2><p><img src="07-infographic-academic-findings.png" alt="清华 NLAH 与 ETH Zurich 的研究发现"></p>
+<p>到 2026 年 3 月，Harness Engineering 从工程实践进入学术视野。两篇研究特别值得关注。</p>
+<h3 id="清华-NLAH：用自然语言写-Agent-控制逻辑"><a href="#清华-NLAH：用自然语言写-Agent-控制逻辑" class="headerlink" title="清华 NLAH：用自然语言写 Agent 控制逻辑"></a>清华 NLAH：用自然语言写 Agent 控制逻辑</h3><p>清华大学的论文（2026.3.26）提出了 <strong>Natural-Language Agent Harnesses (NLAH)**——把 agent 的控制逻辑（合约、状态管理、故障处理、编排）从代码中抽出来，用</strong>可编辑的自然语言**表达。</p>
+<p>核心组件是 **IHR (Intelligent Harness Runtime)**：把 LLM 放进一个运行时循环，每一步读取 harness 文本、当前状态和运行时章程，然后在定义好的合约和预算内选择下一步操作。</p>
+<p>一个惊人的数据：把 OS-Symphony 框架从代码迁移到 NLAH 后：</p>
+<ul>
+<li>任务性能：30.4 → <strong>47.2</strong></li>
+<li>LLM 调用次数：1200 → <strong>34</strong></li>
+<li>运行时间：362 分钟 → <strong>141 分钟</strong></li>
+</ul>
+<p>但论文也发现了反直觉的结果：<strong>验证器（Verifier）和多候选搜索（Multi-candidate Search）反而有害</strong>——在 SWE-bench 上分别降低了 0.8 和 2.4 个百分点。并不是所有”看起来该有”的组件都真的有用。</p>
+<h3 id="ETH-Zurich：AGENTS-md-写多了反而降分"><a href="#ETH-Zurich：AGENTS-md-写多了反而降分" class="headerlink" title="ETH Zurich：AGENTS.md 写多了反而降分"></a>ETH Zurich：AGENTS.md 写多了反而降分</h3><p>ETH Zurich 的研究用 138 个真实 Python 任务测试了 Claude 3.5 Sonnet、Codex GPT-5.2、GPT-5.1 mini、Qwen Code 四个模型，分三组对照：无 context file、LLM 生成的 context file、人工写的 context file。</p>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>任务成功率变化</th>
+<th>推理成本变化</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>LLM 生成的 context file</td>
+<td><strong>-3%</strong></td>
+<td><strong>+20%</strong></td>
+</tr>
+<tr>
+<td>人工写的 context file</td>
+<td>+4%</td>
+<td>+19%</td>
+</tr>
+</tbody></table>
+<p>结论非常明确：</p>
+<ol>
+<li><strong>LLM 生成的 context file 直接丢掉</strong>——稳定降低表现</li>
+<li><strong>人工写的 context file 只写模型推断不出来的信息</strong>（自定义构建命令、特殊工具链）</li>
+<li>包含仓库结构/架构概览<strong>并没有</strong>减少 agent 的文件定位时间</li>
+</ol>
+<p>目前约有 60,000 个开源仓库包含 AGENTS.md 类的 context file。这项研究对这个群体来说是一记警钟。</p>
+<p><strong>两篇论文的交叉结论一致：更多显式结构不等于更好。精简的、人工策展的指导优于详尽的规格说明。</strong></p>
+<hr>
+<h2 id="八、争议：Big-Model-vs-Big-Harness"><a href="#八、争议：Big-Model-vs-Big-Harness" class="headerlink" title="八、争议：Big Model vs Big Harness"></a>八、争议：Big Model vs Big Harness</h2><p><img src="08-infographic-big-model-vs-big-harness.png" alt="Big Model vs Big Harness 之争"></p>
+<p>Harness Engineering 不是没有争议。目前业界存在两个对立阵营：</p>
+<h3 id="Big-Harness-派"><a href="#Big-Harness-派" class="headerlink" title="Big Harness 派"></a>Big Harness 派</h3><p>代表人物：Jerry Liu（LlamaIndex）、HumanLayer</p>
+<p>核心观点：模型的 harness 就是一切。agent 失败 = 配置问题，不是能力问题。</p>
+<blockquote>
+<p>Jerry Liu: “The biggest barrier to getting value from AI is your own ability to context and workflow engineer the models.”</p>
+</blockquote>
+<h3 id="Big-Model-派（Bitter-Lesson）"><a href="#Big-Model-派（Bitter-Lesson）" class="headerlink" title="Big Model 派（Bitter Lesson）"></a>Big Model 派（Bitter Lesson）</h3><p>代表人物：Noam Brown（OpenAI）</p>
+<p>核心观点：围绕非推理模型搭建的脚手架，在推理模型出来后全部过时了。当前围绕 agent 搭建的 harness，也会在下一代模型面前过时。</p>
+<p>这不是空话——LangChain 自己就承认：</p>
+<blockquote>
+<p>“Over time models get better and you’re having to strip away structure and make your harness simpler.”</p>
+</blockquote>
+<p>Manus 团队在 6 个月内重构了 5 次 harness。</p>
+<h3 id="务实中间派"><a href="#务实中间派" class="headerlink" title="务实中间派"></a>务实中间派</h3><p>Armin Ronacher（Flask 作者）的观察最精准：</p>
+<blockquote>
+<p>“AI agents are amazing and a huge productivity boost. They are also massive slop machines if you turn off your brain.”</p>
+</blockquote>
+<p>没有 harness 的加速，只是加速生产垃圾。</p>
+<p>Chad Fowler（Ruby 社区元老）提供了一个哲学视角：</p>
+<blockquote>
+<p>“严谨性不会消失——它只是迁移了。”</p>
+</blockquote>
+<p>从前严谨性体现在写代码上，现在迁移到了设计反馈回路、编写测试、明确接口契约上。如果你不在 harness 层面保持严谨，代码层面的 AI 加速只是放大了混乱。</p>
+<p>Harness.io 的 2026 年度报告提供了一个令人不安的数据点：<strong>51% 的重度 AI 工具用户报告代码质量问题反而增多了</strong>——下游的测试和安全检查跟不上 AI 加速的代码生产。</p>
+<p>所以 harness 的真正价值可能不在于”让 AI 更强”，而在于**”让 AI 的加速不变成灾难”**。</p>
+<hr>
+<h2 id="九、这对你意味着什么"><a href="#九、这对你意味着什么" class="headerlink" title="九、这对你意味着什么"></a>九、这对你意味着什么</h2><p><img src="09-infographic-minimum-viable-harness.png" alt="最小可行 Harness 的四个核心组件"></p>
+<p>如果你已经在用 Claude Code、Cursor、Codex 或任何 AI coding agent，Harness Engineering 对你的影响是即时的。</p>
+<h3 id="最小可行-Harness"><a href="#最小可行-Harness" class="headerlink" title="最小可行 Harness"></a>最小可行 Harness</h3><p>不需要一步到位。从这几件事开始：</p>
+<ol>
+<li><strong>写一份精简的 AGENTS.md / CLAUDE.md</strong>——只写 agent 推断不出来的信息。记住 ETH Zurich 的研究：写多了反而降分</li>
+<li><strong>每次 agent 犯错，都问自己</strong>：”怎么让它再也不犯？”——然后把答案写进 harness（规则、测试、脚本、hook）</li>
+<li>**”成功应该静默”**——只把失败信息展示给 agent，不要灌注 4000 条 pass 的测试结果</li>
+<li><strong>写测试</strong>——这是最古老也最有效的 harness 组件。确定性的反馈循环是一切的基础</li>
+</ol>
+<h3 id="心态转换"><a href="#心态转换" class="headerlink" title="心态转换"></a>心态转换</h3><p>Hashimoto 说得好：</p>
+<blockquote>
+<p>“Building software still requires discipline, but the discipline lives more in the scaffolding than in the code.”</p>
+</blockquote>
+<p>你的注意力应该从”怎么写代码”转向”怎么设计 agent 的运行环境”。写代码越来越像”agent 的事”，设计约束和反馈回路才是”你的事”。</p>
+<p>Ethan Mollick 的重新定义也值得记住：使用 AI agent 的技能，更接近<strong>管理</strong>——写需求、委派任务、评估产出——而非编程。</p>
+<hr>
+<h2 id="写在最后"><a href="#写在最后" class="headerlink" title="写在最后"></a>写在最后</h2><p>回顾这个概念的传播轨迹：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">2026.2.5  Hashimoto 命名 &quot;Harness Engineering&quot;</span><br><span class="line">     ↓ 6 天</span><br><span class="line">2026.2.11 OpenAI 百万行代码实验</span><br><span class="line">     ↓ 6 天</span><br><span class="line">2026.2.17 Martin Fowler 站分析文</span><br><span class="line">     ↓ 1 天</span><br><span class="line">2026.2.18 Ethan Mollick Models&#x2F;Apps&#x2F;Harnesses 框架</span><br><span class="line">     ↓ 5 周</span><br><span class="line">2026.3.26 清华 NLAH 论文，学术正式化</span><br></pre></td></tr></table></figure>
+
+<p>从一篇个人博客到学术论文，不到两个月。这种传播速度本身就说明了一个问题：<strong>这不是某个人发明了一个新概念，而是整个行业同时撞上了同一堵墙。</strong></p>
+<p>那堵墙就是：<strong>模型够强了，但光有模型不够。</strong></p>
+<p>2024 年我们还在争论”AI 能不能写代码”。2026 年这个问题已经不重要了——AI 当然能写代码，问题是<strong>写出来的代码在多大程度上是可靠的、可维护的、符合你需求的</strong>。而这取决于你给它套的那副缰绳。</p>
+<p>Nate’s Newsletter 的比喻最到位：</p>
+<blockquote>
+<p>“Agent 是引擎，Harness 是车。你的 V12 没有车，跑不了多远。”</p>
+</blockquote>
+<p>不过 LangChain 也提醒了一句让人清醒的话：</p>
+<blockquote>
+<p>“These guardrails will almost surely dissolve over time.”</p>
+</blockquote>
+<p>当前的 harness 终将溶解——随着模型越来越强，你今天搭建的约束明天可能就不需要了。Manus 6 个月重构了 5 次 harness 就是明证。</p>
+<p>但这不意味着 harness engineering 会消失。它会<strong>持续简化</strong>，但不会归零。就像软件工程从汇编到高级语言到框架到低代码，抽象层越来越高，但工程纪律永远存在。</p>
+<p>最后引用 Chad Fowler 的那句话作为结尾：</p>
+<blockquote>
+<p><strong>严谨性不会消失。它只是迁移了。</strong></p>
+</blockquote>
+<hr>
+<h2 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h2><table>
+<thead>
+<tr>
+<th>#</th>
+<th>来源</th>
+<th>标题</th>
+<th>链接</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>Mitchell Hashimoto</td>
+<td>My AI Adoption Journey (2026.2.5)</td>
+<td><a target="_blank" rel="noopener" href="https://mitchellh.com/writing/my-ai-adoption-journey">mitchellh.com</a></td>
+</tr>
+<tr>
+<td>2</td>
+<td>OpenAI / Ryan Lopopolo</td>
+<td>Harness Engineering (2026.2.11)</td>
+<td><a target="_blank" rel="noopener" href="https://openai.com/index/harness-engineering/">openai.com</a></td>
+</tr>
+<tr>
+<td>3</td>
+<td>Martin Fowler 站 / Birgitta Böckeler</td>
+<td>Exploring Generative AI: Harness Engineering</td>
+<td><a target="_blank" rel="noopener" href="https://martinfowler.com/articles/exploring-gen-ai/harness-engineering.html">martinfowler.com</a></td>
+</tr>
+<tr>
+<td>4</td>
+<td>Anthropic</td>
+<td>Effective Harnesses for Long-Running Agents</td>
+<td><a target="_blank" rel="noopener" href="https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents">anthropic.com</a></td>
+</tr>
+<tr>
+<td>5</td>
+<td>Anthropic</td>
+<td>Harness Design for Long-Running Application Development</td>
+<td><a target="_blank" rel="noopener" href="https://www.anthropic.com/engineering/harness-design-long-running-apps">anthropic.com</a></td>
+</tr>
+<tr>
+<td>6</td>
+<td>LangChain</td>
+<td>Improving Deep Agents with Harness Engineering</td>
+<td><a target="_blank" rel="noopener" href="https://blog.langchain.com/improving-deep-agents-with-harness-engineering/">blog.langchain.com</a></td>
+</tr>
+<tr>
+<td>7</td>
+<td>HumanLayer</td>
+<td>Skill Issue: Harness Engineering for Coding Agents</td>
+<td><a target="_blank" rel="noopener" href="https://www.humanlayer.dev/blog/skill-issue-harness-engineering-for-coding-agents">humanlayer.dev</a></td>
+</tr>
+<tr>
+<td>8</td>
+<td>清华大学</td>
+<td>Natural-Language Agent Harnesses (2026.3.26)</td>
+<td><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2603.25723">arxiv.org</a></td>
+</tr>
+<tr>
+<td>9</td>
+<td>ETH Zurich</td>
+<td>AGENTS.md Context File Study</td>
+<td><a target="_blank" rel="noopener" href="https://www.marktechpost.com/2026/02/25/new-eth-zurich-study-proves-your-ai-coding-agents-are-failing-because-your-agents-md-files-are-too-detailed/">marktechpost.com</a></td>
+</tr>
+<tr>
+<td>10</td>
+<td>Latent.Space</td>
+<td>Is Harness Engineering Real?</td>
+<td><a target="_blank" rel="noopener" href="https://www.latent.space/p/ainews-is-harness-engineering-real">latent.space</a></td>
+</tr>
+<tr>
+<td>11</td>
+<td>Chad Fowler</td>
+<td>Relocating Rigor</td>
+<td><a target="_blank" rel="noopener" href="https://bjorn.now/link/2026-01-28-relocating-rigor-by-chad-fowler/">bjorn.now</a></td>
+</tr>
+<tr>
+<td>12</td>
+<td>Nate’s Newsletter</td>
+<td>Meta/Manus Agentic Harness</td>
+<td><a target="_blank" rel="noopener" href="https://natesnewsletter.substack.com/p/meta-bought-manus-for-2b-to-acquire">substack</a></td>
+</tr>
+<tr>
+<td>13</td>
+<td>Andrej Karpathy</td>
+<td>Agentic Engineering (X post, 2026.2.4)</td>
+<td><a target="_blank" rel="noopener" href="https://x.com/karpathy/status/2019137879310836075">x.com</a></td>
+</tr>
+<tr>
+<td>14</td>
+<td>Ethan Mollick</td>
+<td>Models, Apps, and Harnesses</td>
+<td><a target="_blank" rel="noopener" href="https://www.oneusefulthing.org/p/a-guide-to-which-ai-to-use-in-the">oneusefulthing.org</a></td>
+</tr>
+<tr>
+<td>15</td>
+<td>Harness.io</td>
+<td>The State of AI in Software Engineering 2026</td>
+<td><a target="_blank" rel="noopener" href="https://www.harness.io/the-state-of-ai-in-software-engineering">harness.io</a></td>
+</tr>
+</tbody></table>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined">Leslie</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="https://leslieaibin.github.io/2026/03/31/Harness-Engineering%EF%BC%9A%E4%B8%A4%E5%91%A8%E5%86%85%E4%BB%8E%E5%8D%9A%E5%AE%A2%E5%88%B0%E8%A1%8C%E4%B8%9A%E5%85%B1%E8%AF%86%E7%9A%84%E6%96%B0%E5%B7%A5%E7%A8%8B%E5%AD%A6%E7%A7%91/">https://leslieaibin.github.io/2026/03/31/Harness-Engineering%EF%BC%9A%E4%B8%A4%E5%91%A8%E5%86%85%E4%BB%8E%E5%8D%9A%E5%AE%A2%E5%88%B0%E8%A1%8C%E4%B8%9A%E5%85%B1%E8%AF%86%E7%9A%84%E6%96%B0%E5%B7%A5%E7%A8%8B%E5%AD%A6%E7%A7%91/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Agent/">Agent</a><a class="post-meta__tags" href="/tags/Harness-Engineering/">Harness Engineering</a><a class="post-meta__tags" href="/tags/Claude-Code/">Claude Code</a><a class="post-meta__tags" href="/tags/AI-%E5%B7%A5%E7%A8%8B/">AI 工程</a><a class="post-meta__tags" href="/tags/Context-Engineering/">Context Engineering</a></div><div class="post_share"><div class="social-share" data-image="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/07.jpg?raw=true" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2026/04/06/%E7%94%A8-Claude-%E8%87%AA%E5%8A%A8%E5%8C%96%E4%BA%86%E4%B8%80%E6%95%B4%E5%A4%A9%E5%B7%A5%E4%BD%9C%E6%B5%81%EF%BC%8C%E6%88%91%E6%80%BB%E7%BB%93%E5%87%BA%E8%BF%99%E4%BA%9B/"><img class="prev-cover" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/07.jpg?raw=true" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">Previous Post</div><div class="prev_info">用 Claude 自动化了一整天工作流，我总结出这些</div></div></a></div><div class="next-post pull-right"><a href="/2026/03/31/%E8%BF%99-8-%E4%B8%AA-Skills%EF%BC%8C%E8%A3%85%E4%BA%86%E5%B0%B1%E5%9B%9E%E4%B8%8D%E5%8E%BB%E4%BA%86/"><img class="next-cover" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/09.jpg?raw=true" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">这 8 个 Skills，装了就回不去了</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span> Related Articles</span></div><div class="relatedPosts-list"><div><a href="/2026/04/06/当-AI-开始扮演你的同事、前任和老板/" title="当 AI 开始扮演你的同事、前任和老板"><img class="cover" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/03.jpg?raw=true" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-06</div><div class="title">当 AI 开始扮演你的同事、前任和老板</div></div></a></div><div><a href="/2026/03/28/深入-Agentic-CLI-架构：用-Claude-Code-拆解它自己的七层设计/" title="深入 Agentic CLI 架构：用 Claude Code 拆解它自己的七层设计"><img class="cover" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/03.jpg?raw=true" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-28</div><div class="title">深入 Agentic CLI 架构：用 Claude Code 拆解它自己的七层设计</div></div></a></div><div><a href="/2026/03/31/这-8-个-Skills，装了就回不去了/" title="这 8 个 Skills，装了就回不去了"><img class="cover" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/09.jpg?raw=true" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-31</div><div class="title">这 8 个 Skills，装了就回不去了</div></div></a></div><div><a href="/2026/03/26/从"推理思维"到"智能体思维"/" title="从"推理思维"到"智能体思维""><img class="cover" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/05.jpg?raw=true" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-26</div><div class="title">从"推理思维"到"智能体思维"</div></div></a></div><div><a href="/2026/04/06/用-Claude-自动化了一整天工作流，我总结出这些/" title="用 Claude 自动化了一整天工作流，我总结出这些"><img class="cover" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/07.jpg?raw=true" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-06</div><div class="title">用 Claude 自动化了一整天工作流，我总结出这些</div></div></a></div><div><a href="/2026/04/08/YC-的-CEO-兼职-60-天写了-60-万行代码，他把方法开源了/" title="YC 的 CEO 兼职 60 天写了 60 万行代码，他把方法开源了"><img class="cover" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/10.jpg?raw=true" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-08</div><div class="title">YC 的 CEO 兼职 60 天写了 60 万行代码，他把方法开源了</div></div></a></div></div></div></div><div class="aside_content" id="aside_content"><div class="card-widget card-info"><div class="card-content"><div class="card-info-avatar is-center"><img class="avatar-img" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/01.jpg?raw=true" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/><div class="author-info__name">Leslie</div><div class="author-info__description"></div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">135</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">Tags</div><div class="length-num">51</div></a></div><div class="card-info-data-item is-center"><a href="/categories/"><div class="headline">Categories</div><div class="length-num">17</div></a></div></div><a class="button--animated" id="card-info-btn"><i class="fas fa-heart"></i><span>瓶中的水 青天的云</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/leslieAIbin" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="https://www.instagram.com/leslieaibin/" target="_blank" title="Ins"><i class="fab fa-instagram"></i></a><a class="social-icon" href="mailto:1915612226@qq.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a><a class="social-icon" href="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/image-20201122143121657.png" target="_blank" title="weixin"><i class="fab fa-weixin"></i></a></div></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="card-content"><div class="item-headline"><i class="fas fa-stream"></i><span>Catalog</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Harness-Engineering%EF%BC%9A%E4%B8%A4%E5%91%A8%E5%86%85%E4%BB%8E%E5%8D%9A%E5%AE%A2%E5%88%B0%E8%A1%8C%E4%B8%9A%E5%85%B1%E8%AF%86%E7%9A%84%E6%96%B0%E5%B7%A5%E7%A8%8B%E5%AD%A6%E7%A7%91"><span class="toc-number">1.</span> <span class="toc-text">Harness Engineering：两周内从博客到行业共识的新工程学科</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BC%95%E8%A8%80"><span class="toc-number">1.1.</span> <span class="toc-text">引言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E5%89%8D%E5%8F%B2%EF%BC%9A%E4%BB%8E-Prompt-Engineering-%E5%88%B0-Context-Engineering"><span class="toc-number">1.2.</span> <span class="toc-text">一、前史：从 Prompt Engineering 到 Context Engineering</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E5%91%BD%E5%90%8D%E6%97%B6%E5%88%BB%EF%BC%9AHashimoto-%E7%9A%84%E5%85%AD%E6%AD%A5%E6%97%85%E7%A8%8B"><span class="toc-number">1.3.</span> <span class="toc-text">二、命名时刻：Hashimoto 的六步旅程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E7%99%BE%E4%B8%87%E8%A1%8C%E5%AE%9E%E9%AA%8C%EF%BC%9AOpenAI-%E7%9A%84%E6%9E%81%E7%AB%AF%E9%AA%8C%E8%AF%81"><span class="toc-number">1.4.</span> <span class="toc-text">三、百万行实验：OpenAI 的极端验证</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#AGENTS-md-%E6%98%AF%E7%9B%AE%E5%BD%95%EF%BC%8C%E4%B8%8D%E6%98%AF%E7%99%BE%E7%A7%91%E5%85%A8%E4%B9%A6"><span class="toc-number">1.4.1.</span> <span class="toc-text">AGENTS.md 是目录，不是百科全书</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E2%80%9C%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E2%80%9D-Agent"><span class="toc-number">1.4.2.</span> <span class="toc-text">“垃圾回收” Agent</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E4%B8%A4%E5%91%A8%E5%BC%95%E7%88%86%EF%BC%9AMartin-Fowler%E3%80%81Ethan-Mollick-%E7%9A%84%E6%94%BE%E5%A4%A7%E6%95%88%E5%BA%94"><span class="toc-number">1.5.</span> <span class="toc-text">四、两周引爆：Martin Fowler、Ethan Mollick 的放大效应</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94%E3%80%81%E6%95%B0%E6%8D%AE%E8%AF%B4%E8%AF%9D%EF%BC%9A%E5%90%8C%E4%B8%80%E4%B8%AA%E6%A8%A1%E5%9E%8B%EF%BC%8C%E4%B8%8D%E5%90%8C%E7%9A%84-Harness"><span class="toc-number">1.6.</span> <span class="toc-text">五、数据说话：同一个模型，不同的 Harness</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD%E3%80%81%E5%90%84%E5%AE%B6%E7%9A%84%E5%81%9A%E6%B3%95"><span class="toc-number">1.7.</span> <span class="toc-text">六、各家的做法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Anthropic%EF%BC%9A%E5%8F%8C-Agent-%E5%92%8C%E4%B8%89-Agent-%E6%9E%B6%E6%9E%84"><span class="toc-number">1.7.1.</span> <span class="toc-text">Anthropic：双 Agent 和三 Agent 架构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#LangChain%EF%BC%9A%E4%B8%AD%E9%97%B4%E4%BB%B6%E6%A8%A1%E5%BC%8F"><span class="toc-number">1.7.2.</span> <span class="toc-text">LangChain：中间件模式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#HumanLayer%EF%BC%9ASkill-Issue"><span class="toc-number">1.7.3.</span> <span class="toc-text">HumanLayer：Skill Issue</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%83%E3%80%81%E5%AD%A6%E6%9C%AF%E6%AD%A3%E5%BC%8F%E5%8C%96%EF%BC%9A%E6%B8%85%E5%8D%8E%E5%92%8C-ETH-%E7%9A%84%E7%A0%94%E7%A9%B6"><span class="toc-number">1.8.</span> <span class="toc-text">七、学术正式化：清华和 ETH 的研究</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B8%85%E5%8D%8E-NLAH%EF%BC%9A%E7%94%A8%E8%87%AA%E7%84%B6%E8%AF%AD%E8%A8%80%E5%86%99-Agent-%E6%8E%A7%E5%88%B6%E9%80%BB%E8%BE%91"><span class="toc-number">1.8.1.</span> <span class="toc-text">清华 NLAH：用自然语言写 Agent 控制逻辑</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ETH-Zurich%EF%BC%9AAGENTS-md-%E5%86%99%E5%A4%9A%E4%BA%86%E5%8F%8D%E8%80%8C%E9%99%8D%E5%88%86"><span class="toc-number">1.8.2.</span> <span class="toc-text">ETH Zurich：AGENTS.md 写多了反而降分</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AB%E3%80%81%E4%BA%89%E8%AE%AE%EF%BC%9ABig-Model-vs-Big-Harness"><span class="toc-number">1.9.</span> <span class="toc-text">八、争议：Big Model vs Big Harness</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Big-Harness-%E6%B4%BE"><span class="toc-number">1.9.1.</span> <span class="toc-text">Big Harness 派</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Big-Model-%E6%B4%BE%EF%BC%88Bitter-Lesson%EF%BC%89"><span class="toc-number">1.9.2.</span> <span class="toc-text">Big Model 派（Bitter Lesson）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8A%A1%E5%AE%9E%E4%B8%AD%E9%97%B4%E6%B4%BE"><span class="toc-number">1.9.3.</span> <span class="toc-text">务实中间派</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B9%9D%E3%80%81%E8%BF%99%E5%AF%B9%E4%BD%A0%E6%84%8F%E5%91%B3%E7%9D%80%E4%BB%80%E4%B9%88"><span class="toc-number">1.10.</span> <span class="toc-text">九、这对你意味着什么</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%80%E5%B0%8F%E5%8F%AF%E8%A1%8C-Harness"><span class="toc-number">1.10.1.</span> <span class="toc-text">最小可行 Harness</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BF%83%E6%80%81%E8%BD%AC%E6%8D%A2"><span class="toc-number">1.10.2.</span> <span class="toc-text">心态转换</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%99%E5%9C%A8%E6%9C%80%E5%90%8E"><span class="toc-number">1.11.</span> <span class="toc-text">写在最后</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%8C%AE"><span class="toc-number">1.12.</span> <span class="toc-text">参考文献</span></a></li></ol></li></ol></div></div></div><div class="card-widget card-recent-post"><div class="card-content"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/04/12/Hermes-Agent-%E4%B8%8D%E5%AE%8C%E5%85%A8%E6%8C%87%E5%8D%97%EF%BC%8C%E4%B8%80%E4%B8%AA%E4%BC%9A%E8%87%AA%E5%B7%B1%E9%95%BF%E8%84%91%E5%AD%90%E7%9A%84-AI-Agent/" title="Hermes Agent 不完全指南，一个会自己长脑子的 AI Agent"><img src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/05.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Hermes Agent 不完全指南，一个会自己长脑子的 AI Agent"/></a><div class="content"><a class="title" href="/2026/04/12/Hermes-Agent-%E4%B8%8D%E5%AE%8C%E5%85%A8%E6%8C%87%E5%8D%97%EF%BC%8C%E4%B8%80%E4%B8%AA%E4%BC%9A%E8%87%AA%E5%B7%B1%E9%95%BF%E8%84%91%E5%AD%90%E7%9A%84-AI-Agent/" title="Hermes Agent 不完全指南，一个会自己长脑子的 AI Agent">Hermes Agent 不完全指南，一个会自己长脑子的 AI Agent</a><time datetime="2026-04-11T16:00:00.000Z" title="Created 2026-04-12 00:00:00">2026-04-12</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/08/Anthropic-%E5%8F%91%E5%B8%83%E6%9C%80%E5%BC%BA%E6%A8%A1%E5%9E%8B-Claude-Mythos%EF%BC%8C%E4%BD%86%E4%B8%8D%E8%AE%A9%E4%BD%A0%E7%94%A8/" title="Anthropic 发布最强模型 Claude Mythos，但不让你用"><img src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/10.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Anthropic 发布最强模型 Claude Mythos，但不让你用"/></a><div class="content"><a class="title" href="/2026/04/08/Anthropic-%E5%8F%91%E5%B8%83%E6%9C%80%E5%BC%BA%E6%A8%A1%E5%9E%8B-Claude-Mythos%EF%BC%8C%E4%BD%86%E4%B8%8D%E8%AE%A9%E4%BD%A0%E7%94%A8/" title="Anthropic 发布最强模型 Claude Mythos，但不让你用">Anthropic 发布最强模型 Claude Mythos，但不让你用</a><time datetime="2026-04-07T16:00:00.000Z" title="Created 2026-04-08 00:00:00">2026-04-08</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/08/YC-%E7%9A%84-CEO-%E5%85%BC%E8%81%8C-60-%E5%A4%A9%E5%86%99%E4%BA%86-60-%E4%B8%87%E8%A1%8C%E4%BB%A3%E7%A0%81%EF%BC%8C%E4%BB%96%E6%8A%8A%E6%96%B9%E6%B3%95%E5%BC%80%E6%BA%90%E4%BA%86/" title="YC 的 CEO 兼职 60 天写了 60 万行代码，他把方法开源了"><img src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/10.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="YC 的 CEO 兼职 60 天写了 60 万行代码，他把方法开源了"/></a><div class="content"><a class="title" href="/2026/04/08/YC-%E7%9A%84-CEO-%E5%85%BC%E8%81%8C-60-%E5%A4%A9%E5%86%99%E4%BA%86-60-%E4%B8%87%E8%A1%8C%E4%BB%A3%E7%A0%81%EF%BC%8C%E4%BB%96%E6%8A%8A%E6%96%B9%E6%B3%95%E5%BC%80%E6%BA%90%E4%BA%86/" title="YC 的 CEO 兼职 60 天写了 60 万行代码，他把方法开源了">YC 的 CEO 兼职 60 天写了 60 万行代码，他把方法开源了</a><time datetime="2026-04-07T16:00:00.000Z" title="Created 2026-04-08 00:00:00">2026-04-08</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/08/%E6%88%91%E6%96%87%E7%AB%A0%E9%87%8C%E9%82%A3%E4%BA%9B%E5%A5%BD%E7%9C%8B%E7%9A%84%E4%BF%A1%E6%81%AF%E5%9B%BE%EF%BC%8C%E9%83%BD%E6%98%AF%E8%BF%99%E4%B8%80%E4%B8%AA%E5%85%8D%E8%B4%B9%E5%B7%A5%E5%85%B7%E7%94%BB%E7%9A%84/" title="我文章里那些好看的信息图，都是这一个免费工具画的"><img src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/05.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="我文章里那些好看的信息图，都是这一个免费工具画的"/></a><div class="content"><a class="title" href="/2026/04/08/%E6%88%91%E6%96%87%E7%AB%A0%E9%87%8C%E9%82%A3%E4%BA%9B%E5%A5%BD%E7%9C%8B%E7%9A%84%E4%BF%A1%E6%81%AF%E5%9B%BE%EF%BC%8C%E9%83%BD%E6%98%AF%E8%BF%99%E4%B8%80%E4%B8%AA%E5%85%8D%E8%B4%B9%E5%B7%A5%E5%85%B7%E7%94%BB%E7%9A%84/" title="我文章里那些好看的信息图，都是这一个免费工具画的">我文章里那些好看的信息图，都是这一个免费工具画的</a><time datetime="2026-04-07T16:00:00.000Z" title="Created 2026-04-08 00:00:00">2026-04-08</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/06/%E5%BD%93-AI-%E5%BC%80%E5%A7%8B%E6%89%AE%E6%BC%94%E4%BD%A0%E7%9A%84%E5%90%8C%E4%BA%8B%E3%80%81%E5%89%8D%E4%BB%BB%E5%92%8C%E8%80%81%E6%9D%BF/" title="当 AI 开始扮演你的同事、前任和老板"><img src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/03.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="当 AI 开始扮演你的同事、前任和老板"/></a><div class="content"><a class="title" href="/2026/04/06/%E5%BD%93-AI-%E5%BC%80%E5%A7%8B%E6%89%AE%E6%BC%94%E4%BD%A0%E7%9A%84%E5%90%8C%E4%BA%8B%E3%80%81%E5%89%8D%E4%BB%BB%E5%92%8C%E8%80%81%E6%9D%BF/" title="当 AI 开始扮演你的同事、前任和老板">当 AI 开始扮演你的同事、前任和老板</a><time datetime="2026-04-05T16:00:00.000Z" title="Created 2026-04-06 00:00:00">2026-04-06</time></div></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/07.jpg?raw=true)"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2026 By Leslie</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="Back To Top"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><div class="js-pjax"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></div></body></html>

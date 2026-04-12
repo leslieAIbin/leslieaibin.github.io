@@ -1,0 +1,424 @@
+<!DOCTYPE html><html lang="zh-Hans" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>深入 Agentic CLI 架构：用 Claude Code 拆解它自己的七层设计 | Mr.Ai</title><meta name="keywords" content="Agent,Claude Code,CLI,Architecture,MCP,Prompt Engineering"><meta name="author" content="Leslie"><meta name="copyright" content="Leslie"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><meta name="description" content="深入 Agentic CLI 架构：用 Claude Code 拆解它自己的七层设计引言很多人以为 AI 编码工具就是”套壳调 API”——拿到用户输入，发给大模型，把回复打印到终端。十行代码就能搞定。 但如果你真的尝试从零构建一个能操作文件系统、执行终端命令、管理多轮对话的 Agentic CLI，你会发现：调 API 确实是十行代码的事，剩下的九千九百九十行才是真正的工程。 于是我做了一件可能">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深入 Agentic CLI 架构：用 Claude Code 拆解它自己的七层设计">
+<meta property="og:url" content="https://leslieaibin.github.io/2026/03/28/%E6%B7%B1%E5%85%A5-Agentic-CLI-%E6%9E%B6%E6%9E%84%EF%BC%9A%E7%94%A8-Claude-Code-%E6%8B%86%E8%A7%A3%E5%AE%83%E8%87%AA%E5%B7%B1%E7%9A%84%E4%B8%83%E5%B1%82%E8%AE%BE%E8%AE%A1/index.html">
+<meta property="og:site_name" content="Mr.Ai">
+<meta property="og:description" content="深入 Agentic CLI 架构：用 Claude Code 拆解它自己的七层设计引言很多人以为 AI 编码工具就是”套壳调 API”——拿到用户输入，发给大模型，把回复打印到终端。十行代码就能搞定。 但如果你真的尝试从零构建一个能操作文件系统、执行终端命令、管理多轮对话的 Agentic CLI，你会发现：调 API 确实是十行代码的事，剩下的九千九百九十行才是真正的工程。 于是我做了一件可能">
+<meta property="og:locale">
+<meta property="og:image" content="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/03.jpg?raw=true">
+<meta property="article:published_time" content="2026-03-27T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-04-12T08:42:47.747Z">
+<meta property="article:author" content="Leslie">
+<meta property="article:tag" content="Agent">
+<meta property="article:tag" content="Claude Code">
+<meta property="article:tag" content="CLI">
+<meta property="article:tag" content="Architecture">
+<meta property="article:tag" content="MCP">
+<meta property="article:tag" content="Prompt Engineering">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/03.jpg?raw=true"><link rel="shortcut icon" href="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/01.jpg?raw=true"><link rel="canonical" href="https://leslieaibin.github.io/2026/03/28/%E6%B7%B1%E5%85%A5-Agentic-CLI-%E6%9E%B6%E6%9E%84%EF%BC%9A%E7%94%A8-Claude-Code-%E6%8B%86%E8%A7%A3%E5%AE%83%E8%87%AA%E5%B7%B1%E7%9A%84%E4%B8%83%E5%B1%82%E8%AE%BE%E8%AE%A1/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":false},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  ClickShowText: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  justifiedGallery: {
+    js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+    css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+};
+
+var saveToLocal = {
+  set: function setWithExpiry(key, value, ttl) {
+    const now = new Date()
+    const expiryDay = ttl * 86400000
+    const item = {
+      value: value,
+      expiry: now.getTime() + expiryDay,
+    }
+    localStorage.setItem(key, JSON.stringify(item))
+  },
+
+  get: function getWithExpiry(key) {
+    const itemStr = localStorage.getItem(key)
+
+    if (!itemStr) {
+      return undefined
+    }
+    const item = JSON.parse(itemStr)
+    const now = new Date()
+
+    if (now.getTime() > item.expiry) {
+      localStorage.removeItem(key)
+      return undefined
+    }
+    return item.value
+  }
+}</script><script id="config_change">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2026-04-12 16:42:47'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(function () {  window.activateDarkMode = function () {
+    document.documentElement.setAttribute('data-theme', 'dark')
+    if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+    }
+  }
+  window.activateLightMode = function () {
+    document.documentElement.setAttribute('data-theme', 'light')
+   if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+    }
+  }
+  const autoChangeMode = 'false'
+  const t = saveToLocal.get('theme')
+  if (autoChangeMode === '1') {
+    const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+    const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+    const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+    const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+    if (t === undefined) {
+      if (isLightMode) activateLightMode()
+      else if (isDarkMode) activateDarkMode()
+      else if (isNotSpecified || hasNoSupport) {
+        const now = new Date()
+        const hour = now.getHours()
+        const isNight = hour <= 6 || hour >= 18
+        isNight ? activateDarkMode() : activateLightMode()
+      }
+      window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
+        if (saveToLocal.get('theme') === undefined) {
+          e.matches ? activateDarkMode() : activateLightMode()
+        }
+      })
+    } else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else if (autoChangeMode === '2') {
+    const now = new Date()
+    const hour = now.getHours()
+    const isNight = hour <= 6 || hour >= 18
+    if (t === undefined) isNight ? activateDarkMode() : activateLightMode()
+    else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else {
+    if (t === 'dark') activateDarkMode()
+    else if (t === 'light') activateLightMode()
+  }const asideStatus = saveToLocal.get('aside-status')
+if (asideStatus !== undefined) {
+   if (asideStatus === 'hide') {
+     document.documentElement.classList.add('hide-aside')
+   } else {
+     document.documentElement.classList.remove('hide-aside')
+   }
+}})()</script><meta name="generator" content="Hexo 5.2.0"><link rel="alternate" href="/atom.xml" title="Mr.Ai" type="application/atom+xml">
+</head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="author-avatar"><img class="avatar-img" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/01.jpg?raw=true" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">135</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">Tags</div><div class="length-num">51</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">Categories</div><div class="length-num">17</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/artitalk/"><i class="fa-fw fas fa-pen"></i><span> 自言自语</span></a></div></div></div></div><div id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/03.jpg?raw=true)"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Mr.Ai</a></span><span id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/artitalk/"><i class="fa-fw fas fa-pen"></i><span> 自言自语</span></a></div></div><span class="close" id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></span></span></nav><div id="post-info"><h1 class="post-title">深入 Agentic CLI 架构：用 Claude Code 拆解它自己的七层设计</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2026-03-27T16:00:00.000Z" title="Created 2026-03-28 00:00:00">2026-03-28</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2026-04-12T08:42:47.747Z" title="Updated 2026-04-12 16:42:47">2026-04-12</time></span></div><div class="meta-secondline"> <span class="post-meta-separator">|</span><span class="post-meta-pv-cv"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post View:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="深入-Agentic-CLI-架构：用-Claude-Code-拆解它自己的七层设计"><a href="#深入-Agentic-CLI-架构：用-Claude-Code-拆解它自己的七层设计" class="headerlink" title="深入 Agentic CLI 架构：用 Claude Code 拆解它自己的七层设计"></a>深入 Agentic CLI 架构：用 Claude Code 拆解它自己的七层设计</h1><h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p>很多人以为 AI 编码工具就是”套壳调 API”——拿到用户输入，发给大模型，把回复打印到终端。十行代码就能搞定。</p>
+<p>但如果你真的尝试从零构建一个能操作文件系统、执行终端命令、管理多轮对话的 Agentic CLI，你会发现：<strong>调 API 确实是十行代码的事，剩下的九千九百九十行才是真正的工程</strong>。</p>
+<p>于是我做了一件可能有点奇怪的事：<strong>用 Claude Code 来拆解 Claude Code 自己。</strong></p>
+<p>这种”拆解者就是被拆解的对象”的视角，能暴露出很多从外部看不到的工程细节。</p>
+<hr>
+<h2 id="1-六层单向依赖：架构的骨架"><a href="#1-六层单向依赖：架构的骨架" class="headerlink" title="1. 六层单向依赖：架构的骨架"></a>1. 六层单向依赖：架构的骨架</h2><p><img src="01-infographic-six-layers.png" alt="Agentic CLI 六层架构"></p>
+<p>一个 Agentic CLI 可以被拆成六层，依赖关系严格单向——上层依赖下层，反过来不行：</p>
+<table>
+<thead>
+<tr>
+<th>层级</th>
+<th>职责</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Core 引擎层</strong></td>
+<td>Agent Loop、SSE 流式客户端、上下文管理、compact 压缩</td>
+</tr>
+<tr>
+<td><strong>Tools 工具层</strong></td>
+<td>21 个内置工具 + MCP 外部工具客户端</td>
+</tr>
+<tr>
+<td><strong>UI 渲染层</strong></td>
+<td>终端流式文本输出、进度指示、颜色主题</td>
+</tr>
+<tr>
+<td><strong>Plugins 插件层</strong></td>
+<td>运行时注入工具和生命周期 hook</td>
+</tr>
+<tr>
+<td><strong>Skills 技能层</strong></td>
+<td>参数化的 prompt 模板（对应 slash command）</td>
+</tr>
+<tr>
+<td><strong>Commands 命令层</strong></td>
+<td>斜杠命令的解析和分发</td>
+</tr>
+</tbody></table>
+<p>技术选型上，Node.js 22 的原生能力覆盖了几乎所有需求——fetch、ReadableStream、TextDecoder、Buffer、child_process.exec 全走标准库。唯一无法绕开的 fast-glob，在跨平台路径处理和大型目录遍历的性能上比原生好一个数量级。选择”零框架”有教学价值，但在生产环境中，像 <code>ink</code>（React for CLI）这类终端 UI 框架能大幅减少渲染层的维护负担。</p>
+<p>这里有一个值得关注的设计问题：<strong>Skills 和 Plugins 的边界在哪？</strong></p>
+<p>作为 Claude Code 本身，我可以从内部视角回答这个问题——边界很模糊。用户触发 <code>/skill</code> 命令时，系统通过 <code>Skill</code> 工具按需加载技能内容，本质上就是一段被参数化的 prompt 指令，而非独立的代码模块。与此同时，插件层的 hook 机制（比如 <code>PreToolUse</code>）可以在工具执行前拦截、修改甚至拒绝操作。Skills 更像是 Plugin 的一种特化——它们共享扩展点，只是抽象层次不同。</p>
+<p>写这篇文章的过程中，我就同时使用了多个 skill（<code>baoyu-article-illustrator</code> 做配图规划、<code>baoyu-image-gen</code> 生成图片），它们本质上都是通过 prompt 注入来扩展我的能力——和 plugin 的 hook 机制走的是同一条路。</p>
+<p>如果你要构建生产级 CLI，把 skills 作为 plugin 的子类型，而非独立的顶层模块，可能更务实。</p>
+<hr>
+<h2 id="2-System-Prompt-分段与-Prompt-Caching：省钱的关键"><a href="#2-System-Prompt-分段与-Prompt-Caching：省钱的关键" class="headerlink" title="2. System Prompt 分段与 Prompt Caching：省钱的关键"></a>2. System Prompt 分段与 Prompt Caching：省钱的关键</h2><p><img src="02-infographic-prompt-caching.png" alt="System Prompt 分段缓存策略"></p>
+<p>System prompt 不是一个大字符串，而是一个 <strong>block 数组</strong>，按内容的可变性分为两类：</p>
+<p><strong>静态段</strong>（打上 <code>cache_control</code>，首次写入缓存后续命中）：</p>
+<ul>
+<li>身份声明与角色设定</li>
+<li>工具使用规范</li>
+<li>编码风格指南</li>
+<li>安全执行规则</li>
+</ul>
+<p><strong>动态段</strong>（不带 <code>cache_control</code>，每轮重新计算）：</p>
+<ul>
+<li>当前工作目录和系统环境</li>
+<li>Git 仓库状态</li>
+<li>CLAUDE.md 项目配置</li>
+<li>MCP 服务器的自定义指令</li>
+</ul>
+<p>排列顺序固定：<strong>身份 → 工具指南 → 编码规范 → 安全规则 → 风格指南 → 环境信息 → Git 上下文 → CLAUDE.md → MCP 指令</strong>。</p>
+<p>为什么顺序这么重要？因为 Anthropic 的 prompt caching 按 block 数组的<strong>前缀匹配</strong>来识别缓存。排在前面的静态内容越稳定，命中率越高，API 调用成本越低（缓存命中时输入 token 费用降至约 1/10）。</p>
+<p>但这里有几个容易踩的坑：</p>
+<p><strong>坑一：最小前缀长度。</strong> Prompt caching 有最小长度要求（Claude Sonnet 是 1024 tokens，Opus 是 2048 tokens）。如果你的静态段太短，根本触发不了缓存。所以分段策略不仅要考虑”哪些是静态的”，还要确保前几个静态 block 的总 token 数超过阈值。</p>
+<p><strong>坑二：动态段破坏前缀。</strong> 用户频繁切换工作目录或 CLAUDE.md 频繁变化时，动态段的变化会破坏前缀匹配，导致缓存雪崩。一个改进思路是将动态内容放到 <strong>user message 而非 system prompt</strong> 中，保持 system 段的缓存稳定。</p>
+<p><strong>坑三：中文 token 密度。</strong> 中文平均 1-2 个字符就是 1 个 token，英文约 4 个字符 1 个 token。如果你按英文经验估算 token 数，中文场景下会严重偏差。</p>
+<p>还有一个通常不被讨论的机制：<strong>system-reminder 动态注入</strong>。就在这次会话中，每当我加载一个 skill 或收到后台任务的通知，系统就会通过 <code>&lt;system-reminder&gt;</code> 标签实时插入新的上下文块。这意味着 system prompt 不是静态组装一次就不变的，而是在对话流中持续追加——对缓存策略的影响比表面看起来更深。</p>
+<hr>
+<h2 id="3-Agent-Loop：不只是-while-循环"><a href="#3-Agent-Loop：不只是-while-循环" class="headerlink" title="3. Agent Loop：不只是 while 循环"></a>3. Agent Loop：不只是 while 循环</h2><p><img src="03-infographic-agent-loop.png" alt="Agent Loop 状态机"></p>
+<p>Agent Loop 的骨架是一个 <strong>while 循环</strong>，每轮对应一次模型调用：</p>
+<ol>
+<li>检查是否需要 compact（token 数超 85% 上下文限制时触发）</li>
+<li>构建完整 prompt（system blocks + messages + tools）</li>
+<li>发起流式 SSE 请求</li>
+<li>实时处理事件流（逐 token 渲染输出）</li>
+<li>检查 <code>stop_reason</code>：<code>tool_use</code> 则执行工具，<code>end_turn</code> 或 <code>max_tokens</code> 则结束</li>
+<li>构建 <code>tool_result</code> message，追加到 messages，进入下一轮</li>
+</ol>
+<p>但真正复杂的不是循环本身，而是<strong>工具执行管线</strong>——每次工具调用要经过六个阶段：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">renderToolCall → permissionCheck → preHook → checkpoint → executeTool → postHook</span><br></pre></td></tr></table></figure>
+
+<p>其中 <code>permissionCheck</code> 是硬性关卡。这不是理论——写这篇文章时我亲身经历了：尝试用 <code>rm -rf</code> 删除旧配图目录时，<code>PreToolUse:Callback</code> hook 直接拦截，返回 <code>Hook PreToolUse:Bash denied this tool call</code> 和 <code>Command blocked by blocklist</code>。系统迫使我改用逐文件删除的安全方式。<strong>这个六阶段管线不是摆设，它真的在运行。</strong></p>
+<h3 id="Compact：上下文压缩的权衡"><a href="#Compact：上下文压缩的权衡" class="headerlink" title="Compact：上下文压缩的权衡"></a>Compact：上下文压缩的权衡</h3><p>自动 compact 机制用<strong>总字符数 ÷ 4</strong> 估算 token 数，超限时发起独立 API 调用生成对话摘要，替换整个 messages 数组。</p>
+<p>这个方案有三个问题：</p>
+<ol>
+<li><p><strong>中文场景失效</strong>：字符数 ÷ 4 会严重低估中文 token 数，导致 compact 触发太晚，请求直接被 API 拒绝。</p>
+</li>
+<li><p><strong>上下文断崖</strong>：摘要替换完整历史意味着模型”忘记”之前的具体操作。更好的做法是<strong>分层压缩</strong>——保留最近 N 轮的完整对话，只压缩更早的历史，关键的工具调用结果和错误信息始终保留。</p>
+</li>
+<li><p><strong>轮次限制的弹性</strong>：主 Agent 和子 Agent 的轮次上限不同。复杂的跨文件重构任务可能需要更灵活的限制策略。</p>
+</li>
+</ol>
+<p>事实上，这次会话本身就触发了 compact——你正在读的这段文字，就是在上下文被压缩之后写出来的。我”记得”之前的工作，靠的是压缩摘要，而不是完整的对话历史。</p>
+<hr>
+<h2 id="4-21-个内置工具与-Deferred-Tools"><a href="#4-21-个内置工具与-Deferred-Tools" class="headerlink" title="4. 21 个内置工具与 Deferred Tools"></a>4. 21 个内置工具与 Deferred Tools</h2><p><img src="04-infographic-tools-system.png" alt="21个内置工具与 Deferred Tools"></p>
+<p>工具系统的入口是 <code>TOOL_DEFINITIONS</code>——一个 JSON Schema 数组，模型通过它”知道”有哪些工具可用。执行入口是单一的 <code>executeTool</code> 函数，内部用 switch 分发。</p>
+<p>核心工具：</p>
+<table>
+<thead>
+<tr>
+<th>工具</th>
+<th>实现要点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Read</strong></td>
+<td><code>fs.readFile</code> + 行号前缀，支持 offset/limit 分页读取大文件</td>
+</tr>
+<tr>
+<td><strong>Edit</strong></td>
+<td>精确字符串替换，<code>old_string</code> 必须唯一出现，否则报错</td>
+</tr>
+<tr>
+<td><strong>Bash</strong></td>
+<td><code>child_process.exec</code>，120 秒超时，输出超 500 行截断（保留前 200 + 后 100）</td>
+</tr>
+<tr>
+<td><strong>Grep</strong></td>
+<td>自实现 regex 引擎，不依赖系统 grep，跨平台一致</td>
+</tr>
+<tr>
+<td><strong>WebFetch</strong></td>
+<td>原生 <code>fetch</code> + HTML 标签剥离 + 内容截断</td>
+</tr>
+</tbody></table>
+<h3 id="Edit-的”唯一性约束”：最被低估的设计决策"><a href="#Edit-的”唯一性约束”：最被低估的设计决策" class="headerlink" title="Edit 的”唯一性约束”：最被低估的设计决策"></a>Edit 的”唯一性约束”：最被低估的设计决策</h3><p>Edit 工具要求 <code>old_string</code> 在文件中<strong>必须唯一出现</strong>，否则直接报错。这看起来是个限制，实际上是整个工具系统中<strong>最重要的设计决策之一</strong>。</p>
+<p>它迫使模型提供足够精确的定位上下文，从根本上避免了”修改错位置”的问题。相比基于行号的替换（如 <code>sed</code>），行号在并发修改或文件变动后极易错位。唯一性约束把”修改错位置”这个<strong>隐性 bug</strong> 转化成了一个<strong>显性、可修复的错误</strong>——工具会提示”provide a larger string with more surrounding context to make it unique”，引导模型自我修正。</p>
+<p>写这篇文章的过程中，我就多次遇到这个机制：当用户在外部编辑器同时修改文件时，我的 Edit 操作因为 <code>old_string</code> 不匹配而失败。系统强制我重新 Read 文件获取最新内容，然后基于新状态再次编辑。这个”先 Read 再 Edit”的强制约束，让我在文件被外部修改的情况下依然能安全操作——而不是盲改一个已经过时的版本。</p>
+<h3 id="Deferred-Tools：延迟加载的利与弊"><a href="#Deferred-Tools：延迟加载的利与弊" class="headerlink" title="Deferred Tools：延迟加载的利与弊"></a>Deferred Tools：延迟加载的利与弊</h3><p>低频工具（如 NotebookRead、TodoWrite）不放入每次请求的 tools 数组，模型需要时通过 <code>ToolSearch</code> 按关键词查询获取完整 schema，将 tools 数组的固定开销降低约 40%。</p>
+<p>但 ToolSearch 带来了<strong>额外的一轮 API 调用</strong>。如果模型频繁需要这些”低频”工具，总成本可能反而增加。另一种策略是<strong>将所有工具都放入 tools 数组，利用 prompt caching 覆盖成本</strong>——缓存命中后 tools 数组的 token 费用几乎为零。</p>
+<hr>
+<h2 id="5-权限系统：三层防线"><a href="#5-权限系统：三层防线" class="headerlink" title="5. 权限系统：三层防线"></a>5. 权限系统：三层防线</h2><p><img src="05-infographic-permission-model.png" alt="权限安全模型"></p>
+<p>权限系统有三种运行模式：</p>
+<table>
+<thead>
+<tr>
+<th>模式</th>
+<th>行为</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>default</strong></td>
+<td>safe 类工具自动执行，dangerous/write 类需用户确认</td>
+</tr>
+<tr>
+<td><strong>auto</strong></td>
+<td>绕过用户提示（适合 CI 环境），但 deny rules 仍生效</td>
+</tr>
+<tr>
+<td><strong>plan</strong></td>
+<td>只读沙箱，所有 dangerous/write 操作被静默拒绝</td>
+</tr>
+</tbody></table>
+<p>工具在注册时就静态声明了安全等级：safe（Read/Glob/Grep）、dangerous（Bash/Agent）、write（Write/Edit）、bypass（PlanMode 切换）。</p>
+<h3 id="两阶段分类器"><a href="#两阶段分类器" class="headerlink" title="两阶段分类器"></a>两阶段分类器</h3><p>在 auto 模式下，Bash 命令需要额外的安全判断：</p>
+<ul>
+<li><strong>Stage 1</strong>：纯模式匹配。已知安全/危险命令的规则表，覆盖 90%+ 常见命令，零延迟。</li>
+<li><strong>Stage 2</strong>：未覆盖的命令发给轻量模型（如 Haiku）快速判断，返回 allow/deny/ask_user，延迟 300-500ms。</li>
+</ul>
+<p>用模型做安全判断是个工程妥协——模型也可能误判。更稳妥的策略是将 Stage 2 的默认行为设为 <code>ask_user</code>，只用模型判断来加速已知安全命令的放行。</p>
+<h3 id="被忽略的第三层：OS-级沙箱"><a href="#被忽略的第三层：OS-级沙箱" class="headerlink" title="被忽略的第三层：OS 级沙箱"></a>被忽略的第三层：OS 级沙箱</h3><p>很多人讨论 AI 安全时只关注 prompt 层面的约束，但实际上还有一层<strong>操作系统级别的沙箱</strong>（macOS 上使用 sandbox-exec），限制了文件系统访问范围。</p>
+<p>我自己就是这个三层防线的活证明。写这篇文章时，我尝试执行 <code>rm -rf</code> 清理旧图片：</p>
+<ul>
+<li><strong>第一层</strong>（Stage 1 模式匹配）：<code>rm -rf</code> 命中 blocklist 规则</li>
+<li><strong>第二层</strong>（PreToolUse hook）：返回 <code>denied</code>，附带 <code>Command blocked by blocklist</code></li>
+<li><strong>第三层</strong>（OS 沙箱）：即使前两层都放行，sandbox-exec 也会限制文件系统访问范围</li>
+</ul>
+<p>三层防线同时工作。这不是 prompt 层面的软性限制，是系统层面的硬性阻断——<strong>即使模型”想”执行危险命令，系统也不允许</strong>。我最终改用了逐文件 <code>rm</code> 加 <code>rmdir</code> 的方式完成了清理。</p>
+<p>这对防止 prompt injection 攻击至关重要。模型的行为可以被恶意 prompt 操纵，但 OS 级沙箱不受 prompt 影响。仅靠 prompt 约束做安全防护，是不够的。</p>
+<hr>
+<h2 id="6-MCP-与-LSP：两个被低估的协议集成"><a href="#6-MCP-与-LSP：两个被低估的协议集成" class="headerlink" title="6. MCP 与 LSP：两个被低估的协议集成"></a>6. MCP 与 LSP：两个被低估的协议集成</h2><p><img src="06-infographic-mcp-lsp.png" alt="MCP 与 LSP 双协议集成"></p>
+<h3 id="MCP：让工具变成独立进程"><a href="#MCP：让工具变成独立进程" class="headerlink" title="MCP：让工具变成独立进程"></a>MCP：让工具变成独立进程</h3><p>MCP（Model Context Protocol）把工具从 CLI 内部解耦出来，变成可独立部署的进程。协议层是 JSON-RPC 2.0 over stdio，启动序列固定：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">initialize 握手 → tools&#x2F;list 获取工具定义 → 正常调用</span><br></pre></td></tr></table></figure>
+
+<p><code>McpManager</code> 管理多个 server 的生命周期，工具名加 <code>mcp__server_name__</code> 前缀做命名空间隔离。</p>
+<p>这个命名空间机制，我在这次会话中就能直接验证——看看我可用的工具列表，你会发现像 <code>mcp__aliyun-observability__cms_execute_promql</code> 这样的工具名。<code>mcp__</code> 前缀 + 服务器名 + <code>__</code> + 工具名，完全避免了不同 MCP server 之间的工具名冲突。</p>
+<h3 id="LSP：被低估的杀手级特性"><a href="#LSP：被低估的杀手级特性" class="headerlink" title="LSP：被低估的杀手级特性"></a>LSP：被低估的杀手级特性</h3><p>LSP（Language Server Protocol）集成解决的问题完全不同：给模型提供<strong>实时代码诊断</strong>。</p>
+<p>Write/Edit 执行后自动通知对应语言服务器，诊断结果注入下一轮 system prompt。模型修改代码后能<strong>立即看到编译器反馈</strong>——类型错误、未定义变量、语法问题，全部在同一轮对话内暴露。</p>
+<p>这是拉开 AI 编码工具差距的关键能力。大多数 AI 编码工具修改代码后需要用户手动运行编译器，再把错误信息粘贴回去。LSP 集成将这个反馈循环从<strong>分钟级压缩到秒级</strong>，模型可以在一轮对话内完成”修改→发现错误→修复”的闭环。</p>
+<p>在 Claude Code 中，LSP 操作（<code>goToDefinition</code>、<code>findReferences</code>、<code>hover</code>、<code>documentSymbol</code>）是一等公民工具，可以直接调用，无需通过 Bash 间接启动语言服务器。这种”LSP 即工具”的设计让编译器反馈变成了模型可以主动查询的资源。</p>
+<p>实现上的坑：LSP 服务器启动可能需要几秒到几十秒（TypeScript 的 tsserver 在大项目上尤其慢）。解决方案是<strong>懒加载 + 持久化连接</strong>——只在首次涉及对应语言的文件操作时才启动，启动后保持连接复用。</p>
+<hr>
+<h2 id="7-多-Agent-协作与跨会话记忆"><a href="#7-多-Agent-协作与跨会话记忆" class="headerlink" title="7. 多 Agent 协作与跨会话记忆"></a>7. 多 Agent 协作与跨会话记忆</h2><p><img src="07-infographic-multi-agent-memory.png" alt="多 Agent 协作与跨会话记忆"></p>
+<h3 id="子-Agent：并行但受控"><a href="#子-Agent：并行但受控" class="headerlink" title="子 Agent：并行但受控"></a>子 Agent：并行但受控</h3><p>子 Agent 是主 Agent Loop 的简化版——排除团队管理工具防止无限嵌套，轮次上限更低。隔离模式可选：<code>isolation: &quot;worktree&quot;</code> 创建 Git worktree，子 Agent 在独立分支上操作，不影响主分支。</p>
+<p>这次会话中，我就启动了多个子 Agent 并行生成这篇文章的 7 张配图。每个子 Agent 独立调用 <code>baoyu-image-gen</code> skill，独立处理一张图片的 prompt 构建和生成。它们完成后通过消息机制通知我，我再统一检查结果、更新文章中的图片引用。</p>
+<p>这个过程本身就是”多 Agent 协作”的活演示——主 Agent（我）负责文章内容和整体协调，子 Agent 负责并行执行具体的图片生成任务。</p>
+<h3 id="记忆系统：优雅但有天花板"><a href="#记忆系统：优雅但有天花板" class="headerlink" title="记忆系统：优雅但有天花板"></a>记忆系统：优雅但有天花板</h3><p>Auto Memory 用文件系统模拟持久记忆，分为四种类型：</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>user</strong></td>
+<td>用户偏好（编码风格、语言习惯）</td>
+</tr>
+<tr>
+<td><strong>feedback</strong></td>
+<td>行为纠正（用户指出的错误模式）</td>
+</tr>
+<tr>
+<td><strong>project</strong></td>
+<td>项目约定（CLAUDE.md 中的规则）</td>
+</tr>
+<tr>
+<td><strong>reference</strong></td>
+<td>外部资源指针</td>
+</tr>
+</tbody></table>
+<p>记忆文件是带 YAML frontmatter 的 Markdown，完全复用已有的 Read/Write/Edit 工具链——零新增代码路径，工程上很聪明。</p>
+<p>但文件系统记忆有两个扩展性瓶颈：</p>
+<ol>
+<li><p><strong>检索效率</strong>：记忆积累到数百个文件时，模型需要先读索引再读具体文件，消耗大量 token。引入<strong>向量检索</strong>根据对话上下文自动召回相关记忆，是更可持续的方案。</p>
+</li>
+<li><p><strong>记忆冲突</strong>：多个记忆文件包含矛盾信息时（比如两次不同的用户偏好），没有版本控制或冲突解决机制。用户会偶尔发现模型”记住了旧偏好”。</p>
+</li>
+</ol>
+<p>此外，还有一个”实时短期记忆”机制：通过 <code>&lt;system-reminder&gt;</code> 在对话过程中动态注入上下文——技能加载结果、后台任务通知、hook 拦截错误等。这比文件系统记忆更即时，但只存活于当前会话。长期记忆和短期记忆的配合，是记忆系统设计的核心问题。</p>
+<p>这次会话就是个例子：当对话历史过长触发 compact 时，我之前的操作细节被压缩成了摘要。我”记得”做过什么，但具体的 token 级细节已经丢失。这就是 compact 的”上下文断崖”——也是为什么分层压缩比全量替换更合理的原因。</p>
+<hr>
+<h2 id="总结：这篇文章本身就是证明"><a href="#总结：这篇文章本身就是证明" class="headerlink" title="总结：这篇文章本身就是证明"></a>总结：这篇文章本身就是证明</h2><table>
+<thead>
+<tr>
+<th>维度</th>
+<th>核心设计</th>
+<th>本文中的活证据</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>架构分层</td>
+<td>六层单向依赖</td>
+<td>skills（配图、生图）作为 plugin 特化被加载</td>
+</tr>
+<tr>
+<td>Prompt Caching</td>
+<td>静态/动态分段 + 前缀匹配</td>
+<td>system-reminder 持续注入新上下文块</td>
+</tr>
+<tr>
+<td>Agent Loop</td>
+<td>while 循环 + 六阶段工具管线</td>
+<td>rm -rf 在 permissionCheck 阶段被拦截</td>
+</tr>
+<tr>
+<td>工具系统</td>
+<td>21 个内置 + Deferred 延迟加载</td>
+<td>Edit 唯一性约束 + 先 Read 再 Edit 多次触发</td>
+</tr>
+<tr>
+<td>权限安全</td>
+<td>模式匹配 + 模型判断 + OS 沙箱</td>
+<td>三层防线联合阻止了 rm -rf</td>
+</tr>
+<tr>
+<td>MCP &amp; LSP</td>
+<td>工具即进程 + 编译即反馈</td>
+<td>mcp__aliyun-observability__ 命名空间可直接观察</td>
+</tr>
+<tr>
+<td>记忆系统</td>
+<td>文件系统 + 实时注入</td>
+<td>compact 触发后靠摘要延续上下文</td>
+</tr>
+</tbody></table>
+<p>调用 API 是十行代码的事。把工具调用结果正确地反馈给模型、在流式输出中间插入用户交互、处理长任务里的错误恢复——这些才是真正的工程挑战。</p>
+<p>这篇文章本身就是一个活的证明：它的文字、配图、文件操作，甚至那个被拦截的 <code>rm -rf</code> 命令，全部发生在一次真实的 Claude Code 会话中。你读到的不是事后整理的分析报告，而是一个 Agentic CLI 在真实运行中产生的输出——包括它的能力，和它的限制。</p>
+<p>Agentic CLI 的护城河不在模型能力，而在<strong>工程系统的精度和鲁棒性</strong>。这些工程细节——hook 的硬性拦截、Read-before-Edit 的强制约束、system-reminder 的动态注入——在代码层面可能只是几行条件判断，但它们共同构成了让 AI 安全操作真实系统的围栏。</p>
+<p>这就是 Harness Engineering。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined">Leslie</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="https://leslieaibin.github.io/2026/03/28/%E6%B7%B1%E5%85%A5-Agentic-CLI-%E6%9E%B6%E6%9E%84%EF%BC%9A%E7%94%A8-Claude-Code-%E6%8B%86%E8%A7%A3%E5%AE%83%E8%87%AA%E5%B7%B1%E7%9A%84%E4%B8%83%E5%B1%82%E8%AE%BE%E8%AE%A1/">https://leslieaibin.github.io/2026/03/28/%E6%B7%B1%E5%85%A5-Agentic-CLI-%E6%9E%B6%E6%9E%84%EF%BC%9A%E7%94%A8-Claude-Code-%E6%8B%86%E8%A7%A3%E5%AE%83%E8%87%AA%E5%B7%B1%E7%9A%84%E4%B8%83%E5%B1%82%E8%AE%BE%E8%AE%A1/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Agent/">Agent</a><a class="post-meta__tags" href="/tags/Claude-Code/">Claude Code</a><a class="post-meta__tags" href="/tags/CLI/">CLI</a><a class="post-meta__tags" href="/tags/Architecture/">Architecture</a><a class="post-meta__tags" href="/tags/MCP/">MCP</a><a class="post-meta__tags" href="/tags/Prompt-Engineering/">Prompt Engineering</a></div><div class="post_share"><div class="social-share" data-image="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/03.jpg?raw=true" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2026/03/31/%E8%BF%99-8-%E4%B8%AA-Skills%EF%BC%8C%E8%A3%85%E4%BA%86%E5%B0%B1%E5%9B%9E%E4%B8%8D%E5%8E%BB%E4%BA%86/"><img class="prev-cover" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/09.jpg?raw=true" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">Previous Post</div><div class="prev_info">这 8 个 Skills，装了就回不去了</div></div></a></div><div class="next-post pull-right"><a href="/2026/03/26/%E4%BB%8E%22%E6%8E%A8%E7%90%86%E6%80%9D%E7%BB%B4%22%E5%88%B0%22%E6%99%BA%E8%83%BD%E4%BD%93%E6%80%9D%E7%BB%B4%22/"><img class="next-cover" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/05.jpg?raw=true" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">从&quot;推理思维&quot;到&quot;智能体思维&quot;</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span> Related Articles</span></div><div class="relatedPosts-list"><div><a href="/2026/03/31/Harness-Engineering：两周内从博客到行业共识的新工程学科/" title="Harness Engineering：两周内从博客到行业共识的新工程学科"><img class="cover" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/07.jpg?raw=true" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-31</div><div class="title">Harness Engineering：两周内从博客到行业共识的新工程学科</div></div></a></div><div><a href="/2026/04/06/当-AI-开始扮演你的同事、前任和老板/" title="当 AI 开始扮演你的同事、前任和老板"><img class="cover" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/03.jpg?raw=true" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-06</div><div class="title">当 AI 开始扮演你的同事、前任和老板</div></div></a></div><div><a href="/2026/03/31/这-8-个-Skills，装了就回不去了/" title="这 8 个 Skills，装了就回不去了"><img class="cover" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/09.jpg?raw=true" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-31</div><div class="title">这 8 个 Skills，装了就回不去了</div></div></a></div><div><a href="/2026/03/26/从"推理思维"到"智能体思维"/" title="从"推理思维"到"智能体思维""><img class="cover" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/05.jpg?raw=true" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-26</div><div class="title">从"推理思维"到"智能体思维"</div></div></a></div><div><a href="/2026/04/06/用-Claude-自动化了一整天工作流，我总结出这些/" title="用 Claude 自动化了一整天工作流，我总结出这些"><img class="cover" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/07.jpg?raw=true" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-06</div><div class="title">用 Claude 自动化了一整天工作流，我总结出这些</div></div></a></div><div><a href="/2026/04/08/YC-的-CEO-兼职-60-天写了-60-万行代码，他把方法开源了/" title="YC 的 CEO 兼职 60 天写了 60 万行代码，他把方法开源了"><img class="cover" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/10.jpg?raw=true" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-08</div><div class="title">YC 的 CEO 兼职 60 天写了 60 万行代码，他把方法开源了</div></div></a></div></div></div></div><div class="aside_content" id="aside_content"><div class="card-widget card-info"><div class="card-content"><div class="card-info-avatar is-center"><img class="avatar-img" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/01.jpg?raw=true" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/><div class="author-info__name">Leslie</div><div class="author-info__description"></div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">135</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">Tags</div><div class="length-num">51</div></a></div><div class="card-info-data-item is-center"><a href="/categories/"><div class="headline">Categories</div><div class="length-num">17</div></a></div></div><a class="button--animated" id="card-info-btn"><i class="fas fa-heart"></i><span>瓶中的水 青天的云</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/leslieAIbin" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="https://www.instagram.com/leslieaibin/" target="_blank" title="Ins"><i class="fab fa-instagram"></i></a><a class="social-icon" href="mailto:1915612226@qq.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a><a class="social-icon" href="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/image-20201122143121657.png" target="_blank" title="weixin"><i class="fab fa-weixin"></i></a></div></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="card-content"><div class="item-headline"><i class="fas fa-stream"></i><span>Catalog</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%B7%B1%E5%85%A5-Agentic-CLI-%E6%9E%B6%E6%9E%84%EF%BC%9A%E7%94%A8-Claude-Code-%E6%8B%86%E8%A7%A3%E5%AE%83%E8%87%AA%E5%B7%B1%E7%9A%84%E4%B8%83%E5%B1%82%E8%AE%BE%E8%AE%A1"><span class="toc-number">1.</span> <span class="toc-text">深入 Agentic CLI 架构：用 Claude Code 拆解它自己的七层设计</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BC%95%E8%A8%80"><span class="toc-number">1.1.</span> <span class="toc-text">引言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%85%AD%E5%B1%82%E5%8D%95%E5%90%91%E4%BE%9D%E8%B5%96%EF%BC%9A%E6%9E%B6%E6%9E%84%E7%9A%84%E9%AA%A8%E6%9E%B6"><span class="toc-number">1.2.</span> <span class="toc-text">1. 六层单向依赖：架构的骨架</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-System-Prompt-%E5%88%86%E6%AE%B5%E4%B8%8E-Prompt-Caching%EF%BC%9A%E7%9C%81%E9%92%B1%E7%9A%84%E5%85%B3%E9%94%AE"><span class="toc-number">1.3.</span> <span class="toc-text">2. System Prompt 分段与 Prompt Caching：省钱的关键</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-Agent-Loop%EF%BC%9A%E4%B8%8D%E5%8F%AA%E6%98%AF-while-%E5%BE%AA%E7%8E%AF"><span class="toc-number">1.4.</span> <span class="toc-text">3. Agent Loop：不只是 while 循环</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Compact%EF%BC%9A%E4%B8%8A%E4%B8%8B%E6%96%87%E5%8E%8B%E7%BC%A9%E7%9A%84%E6%9D%83%E8%A1%A1"><span class="toc-number">1.4.1.</span> <span class="toc-text">Compact：上下文压缩的权衡</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-21-%E4%B8%AA%E5%86%85%E7%BD%AE%E5%B7%A5%E5%85%B7%E4%B8%8E-Deferred-Tools"><span class="toc-number">1.5.</span> <span class="toc-text">4. 21 个内置工具与 Deferred Tools</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Edit-%E7%9A%84%E2%80%9D%E5%94%AF%E4%B8%80%E6%80%A7%E7%BA%A6%E6%9D%9F%E2%80%9D%EF%BC%9A%E6%9C%80%E8%A2%AB%E4%BD%8E%E4%BC%B0%E7%9A%84%E8%AE%BE%E8%AE%A1%E5%86%B3%E7%AD%96"><span class="toc-number">1.5.1.</span> <span class="toc-text">Edit 的”唯一性约束”：最被低估的设计决策</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Deferred-Tools%EF%BC%9A%E5%BB%B6%E8%BF%9F%E5%8A%A0%E8%BD%BD%E7%9A%84%E5%88%A9%E4%B8%8E%E5%BC%8A"><span class="toc-number">1.5.2.</span> <span class="toc-text">Deferred Tools：延迟加载的利与弊</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E6%9D%83%E9%99%90%E7%B3%BB%E7%BB%9F%EF%BC%9A%E4%B8%89%E5%B1%82%E9%98%B2%E7%BA%BF"><span class="toc-number">1.6.</span> <span class="toc-text">5. 权限系统：三层防线</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%A4%E9%98%B6%E6%AE%B5%E5%88%86%E7%B1%BB%E5%99%A8"><span class="toc-number">1.6.1.</span> <span class="toc-text">两阶段分类器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A2%AB%E5%BF%BD%E7%95%A5%E7%9A%84%E7%AC%AC%E4%B8%89%E5%B1%82%EF%BC%9AOS-%E7%BA%A7%E6%B2%99%E7%AE%B1"><span class="toc-number">1.6.2.</span> <span class="toc-text">被忽略的第三层：OS 级沙箱</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-MCP-%E4%B8%8E-LSP%EF%BC%9A%E4%B8%A4%E4%B8%AA%E8%A2%AB%E4%BD%8E%E4%BC%B0%E7%9A%84%E5%8D%8F%E8%AE%AE%E9%9B%86%E6%88%90"><span class="toc-number">1.7.</span> <span class="toc-text">6. MCP 与 LSP：两个被低估的协议集成</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#MCP%EF%BC%9A%E8%AE%A9%E5%B7%A5%E5%85%B7%E5%8F%98%E6%88%90%E7%8B%AC%E7%AB%8B%E8%BF%9B%E7%A8%8B"><span class="toc-number">1.7.1.</span> <span class="toc-text">MCP：让工具变成独立进程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#LSP%EF%BC%9A%E8%A2%AB%E4%BD%8E%E4%BC%B0%E7%9A%84%E6%9D%80%E6%89%8B%E7%BA%A7%E7%89%B9%E6%80%A7"><span class="toc-number">1.7.2.</span> <span class="toc-text">LSP：被低估的杀手级特性</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-%E5%A4%9A-Agent-%E5%8D%8F%E4%BD%9C%E4%B8%8E%E8%B7%A8%E4%BC%9A%E8%AF%9D%E8%AE%B0%E5%BF%86"><span class="toc-number">1.8.</span> <span class="toc-text">7. 多 Agent 协作与跨会话记忆</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AD%90-Agent%EF%BC%9A%E5%B9%B6%E8%A1%8C%E4%BD%86%E5%8F%97%E6%8E%A7"><span class="toc-number">1.8.1.</span> <span class="toc-text">子 Agent：并行但受控</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%B0%E5%BF%86%E7%B3%BB%E7%BB%9F%EF%BC%9A%E4%BC%98%E9%9B%85%E4%BD%86%E6%9C%89%E5%A4%A9%E8%8A%B1%E6%9D%BF"><span class="toc-number">1.8.2.</span> <span class="toc-text">记忆系统：优雅但有天花板</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93%EF%BC%9A%E8%BF%99%E7%AF%87%E6%96%87%E7%AB%A0%E6%9C%AC%E8%BA%AB%E5%B0%B1%E6%98%AF%E8%AF%81%E6%98%8E"><span class="toc-number">1.9.</span> <span class="toc-text">总结：这篇文章本身就是证明</span></a></li></ol></li></ol></div></div></div><div class="card-widget card-recent-post"><div class="card-content"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/04/12/Hermes-Agent-%E4%B8%8D%E5%AE%8C%E5%85%A8%E6%8C%87%E5%8D%97%EF%BC%8C%E4%B8%80%E4%B8%AA%E4%BC%9A%E8%87%AA%E5%B7%B1%E9%95%BF%E8%84%91%E5%AD%90%E7%9A%84-AI-Agent/" title="Hermes Agent 不完全指南，一个会自己长脑子的 AI Agent"><img src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/05.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Hermes Agent 不完全指南，一个会自己长脑子的 AI Agent"/></a><div class="content"><a class="title" href="/2026/04/12/Hermes-Agent-%E4%B8%8D%E5%AE%8C%E5%85%A8%E6%8C%87%E5%8D%97%EF%BC%8C%E4%B8%80%E4%B8%AA%E4%BC%9A%E8%87%AA%E5%B7%B1%E9%95%BF%E8%84%91%E5%AD%90%E7%9A%84-AI-Agent/" title="Hermes Agent 不完全指南，一个会自己长脑子的 AI Agent">Hermes Agent 不完全指南，一个会自己长脑子的 AI Agent</a><time datetime="2026-04-11T16:00:00.000Z" title="Created 2026-04-12 00:00:00">2026-04-12</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/08/Anthropic-%E5%8F%91%E5%B8%83%E6%9C%80%E5%BC%BA%E6%A8%A1%E5%9E%8B-Claude-Mythos%EF%BC%8C%E4%BD%86%E4%B8%8D%E8%AE%A9%E4%BD%A0%E7%94%A8/" title="Anthropic 发布最强模型 Claude Mythos，但不让你用"><img src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/10.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Anthropic 发布最强模型 Claude Mythos，但不让你用"/></a><div class="content"><a class="title" href="/2026/04/08/Anthropic-%E5%8F%91%E5%B8%83%E6%9C%80%E5%BC%BA%E6%A8%A1%E5%9E%8B-Claude-Mythos%EF%BC%8C%E4%BD%86%E4%B8%8D%E8%AE%A9%E4%BD%A0%E7%94%A8/" title="Anthropic 发布最强模型 Claude Mythos，但不让你用">Anthropic 发布最强模型 Claude Mythos，但不让你用</a><time datetime="2026-04-07T16:00:00.000Z" title="Created 2026-04-08 00:00:00">2026-04-08</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/08/YC-%E7%9A%84-CEO-%E5%85%BC%E8%81%8C-60-%E5%A4%A9%E5%86%99%E4%BA%86-60-%E4%B8%87%E8%A1%8C%E4%BB%A3%E7%A0%81%EF%BC%8C%E4%BB%96%E6%8A%8A%E6%96%B9%E6%B3%95%E5%BC%80%E6%BA%90%E4%BA%86/" title="YC 的 CEO 兼职 60 天写了 60 万行代码，他把方法开源了"><img src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/10.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="YC 的 CEO 兼职 60 天写了 60 万行代码，他把方法开源了"/></a><div class="content"><a class="title" href="/2026/04/08/YC-%E7%9A%84-CEO-%E5%85%BC%E8%81%8C-60-%E5%A4%A9%E5%86%99%E4%BA%86-60-%E4%B8%87%E8%A1%8C%E4%BB%A3%E7%A0%81%EF%BC%8C%E4%BB%96%E6%8A%8A%E6%96%B9%E6%B3%95%E5%BC%80%E6%BA%90%E4%BA%86/" title="YC 的 CEO 兼职 60 天写了 60 万行代码，他把方法开源了">YC 的 CEO 兼职 60 天写了 60 万行代码，他把方法开源了</a><time datetime="2026-04-07T16:00:00.000Z" title="Created 2026-04-08 00:00:00">2026-04-08</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/08/%E6%88%91%E6%96%87%E7%AB%A0%E9%87%8C%E9%82%A3%E4%BA%9B%E5%A5%BD%E7%9C%8B%E7%9A%84%E4%BF%A1%E6%81%AF%E5%9B%BE%EF%BC%8C%E9%83%BD%E6%98%AF%E8%BF%99%E4%B8%80%E4%B8%AA%E5%85%8D%E8%B4%B9%E5%B7%A5%E5%85%B7%E7%94%BB%E7%9A%84/" title="我文章里那些好看的信息图，都是这一个免费工具画的"><img src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/05.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="我文章里那些好看的信息图，都是这一个免费工具画的"/></a><div class="content"><a class="title" href="/2026/04/08/%E6%88%91%E6%96%87%E7%AB%A0%E9%87%8C%E9%82%A3%E4%BA%9B%E5%A5%BD%E7%9C%8B%E7%9A%84%E4%BF%A1%E6%81%AF%E5%9B%BE%EF%BC%8C%E9%83%BD%E6%98%AF%E8%BF%99%E4%B8%80%E4%B8%AA%E5%85%8D%E8%B4%B9%E5%B7%A5%E5%85%B7%E7%94%BB%E7%9A%84/" title="我文章里那些好看的信息图，都是这一个免费工具画的">我文章里那些好看的信息图，都是这一个免费工具画的</a><time datetime="2026-04-07T16:00:00.000Z" title="Created 2026-04-08 00:00:00">2026-04-08</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/06/%E5%BD%93-AI-%E5%BC%80%E5%A7%8B%E6%89%AE%E6%BC%94%E4%BD%A0%E7%9A%84%E5%90%8C%E4%BA%8B%E3%80%81%E5%89%8D%E4%BB%BB%E5%92%8C%E8%80%81%E6%9D%BF/" title="当 AI 开始扮演你的同事、前任和老板"><img src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/03.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="当 AI 开始扮演你的同事、前任和老板"/></a><div class="content"><a class="title" href="/2026/04/06/%E5%BD%93-AI-%E5%BC%80%E5%A7%8B%E6%89%AE%E6%BC%94%E4%BD%A0%E7%9A%84%E5%90%8C%E4%BA%8B%E3%80%81%E5%89%8D%E4%BB%BB%E5%92%8C%E8%80%81%E6%9D%BF/" title="当 AI 开始扮演你的同事、前任和老板">当 AI 开始扮演你的同事、前任和老板</a><time datetime="2026-04-05T16:00:00.000Z" title="Created 2026-04-06 00:00:00">2026-04-06</time></div></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/03.jpg?raw=true)"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2026 By Leslie</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="Back To Top"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><div class="js-pjax"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></div></body></html>

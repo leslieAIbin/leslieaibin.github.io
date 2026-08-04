@@ -1,0 +1,379 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+  <head>
+
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#050b18">
+<meta name="color-scheme" content="dark light">
+<title>KV Cache 跨节点迁移，为什么会卡住第一个 token？ | Leslie Zhang</title>
+<meta name="description" content="Prefill 算完不代表用户马上能看到第一个 token。KV Cache 跨节点迁移不是传文件，而是一条从 GPU、NIC、Leaf、Spine 到目的端 GPU 的端到端搬运链路。">
+<meta name="author" content="Leslie Zhang">
+<link rel="canonical" href="https://leslieaibin.github.io/2026/06/30/attention-field/KVCache%E8%B7%A8%E8%8A%82%E7%82%B9%E8%BF%81%E7%A7%BB/">
+<link rel="icon" href="/imgs/01.jpg">
+<link rel="alternate" type="application/atom+xml" title="Leslie Zhang" href="/atom.xml">
+<meta property="og:type" content="article">
+<meta property="og:title" content="KV Cache 跨节点迁移，为什么会卡住第一个 token？ | Leslie Zhang">
+<meta property="og:description" content="Prefill 算完不代表用户马上能看到第一个 token。KV Cache 跨节点迁移不是传文件，而是一条从 GPU、NIC、Leaf、Spine 到目的端 GPU 的端到端搬运链路。">
+<meta property="og:url" content="https://leslieaibin.github.io/2026/06/30/attention-field/KVCache%E8%B7%A8%E8%8A%82%E7%82%B9%E8%BF%81%E7%A7%BB/">
+<meta property="og:image" content="https://leslieaibin.github.io/2026/06/30/attention-field/KVCache%E8%B7%A8%E8%8A%82%E7%82%B9%E8%BF%81%E7%A7%BB/imgs/cover.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="KV Cache 跨节点迁移，为什么会卡住第一个 token？ | Leslie Zhang">
+<meta name="twitter:description" content="Prefill 算完不代表用户马上能看到第一个 token。KV Cache 跨节点迁移不是传文件，而是一条从 GPU、NIC、Leaf、Spine 到目的端 GPU 的端到端搬运链路。">
+<meta name="twitter:image" content="https://leslieaibin.github.io/2026/06/30/attention-field/KVCache%E8%B7%A8%E8%8A%82%E7%82%B9%E8%BF%81%E7%A7%BB/imgs/cover.jpg">
+<script>
+  (function () {
+    var saved = localStorage.getItem('orbital-theme');
+    var theme = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    document.documentElement.dataset.theme = theme;
+  })();
+</script>
+<link rel="stylesheet" href="/css/orbital.css">
+<meta name="generator" content="Hexo 5.2.0"></head>
+  <body class="page-post">
+    <a class="skip-link" href="#main-content">跳到主要内容</a>
+    <div class="reading-progress" data-reading-progress></div>
+    <header class="site-header" data-header>
+  <div class="nav-shell">
+    <a class="brand" href="/" aria-label="返回首页">
+      <span class="brand-mark" aria-hidden="true"><img src="/images/brand/leslie-mythos-avatar.webp" alt="" width="512" height="512"></span>
+      <span class="brand-copy">
+        <strong>LESLIE</strong>
+        <small>REAL-WORLD AGENTS</small>
+      </span>
+    </a>
+
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav" data-nav-toggle>
+      <span></span><span></span>
+      <span class="sr-only">打开导航</span>
+    </button>
+
+    <nav class="main-nav" id="main-nav" aria-label="主导航" data-nav>
+      
+        <a href="/" class="">首页</a>
+      
+        <a href="/writing/" class="">写作</a>
+      
+        <a href="/projects/" class="">项目</a>
+      
+        <a href="/about/" class="">关于</a>
+      
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换明暗主题">
+        <span class="theme-toggle__sun" aria-hidden="true">☼</span>
+        <span class="theme-toggle__moon" aria-hidden="true">◐</span>
+      </button>
+      <button class="ask-nav" type="button" data-ask-open>ASK LESLIE</button>
+    </nav>
+  </div>
+</header>
+
+    <main id="main-content"><article class="post-shell">
+  <header class="post-hero shell">
+    <a class="post-back" href="/writing/">← 返回写作</a>
+    <div class="post-hero__meta">
+      <time datetime="2026-06-30">2026 年 06 月 30 日</time>
+      <span>12 分钟阅读</span>
+    </div>
+    <h1>KV Cache 跨节点迁移，为什么会卡住第一个 token？</h1>
+    <p class="post-hero__summary">Prefill 算完不代表用户马上能看到第一个 token。KV Cache 跨节点迁移不是传文件，而是一条从 GPU、NIC、Leaf、Spine 到目的端 GPU 的端到端搬运链路。</p>
+    <div class="chip-row"><a href="/tags/LLM/">LLM</a><a href="/tags/Inference/">Inference</a><a href="/tags/KV-Cache/">KV-Cache</a><a href="/tags/TTFT/">TTFT</a><a href="/tags/RoCE/">RoCE</a><a href="/tags/GPUDirect-RDMA/">GPUDirect-RDMA</a><a href="/tags/Disaggregated-Inference/">Disaggregated-Inference</a></div>
+  </header>
+
+  <div class="post-cover shell"><img src="/2026/06/30/attention-field/KVCache%E8%B7%A8%E8%8A%82%E7%82%B9%E8%BF%81%E7%A7%BB/imgs/cover.jpg" alt="KV Cache 跨节点迁移，为什么会卡住第一个 token？"></div>
+
+  <div class="post-layout shell">
+    <aside class="post-toc" aria-label="文章目录">
+      <span class="aside-title">目录</span>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%83%E4%B8%8D%E6%98%AF-GPU-%E5%88%B0-GPU-%E9%A3%9E%E8%BF%87%E5%8E%BB"><span class="toc-text">它不是 GPU 到 GPU 飞过去</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88-Prefill-%E5%92%8C-Decode-%E8%A6%81%E5%88%86%E5%BC%80"><span class="toc-text">为什么 Prefill 和 Decode 要分开</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E6%AE%B5%E7%93%B6%E9%A2%88%EF%BC%9A%E6%BA%90%E7%AB%AF%E5%8F%AF%E8%83%BD%E6%A0%B9%E6%9C%AC%E5%87%BA%E4%B8%8D%E6%9D%A5"><span class="toc-text">第一段瓶颈：源端可能根本出不来</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E6%AE%B5%E7%93%B6%E9%A2%88%EF%BC%9A%E6%BA%90%E7%AB%AF-Leaf-%E8%A2%AB%E4%B8%80%E6%B3%A2%E6%B3%A2%E6%89%93%E9%AB%98"><span class="toc-text">第二段瓶颈：源端 Leaf 被一波波打高</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E6%AE%B5%E7%93%B6%E9%A2%88%EF%BC%9A%E4%B8%AD%E9%97%B4%E7%BD%91%E7%BB%9C%E4%B8%8D%E6%98%AF%E4%B8%8D%E5%A4%9F%E5%A4%A7%EF%BC%8C%E8%80%8C%E6%98%AF%E4%B8%8D%E5%A4%9F%E5%9D%87"><span class="toc-text">第三段瓶颈：中间网络不是不够大，而是不够均</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%9B%9B%E6%AE%B5%E7%93%B6%E9%A2%88%EF%BC%9A%E7%9B%AE%E7%9A%84%E7%AB%AF%E6%8E%A5%E4%B8%8D%E4%BD%8F%EF%BC%8C%E6%9C%80%E5%AE%B9%E6%98%93%E8%A2%AB%E4%BD%8E%E4%BC%B0"><span class="toc-text">第四段瓶颈：目的端接不住，最容易被低估</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E5%B9%B3%E5%9D%87%E5%B8%A6%E5%AE%BD%E7%BB%8F%E5%B8%B8%E9%AA%97%E4%BD%A0"><span class="toc-text">为什么平均带宽经常骗你</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ECN-%E5%92%8C-DCQCN-%E4%B8%BA%E4%BB%80%E4%B9%88%E6%9C%89%E6%97%B6%E6%95%91%E4%B8%8D%E5%8F%8A%E6%97%B6"><span class="toc-text">ECN 和 DCQCN 为什么有时救不及时</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9C%9F%E6%AD%A3%E8%AF%A5%E7%9C%8B%E7%9A%84%E8%AF%81%E6%8D%AE%E9%93%BE"><span class="toc-text">真正该看的证据链</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%99%E5%9C%A8%E6%9C%80%E5%90%8E"><span class="toc-text">写在最后</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="toc-text">参考资料</span></a></li></ol>
+    </aside>
+    <div class="article-content"><h1 id="KV-Cache-跨节点迁移，为什么会卡住第一个-token？"><a href="#KV-Cache-跨节点迁移，为什么会卡住第一个-token？" class="headerlink" title="KV Cache 跨节点迁移，为什么会卡住第一个 token？"></a>KV Cache 跨节点迁移，为什么会卡住第一个 token？</h1><p>如果你做过一点大模型推理服务，很容易遇到一个很别扭的现象。</p>
+<p>Prefill 看起来不慢。</p>
+<p>Decode 看起来也不慢。</p>
+<p>GPU 也不是完全不够。</p>
+<p>但用户就是等不到第一个字。</p>
+<p>更奇怪的是，你去看网络监控，平均带宽好像也没满。400G 的网卡没有打满，交换机总吞吐也不是特别夸张，整个集群看上去没有那种「全网爆炸」的感觉。</p>
+<p>可 TTFT 就是下不来。</p>
+<p>这时候很多人会本能地说一句，网络不够快。</p>
+<p>这个判断不能说错。</p>
+<p>但太粗了。</p>
+<p>因为在分离式推理架构里，KV Cache 跨节点迁移从来不是一个简单的「从 A 机器传到 B 机器」问题。它更像一条很长的搬运链路，中间任何一段卡住，都会挡在第一个 token 前面。</p>
+<p>你可以把它想成这样。</p>
+<p>Prefill 已经把题目读完了，也把每一层的 Key、Value 都算出来了。</p>
+<p>但 Decode 节点还没拿到这些 KV。</p>
+<p>那它就不能开始生成。</p>
+<p>所以这段迁移时间，直接算进 TTFT。</p>
+<p>这就是它敏感的地方。</p>
+<p>训练里的网络慢，很多时候拖的是吞吐。</p>
+<p>KV Cache 迁移慢，拖的是用户眼前那几秒空白。</p>
+<p><img src="imgs/cover.jpg" alt="KV Cache 跨节点迁移链路：P 侧 GPU 里的 KV blocks 经过 NIC、Leaf、Spine 到达 D 侧 GPU，TTFT 计时器被迁移链路拖长"></p>
+<h2 id="它不是-GPU-到-GPU-飞过去"><a href="#它不是-GPU-到-GPU-飞过去" class="headerlink" title="它不是 GPU 到 GPU 飞过去"></a>它不是 GPU 到 GPU 飞过去</h2><p>先把画面拆开。</p>
+<p>很多人脑子里会有一个很简化的想象：P 节点算完 Prefill，D 节点负责 Decode，中间把 KV Cache 搬过去。</p>
+<p>听起来像 GPU 到 GPU 之间飞了一包数据。</p>
+<p>真实路径要麻烦得多。</p>
+<p>KV 最开始在 P 侧 GPU 显存里。要跨节点送出去，它要先走出 GPU，经过主机内部的 PCIe 拓扑，走到对应的 NIC。如果 GPUDirect RDMA 生效，它可以少走一些 CPU 中转；如果没走通，路径就会变长，延迟和 CPU 开销都可能上来。</p>
+<p>然后它进入源端服务器所在的 Leaf 交换机。</p>
+<p>如果 P 节点和 D 节点不在同一个 Leaf 下，它还要继续穿过 Spine，甚至更上层的 Core。等到了 D 侧 Leaf，再下发到目标服务器 NIC，最后落到 D 侧 GPU 或者推理引擎管理的接收缓冲里。</p>
+<p>你看，光是这句话里，就已经有好几段可能出问题。</p>
+<p>P 侧 GPU 到 NIC。</p>
+<p>源端 Leaf 上行。</p>
+<p>Spine / Core 路径。</p>
+<p>目的端 Leaf 下行。</p>
+<p>D 侧 NIC 到 GPU。</p>
+<p>所以 KV Cache 跨节点迁移最容易被误判的地方就在这里：<strong>它看起来是网络问题，其实是端到端数据路径问题。</strong></p>
+<p>网络只是其中一段。</p>
+<p>而 TTFT 只认最后结果。</p>
+<p>哪一段最慢，它就被哪一段拖住。</p>
+<p><img src="imgs/01-end-to-end-path.jpg" alt="KV Cache 端到端搬运路径：P 侧 GPU 显存经过 PCIe、NUMA、NIC、源端 Leaf、Spine/Core、目的端 Leaf，最后进入 D 侧 GPU"></p>
+<h2 id="为什么-Prefill-和-Decode-要分开"><a href="#为什么-Prefill-和-Decode-要分开" class="headerlink" title="为什么 Prefill 和 Decode 要分开"></a>为什么 Prefill 和 Decode 要分开</h2><p>讲到这里，先补一点背景。</p>
+<p>现在很多大模型推理系统会考虑 Prefill / Decode 分离。</p>
+<p>原因也不复杂。</p>
+<p>Prefill 和 Decode 的性格完全不一样。</p>
+<p>Prefill 是把一大段输入 token 一次性吃进去。它更偏计算密集，batch 做大一点，GPU 更容易被喂饱。</p>
+<p>Decode 是一个 token 一个 token 往外生成。每一步都要读历史 KV Cache，更偏显存带宽和调度。它的延迟敏感度也更高，因为用户正在看着字往外蹦。</p>
+<p>如果把这两类负载粗暴混在一起，互相干扰很明显。</p>
+<p>长 Prompt 的 Prefill 可能把 Decode 挤住。</p>
+<p>大量 Decode 请求又会让 Prefill 很难组织成舒服的大 batch。</p>
+<p>所以 DistServe、Mooncake 这类工作都会把问题往分离式推理上推：让 Prefill 和 Decode 使用不同的资源池，用更适合各自特性的方式调度。</p>
+<p>这个思路很自然。</p>
+<p>但它引入了一个新成本。</p>
+<p>KV Cache 要搬家。</p>
+<p>Prefill 节点算出来的 KV，Decode 节点要接着用。只要它们不在同一张卡、同一台机器，甚至不在同一个机架，迁移链路就成了第一个 token 前面的必经路。</p>
+<p>这就是为什么 P/D 分离不是单纯的调度优化。</p>
+<p>它还把推理系统里的网络问题，直接抬到了用户体验层。</p>
+<p><img src="imgs/02-ttft-transfer-barrier.jpg" alt="TTFT 时间轴：用户请求进入后经过 Prefill、KV Transfer、Decode Start，KV 没到之前第一个 token 无法生成"></p>
+<h2 id="第一段瓶颈：源端可能根本出不来"><a href="#第一段瓶颈：源端可能根本出不来" class="headerlink" title="第一段瓶颈：源端可能根本出不来"></a>第一段瓶颈：源端可能根本出不来</h2><p>一说网络瓶颈，很多人会直接去看交换机。</p>
+<p>但在 KV 迁移里，第一段问题经常还没走到交换机。</p>
+<p>它卡在源端主机内部。</p>
+<p>也就是 P 侧 GPU 到 NIC 这一段。</p>
+<p>这段路听起来很短，但很容易不顺。</p>
+<p>比如 GPU 和 NIC 不在同一个 NUMA 域。比如某张 GPU 到某张网卡的 PCIe 路径更绕。比如你以为 GPUDirect RDMA 生效了，实际上流量还是绕了 CPU 或者走了不理想的路径。再比如多网卡看起来都在用，但不同 rail 的实际吞吐差很多。</p>
+<p>这时候你会看到一个很迷惑的现象。</p>
+<p>交换机不热。</p>
+<p>网络平均不高。</p>
+<p>但某些 KV 迁移就是慢。</p>
+<p>同一台服务器上，不同 GPU 发出去的速度还不一样。</p>
+<p>这不一定是网络中间出了问题。</p>
+<p>可能是源端「出门」这一步就不顺。</p>
+<p>我一直觉得这类问题很像城市交通。你要从一个小区去机场，大家总盯着高速堵不堵，但你可能根本还没开上高速，先卡在小区门口那条窄路上。</p>
+<p>KV 迁移也是一样。</p>
+<p>P 侧 GPU 显存里的 KV，要先顺利走到 NIC。</p>
+<p>如果这一步不稳，后面的 Clos 网络再漂亮，也救不了你的 TTFT。</p>
+<p><img src="imgs/03-source-host-bottleneck.jpg" alt="源端主机内部瓶颈：GPU 到 NIC 的 PCIe、NUMA、GPUDirect RDMA 路径不一致，多轨带宽没有真正叠加"></p>
+<h2 id="第二段瓶颈：源端-Leaf-被一波波打高"><a href="#第二段瓶颈：源端-Leaf-被一波波打高" class="headerlink" title="第二段瓶颈：源端 Leaf 被一波波打高"></a>第二段瓶颈：源端 Leaf 被一波波打高</h2><p>如果源端主机路径没问题，下一个常见瓶颈就是源端 Leaf 上行。</p>
+<p>这也是第一次真正进入「网络」的地方。</p>
+<p>想象一下，一个 Leaf 下面挂了很多 P 节点。它们都在做 Prefill。某一小段时间里，一批请求陆续完成 Prefill，然后同时开始把 KV Cache 往外发。</p>
+<p>这时候 Leaf 看到的不是平滑流量。</p>
+<p>而是一波突发。</p>
+<p>很多服务器下行口一起往有限的上行口推大块 KV 数据。单个流量看起来不一定离谱，但叠在同一个时间窗口里，队列就会上来。</p>
+<p>队列一上来，ECN marks 可能增加。</p>
+<p>再严重一点，PFC 风险也会上来。</p>
+<p>问题就在这里。</p>
+<p>KV Cache 迁移不像训练里的 collective 那么规律。训练通信虽然也重，但节奏更可预测，模式更稳定。KV 迁移是请求驱动的。用户请求什么时候来、Prompt 多长、Prefill 什么时候完成、要发给哪个 Decode 组，都带着很强的不确定性。</p>
+<p>所以源端 Leaf 上行面对的不是一条稳定大河。</p>
+<p>更像一阵阵突然冲下来的山洪。</p>
+<p>平均看不吓人。</p>
+<p>瞬间看很疼。</p>
+<p>这也是为什么你不能只看分钟级平均带宽。分钟级平均把尖峰抹平以后，最关键的信息就没了。</p>
+<p>TTFT 不会等你做平均。</p>
+<p>它只会被那一次尖峰拖住。</p>
+<p><img src="imgs/04-leaf-burst-hotspot.jpg" alt="源端 Leaf 上行突发汇聚：多个 P 节点同时发送 KV blocks，Leaf 上行口队列升高，出现 ECN 和 PFC 风险"></p>
+<h2 id="第三段瓶颈：中间网络不是不够大，而是不够均"><a href="#第三段瓶颈：中间网络不是不够大，而是不够均" class="headerlink" title="第三段瓶颈：中间网络不是不够大，而是不够均"></a>第三段瓶颈：中间网络不是不够大，而是不够均</h2><p>再往里走，就是 Spine / Core 这些中间网络。</p>
+<p>这里当然也可能带宽不够。</p>
+<p>但在很多真实系统里，更常见的问题不是「全网总带宽不够」，而是「某些路径比其他路径更热」。</p>
+<p>这句话很重要。</p>
+<p>因为大集群网络通常不是一条路，而是一组等价路径。Clos、ECMP、多 Spine，本来就是为了让流量可以摊开走。</p>
+<p>但 KV 迁移流量不是完全随机的背景噪声。</p>
+<p>它有方向。</p>
+<p>一批 P 节点，可能集中把 KV 发给某几个 D 副本，或者某个 TP 组。某些哈希结果、某些目标组合、某些调度策略，会让一部分路径长期偏热。</p>
+<p>于是你看全网平均，很健康。</p>
+<p>你看某些 Spine 端口，很难受。</p>
+<p>你看整体吞吐，没有跑满。</p>
+<p>你看某些批次的 TTFT，长尾很明显。</p>
+<p>这就是路径热点。</p>
+<p>它最麻烦的地方是，问题不是每次都发生，也不是所有请求都慢。</p>
+<p>有时候快。</p>
+<p>有时候慢。</p>
+<p>有些目标组快。</p>
+<p>有些目标组慢。</p>
+<p>这会让排查变得很折磨。因为它不像一根光纤断了那样干脆，也不像所有链路都满了那样明显。它更像系统里某些方向反复积压，最后表现成 TTFT 的尾延迟。</p>
+<p>所以看中间网络，不能只问总量够不够。</p>
+<p>还要问路径摊得均不均。</p>
+<h2 id="第四段瓶颈：目的端接不住，最容易被低估"><a href="#第四段瓶颈：目的端接不住，最容易被低估" class="headerlink" title="第四段瓶颈：目的端接不住，最容易被低估"></a>第四段瓶颈：目的端接不住，最容易被低估</h2><p>真正容易被低估的，是目的端。</p>
+<p>很多人天然觉得，发送端和中间网络更危险。</p>
+<p>其实在 KV 迁移里，目的端很容易成为最尖锐的汇聚点。</p>
+<p>原因很简单。</p>
+<p>KV 不是均匀发给所有 Decode 节点。</p>
+<p>它通常会发给某个目标 Decode 副本，或者某个 TP 组。</p>
+<p>如果多个 P 节点在相近时间里完成 Prefill，而调度器又把它们的 KV 指向少数几个 D 目标，那接收侧就会出现非常典型的定向 Incast。</p>
+<p>多个源头。</p>
+<p>少数目标。</p>
+<p>一瞬间打过来。</p>
+<p>目的端会卡在哪？</p>
+<p>第一层是 D 侧 Leaf 下行。</p>
+<p>很多来自上游的流量，最后要汇到同一个机架、同一组服务器方向。</p>
+<p>第二层是 D 侧 NIC。</p>
+<p>尤其是多条 KV 流同时进入同一台服务器时，接收队列、DMA、内存路径都会变得敏感。</p>
+<p>第三层是 D 侧 GPU 落地。</p>
+<p>KV 接收以后不是凭空消失，它还要被放到推理引擎能用的位置，完成映射、组织、可能的 block 管理，然后 Decode 才能真正接上。</p>
+<p>这里稍微不顺，TTFT 就继续等。</p>
+<p>目的端问题最讨厌的地方，是它从全网视角看不一定显眼。</p>
+<p>总流量不大。</p>
+<p>平均带宽不高。</p>
+<p>但某个 D 副本、某个 D 组、某个接收方向，压力很大。</p>
+<p>于是你会看到一种长尾。</p>
+<p>请求打到这个目标组，慢。</p>
+<p>打到另一个目标组，正常。</p>
+<p>系统整体看起来没炸，但用户侧 p99 很难看。</p>
+<p>这就是目的端定向汇聚的典型味道。</p>
+<p>所以 KV 迁移最容易被低估的一句话是：<strong>问题不一定是发不出去，也可能是集中接不住。</strong></p>
+<p><img src="imgs/05-ecmp-destination-incast.jpg" alt="中间路径热点与目的端 Incast：ECMP 路径不均导致 Spine 热点，多个 P 源头同时打向少数 D 目标组形成接收侧汇聚"></p>
+<h2 id="为什么平均带宽经常骗你"><a href="#为什么平均带宽经常骗你" class="headerlink" title="为什么平均带宽经常骗你"></a>为什么平均带宽经常骗你</h2><p>讲到这里，就能理解为什么平均带宽经常会误导人。</p>
+<p>KV 迁移怕的不是平均。</p>
+<p>它怕三个东西。</p>
+<p>短时突发。</p>
+<p>局部汇聚。</p>
+<p>尾延迟。</p>
+<p>平均带宽会把短时突发抹平。全网总吞吐会把局部热点藏起来。平均 TTFT 会把少数慢请求的痛感稀释掉。</p>
+<p>但用户感知不是平均的。</p>
+<p>用户感知的是这一次。</p>
+<p>他发出请求以后，屏幕空白了多久。</p>
+<p>所以看 KV Cache 迁移，真正要关心的不是「网络是不是总体没满」，而是：</p>
+<p>P 侧 GPU 到 NIC 这段有没有慢轨。</p>
+<p>源端 Leaf 上行有没有尖峰。</p>
+<p>Spine / Core 路径有没有偏热。</p>
+<p>D 侧 Leaf 下行有没有接收队列。</p>
+<p>某些 Decode 副本是不是长期拖慢 TTFT。</p>
+<p>这些指标如果只用平均值看，很容易看不到。</p>
+<p>你得看峰值，看 p99，看单端口，看单路径，看单目标组。</p>
+<p>这就像排队买咖啡。店里一天平均每分钟只来两个人，听起来很轻松。但如果早上 9 点 10 分突然来了 80 个人，用户体验就是崩的。</p>
+<p>平均值没有撒谎。</p>
+<p>只是它回答了一个不重要的问题。</p>
+<h2 id="ECN-和-DCQCN-为什么有时救不及时"><a href="#ECN-和-DCQCN-为什么有时救不及时" class="headerlink" title="ECN 和 DCQCN 为什么有时救不及时"></a>ECN 和 DCQCN 为什么有时救不及时</h2><p>RoCE 网络里，大家经常会提到 ECN、PFC、DCQCN。</p>
+<p>这些机制当然重要。</p>
+<p>但在 KV 迁移这种流量形态下，它们并不是万能按钮。</p>
+<p>原因还是突发。</p>
+<p>拥塞控制需要时间。</p>
+<p>队列开始上升，交换机打 ECN 标记，接收端把拥塞信息反馈回去，发送端再调整速率。这个链路是有效的，但它不是瞬移。</p>
+<p>而 KV 迁移的尖峰可能来得很快。</p>
+<p>多个 Prefill 节点同时完成。</p>
+<p>多条 KV 流同时打向同一个 D 组。</p>
+<p>某个 Leaf 或某个接收端口短时间被推高。</p>
+<p>等反馈链路开始发挥作用时，队列可能已经很深，甚至已经接近触发 PFC 的边界。</p>
+<p>所以这里的难点不是「有没有拥塞反馈」。</p>
+<p>而是「反馈够不够快，能不能在尖峰把队列打深之前把流量压住」。</p>
+<p>这也是 KV 迁移比稳定大流更难控制的地方。</p>
+<p>稳定大流可以慢慢收敛。</p>
+<p>尖峰流量没有那么多耐心。</p>
+<p>它几毫秒、几十毫秒里就把问题暴露出来，然后 TTFT 已经被拉长了。</p>
+<h2 id="真正该看的证据链"><a href="#真正该看的证据链" class="headerlink" title="真正该看的证据链"></a>真正该看的证据链</h2><p>如果要判断 KV 迁移到底卡在哪，我会按端到端链路去看，而不是先给网络扣帽子。</p>
+<p>先看源端主机。</p>
+<p>GPU 和 NIC 的拓扑关系是否合理？跨 NUMA 有没有明显更慢？GPUDirect RDMA 是否真正走通？不同 GPU、不同 NIC、不同 rail 的迁移能力是不是一致？</p>
+<p>如果这里不稳，问题可能还没出服务器。</p>
+<p>再看源端 Leaf。</p>
+<p>P 侧接入交换机上行有没有短时冲高？ECN marks 是不是集中出现在源端上行？多个 P 节点是不是在相近窗口同时发 KV？</p>
+<p>如果这些成立，源端汇聚很可能就是第一波瓶颈。</p>
+<p>然后看中间网络。</p>
+<p>Spine / Core 有没有个别链路长期偏热？ECMP 有没有明显不均？慢请求是不是和某些路径、某些方向相关？</p>
+<p>如果是，那就不是全网不够，而是路径不均。</p>
+<p>再看目的端。</p>
+<p>D 侧 Leaf 下行有没有队列？D 侧 NIC 接收有没有压力？某些 Decode 副本是不是长期更慢？TTFT 长尾是不是和特定目标组绑定？</p>
+<p>如果请求打到某些 D 组就慢，那目的端定向 Incast 就要重点怀疑。</p>
+<p>最后，把这些东西和应用层指标对上。</p>
+<p>迁移时间。</p>
+<p>TTFT p95 / p99。</p>
+<p>不同 D 副本的首 token 延迟。</p>
+<p>不同 P/D 组合的迁移耗时。</p>
+<p>网络是过程。</p>
+<p>TTFT 才是结果。</p>
+<p>只看过程指标，很容易把一堆漂亮曲线解释成「没问题」。但用户等第一个字等得难受，这件事不会因为平均带宽漂亮就消失。</p>
+<h2 id="写在最后"><a href="#写在最后" class="headerlink" title="写在最后"></a>写在最后</h2><p>KV Cache 跨节点迁移最重要的判断，其实就一句话：</p>
+<p><strong>不要把它当成传文件，要把它当成一条挡在首 token 前面的端到端数据路径。</strong></p>
+<p>这条路径上，源端要发得出来，中间要过得稳定，目的端要接得住。</p>
+<p>三件事缺一个，TTFT 都会被拉长。</p>
+<p>而且很多时候，真正的问题不是总带宽不够。</p>
+<p>是某一段路径不顺。</p>
+<p>是某一波突发太尖。</p>
+<p>是某一个方向长期偏热。</p>
+<p>是少数几个 D 目标接不住。</p>
+<p>所以排 KV 迁移问题，最怕一句话：</p>
+<p>网络平均没满，所以不是网络问题。</p>
+<p>这句话听起来很理性。</p>
+<p>但在 KV 迁移场景里，它经常把你带偏。</p>
+<p>真正该问的是：</p>
+<p>哪一段链路拖住了第一个 token？</p>
+<p>这个问题问对了，后面的排查才会开始变得清楚。</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li>DistServe: Disaggregating Prefill and Decoding for Goodput-optimized Large Language Model Serving</li>
+<li>Mooncake: A KVCache-centric Disaggregated Architecture for LLM Serving</li>
+<li>LMCache: Efficient KV Cache Management for LLM Serving</li>
+<li>NVIDIA GPUDirect RDMA Documentation</li>
+<li>Microsoft DCQCN: Congestion Control for Large-Scale RDMA Deployments</li>
+</ul>
+</div>
+    <aside class="post-rail">
+      <span class="post-rail__line"></span>
+      <span>LESLIE / WRITING</span>
+    </aside>
+  </div>
+
+  <footer class="post-footer shell">
+    <div><h2>如果这篇文章帮到了你，<br>也许下一篇会更有意思。</h2></div>
+    <a class="button button--primary" href="/writing/">继续阅读 →</a>
+  </footer>
+</article>
+</main>
+    <footer class="site-footer">
+  <div class="footer-grid">
+    <div>
+      <p class="footer-kicker">Leslie Zhang</p>
+      <p class="footer-statement">把真实世界的问题，<br>变成可以运行的智能系统。</p>
+    </div>
+    <div class="footer-links">
+      <a href="https://github.com/leslieAIbin" target="_blank" rel="noreferrer">GitHub ↗</a>
+      <a href="mailto:aibinzhangleslie@gmail.com">Email ↗</a>
+      <a href="/atom.xml">RSS ↗</a>
+    </div>
+    <div class="footer-meta">
+      <span>© 2026 Leslie Zhang</span>
+      <span>Writing, research and working systems.</span>
+    </div>
+  </div>
+</footer>
+
+    <dialog class="ask-dialog" id="ask-leslie" aria-labelledby="ask-title">
+  <div class="ask-dialog__shell">
+    <div class="ask-dialog__topbar">
+      <div>
+        <h2 id="ask-title">Ask Leslie</h2>
+      </div>
+      <button class="icon-button" type="button" data-ask-close aria-label="关闭">×</button>
+    </div>
+    <p class="ask-dialog__intro">从本站公开文章中寻找答案。当前版本在浏览器本地检索，不上传问题，也不会编造不存在的经历。</p>
+    <form class="ask-form" data-ask-form>
+      <label class="sr-only" for="ask-query">输入问题</label>
+      <textarea id="ask-query" rows="2" placeholder="例如：Agent Runtime 应该怎么设计？" data-ask-input></textarea>
+      <button type="submit">检索知识库 <span aria-hidden="true">↗</span></button>
+    </form>
+    <div class="ask-suggestions" aria-label="推荐问题">
+      
+        <button type="button" data-ask-suggestion="Agent Runtime 应该怎么设计？">Agent Runtime 应该怎么设计？</button>
+      
+        <button type="button" data-ask-suggestion="如何让 AI 操控真实世界设备？">如何让 AI 操控真实世界设备？</button>
+      
+        <button type="button" data-ask-suggestion="Leslie 最近在研究什么？">Leslie 最近在研究什么？</button>
+      
+    </div>
+    <div class="ask-results" data-ask-results aria-live="polite">
+      <div class="ask-empty">
+        <p>输入一个问题，我会把你带到 Leslie 写过的相关内容。</p>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+    <script>window.ORBITAL_ROOT = '/';</script>
+    <script src="/js/orbital.js" defer></script>
+  </body>
+</html>

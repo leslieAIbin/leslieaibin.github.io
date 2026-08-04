@@ -1,0 +1,1514 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+  <head>
+
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#050b18">
+<meta name="color-scheme" content="dark light">
+<title>写作 | Leslie Zhang</title>
+<meta name="description" content="关于 AI Agent、工程系统与后端技术的公开笔记">
+<meta name="author" content="Leslie Zhang">
+<link rel="canonical" href="https://leslieaibin.github.io/writing/index.html">
+<link rel="icon" href="/imgs/01.jpg">
+<link rel="alternate" type="application/atom+xml" title="Leslie Zhang" href="/atom.xml">
+<meta property="og:type" content="website">
+<meta property="og:title" content="写作 | Leslie Zhang">
+<meta property="og:description" content="关于 AI Agent、工程系统与后端技术的公开笔记">
+<meta property="og:url" content="https://leslieaibin.github.io/writing/index.html">
+<meta property="og:image" content="https://leslieaibin.github.io/og-blue.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="写作 | Leslie Zhang">
+<meta name="twitter:description" content="关于 AI Agent、工程系统与后端技术的公开笔记">
+<meta name="twitter:image" content="https://leslieaibin.github.io/og-blue.png">
+<script>
+  (function () {
+    var saved = localStorage.getItem('orbital-theme');
+    var theme = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    document.documentElement.dataset.theme = theme;
+  })();
+</script>
+<link rel="stylesheet" href="/css/orbital.css">
+<meta name="generator" content="Hexo 5.2.0"></head>
+  <body class="page-writing">
+    <a class="skip-link" href="#main-content">跳到主要内容</a>
+    <div class="reading-progress" data-reading-progress></div>
+    <header class="site-header" data-header>
+  <div class="nav-shell">
+    <a class="brand" href="/" aria-label="返回首页">
+      <span class="brand-mark" aria-hidden="true"><img src="/images/brand/leslie-mythos-avatar.webp" alt="" width="512" height="512"></span>
+      <span class="brand-copy">
+        <strong>LESLIE</strong>
+        <small>REAL-WORLD AGENTS</small>
+      </span>
+    </a>
+
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav" data-nav-toggle>
+      <span></span><span></span>
+      <span class="sr-only">打开导航</span>
+    </button>
+
+    <nav class="main-nav" id="main-nav" aria-label="主导航" data-nav>
+      
+        <a href="/" class="">首页</a>
+      
+        <a href="/writing/" class="is-current">写作</a>
+      
+        <a href="/projects/" class="">项目</a>
+      
+        <a href="/about/" class="">关于</a>
+      
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换明暗主题">
+        <span class="theme-toggle__sun" aria-hidden="true">☼</span>
+        <span class="theme-toggle__moon" aria-hidden="true">◐</span>
+      </button>
+      <button class="ask-nav" type="button" data-ask-open>ASK LESLIE</button>
+    </nav>
+  </div>
+</header>
+
+    <main id="main-content">
+
+<div class="interior-hero-surface writing-hero-surface">
+  <section class="page-hero page-hero--writing shell">
+    <span class="page-kicker">Two channels / one mind</span>
+    <h1>两种写作，<br><em>一套思考。</em></h1>
+    <p>公众号记录正在发生的 AI 变化，技术博客保存可以反复查阅的工程笔记。</p>
+
+    <nav class="writing-channels" aria-label="选择写作频道">
+      <a class="writing-channel writing-channel--attention" href="#attention-field">
+        <span class="writing-channel__index">01</span>
+        <span class="writing-channel__body">
+          <small>微信公众号 · 51 篇原创</small>
+          <strong>注意力场</strong>
+          <span>AI Agent、AI Coding 与一线工程观察</span>
+        </span>
+        <b aria-hidden="true">↓</b>
+      </a>
+      <a class="writing-channel" href="#blog-archive">
+        <span class="writing-channel__index">02</span>
+        <span class="writing-channel__body">
+          <small>个人博客 · 125 篇存档</small>
+          <strong>技术博客</strong>
+          <span>后端系统、基础知识与长期技术笔记</span>
+        </span>
+        <b aria-hidden="true">↓</b>
+      </a>
+    </nav>
+  </section>
+</div>
+
+<section class="section shell attention-section" id="attention-field">
+  <header class="publication-heading reveal">
+    <div>
+      <span class="section-label">WeChat publication</span>
+      <h2>注意力场</h2>
+    </div>
+    <div class="publication-heading__intro">
+      <p>关注人工智能与 AIGC，更偏向当下、判断和可读性。新文章优先发布在公众号，部分长文同步到这里。</p>
+      <button class="account-copy" type="button" data-account-copy="注意力场">
+        <span>微信搜索「注意力场」</span><b>复制名称</b>
+      </button>
+    </div>
+  </header>
+
+  
+    <div class="attention-editorial reveal">
+      <article class="attention-lead">
+        
+          <a class="attention-lead__cover" href="/2026/08/03/attention-field/AgentApp%E7%A1%AE%E5%AE%9A%E6%80%A7%E5%9B%9E%E5%BD%92/">
+            <img src="/2026/08/03/attention-field/AgentApp%E7%A1%AE%E5%AE%9A%E6%80%A7%E5%9B%9E%E5%BD%92/imgs/cover.png" alt="《App 没有死：Agent 只是把软件入口改成了自然语言》文章封面" loading="lazy">
+          </a>
+        
+        <div class="attention-lead__copy">
+          <div class="publication-meta"><span>公众号同步</span><time datetime="2026-08-03">2026.08.03</time></div>
+          <h3><a href="/2026/08/03/attention-field/AgentApp%E7%A1%AE%E5%AE%9A%E6%80%A7%E5%9B%9E%E5%BD%92/">App 没有死：Agent 只是把软件入口改成了自然语言</a></h3>
+          <p>通用 Agent 没有失败，传统 App 也不会消失。真正可靠的 AI 应用，正在把自然语言交给模型，把事实、状态、权限和执行留给确定性系统，再用 GUI 完成展示与确认。</p>
+          <div class="attention-lead__footer">
+            <div class="chip-row"><span>AI Agent</span><span>Agent App</span><span>Workflow</span></div>
+            <a href="/2026/08/03/attention-field/AgentApp%E7%A1%AE%E5%AE%9A%E6%80%A7%E5%9B%9E%E5%BD%92/">阅读全文 ↗</a>
+          </div>
+        </div>
+      </article>
+
+      <div class="attention-index" aria-label="注意力场近期精选">
+        
+          <a class="attention-index__item" href="/2026/08/02/attention-field/DeepSeek%E5%90%8E%E8%AE%AD%E7%BB%83%E4%B8%BA%E4%BB%80%E4%B9%88%E8%83%BD%E5%A2%9E%E5%BC%BAAgent/">
+            <span>02</span>
+            <div>
+              <time datetime="2026-08-02">08.02</time>
+              <h3>架构和参数量没变，Agent 为什么还能变强？拆解 DeepSeek V4-Flash-0731 的后训练逻辑</h3>
+            </div>
+            <b aria-hidden="true">↗</b>
+          </a>
+        
+          <a class="attention-index__item" href="/2026/07/31/attention-field/AICoding%E4%BB%B7%E6%A0%BC%E4%B8%8D%E8%83%BD%E5%8F%AA%E7%9C%8BToken/">
+            <span>03</span>
+            <div>
+              <time datetime="2026-07-31">07.31</time>
+              <h3>GPT 降价 80%，GLM Coding Plan 却涨了？AI Coding 的真实成本，不能只看 Token</h3>
+            </div>
+            <b aria-hidden="true">↗</b>
+          </a>
+        
+          <a class="attention-index__item" href="/2026/07/30/attention-field/Skill%E5%88%B0%E5%BA%95%E6%98%AF%E4%BB%80%E4%B9%88/">
+            <span>04</span>
+            <div>
+              <time datetime="2026-07-30">07.30</time>
+              <h3>Skill 到底是什么？它不是 API，也不是 MCP</h3>
+            </div>
+            <b aria-hidden="true">↗</b>
+          </a>
+        
+          <a class="attention-index__item" href="/2026/07/28/attention-field/AgentHarness%E5%BE%AA%E7%8E%AF%E5%B7%A5%E7%A8%8B%E5%9B%BE%E5%B7%A5%E7%A8%8B/">
+            <span>05</span>
+            <div>
+              <time datetime="2026-07-28">07.28</time>
+              <h3>Agent Harness、Loop、Graph：别再把三种 Agent 工程混成一件事</h3>
+            </div>
+            <b aria-hidden="true">↗</b>
+          </a>
+        
+          <a class="attention-index__item" href="/2026/07/05/attention-field/MattPocockSkills%E6%9B%BF%E4%BB%A3Superpowers/">
+            <span>06</span>
+            <div>
+              <time datetime="2026-07-05">07.05</time>
+              <h3>为什么 Matt Pocock 的 Skills，可以替代 Superpowers 的一部分</h3>
+            </div>
+            <b aria-hidden="true">↗</b>
+          </a>
+        
+      </div>
+    </div>
+  
+</section>
+
+<section class="section shell writing-section" id="blog-archive">
+  <header class="archive-heading reveal">
+    <div>
+      <span class="section-label">Technical archive</span>
+      <h2>技术博客</h2>
+      <p>从早期学习记录到现在的 Agent 工程实践，按时间保留完整轨迹。</p>
+    </div>
+    <div class="archive-heading__search">
+      <label class="writing-search">
+        <span aria-hidden="true">⌕</span>
+        <span class="sr-only">搜索技术博客</span>
+        <input type="search" placeholder="搜索标题、标签或内容…" data-writing-search>
+        <kbd>/</kbd>
+      </label>
+      <div class="writing-status"><span data-writing-count>125</span> 篇公开文章</div>
+    </div>
+  </header>
+  <div class="writing-list" data-writing-list>
+  
+    <article class="writing-row reveal" data-writing-item data-search="11.虚拟内存 操作系统 1. 什么是虚拟内存？解决了什么问题？ 虚拟内存是操作系统内存管理的一种技术，每个进程启动时，操作系统会提供一个独立的虚拟地址空间，这个地址空间是连续的，进程可以很方便的访问内存，这里的内存指的是访问虚拟内存。 虚拟内存的目的，一是方便进程进行内存的访问，二是可以使有限的物理内存运行一个比它大很多的程序。 虚拟内存的基本思想：每个程序拥有自己的地址空间，这个空间被分割成很多块，每块称为一页，每一页地址都是连续的地址范围。这些页被映射到物理内存，但不要求是连续的物理内存，也不需…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2022-07-18">2022.07.18</time><span>6 MIN</span></div>
+        <h2><a href="/2022/07/18/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/11.%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/">11.虚拟内存</a></h2>
+        <p>1. 什么是虚拟内存？解决了什么问题？ 虚拟内存是操作系统内存管理的一种技术，每个进程启动时，操作系统会提供一个独立的虚拟地址空间，这个地址空间是连续的，进程可以很方便的访问内存，这里的内存指的是访问虚拟内存。 虚拟内存的目的，一是方便进程进行内存的访问，二是可以使有限的物理内存运行一个比它大很多的…</p>
+        <div class="chip-row"><span>操作系统</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2022/07/18/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/11.%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/" aria-label="阅读《11.虚拟内存》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="10.进程间通信 操作系统 进程间8种通信方式详解 进程通信： 每个进程各自有不同的用户地址空间,任何一个进程的全局变量在另一个进程中都看不到，所以进程之间要交换数据必须通过内核,在内核中开辟一块缓冲区,进程a把数据从用户空间拷到内核缓冲区,进程b再从内核缓冲区把数据读走,内核提供的这种机制称为进程间通信。 1 匿名管道通信 匿名管道( pipe )：管道是一种半双工的通信方式，数据只能单向流动，而且只能在具有亲缘关系的进程间使用。进程的亲缘关系通常是指父子进程关系。 通过匿名管道实现进程间通信的步骤如…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2022-07-11">2022.07.11</time><span>5 MIN</span></div>
+        <h2><a href="/2022/07/11/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/10.%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1/">10.进程间通信</a></h2>
+        <p>进程间8种通信方式详解 进程通信： 每个进程各自有不同的用户地址空间,任何一个进程的全局变量在另一个进程中都看不到，所以进程之间要交换数据必须通过内核,在内核中开辟一块缓冲区,进程A把数据从用户空间拷到内核缓冲区,进程B再从内核缓冲区把数据读走,内核提供的这种机制称为进程间通信。 1 匿名管道通信…</p>
+        <div class="chip-row"><span>操作系统</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2022/07/11/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/10.%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1/" aria-label="阅读《10.进程间通信》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="https保证传输安全 tcp/ip 1. http存在的问题 传统的不使用ssl/tls的http协议，是不加密的通信。无论是客户端发送给服务端的请求体，还是服务端响应给客户端的响应体，都是明文传输的，这会带来几个问题： 1. 窃听 第三方劫持请求后可以获取通信内容。对于一些敏感数据，这是不被允许的。 2. 篡改 第三方劫持请求后可以篡改通信内容。例如银行系统中，张三本来要给李四转账，第三方劫持请求后篡改了请求数据，将收款方改为自己，导致用户资金流失。 3. 冒充 第三方可以冒充客户端发送数据。由于是明文传输，…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2022-07-08">2022.07.08</time><span>10 MIN</span></div>
+        <h2><a href="/2022/07/08/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/12.https%E4%BF%9D%E8%AF%81%E4%BC%A0%E8%BE%93%E5%AE%89%E5%85%A8/">https保证传输安全</a></h2>
+        <p>1. HTTP存在的问题 传统的不使用SSL/TLS的HTTP协议，是不加密的通信。无论是客户端发送给服务端的请求体，还是服务端响应给客户端的响应体，都是明文传输的，这会带来几个问题： 1. 窃听 第三方劫持请求后可以获取通信内容。对于一些敏感数据，这是不被允许的。 2. 篡改 第三方劫持请求后可以…</p>
+        <div class="chip-row"><span>TCP/IP</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2022/07/08/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/12.https%E4%BF%9D%E8%AF%81%E4%BC%A0%E8%BE%93%E5%AE%89%E5%85%A8/" aria-label="阅读《https保证传输安全》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="12.mysql事务 mysql 什么是事务？ 事务（ ），一般是指要做的或所做的事情。在计算机术语中是指访问并可能更新数据库中各种数据项的一个程序执行单元。事务通常由高 级数 据库操作语言或编程语言（如 sql，c++ 或 java）书写的用户程序的执行所引起，并用形如 和 语句（或函数调用）来界定。事务由事务开始（ ）和事务结束（ ）之间执行的全部操作组成。 对于 mysql 数据库来说，事务是指以执行 命令开始，到执行 或者 命令结束之间的全部 sql 操作，如果这些 sql 操作全部执行成功，则执行…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2022-07-04">2022.07.04</time><span>21 MIN</span></div>
+        <h2><a href="/2022/07/04/MySQL/12.%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3mysql%E4%BA%8B%E5%8A%A1/">12.MySql事务</a></h2>
+        <p>什么是事务？ 事务（ ），一般是指要做的或所做的事情。在计算机术语中是指访问并可能更新数据库中各种数据项的一个程序执行单元。事务通常由高 级数 据库操作语言或编程语言（如 SQL，C++ 或 Java）书写的用户程序的执行所引起，并用形如 和 语句（或函数调用）来界定。事务由事务开始（ ）和事务结束…</p>
+        <div class="chip-row"><span>MySQL</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2022/07/04/MySQL/12.%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3mysql%E4%BA%8B%E5%8A%A1/" aria-label="阅读《12.MySql事务》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="redis的持久化 redis 前言 什么是持久化 : redis读写速度快、性能优越是因为它将所有数据存在了内存中,然而,当redis进程退出或重启后,所有数据就会丢失,所以我们希望redis能保存数据到硬盘中,在redis服务重启之后,原来的数据能够恢复,这个过程就叫持久化.- mysql的innodb存储引擎通过 redo log、bin log 这两个日志保证了持久化. redis的两种持久化方式 — rdb、aof redis 提供了两种持久化功能 : rdb、aof ,但两种功能无论在磁盘上的存…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2022-06-30">2022.06.30</time><span>12 MIN</span></div>
+        <h2><a href="/2022/06/30/Redis/%E8%81%8A%E8%81%8ARedis%E7%9A%84%E6%8C%81%E4%B9%85%E6%80%A7/">Redis的持久化</a></h2>
+        <p>前言 什么是持久化 : Redis读写速度快、性能优越是因为它将所有数据存在了内存中,然而,当Redis进程退出或重启后,所有数据就会丢失,所以我们希望Redis能保存数据到硬盘中,在Redis服务重启之后,原来的数据能够恢复,这个过程就叫持久化.- MySQL的InnoDB存储引擎通过 redo…</p>
+        <div class="chip-row"><span>Redis</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2022/06/30/Redis/%E8%81%8A%E8%81%8ARedis%E7%9A%84%E6%8C%81%E4%B9%85%E6%80%A7/" aria-label="阅读《Redis的持久化》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="15.多线程打印 多线程与并发 一道面试中常考的并发编程的代码题： 三个线程t1、t2、t3轮流打印abc，打印n次，如abcabcabcabc……. 两个线程交替打印1-100的奇偶数 n个线程循环打印1-100 …… 其实这类问题本质上都是线程通信问题，思路基本上都是一个线程执行完毕，阻塞该线程，唤醒其他线程，按顺序执行下一个线程。下面先来看最简单的，如何按顺序执行三个线程。 synchronized+wait/notify 基本思路就是线程a、线程b、线程c三个线程同时启动，因为变量 的初始值为 ，所…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2022-06-24">2022.06.24</time><span>2 MIN</span></div>
+        <h2><a href="/2022/06/24/Thread/15.%E5%A4%9A%E7%BA%BF%E7%A8%8B%E6%89%93%E5%8D%B0/">15.多线程打印</a></h2>
+        <p>一道面试中常考的并发编程的代码题： 三个线程T1、T2、T3轮流打印ABC，打印n次，如ABCABCABCABC……. 两个线程交替打印1-100的奇偶数 N个线程循环打印1-100 …… 其实这类问题本质上都是线程通信问题，思路基本上都是一个线程执行完毕，阻塞该线程，唤醒其他线程，按顺序执行下一个…</p>
+        <div class="chip-row"><span>多线程与并发</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2022/06/24/Thread/15.%E5%A4%9A%E7%BA%BF%E7%A8%8B%E6%89%93%E5%8D%B0/" aria-label="阅读《15.多线程打印》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="9.进程的状态 操作系统 linux系统之进程状态 d：uninterruptible sleep (usually io) r：running or runnable (on run queue) s：interruptible sleep (waiting for an event to complete) t：stopped by job control signal t：stopped by debugger during the tracing w：paging (not valid sin…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2022-06-11">2022.06.11</time><span>15 MIN</span></div>
+        <h2><a href="/2022/06/11/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/9.%E8%BF%9B%E7%A8%8B%E7%9A%84%E7%9B%B8%E5%85%B3%E9%97%AE%E9%A2%98/">9.进程的状态</a></h2>
+        <p>Linux系统之进程状态 D：uninterruptible sleep (usually IO) R：running or runnable (on run queue) S：interruptible sleep (waiting for an event to complete) T：stop…</p>
+        <div class="chip-row"><span>操作系统</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2022/06/11/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/9.%E8%BF%9B%E7%A8%8B%E7%9A%84%E7%9B%B8%E5%85%B3%E9%97%AE%E9%A2%98/" aria-label="阅读《9.进程的状态》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="05.编写netty应用程序 netty 05.netty服务启动 之前讲过的 echoserver： 问题 通过前面使用案例的学习，我们知道，netty 启动的时候主要是下面这行代码： 这里主要有两个方法，一个是 bind ()，一个是 sync ()，sync () 属于 channelfuture 的范畴，我们之后再说： netty 的 channel 跟 java 原生的 channel 是否有某种关系？ bind () 是否调用了 java 底层的 socket 相关的操作？ netty 服务启动之后 ch…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2022-05-23">2022.05.23</time><span>4 MIN</span></div>
+        <h2><a href="/2022/05/23/Netty/05.Netty%E6%9C%8D%E5%8A%A1%E5%90%AF%E5%8A%A8/">05.编写Netty应用程序</a></h2>
+        <p>05.Netty服务启动 之前讲过的 EchoServer： 问题 通过前面使用案例的学习，我们知道，Netty 启动的时候主要是下面这行代码： 这里主要有两个方法，一个是 bind ()，一个是 sync ()，sync () 属于 ChannelFuture 的范畴，我们之后再说： Netty…</p>
+        <div class="chip-row"><span>Netty</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2022/05/23/Netty/05.Netty%E6%9C%8D%E5%8A%A1%E5%90%AF%E5%8A%A8/" aria-label="阅读《05.编写Netty应用程序》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="04.编写netty应用程序 netty 编写netty应用程序 从 工程下抄了一份 echoserver 过来，并删减了部分代码，归纳出来一份编写 netty 服务端程序的模板，我把它称为 “netty 编码十步曲”。 1. 声明线程池（必须） 一般来说，我们会声明两个 group，一个是 bossgroup，用于处理 accept 事件，一个是 workergroup，用于处理消息的读写事件。其中，bossgroup 一般声明为一个线程。当然，如果声明一个 group 也是可以的，只是不建议。 这就像是大型餐厅一…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2022-05-17">2022.05.17</time><span>5 MIN</span></div>
+        <h2><a href="/2022/05/17/Netty/04.%E7%BC%96%E5%86%99Netty%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F/">04.编写Netty应用程序</a></h2>
+        <p>编写Netty应用程序 从 工程下抄了一份 EchoServer 过来，并删减了部分代码，归纳出来一份编写 Netty 服务端程序的模板，我把它称为 “Netty 编码十步曲”。 1. 声明线程池（必须） 一般来说，我们会声明两个 Group，一个是 bossGroup，用于处理 Accept 事件…</p>
+        <div class="chip-row"><span>Netty</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2022/05/17/Netty/04.%E7%BC%96%E5%86%99Netty%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F/" aria-label="阅读《04.编写Netty应用程序》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="03.java nio的核心组件 netty 03.java nio的核心组件 channel 什么是 channel 呢？ 让我们来看看 jdk 怎么说： // java.nio.channels.channel a nexus for i/o operations. a channel represents an open connection to an entity such as a hardware device, a file, a network socket, or a program componen…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2022-05-17">2022.05.17</time><span>9 MIN</span></div>
+        <h2><a href="/2022/05/17/Netty/03.%20Java%20NIO%E7%9A%84%E6%A0%B8%E5%BF%83%E7%BB%84%E4%BB%B6/">03.Java NIO的核心组件</a></h2>
+        <p>03.Java NIO的核心组件 Channel 什么是 Channel 呢？ 让我们来看看 JDK 怎么说： // java.nio.channels.Channel A nexus for I/O operations. A channel represents an open connecti…</p>
+        <div class="chip-row"><span>Netty</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2022/05/17/Netty/03.%20Java%20NIO%E7%9A%84%E6%A0%B8%E5%BF%83%E7%BB%84%E4%BB%B6/" aria-label="阅读《03.Java NIO的核心组件》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="02.io多路复用实现机制 netty io 多路复用实现机制 概念说明 io 多路复用有三种实现，在介绍select、poll、epoll之前，首先介绍一下linux操作系统中 基础的概念 ： 用户空间和内核空间 进程切换 进程的阻塞 文件描述符 缓存 i/o 用户空间 / 内核空间 现在操作系统都是采用虚拟存储器，那么对32位操作系统而言，它的寻址空间（虚拟存储空间）为4g（2的32次方）。操作系统的核心是内核，独立于普通的应用程序，可以访问受保护的内存空间，也有访问底层硬件设备的所有权限。为了保证用户进程不能…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2022-05-14">2022.05.14</time><span>15 MIN</span></div>
+        <h2><a href="/2022/05/14/Netty/02.%20IO%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6/">02.IO多路复用实现机制</a></h2>
+        <p>IO 多路复用实现机制 概念说明 IO 多路复用有三种实现，在介绍select、poll、epoll之前，首先介绍一下Linux操作系统中 基础的概念 ： 用户空间和内核空间 进程切换 进程的阻塞 文件描述符 缓存 I/O 用户空间 / 内核空间 现在操作系统都是采用虚拟存储器，那么对32位操作系统…</p>
+        <div class="chip-row"><span>Netty</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2022/05/14/Netty/02.%20IO%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6/" aria-label="阅读《02.IO多路复用实现机制》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="01.io多路复用基础 netty i/o 五种io模型 前言 为了加深对 i/o多路复用机制 的理解，以及了解到多路复用也有局限性，在这里我们先回顾下 unix网络编程中的五种io模型 。 blocking io - 阻塞io noneblocking io - 非阻塞io io multiplexing - io多路复用 signal driven io - 信号驱动io asynchronous io - 异步io unix网络编程中的五种io模型 阻塞io - blocking io 最传统的一种io模…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2022-05-10">2022.05.10</time><span>8 MIN</span></div>
+        <h2><a href="/2022/05/10/Netty/01.%20IO%20%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8%E5%9F%BA%E7%A1%80/">01.IO多路复用基础</a></h2>
+        <p>I/O 五种IO模型 前言 为了加深对 I/O多路复用机制 的理解，以及了解到多路复用也有局限性，在这里我们先回顾下 Unix网络编程中的五种IO模型 。 Blocking IO - 阻塞IO NoneBlocking IO - 非阻塞IO IO multiplexing - IO多路复用 sign…</p>
+        <div class="chip-row"><span>Netty</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2022/05/10/Netty/01.%20IO%20%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8%E5%9F%BA%E7%A1%80/" aria-label="阅读《01.IO多路复用基础》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="02.rocketmq部署 rocketmq 单机部署 部署条件： jdk 1.8.0_322 maven apache maven 3.5.4 下载源码 打开 rocketmq release_notes 页面，我们可以看到 rocketmq 所有的发布版本。这里，我们选择最新的 rocketmq 4.6.0 版本。点击进入该版本的发布页面后，我们可以看到两种发布版本： source: rocketmq-all-4.6.0-source-release.zip binary: rocketmq-all-4.6.0-bi…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2022-03-17">2022.03.17</time><span>4 MIN</span></div>
+        <h2><a href="/2022/03/17/RocketMq/02.RocketMq%E9%83%A8%E7%BD%B2/">02.RocketMQ部署</a></h2>
+        <p>单机部署 部署条件： JDK 1.8.0_322 Maven Apache Maven 3.5.4 下载源码 打开 RocketMQ release_notes 页面，我们可以看到 RocketMQ 所有的发布版本。这里，我们选择最新的 RocketMQ 4.6.0 版本。点击进入该版本的发布页面后…</p>
+        <div class="chip-row"><span>RocketMQ</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2022/03/17/RocketMq/02.RocketMq%E9%83%A8%E7%BD%B2/" aria-label="阅读《02.RocketMQ部署》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="01.rocketmq概述 rocketmq 概述 阿里巴巴消息中间件起源于 2001 年的五彩石项目， notify 在这期间应运而生，用于交易核心消息的流转 。 2010 年， b2b 开始大规模使用 activemq 作为消息内核，随着阿里业务的快速发展，急需一款支持顺序消息，拥有海量消息堆积能力的消息中间件， metaq 1.0 在 2011年诞生 。 2012年， metaq已经发展到了3.0版本，并抽象出了通用的消息引擎 rocketmq。 随后，对 rocketmq 进行了开源 ，阿里的消息中间件正式走人了…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2022-03-17">2022.03.17</time><span>14 MIN</span></div>
+        <h2><a href="/2022/03/17/RocketMq/01.RocketMq%E5%85%A5%E9%97%A8/">01.RocketMQ概述</a></h2>
+        <p>概述 阿里巴巴消息中间件起源于 2001 年的五彩石项目， Notify 在这期间应运而生，用于交易核心消息的流转 。 2010 年， B2B 开始大规模使用 ActiveMQ 作为消息内核，随着阿里业务的快速发展，急需一款支持顺序消息，拥有海量消息堆积能力的消息中间件， MetaQ 1.0 在 2…</p>
+        <div class="chip-row"><span>RocketMQ</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2022/03/17/RocketMq/01.RocketMq%E5%85%A5%E9%97%A8/" aria-label="阅读《01.RocketMQ概述》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="8.select poll epoll 区别 操作系统 select、poll和epoll区别 select单个进程可监视的fd数量受到限制，epoll和select都可实现同时监听多个i/o事件的状态。 select 基于轮训机制 epoll基于操作系统支持的i/o通知机制 epoll支持水平触发和边沿触发两种模式。 1 select select本质上是通过设置或检查存放fd标志位的数据结构进行下一步处理。 这带来缺点： 单个进程可监视的fd数量被限制，即能监听端口的数量有限 单个进程所能打开的最大连接数有 宏定义，其大小是3…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2022-03-11">2022.03.11</time><span>9 MIN</span></div>
+        <h2><a href="/2022/03/11/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/8.select%20poll%20%E5%92%8C%20epoll%E5%8C%BA%E5%88%AB/">8.select poll epoll 区别</a></h2>
+        <p>select、poll和epoll区别 select单个进程可监视的fd数量受到限制，epoll和select都可实现同时监听多个I/O事件的状态。 select 基于轮训机制 epoll基于操作系统支持的I/O通知机制 epoll支持水平触发和边沿触发两种模式。 1 select select本质…</p>
+        <div class="chip-row"><span>操作系统</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2022/03/11/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/8.select%20poll%20%E5%92%8C%20epoll%E5%8C%BA%E5%88%AB/" aria-label="阅读《8.select poll epoll 区别》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="ping的原理 tcp/ip ping 的工作原理 正文 ip协议的助手 —— icmp 协议 ping 是基于 协议工作的，所以要明白 ping 的工作，首先我们先来熟悉 icmp 协议 。 icmp 是什么？ icmp 全称是 internet control message protocol ，也就是 互联网控制报文协议 。 里面有个关键词 —— 控制 ，如何控制的呢？ 网络包在复杂的网络传输环境里，常常会遇到各种问题。当遇到问题的时候，总不能死的不明不白，没头没脑的作风不是计算机网络的风格。所以需…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2022-03-08">2022.03.08</time><span>11 MIN</span></div>
+        <h2><a href="/2022/03/08/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/11.Ping%E7%9A%84%E5%8E%9F%E7%90%86/">Ping的原理</a></h2>
+        <p>ping 的工作原理 正文 IP协议的助手 —— ICMP 协议 ping 是基于 协议工作的，所以要明白 ping 的工作，首先我们先来熟悉 ICMP 协议 。 ICMP 是什么？ ICMP 全称是 Internet Control Message Protocol ，也就是 互联网控制报文协议…</p>
+        <div class="chip-row"><span>TCP/IP</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2022/03/08/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/11.Ping%E7%9A%84%E5%8E%9F%E7%90%86/" aria-label="阅读《Ping的原理》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="  (129条消息) 深入理解 mysql ….md 数据库优化和查询优化方案 数据库优化方案 优化索引，sql语句，分析慢查询 设计表的时候严格按照数据库设计规范来设计数据库 使用缓存，把经常访问并且不需要经常变化的数据放在缓存中，能够节约磁盘io 优化硬件，采用ssd，使用磁盘队列技术（raid0， raid1，raid5） 采用mysql自带的表分区技术，把数据分析分成不同文件，能够磁盘的读写效率 垂直分表，把一些不经常读的数据放在一张表当中，节约磁盘io 主从分离读写，采…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2022-02-13">2022.02.13</time><span>8 MIN</span></div>
+        <h2><a href="/2022/02/13/MySQL/11.%E6%95%B0%E6%8D%AE%E5%BA%93%E4%BC%98%E5%8C%96/"></a></h2>
+        <p>(129条消息) 深入理解 MySQL ….md 数据库优化和查询优化方案 数据库优化方案 优化索引，sql语句，分析慢查询 设计表的时候严格按照数据库设计规范来设计数据库 使用缓存，把经常访问并且不需要经常变化的数据放在缓存中，能够节约磁盘IO 优化硬件，采用ssd，使用磁盘队列技术（RAID0，…</p>
+        <div class="chip-row"></div>
+      </div>
+      <a class="writing-row__arrow" href="/2022/02/13/MySQL/11.%E6%95%B0%E6%8D%AE%E5%BA%93%E4%BC%98%E5%8C%96/" aria-label="阅读《》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="策略模式 java 策略模式 策略模式定义了算法族，分别封装起来，让它们之间可以互相替换，此模式让算法的变化独立于使用算法的客户。 意图：定义一系列的算法,把它们一个个封装起来, 并且使它们可相互替换。 主要解决：在有多种算法相似的情况下，使用 if…else 所带来的复杂和难以维护。 何时使用：一个系统有许多许多类，而区分它们的只是他们直接的行为。 如何解决：将这些算法封装成一个一个的类，任意地替换。 关键代码：实现同一个接口。 应用实例： 诸葛亮的锦囊妙计，每一个锦囊就是一个策略。 旅行的出…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-12-23">2021.12.23</time><span>5 MIN</span></div>
+        <h2><a href="/2021/12/23/%E9%A1%B9%E7%9B%AE%E7%9B%B8%E5%85%B3/%E7%AD%96%E7%95%A5%E6%A8%A1%E5%BC%8F%E5%92%8C%E8%A7%82%E5%AF%9F%E8%80%85%E6%A8%A1%E5%BC%8F/">策略模式</a></h2>
+        <p>策略模式 策略模式定义了算法族，分别封装起来，让它们之间可以互相替换，此模式让算法的变化独立于使用算法的客户。 意图：定义一系列的算法,把它们一个个封装起来, 并且使它们可相互替换。 主要解决：在有多种算法相似的情况下，使用 if…else 所带来的复杂和难以维护。 何时使用：一个系统有许多许多类，…</p>
+        <div class="chip-row"><span>Java</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/12/23/%E9%A1%B9%E7%9B%AE%E7%9B%B8%E5%85%B3/%E7%AD%96%E7%95%A5%E6%A8%A1%E5%BC%8F%E5%92%8C%E8%A7%82%E5%AF%9F%E8%80%85%E6%A8%A1%E5%BC%8F/" aria-label="阅读《策略模式》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="海量数据处理 java 海量数据处理的问题总结 所谓海量数据处理，无非就是基于海量数据上的存储、处理、操作。何谓海量，就是数据量太大，所以导致要么是无法在较短时间内迅速解决，要么是数据太大，导致无法一次性装入内存。 解决办法呢？针对时间，需要采用巧妙的算法配合合适的数据结构，如 / / / / 或 / 树。针对空间，大而化小，分而治之（ 映射可以做到）。 至于所谓的单机及集群问题，单机就是处理装载数据的机器有限(只要考虑cpu、内存、硬盘间的数据交互)。而集群，机器有多台，适合分布式处理、并行计算(…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-12-19">2021.12.19</time><span>13 MIN</span></div>
+        <h2><a href="/2021/12/19/%E9%A1%B9%E7%9B%AE%E7%9B%B8%E5%85%B3/%E6%B5%B7%E9%87%8F%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86/">海量数据处理</a></h2>
+        <p>海量数据处理的问题总结 所谓海量数据处理，无非就是基于海量数据上的存储、处理、操作。何谓海量，就是数据量太大，所以导致要么是无法在较短时间内迅速解决，要么是数据太大，导致无法一次性装入内存。 解决办法呢？针对时间，需要采用巧妙的算法配合合适的数据结构，如 / / / / 或 / 树。针对空间，大而化…</p>
+        <div class="chip-row"><span>Java</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/12/19/%E9%A1%B9%E7%9B%AE%E7%9B%B8%E5%85%B3/%E6%B5%B7%E9%87%8F%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86/" aria-label="阅读《海量数据处理》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="面试杂谈1 java 字符串 输出 cms 能不能 初始标记 并发标记 重新标记 并发清理 去掉重新标记 1 浮动垃圾 如图，gc 线程便利对象树（实际是图）,遍历过了a ，然后遍历过了b，遍历到了c，但是还没有遍历完c的儿子d，这时候如果 a.b=null； 那么b就变成了浮动垃圾，本次gc 过程b不会被清除。只能下次清除。 2 gc 三色标记算法过程中，白色的节点指向 黑色的节点 怎么办？ 直接把黑色变成灰色，这是浮动垃圾吗？不是，因为黑色节点变成了灰色，gc线程每次暂停后开始都会重灰色线程开…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-12-19">2021.12.19</time><span>20 MIN</span></div>
+        <h2><a href="/2021/12/19/%E9%A1%B9%E7%9B%AE%E7%9B%B8%E5%85%B3/%E9%9D%A2%E8%AF%95%E6%9D%82%E8%B0%881/">面试杂谈1</a></h2>
+        <p>字符串 输出 CMS 能不能 初始标记 并发标记 重新标记 并发清理 去掉重新标记 1 浮动垃圾 如图，GC 线程便利对象树（实际是图）,遍历过了A ，然后遍历过了B，遍历到了C，但是还没有遍历完C的儿子D，这时候如果 A.B=null； 那么B就变成了浮动垃圾，本次GC 过程B不会被清除。只能下次…</p>
+        <div class="chip-row"><span>Java</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/12/19/%E9%A1%B9%E7%9B%AE%E7%9B%B8%E5%85%B3/%E9%9D%A2%E8%AF%95%E6%9D%82%E8%B0%881/" aria-label="阅读《面试杂谈1》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="面试杂谈3 java ····················································· rpc和http的比较 http 和 rpc 其实是两个维度的东西， http 指的是通信协议。 而 rpc 则是远程调用，其对应的是本地调用。 rpc 的通信可以用 http 协议，也可以自定义协议，是不做约束的。 可能你常听到什么什么之间是 rpc 调用的，那你有没有想过为什么要 rpc， 我们直接 webclient http 调用不行么？ 其实 rpc 调用是因…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-12-19">2021.12.19</time><span>4 MIN</span></div>
+        <h2><a href="/2021/12/19/%E9%A1%B9%E7%9B%AE%E7%9B%B8%E5%85%B3/%E9%9D%A2%E8%AF%95%E6%9D%82%E8%B0%883/">面试杂谈3</a></h2>
+        <p>····················································· RPC和HTTP的比较 HTTP 和 RPC 其实是两个维度的东西， HTTP 指的是通信协议。 而 RPC 则是远程调用，其对应的是本地调用。 RPC 的通信可以用 HTTP 协议，也可以自…</p>
+        <div class="chip-row"><span>Java</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/12/19/%E9%A1%B9%E7%9B%AE%E7%9B%B8%E5%85%B3/%E9%9D%A2%E8%AF%95%E6%9D%82%E8%B0%883/" aria-label="阅读《面试杂谈3》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="面试杂谈2 java 面经1 1.jvm内存分区 https://leslieaibin.github.io/2020/11/10/jvm/1.java%e5%86%85%e5%ad%98%e5%8c%ba%e5%9f%9f%e7%ae%80%e4%bb%8b/ 2.对象加载在哪里，一定不能在栈上吗，为什么不直接在栈上。 1、功能和作用： （1）栈，可以看成是方法的运行模型，所有方法的调用都是通过栈帧来进行的，jvm会为每个线程都分配一个栈区，jvm对栈只进行两种操作：以帧为单位的压栈和出栈操作。…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-12-19">2021.12.19</time><span>12 MIN</span></div>
+        <h2><a href="/2021/12/19/%E9%A1%B9%E7%9B%AE%E7%9B%B8%E5%85%B3/%E9%9D%A2%E8%AF%95%E6%9D%82%E8%B0%882/">面试杂谈2</a></h2>
+        <p>面经1 1.JVM内存分区 https://leslieaibin.github.io/2020/11/10/JVM/1.Java%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E7%AE%80%E4%BB%8B/ 2.对象加载在哪里，一定不能在栈上吗，为什么不直接在栈上。…</p>
+        <div class="chip-row"><span>Java</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/12/19/%E9%A1%B9%E7%9B%AE%E7%9B%B8%E5%85%B3/%E9%9D%A2%E8%AF%95%E6%9D%82%E8%B0%882/" aria-label="阅读《面试杂谈2》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="面试杂谈4 java 1.http三次握手，状态码，交互细节 2.为什么要三次握手 3.四次挥手，状态码，传输细节，为什么握手要三次，挥手要四次 4.数据链路层怎么传输数据的，展开说说 : 在每个网络层数据报在传输之前，几乎所有的链路层协议都会将数据报用链路层封装起来。数据链路层从网络层获取数据后将其封装成为 ，如果帧太大的话，数据链路层会将大帧拆分为一个个的小帧，小帧能够使传输控制和错误检测更加高效。 帧就是 0 1 序列的封装。 一个帧由 header、payload field、traile…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-12-19">2021.12.19</time><span>7 MIN</span></div>
+        <h2><a href="/2021/12/19/%E9%A1%B9%E7%9B%AE%E7%9B%B8%E5%85%B3/%E9%9D%A2%E8%AF%95%E6%9D%82%E8%B0%884/">面试杂谈4</a></h2>
+        <p>1.http三次握手，状态码，交互细节 2.为什么要三次握手 3.四次挥手，状态码，传输细节，为什么握手要三次，挥手要四次 4.数据链路层怎么传输数据的，展开说说 : 在每个网络层数据报在传输之前，几乎所有的链路层协议都会将数据报用链路层封装起来。数据链路层从网络层获取数据后将其封装成为 ，如果帧太…</p>
+        <div class="chip-row"><span>Java</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/12/19/%E9%A1%B9%E7%9B%AE%E7%9B%B8%E5%85%B3/%E9%9D%A2%E8%AF%95%E6%9D%82%E8%B0%884/" aria-label="阅读《面试杂谈4》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="定位问题 java 定位问题的先决条件 需要有详细的日志记录，提前告警的监控平台，事发现场保留 日志 ：业务日志，中间件日志 监控 ：cpu、内存、磁盘、网络，类加载、gc、线程等 快照 ：-xx:+heapdumponoutofmemoryerror 和 -xx:heapdumppath 分析问题，解决问题的思路 经验+直觉，快速定位 逐一排查，传输链路 寻找规律 不要轻易怀疑监控。考虑资源。优先保证系统能正常运行。保留现场，事后排查定位问题。 逐一排查，传输链路，通过日志或工具逐一排查 内部…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-12-18">2021.12.18</time><span>3 MIN</span></div>
+        <h2><a href="/2021/12/18/%E9%A1%B9%E7%9B%AE%E7%9B%B8%E5%85%B3/%E5%AE%9A%E4%BD%8D%E9%97%AE%E9%A2%98/">定位问题</a></h2>
+        <p>定位问题的先决条件 需要有详细的日志记录，提前告警的监控平台，事发现场保留 日志 ：业务日志，中间件日志 监控 ：CPU、内存、磁盘、网络，类加载、GC、线程等 快照 ：-XX:+HeapDumpOnOutOfMemoryError 和 -XX:HeapDumpPath 分析问题，解决问题的思路 经…</p>
+        <div class="chip-row"><span>Java</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/12/18/%E9%A1%B9%E7%9B%AE%E7%9B%B8%E5%85%B3/%E5%AE%9A%E4%BD%8D%E9%97%AE%E9%A2%98/" aria-label="阅读《定位问题》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="bitmap讲解  小知识 在实际项目中，我们经常需要聚合统计，比如统计一个年龄在20-30，喜欢看技术书籍，喜欢听音乐，喜欢宅在家的程序员等等一系列标签的用户。 如果使用mysql求并集，首先语句随着标签变长而变长，其次聚合，分组，去重严重影响语句性能。这种情况如何解决？ 比如现在比较火的面试题，在10亿整数中找出100个重复的数，或者任意给定一个整数，判断是否在这个10亿数中。 bitmap原理 bitmap就是使用bit位来标记元素，key为该元素，value一般为0或者1，大大节省存储空…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-12-14">2021.12.14</time><span>2 MIN</span></div>
+        <h2><a href="/2021/12/14/java%E5%9F%BA%E7%A1%80/bitMap%E8%AE%B2%E8%A7%A3/">bitMap讲解</a></h2>
+        <p>小知识 在实际项目中，我们经常需要聚合统计，比如统计一个年龄在20-30，喜欢看技术书籍，喜欢听音乐，喜欢宅在家的程序员等等一系列标签的用户。 如果使用mysql求并集，首先语句随着标签变长而变长，其次聚合，分组，去重严重影响语句性能。这种情况如何解决？ 比如现在比较火的面试题，在10亿整数中找出1…</p>
+        <div class="chip-row"></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/12/14/java%E5%9F%BA%E7%A1%80/bitMap%E8%AE%B2%E8%A7%A3/" aria-label="阅读《bitMap讲解》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="反射机制  rpc框架手撕之路—java反射以及动态代理机制 在上一篇文章中，我们提到了，rpc框架所需要的java基础，第一点就是java的动态代理机制，动态代理机制的基础是反射，无论是在实际编程或者是面试时，都是java知识的重中之重。 定义： 在运行状态中，对于任意一个类，都能够知道这一个类的所有属性和方法，对于任意一个对象都能够通过反射机制调用一个类的任意方法，这种动态获取类信息以及动态调用类方法的功能称为java的反射机制。 作用： 1、动态的创建类的实例，将类绑定到现有对象中…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-12-12">2021.12.12</time><span>3 MIN</span></div>
+        <h2><a href="/2021/12/12/java%E5%9F%BA%E7%A1%80/%E5%8F%8D%E5%B0%84/">反射机制</a></h2>
+        <p>RPC框架手撕之路—java反射以及动态代理机制 在上一篇文章中，我们提到了，RPC框架所需要的java基础，第一点就是java的动态代理机制，动态代理机制的基础是反射，无论是在实际编程或者是面试时，都是java知识的重中之重。 定义： 在运行状态中，对于任意一个类，都能够知道这一个类的所有属性和方…</p>
+        <div class="chip-row"></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/12/12/java%E5%9F%BA%E7%A1%80/%E5%8F%8D%E5%B0%84/" aria-label="阅读《反射机制》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="redis缓存与数据库一致性问题 redis 在做系统优化时，想到了将数据进行分级存储的思路。因为在系统中会存在一些数据，有些数据的实时性要求不高，比如一些配置信息。 基本上配置了很久才会变一次。而有一些数据实时性要求非常高，比如订单和流水的数据。所以这里根据数据要求实时性不同将数据分为三级。 第1级：订单数据和支付流水数据；这两块数据对实时性和精确性要求很高，所以不添加任何缓存，读写操作将直接操作数据库。 第2级：用户相关数据；这些数据和用户相关，具有读多写少的特征，所以我们使用redis进行缓存。 第3级：支付配置信…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-11-30">2021.11.30</time><span>5 MIN</span></div>
+        <h2><a href="/2021/11/30/Redis/%E5%A6%82%E4%BD%95%E4%BF%9D%E8%AF%81%20Redis%20%E7%BC%93%E5%AD%98%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E5%8F%8C%E5%86%99%E4%B8%80%E8%87%B4%E6%80%A7%EF%BC%9F/">Redis缓存与数据库一致性问题</a></h2>
+        <p>在做系统优化时，想到了将数据进行分级存储的思路。因为在系统中会存在一些数据，有些数据的实时性要求不高，比如一些配置信息。 基本上配置了很久才会变一次。而有一些数据实时性要求非常高，比如订单和流水的数据。所以这里根据数据要求实时性不同将数据分为三级。 第1级：订单数据和支付流水数据；这两块数据对实时性…</p>
+        <div class="chip-row"><span>Redis</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/11/30/Redis/%E5%A6%82%E4%BD%95%E4%BF%9D%E8%AF%81%20Redis%20%E7%BC%93%E5%AD%98%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E5%8F%8C%E5%86%99%E4%B8%80%E8%87%B4%E6%80%A7%EF%BC%9F/" aria-label="阅读《Redis缓存与数据库一致性问题》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="14.reentrantlock实现公平锁和非公平锁 多线程与并发 准备知识 理想情况下，线程a拿到锁，执行完后释放锁，线程b恰好到来顺手接下这把锁，一切都那么完美的话，也没必要加锁了，问题就在于在a没释放锁时，后续线程也想得到这把锁，所以只好让这些等待的线程进行排队，进而需要一套数据结构来组织这个队伍： node结点：作为获取锁失败线程的包装类， 组合了thread引用， 实现为fifo双向队列。 下图为node结点的属性描述- 下图为用node节点构成的双向链表图示：- 链表初始化的头节点其实是一个虚拟节点，英文名称之为 ， 因为它不会像…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-11-24">2021.11.24</time><span>6 MIN</span></div>
+        <h2><a href="/2021/11/24/Thread/14.ReentrantLock%E5%85%AC%E5%B9%B3%E9%94%81%E5%92%8C%E9%9D%9E%E5%85%AC%E5%B9%B3%E9%94%81/">14.ReentrantLock实现公平锁和非公平锁</a></h2>
+        <p>准备知识 理想情况下，线程A拿到锁，执行完后释放锁，线程B恰好到来顺手接下这把锁，一切都那么完美的话，也没必要加锁了，问题就在于在A没释放锁时，后续线程也想得到这把锁，所以只好让这些等待的线程进行排队，进而需要一套数据结构来组织这个队伍： Node结点：作为获取锁失败线程的包装类， 组合了Threa…</p>
+        <div class="chip-row"><span>多线程与并发</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/11/24/Thread/14.ReentrantLock%E5%85%AC%E5%B9%B3%E9%94%81%E5%92%8C%E9%9D%9E%E5%85%AC%E5%B9%B3%E9%94%81/" aria-label="阅读《14.ReentrantLock实现公平锁和非公平锁》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="超卖问题 java 常见写法安全性及效率分析 假设我们的商品表的schema是下面这样的： 设置为字段无符号解决 这种做法大家的想法是我们将库存字段设置成无符号类型，这样当库存字段在sql执行时候被置为负数的时候mysql就会报错，那么affectrow就会是0或者可以捕获到这个异常，从而实现并发下的数据安全。 解法释义 实际上这段代码是危险的，因为在不同版本的mysql和配置下，这段代码的表现完全不同。具体的情况会出现3种不同的结果： 代码正常运行，执行update的时候报错 代码最终执行结果…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-11-18">2021.11.18</time><span>5 MIN</span></div>
+        <h2><a href="/2021/11/18/%E9%A1%B9%E7%9B%AE%E7%9B%B8%E5%85%B3/%E7%A7%92%E6%9D%80%E9%A1%B9%E7%9B%AE%E8%B6%85%E5%8D%96%E8%AE%A8%E8%AE%BA/">超卖问题</a></h2>
+        <p>常见写法安全性及效率分析 假设我们的商品表的schema是下面这样的： 设置为字段无符号解决 这种做法大家的想法是我们将库存字段设置成无符号类型，这样当库存字段在sql执行时候被置为负数的时候mysql就会报错，那么affectRow就会是0或者可以捕获到这个异常，从而实现并发下的数据安全。 解法释…</p>
+        <div class="chip-row"><span>Java</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/11/18/%E9%A1%B9%E7%9B%AE%E7%9B%B8%E5%85%B3/%E7%A7%92%E6%9D%80%E9%A1%B9%E7%9B%AE%E8%B6%85%E5%8D%96%E8%AE%A8%E8%AE%BA/" aria-label="阅读《超卖问题》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="消息队列幂等性 消息队列 rabbitmq消费幂等性 什么是幂等性 幂等性，简单来说就是 对于同一个系统，在同样条件下，一次请求和重复多次请求对资源的影响是一致的，就称该操作为幂等的 。比如说如果有一个接口是幂等的，当传入相同条件时，其效果必须是相同的。在rabbitmq中消费幂等就是指给消费者发送多条同样的消息，消费者只会消费其中的一条。例如，在一次购物中提交订单进行支付时，当网络延迟等其他问题造成消费者重新支付，如果没有幂等性的支持，那么会对同一订单进行两次扣款，这是非常严重的，因此有了幂等性，当…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-11-12">2021.11.12</time><span>5 MIN</span></div>
+        <h2><a href="/2021/11/12/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E6%80%8E%E6%A0%B7%E4%BF%9D%E8%AF%81%E5%B9%82%E7%AD%89%E6%80%A7/">消息队列幂等性</a></h2>
+        <p>RabbitMQ消费幂等性 什么是幂等性 幂等性，简单来说就是 对于同一个系统，在同样条件下，一次请求和重复多次请求对资源的影响是一致的，就称该操作为幂等的 。比如说如果有一个接口是幂等的，当传入相同条件时，其效果必须是相同的。在RabbitMQ中消费幂等就是指给消费者发送多条同样的消息，消费者只会…</p>
+        <div class="chip-row"><span>消息队列</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/11/12/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E6%80%8E%E6%A0%B7%E4%BF%9D%E8%AF%81%E5%B9%82%E7%AD%89%E6%80%A7/" aria-label="阅读《消息队列幂等性》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="消息队列问题 消息队列 mq 的问题 任何技术都会有利有弊，mq 给整体系统架构带来很多好处，但也会付出一定的代价。 mq 主要引入了以下问题： 系统可用性降低 ：引入了 mq 后，通信需要基于 mq 完成，如果 mq 宕机，则服务不可用。 系统复杂度提高 使用 mq，需要关注一些新的问题： 如何保证消息没有 重复消费 ？ 如何处理 消息丢失 的问题？ 如何保证传递 消息的顺序性 ？ 如何处理大量 消息积压 的问题？ 一致性问题 ：假设系统 a 处理完直接返回成功的结果给用户，用户认为请求成功。但如…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-11-11">2021.11.11</time><span>6 MIN</span></div>
+        <h2><a href="/2021/11/11/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/%E6%B6%88%E6%81%AF%E5%A0%86%E7%A7%AF%E5%A4%AA%E5%A4%9A%E6%80%8E%E4%B9%88%E5%8A%9E/">消息队列问题</a></h2>
+        <p>MQ 的问题 任何技术都会有利有弊，MQ 给整体系统架构带来很多好处，但也会付出一定的代价。 MQ 主要引入了以下问题： 系统可用性降低 ：引入了 MQ 后，通信需要基于 MQ 完成，如果 MQ 宕机，则服务不可用。 系统复杂度提高 使用 MQ，需要关注一些新的问题： 如何保证消息没有 重复消费 ？…</p>
+        <div class="chip-row"><span>消息队列</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/11/11/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/%E6%B6%88%E6%81%AF%E5%A0%86%E7%A7%AF%E5%A4%AA%E5%A4%9A%E6%80%8E%E4%B9%88%E5%8A%9E/" aria-label="阅读《消息队列问题》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="skip list--跳表 redis skip list–跳表 跳表是一种神奇的数据结构，因为几乎所有版本的大学本科教材上都没有跳表这种数据结构，而且神书《算法导论》、《算法第四版》这两本书中也没有介绍跳表。但是跳表插入、删除、查找元素的时间复杂度跟红黑树都是一样量级的，时间复杂度都是o(logn)，而且跳表有一个特性是红黑树无法匹敌的（具体什么特性后面会提到）。所以在工业中，跳表也会经常被用到。废话不多说了，开始今天的跳表学习。 通过本文，你能 get 到以下知识： 什么是跳表？ 跳表的查找、插入、删除元素的流…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-10-30">2021.10.30</time><span>17 MIN</span></div>
+        <h2><a href="/2021/10/30/Redis/%E8%B7%B3%E8%A1%A8/">Skip List--跳表</a></h2>
+        <p>Skip List–跳表 跳表是一种神奇的数据结构，因为几乎所有版本的大学本科教材上都没有跳表这种数据结构，而且神书《算法导论》、《算法第四版》这两本书中也没有介绍跳表。但是跳表插入、删除、查找元素的时间复杂度跟红黑树都是一样量级的，时间复杂度都是O(logn)，而且跳表有一个特性是红黑树无法匹敌的…</p>
+        <div class="chip-row"><span>Redis</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/10/30/Redis/%E8%B7%B3%E8%A1%A8/" aria-label="阅读《Skip List--跳表》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="10.分库分表 mysql 1. 为什么要拆分数据库？ 单体项目在构建之初， 数据库 的负载和数据量都不大，所以不需要对数据库做拆分，小型财务系统、文书系统、erp系统、oa系统，用一个mysql数据库实例基本就够用了。 就像《淘宝技术这十年》里面说到的，电商业务的数据量增长飞快，所以最开始的php+mysql的架构已经不能满足实际要求了，于是淘宝想到的第一个办法就是把mysql替换成oracle。但是没过了多久，在08年前后，单节点的oracle数据库也不好用了，于是淘宝终于告别了单节点数据库，开始拆…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-10-25">2021.10.25</time><span>5 MIN</span></div>
+        <h2><a href="/2021/10/25/MySQL/10.%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8/">10.分库分表</a></h2>
+        <p>1. 为什么要拆分数据库？ 单体项目在构建之初， 数据库 的负载和数据量都不大，所以不需要对数据库做拆分，小型财务系统、文书系统、ERP系统、OA系统，用一个MySQL数据库实例基本就够用了。 就像《淘宝技术这十年》里面说到的，电商业务的数据量增长飞快，所以最开始的PHP+MySQL的架构已经不能满…</p>
+        <div class="chip-row"><span>MySQL</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/10/25/MySQL/10.%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8/" aria-label="阅读《10.分库分表》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="13.线程安全 多线程与并发 4种解决线程安全问题的方式 前言 线程安全问题，在做高并发的系统的时候，是程序员经常需要考虑的地方。怎么有效的防止线程安全问题，保证数据的准确性？怎么合理的最大化的利用系统资源等，这些问题都需要充分的理解并运行线程。当然关于多线程的问题在面试的时候也是出现频率比较高的。下面就来学习一下吧！ 线程 先来看看什么是进程和线程？ 进程是资源（cpu、内存等）分配的基本单位，它是程序执行时的一个实例。程序运行时系统就会创建一个进程，并为它分配资源，然后把该进程放入进程就绪队列，进程调…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-10-24">2021.10.24</time><span>9 MIN</span></div>
+        <h2><a href="/2021/10/24/Thread/13.%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98/">13.线程安全</a></h2>
+        <p>4种解决线程安全问题的方式 前言 线程安全问题，在做高并发的系统的时候，是程序员经常需要考虑的地方。怎么有效的防止线程安全问题，保证数据的准确性？怎么合理的最大化的利用系统资源等，这些问题都需要充分的理解并运行线程。当然关于多线程的问题在面试的时候也是出现频率比较高的。下面就来学习一下吧！ 线程 先…</p>
+        <div class="chip-row"><span>多线程与并发</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/10/24/Thread/13.%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98/" aria-label="阅读《13.线程安全》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="7.cpu密集型和io密集型 操作系统 在看《java并发编程的艺术》线程池这一块时，提到了要合理地配置线程池，要分析任务特性。任务的性质：cpu密集型、io密集型和混合型。 cpu密集型和io密集型 cpu密集型也是指计算密集型，大部分时间用来做计算逻辑判断等cpu动作的程序称为cpu密集型任务。该类型的任务需要进行大量的计算，主要消耗cpu资源。这种计算密集型任务虽然也可以用多任务完成，但是任务越多，花在任务切换的时间就越多，cpu执行任务的效率就越低，所以，要最高效地利用cpu，计算密集型任务同时进行的数量应…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-10-24">2021.10.24</time><span>4 MIN</span></div>
+        <h2><a href="/2021/10/24/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/7.CPU%E5%AF%86%E9%9B%86%E5%9E%8B%E5%92%8CIO%E5%AF%86%E9%9B%86%E5%9E%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B%E6%B1%A0/">7.CPU密集型和IO密集型</a></h2>
+        <p>在看《Java并发编程的艺术》线程池这一块时，提到了要合理地配置线程池，要分析任务特性。任务的性质：CPU密集型、IO密集型和混合型。 CPU密集型和IO密集型 CPU密集型也是指计算密集型，大部分时间用来做计算逻辑判断等CPU动作的程序称为CPU密集型任务。该类型的任务需要进行大量的计算，主要消耗…</p>
+        <div class="chip-row"><span>操作系统</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/10/24/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/7.CPU%E5%AF%86%E9%9B%86%E5%9E%8B%E5%92%8CIO%E5%AF%86%E9%9B%86%E5%9E%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B%E6%B1%A0/" aria-label="阅读《7.CPU密集型和IO密集型》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="代理  java 反射和动态代理 简介 什么是反射 反射(reflection)是 java 程序开发语言的特征之一，它允许运行中的 java 程序获取自身的信息，并且可以操作类或对象的内部属性。 通过反射机制，可以在运行时访问 java 对象的属性，方法，构造方法等。 反射的应用场景 反射的主要应用场景有： 开发通用框架 - 反射最重要的用途就是开发各种通用框架。很多框架（比如 spring）都是配置化的（比如通过 xml 文件配置 javabean、filter 等），为了保证框…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-10-12">2021.10.12</time><span>11 MIN</span></div>
+        <h2><a href="/2021/10/12/java%E5%9F%BA%E7%A1%80/%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86/">代理</a></h2>
+        <p>Java 反射和动态代理 简介 什么是反射 反射(Reflection)是 Java 程序开发语言的特征之一，它允许运行中的 Java 程序获取自身的信息，并且可以操作类或对象的内部属性。 通过反射机制，可以在运行时访问 Java 对象的属性，方法，构造方法等。 反射的应用场景 反射的主要应用场景有…</p>
+        <div class="chip-row"></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/10/12/java%E5%9F%BA%E7%A1%80/%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86/" aria-label="阅读《代理》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="20.双亲委派 jvm java双亲委派模型 一、前言 平时做业务开发比较少接触类加载器，但是如果想深入学习tomcat、spring等开源项目，或者从事底层架构的开发，了解甚至熟悉类加载的原理是必不可少的。 java的类加载器有哪些？什么是双亲委派？为什么要双亲委派？如何打破它？多多少少对这些概念了解一些，甚至因为应付面试背过这些知识点，但是再深入一些细节，却知之甚少。 二、类加载器 类加载器，顾名思义就是一个可以将java字节码加载为 实例的工具。这个过程包括，读取字节数组、验证、解析、初始化等…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-10-11">2021.10.11</time><span>9 MIN</span></div>
+        <h2><a href="/2021/10/11/JVM/20.%E5%8F%8C%E4%BA%B2%E5%A7%94%E6%B4%BE/">20.双亲委派</a></h2>
+        <p>Java双亲委派模型 一、前言 平时做业务开发比较少接触类加载器，但是如果想深入学习Tomcat、Spring等开源项目，或者从事底层架构的开发，了解甚至熟悉类加载的原理是必不可少的。 java的类加载器有哪些？什么是双亲委派？为什么要双亲委派？如何打破它？多多少少对这些概念了解一些，甚至因为应付面…</p>
+        <div class="chip-row"><span>JVM</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/10/11/JVM/20.%E5%8F%8C%E4%BA%B2%E5%A7%94%E6%B4%BE/" aria-label="阅读《20.双亲委派》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="5.操作系统-进程调度算法 操作系统 进程调度算法 先来先服务调度算法 先来先服务(fcfs)调度算法是一种最简单的调度算法，该算法既可用于作业调度，也可用于进程调度。当在作业调度中采用该算法时，每次调度都是从后备作业队列中选择一个或多个最先进入该队列的作业，将它们调入内存，为它们分配资源、创建进程，然后放入就绪队列。在进程调度中采用fcfs算法时，则每次调度是从就绪队列中选择一个最先进入该队列的进程，为之分配处理机，使之投入运行。该进程一直运行到完成或发生某事件而阻塞后才放弃处理机。 短作业(进程)优先调度算法…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-10-04">2021.10.04</time><span>6 MIN</span></div>
+        <h2><a href="/2021/10/04/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/5.%E8%BF%9B%E7%A8%8B%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95/">5.操作系统-进程调度算法</a></h2>
+        <p>进程调度算法 先来先服务调度算法 先来先服务(FCFS)调度算法是一种最简单的调度算法，该算法既可用于作业调度，也可用于进程调度。当在作业调度中采用该算法时，每次调度都是从后备作业队列中选择一个或多个最先进入该队列的作业，将它们调入内存，为它们分配资源、创建进程，然后放入就绪队列。在进程调度中采用F…</p>
+        <div class="chip-row"><span>操作系统</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/10/04/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/5.%E8%BF%9B%E7%A8%8B%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95/" aria-label="阅读《5.操作系统-进程调度算法》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="6.死锁的概念 操作系统 死锁概念，死锁产生的四个必要条件，如何避免和预防死锁 一、死锁概念 死锁是指两个或多个进程在执行的过程中，因为竞争资源而造成互相等待的现象，若无外力作用，它们都无法推进下去。- 1.在等待对方时占有不可抢占的资源- 举个例子，假设有p1，p2两个进程，都需要a和b两个资源，两个都等待另一个资源而不肯释放资源，就这样无限等待中，这就形成死锁。这只是死锁的一种情况，就是在等待对方时占有不可抢占的资源。- 2.竞争可消耗资源引起死锁- 有p1，p2，p3三个进程，p1向p2发送消息…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-10-04">2021.10.04</time><span>4 MIN</span></div>
+        <h2><a href="/2021/10/04/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/6.%E6%AD%BB%E9%94%81/">6.死锁的概念</a></h2>
+        <p>死锁概念，死锁产生的四个必要条件，如何避免和预防死锁 一、死锁概念 死锁是指两个或多个进程在执行的过程中，因为竞争资源而造成互相等待的现象，若无外力作用，它们都无法推进下去。- 1.在等待对方时占有不可抢占的资源- 举个例子，假设有P1，P2两个进程，都需要A和B两个资源，两个都等待另一个资源而不肯…</p>
+        <div class="chip-row"><span>操作系统</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/10/04/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/6.%E6%AD%BB%E9%94%81/" aria-label="阅读《6.死锁的概念》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="4.操作系统-页面置换算法 操作系统 页面置换算法 地址映射过程中，若在页面中发现所要访问的页面不在内存中，则产生缺页中断。当发生缺页中断时操作系统必须在内存选择一个页面将其移除内存，以便为即将调入的页面让出空间。而用来选择淘汰那一页的规则叫做页面置换算法。 最佳置换算法（opt）（理想置换算法） 这是一种理想情况下的页面置换算法，但实际上是不可能实现的。该算法的基本思想是：发生缺页时，有些页面在内存中，其中有一页将很快被访问（也包含紧接着的下一条指令的那页），而其他页面则可能要到10、100或者1000条指令后…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-10-03">2021.10.03</time><span>5 MIN</span></div>
+        <h2><a href="/2021/10/03/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/4.%E9%A1%B5%E9%9D%A2%E7%BD%AE%E6%8D%A2%E7%AE%97%E6%B3%95/">4.操作系统-页面置换算法</a></h2>
+        <p>页面置换算法 地址映射过程中，若在页面中发现所要访问的页面不在内存中，则产生缺页中断。当发生缺页中断时操作系统必须在内存选择一个页面将其移除内存，以便为即将调入的页面让出空间。而用来选择淘汰那一页的规则叫做页面置换算法。 最佳置换算法（OPT）（理想置换算法） 这是一种理想情况下的页面置换算法，但实…</p>
+        <div class="chip-row"><span>操作系统</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/10/03/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/4.%E9%A1%B5%E9%9D%A2%E7%BD%AE%E6%8D%A2%E7%AE%97%E6%B3%95/" aria-label="阅读《4.操作系统-页面置换算法》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="redis集群 redis redis支持三种集群方案 主从复制模式 sentiel(哨兵)模式 cluster模式 redis集群的三种模式 主从复制模式 主从复制作用 通过持久化功能，redis保证了即使服务器重启的情况下也不会丢失（或少量丢失）数据，因为持久化会把内存中数据保存到硬盘上，重启会从硬盘上加载数据。但是由于数据是存储在一台服务器上的，如果这台服务器出现硬盘故障等问题，也会导致数据丢失。 为了避免单点故障，通常的做法是将数据库复制多个副本以部署在不同的服务器上，这样即使一台服务器出现故障…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-10-01">2021.10.01</time><span>4 MIN</span></div>
+        <h2><a href="/2021/10/01/Redis/Redis%E9%9B%86%E7%BE%A4/">Redis集群</a></h2>
+        <p>Redis支持三种集群方案 主从复制模式 Sentiel(哨兵)模式 Cluster模式 Redis集群的三种模式 主从复制模式 主从复制作用 通过持久化功能，Redis保证了即使服务器重启的情况下也不会丢失（或少量丢失）数据，因为持久化会把内存中数据保存到硬盘上，重启会从硬盘上加载数据。但是由于数…</p>
+        <div class="chip-row"><span>Redis</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/10/01/Redis/Redis%E9%9B%86%E7%BE%A4/" aria-label="阅读《Redis集群》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="redis分布式限流 redis 由于互联网公司的流量巨大，系统上线会做一个流量峰值的评估，尤其是像各种秒杀促销活动，为了保证系统不被巨大的流量压垮，会在系统流量到达一定阈值时，拒绝掉一部分流量。 限流会导致用户在短时间内（这个时间段是毫秒级的）系统不可用，一般我们衡量系统处理能力的指标是每秒的 或者 ，假设系统每秒的流量阈值是1000，理论上一秒内有第1001个请求进来时，那么这个请求就会被限流。 限流方案 计数器 java内部可以通过原子类计数器 、 信号量来做简单的限流。 漏桶算法 漏桶算法思路很简单，…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-09-30">2021.09.30</time><span>3 MIN</span></div>
+        <h2><a href="/2021/09/30/Redis/Redis%E5%88%86%E5%B8%83%E5%BC%8F%E9%99%90%E6%B5%81/">Redis分布式限流</a></h2>
+        <p>由于互联网公司的流量巨大，系统上线会做一个流量峰值的评估，尤其是像各种秒杀促销活动，为了保证系统不被巨大的流量压垮，会在系统流量到达一定阈值时，拒绝掉一部分流量。 限流会导致用户在短时间内（这个时间段是毫秒级的）系统不可用，一般我们衡量系统处理能力的指标是每秒的 或者 ，假设系统每秒的流量阈值是10…</p>
+        <div class="chip-row"><span>Redis</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/09/30/Redis/Redis%E5%88%86%E5%B8%83%E5%BC%8F%E9%99%90%E6%B5%81/" aria-label="阅读《Redis分布式限流》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="3.操作系统-io模型 操作系统 io io (input/output，输入/输出)即数据的读取（接收）或写入（发送）操作，通常用户进程中的一个完整io分为两阶段：用户进程空间 – 内核空间、内核空间 – 设备空间（磁盘、网络等）。io有内存io、网络io和磁盘io三种，通常我们说的io指的是后两者。 linux中进程无法直接操作i/o设备，其必须通过系统调用请求kernel来协助完成i/o动作；内核会为每个i/o设备维护一个缓冲区。 对于一个输入操作来说，进程io系统调用后，内核会先看缓冲区中有没有相应的…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-09-30">2021.09.30</time><span>12 MIN</span></div>
+        <h2><a href="/2021/09/30/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/3.IO%E6%A8%A1%E5%9E%8B/">3.操作系统-IO模型</a></h2>
+        <p>IO IO (Input/Output，输入/输出)即数据的读取（接收）或写入（发送）操作，通常用户进程中的一个完整IO分为两阶段：用户进程空间 – 内核空间、内核空间 – 设备空间（磁盘、网络等）。IO有内存IO、网络IO和磁盘IO三种，通常我们说的IO指的是后两者。 LINUX中进程无法直接操作…</p>
+        <div class="chip-row"><span>操作系统</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/09/30/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/3.IO%E6%A8%A1%E5%9E%8B/" aria-label="阅读《3.操作系统-IO模型》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="redis数据结构 redis redist有五种基本数据结构： string、hash、set、zset、list 。这五种数据结构的底层数据结构有六种： 动态字符串sds、链表、哈希表、跳表、整数集合、压缩链表 底层结构 redis是用c语言写的，但是redis并没有使用c的字符串表示（c是字符串是以 空字符结尾的字符数组），而是自己构建了一种 简单动态字符串 （simple dynamic string，sds）的抽象类型，并作为redis的默认字符串表示 在redis中，包含字符串值的键值对底层都是…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-09-29">2021.09.29</time><span>18 MIN</span></div>
+        <h2><a href="/2021/09/29/Redis/Redis%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">Redis数据结构</a></h2>
+        <p>Redist有五种基本数据结构： string、hash、set、zset、list 。这五种数据结构的底层数据结构有六种： 动态字符串SDS、链表、哈希表、跳表、整数集合、压缩链表 底层结构 Redis是用C语言写的，但是Redis并没有使用C的字符串表示（C是字符串是以 空字符结尾的字符数组），…</p>
+        <div class="chip-row"><span>Redis</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/09/29/Redis/Redis%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" aria-label="阅读《Redis数据结构》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="mq的作用 消息队列 mq的作用 消息队列在大型电子商务类网站，如京东、淘宝、去哪儿等网站有着深入的应用， 队列的主要作用是消除高并发访问高峰，加快网站的响应速度。 在不使用消息队列的情况下，用户的请求数据直接写入数据库，在高并发的情况下，会对数据库造成巨大的压力，同时也使得系统响应延迟加剧。 在使用队列后，用户的请求发给队列后立即返回, （例如: 当然不能直接给用户提示订单提交成功，京东上提示：您“您提交了订单，请等待系统确认”）， 再由消息队列的消费者进程从消息队列中获取数据，异步写入数据库。…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-09-26">2021.09.26</time><span>5 MIN</span></div>
+        <h2><a href="/2021/09/26/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/MQ%E7%9A%84%E4%BD%9C%E7%94%A8%E6%80%BB%E7%BB%93/">MQ的作用</a></h2>
+        <p>MQ的作用 消息队列在大型电子商务类网站，如京东、淘宝、去哪儿等网站有着深入的应用， 队列的主要作用是消除高并发访问高峰，加快网站的响应速度。 在不使用消息队列的情况下，用户的请求数据直接写入数据库，在高并发的情况下，会对数据库造成巨大的压力，同时也使得系统响应延迟加剧。 在使用队列后，用户的请求发…</p>
+        <div class="chip-row"><span>消息队列</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/09/26/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/MQ%E7%9A%84%E4%BD%9C%E7%94%A8%E6%80%BB%E7%BB%93/" aria-label="阅读《MQ的作用》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="07.innodb引擎特性和日志 mysql innodb引擎的4大特性 插入缓存（insert buffer/change buffer) 插入缓存之前版本叫insert buffer，现版本change buffer，主要提升插入性能，change buffer 是insert buffer的加强，insert buffer 只针对insert有效，change buffering 对insert、delete、update（delete + insert）、purge都有效 对于非聚聚索引来说，比如存在用户购买金额…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-09-25">2021.09.25</time><span>16 MIN</span></div>
+        <h2><a href="/2021/09/25/MySQL/07.Innodb%E5%BC%95%E6%93%8E%E7%9A%844%E5%A4%A7%E7%89%B9%E6%80%A7%E4%B8%8E%E6%97%A5%E5%BF%97/">07.Innodb引擎特性和日志</a></h2>
+        <p>Innodb引擎的4大特性 插入缓存（Insert Buffer/Change Buffer) 插入缓存之前版本叫insert buffer，现版本Change Buffer，主要提升插入性能，change buffer 是insert buffer的加强，insert buffer 只针对inse…</p>
+        <div class="chip-row"><span>MySQL</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/09/25/MySQL/07.Innodb%E5%BC%95%E6%93%8E%E7%9A%844%E5%A4%A7%E7%89%B9%E6%80%A7%E4%B8%8E%E6%97%A5%E5%BF%97/" aria-label="阅读《07.Innodb引擎特性和日志》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="08.abc联合索引生效问题 mysql abc联合索引生效问题 对于复合索引：mysql从左到右的使用索引中的字段，一个查询可以只使用索引中的一部份，但只能是最左侧部分。例如索引是key index （a,b,c）。 可以支持 a | a,b| a,b,c 3种组合进行查找，但不支持 b,c进行查找 .当最左侧字段是常量引用时，索引就十分有效。 以下是一些 例子： **abc顺序** where里面的条件顺序在查询之前会被mysql自动优化，**效果跟上一句一样** b范围值，断点，阻塞了c的索引a用到了，b也用到…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-09-25">2021.09.25</time><span>2 MIN</span></div>
+        <h2><a href="/2021/09/25/MySQL/08.%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E7%94%9F%E6%95%88%E9%97%AE%E9%A2%98/">08.ABC联合索引生效问题</a></h2>
+        <p>ABC联合索引生效问题 对于复合索引：Mysql从左到右的使用索引中的字段，一个查询可以只使用索引中的一部份，但只能是最左侧部分。例如索引是key index （a,b,c）。 可以支持 a | a,b| a,b,c 3种组合进行查找，但不支持 b,c进行查找 .当最左侧字段是常量引用时，索引就十分…</p>
+        <div class="chip-row"><span>MySQL</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/09/25/MySQL/08.%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E7%94%9F%E6%95%88%E9%97%AE%E9%A2%98/" aria-label="阅读《08.ABC联合索引生效问题》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="09.一条update执行的过程 mysql 语句的执行过程如下： 客户端（通常是你的服务）发出更新语句” update t set b = 200 where id = 2 “ 并向mysql服务端建立连接； mysql连接器负责和客户端建立连接，获取权限，维持和管理连接； mysql拿到一个查询请求后，会先到查询缓存看看（mysql8.x已经废弃了查询缓存），看之前是否已经执行过，如果执行过，执行语句及结果会以key-value形式存储到内存中，如果命中缓存会返回结果。如果没命中缓存，就开始真正执行语句。分析器会先做…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-09-25">2021.09.25</time><span>7 MIN</span></div>
+        <h2><a href="/2021/09/25/MySQL/09.%E4%B8%80%E6%9D%A1update%E6%89%A7%E8%A1%8C%E7%9A%84%E8%BF%87%E7%A8%8B/">09.一条update执行的过程</a></h2>
+        <p>语句的执行过程如下： 客户端（通常是你的服务）发出更新语句” update t set b = 200 where id = 2 “ 并向MySQL服务端建立连接； MySQL连接器负责和客户端建立连接，获取权限，维持和管理连接； MySQL拿到一个查询请求后，会先到查询缓存看看（MySQL8.x已…</p>
+        <div class="chip-row"><span>MySQL</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/09/25/MySQL/09.%E4%B8%80%E6%9D%A1update%E6%89%A7%E8%A1%8C%E7%9A%84%E8%BF%87%E7%A8%8B/" aria-label="阅读《09.一条update执行的过程》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="6.循环队列 collection 循环队列 一、普通队列的弊端 队列：是一种可以分别在两端进行增删的特殊线性表。既然是线性表，那么可以使用顺序存储和链式存储来实现，如果是链式存储的话，那么增删的复杂度都是o(1)，这一点很好理解，应该只要修改一下指针就好了，如果是顺序存储的话，在队尾增加的时间复杂度是o(1)，但是在队头进行删除的时候，会涉及到迁移操作，这时候的时候复杂度就是o(n)，所以一般来讲不会直接使用顺序存储的方式来实现普通队列。 二、循环队列的原理概述 较之普通队列用顺序存储来实现存在删除带来的时间…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-09-25">2021.09.25</time><span>3 MIN</span></div>
+        <h2><a href="/2021/09/25/Collection/6.%E5%BE%AA%E7%8E%AF%E9%98%9F%E5%88%97/">6.循环队列</a></h2>
+        <p>循环队列 一、普通队列的弊端 队列：是一种可以分别在两端进行增删的特殊线性表。既然是线性表，那么可以使用顺序存储和链式存储来实现，如果是链式存储的话，那么增删的复杂度都是O(1)，这一点很好理解，应该只要修改一下指针就好了，如果是顺序存储的话，在队尾增加的时间复杂度是O(1)，但是在队头进行删除的时…</p>
+        <div class="chip-row"><span>Collection</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/09/25/Collection/6.%E5%BE%AA%E7%8E%AF%E9%98%9F%E5%88%97/" aria-label="阅读《6.循环队列》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="12.threadlocal 分析 多线程与并发 threadlocal的数据结构 类有一个类型为 的实例变量 ，也就是说每个线程有一个自己的 。 有自己的独立实现，可以简单地将它的 视作 ， 为代码中放入的值（实际上 并不是 本身，而是它的一个 弱引用 ）。 每个线程在往 里放值的时候，都会往自己的 里存，读也是以 作为引用，在自己的 里找对应的 ，从而实现了 线程隔离 。 有点类似 的结构，只是 是由 数组+链表 实现的，而 中并没有 链表 结构。 我们还要注意 ， 它的 是 ，继承自 ， 也就是我们常说的弱引用类型。…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-09-24">2021.09.24</time><span>11 MIN</span></div>
+        <h2><a href="/2021/09/24/Thread/12.ThreadLocal%E5%88%86%E6%9E%90/">12.ThreadLocal 分析</a></h2>
+        <p>ThreadLocal的数据结构 类有一个类型为 的实例变量 ，也就是说每个线程有一个自己的 。 有自己的独立实现，可以简单地将它的 视作 ， 为代码中放入的值（实际上 并不是 本身，而是它的一个 弱引用 ）。 每个线程在往 里放值的时候，都会往自己的 里存，读也是以 作为引用，在自己的 里找对应的…</p>
+        <div class="chip-row"><span>多线程与并发</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/09/24/Thread/12.ThreadLocal%E5%88%86%E6%9E%90/" aria-label="阅读《12.ThreadLocal 分析》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="5.concurrenthashmap详解 collection concurrenthashmap跟hashmap，hashtable的对比 我们都知道hashmap不是线程安全的，所以在处理并发的时候会出现问题。 而hashtable虽然是线程安全的，但是是通过整个来加锁的方式，当一个线程在写操作的时候，另外的线程则不能进行读写。 而concurrenthashmap则可以支持并发的读写。跟1.7版本相比，1.8版本又有了很大的变化，已经抛弃了segment的概念，虽然源码里面还保留了，也只是为了兼容性的考虑。 concurrentha…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-09-24">2021.09.24</time><span>6 MIN</span></div>
+        <h2><a href="/2021/09/24/Collection/5.ConcurrentHashMap%E8%AF%A6%E8%A7%A3/">5.ConcurrentHashMap详解</a></h2>
+        <p>ConcurrentHashMap跟HashMap，HashTable的对比 我们都知道HashMap不是线程安全的，所以在处理并发的时候会出现问题。 而HashTable虽然是线程安全的，但是是通过整个来加锁的方式，当一个线程在写操作的时候，另外的线程则不能进行读写。 而ConcurrentHas…</p>
+        <div class="chip-row"><span>Collection</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/09/24/Collection/5.ConcurrentHashMap%E8%AF%A6%E8%A7%A3/" aria-label="阅读《5.ConcurrentHashMap详解》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="06.mysql的主从复制 mysql mysql binlog mysql 的 binlog 日志是一种二进制格式的日志，binlog记录所有的ddl和dml语句（除了数据查询语句select， show 等），以event的形式记录，同时记录语句执行时间。 binlog的 主要作用有两种： 数据恢复： 因为binlog详细记录所有修改数据的sql，当某一个时刻的数据误操作而导致出问题，或者数据库当局数据丢失，那么可以根据binlog回放历史数据 主从复制 想做多级备份的业务，可以去监听当前写库的binlog日志…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-09-21">2021.09.21</time><span>10 MIN</span></div>
+        <h2><a href="/2021/09/21/MySQL/06.MySQL%E7%9A%84%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">06.MySQL的主从复制</a></h2>
+        <p>MySQL BinLog MySQL 的 Binlog 日志是一种二进制格式的日志，Binlog记录所有的DDL和DML语句（除了数据查询语句Select， show 等），以Event的形式记录，同时记录语句执行时间。 BInlog的 主要作用有两种： 数据恢复： 因为Binlog详细记录所有修改…</p>
+        <div class="chip-row"><span>MySQL</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/09/21/MySQL/06.MySQL%E7%9A%84%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/" aria-label="阅读《06.MySQL的主从复制》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="05.spring-bean(2) spring spring bean的生命周期 初始化 在创建此bean的bean工厂中设置bean的名称，在普通属性设置之后调用，在 方法之前调用 : 在普通属性设置之后，initializingbean.afterpropertiesset()之前调用 : 回调提供了自己的bean实例工厂，在普通属性设置之后，在 或者自定义初始化方法之前调用 : 设置environment在组件使用时调用 : 设置stringvalueresolver 用来解决嵌入式的值域问题 : 在普通bean对象…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-09-19">2021.09.19</time><span>7 MIN</span></div>
+        <h2><a href="/2021/09/19/Spring/06.Spring-Bean(2)/">05.Spring-Bean(2)</a></h2>
+        <p>Spring Bean的生命周期 初始化 在创建此bean的bean工厂中设置bean的名称，在普通属性设置之后调用，在 方法之前调用 : 在普通属性设置之后，InitializingBean.afterPropertiesSet()之前调用 : 回调提供了自己的bean实例工厂，在普通属性设置之后…</p>
+        <div class="chip-row"><span>Spring</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/09/19/Spring/06.Spring-Bean(2)/" aria-label="阅读《05.Spring-Bean(2)》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="05.spring-ioc(2) spring spring ioc spring ioc容器 作用 控制反转即ioc(inversion of control)，将传统上由程序代码直接控制的对象的调度权交给容器，通过容器来实现对象组件的装配和管理。所谓的”控制反转”概念就是对组件对象控制权的转移，从本身程序代码转到容器，spring ioc 负责创建对象，管理对象（通过依赖注入（di），装配对象，配置对象，并且管理这些对象的整个生命周期）。对于l0c来说,最重要的就是容器。容器管理着bean的生命周期,控制着bean的依…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-09-18">2021.09.18</time><span>7 MIN</span></div>
+        <h2><a href="/2021/09/18/Spring/05.Spring-IoC(2)/">05.Spring-IoC(2)</a></h2>
+        <p>Spring IoC Spring IoC容器 作用 控制反转即IoC(Inversion of Control)，将传统上由程序代码直接控制的对象的调度权交给容器，通过容器来实现对象组件的装配和管理。所谓的”控制反转”概念就是对组件对象控制权的转移，从本身程序代码转到容器，Spring IOC 负…</p>
+        <div class="chip-row"><span>Spring</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/09/18/Spring/05.Spring-IoC(2)/" aria-label="阅读《05.Spring-IoC(2)》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="10.java内存模型 多线程与并发 java内存模型（jmm） jvm内存模型指的是jvm的内存分区；而java内存模型是一种虚拟机规范 jmm就是java内存模型（java mermory model）。因为在不同的硬件生产商和不同的操作系统下，内存的访问有一定的差异，所以会造成相同的代码运行在不同的系统上会出现各种问题。 所以java内存模型（jmm）屏蔽掉各种硬件和和操作系统的内存访问差异，以实现让java程序在各种平台下都能达到一致的并发效果 java内存模型规定所有的变量存储在主内存中，包括 实例变量…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-09-15">2021.09.15</time><span>8 MIN</span></div>
+        <h2><a href="/2021/09/15/Thread/11.Java%E7%9A%84%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%EF%BC%88JMM)/">10.Java内存模型</a></h2>
+        <p>Java内存模型（JMM） JVM内存模型指的是JVM的内存分区；而java内存模型是一种虚拟机规范 JMM就是Java内存模型（Java Mermory Model）。因为在不同的硬件生产商和不同的操作系统下，内存的访问有一定的差异，所以会造成相同的代码运行在不同的系统上会出现各种问题。 所以Ja…</p>
+        <div class="chip-row"><span>多线程与并发</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/09/15/Thread/11.Java%E7%9A%84%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%EF%BC%88JMM)/" aria-label="阅读《10.Java内存模型》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="05.分布式锁 mysql 分布式锁 什么是锁 在单线程的系统中，当存在多个线程可以同时改变某个变量（可变共享变量）时，就需要对变量或代码块做同步，使其在修改这种变量时能够线性执行消除并发修改变量 而同步的本质是通过锁实现的。为了实现多个线程在一个时刻同一代码块只能有一个线程可执行，那么需要在某个地方做个标记，这个必须每个线程都能看到，当标记不存在时可以设置该标记，其余后续线程发现已经有标记了则等待拥有标记的线程结束同步代码块取消标记后再去尝试设置标记。这个标记可以理解为锁。 不同地方实现锁的方式也不一…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-09-11">2021.09.11</time><span>9 MIN</span></div>
+        <h2><a href="/2021/09/11/MySQL/05.%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81/">05.分布式锁</a></h2>
+        <p>分布式锁 什么是锁 在单线程的系统中，当存在多个线程可以同时改变某个变量（可变共享变量）时，就需要对变量或代码块做同步，使其在修改这种变量时能够线性执行消除并发修改变量 而同步的本质是通过锁实现的。为了实现多个线程在一个时刻同一代码块只能有一个线程可执行，那么需要在某个地方做个标记，这个必须每个线程…</p>
+        <div class="chip-row"><span>MySQL</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/09/11/MySQL/05.%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81/" aria-label="阅读《05.分布式锁》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="18.字符串常量池 jvm jvm——字符串常量池详解 引言 在java开发中不管是前后端交互的json串，还是数据库中的数据存储，我们常常需要使用到string类型的字符串。作为最常用也是最基础的引用数据类型，jvm为string提供了字符串常量池来提高性能，本篇文章我们一起从底层jvm中认识并学习字符串常量池的概念和设计原理。 字符串常量池由来 在日常开发过程中，字符串的创建是比较频繁的，而字符串的分配和其他对象的分配是类似的，需要耗费大量的时间和空间，从而影响程序的运行性能，所以作为最基础最常用的…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-09-11">2021.09.11</time><span>6 MIN</span></div>
+        <h2><a href="/2021/09/11/JVM/18.%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%B8%B8%E9%87%8F%E6%B1%A0/">18.字符串常量池</a></h2>
+        <p>JVM——字符串常量池详解 引言 在Java开发中不管是前后端交互的JSON串，还是数据库中的数据存储，我们常常需要使用到String类型的字符串。作为最常用也是最基础的引用数据类型，JVM为String提供了字符串常量池来提高性能，本篇文章我们一起从底层JVM中认识并学习字符串常量池的概念和设计原…</p>
+        <div class="chip-row"><span>JVM</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/09/11/JVM/18.%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%B8%B8%E9%87%8F%E6%B1%A0/" aria-label="阅读《18.字符串常量池》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="19.oom排查 jvm 1、使用dmesg命令查看系统日志 dmesg |grep -e ‘kill|oom|out of memory’，可以查看操作系统启动后的系统日志，这里就是查看跟内存溢出相关联的系统日志。- 2、这时候，需要启动项目，使用ps命令查看进程 - ps -aux|grep java 或者是 ps -ef|grep java 命令查看一下你的java进程，就可以找到你的java进程的进程id。- 3、接着使用top命令 top命令显示的结果列表中，会看到%mem这一列，这里可以看…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-09-11">2021.09.11</time><span>5 MIN</span></div>
+        <h2><a href="/2021/09/11/JVM/19.oom%E6%8E%92%E6%9F%A5/">19.oom排查</a></h2>
+        <p>1、使用dmesg命令查看系统日志 dmesg |grep -E ‘kill|oom|out of memory’，可以查看操作系统启动后的系统日志，这里就是查看跟内存溢出相关联的系统日志。- 2、这时候，需要启动项目，使用ps命令查看进程 - ps -aux|grep java 或者是 ps -e…</p>
+        <div class="chip-row"><span>JVM</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/09/11/JVM/19.oom%E6%8E%92%E6%9F%A5/" aria-label="阅读《19.oom排查》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="04.mysql索引原理及慢查询优化 mysql 背景 mysql凭借着出色的性能、低廉的成本、丰富的资源，已经成为绝大多数互联网公司的首选关系型数据库。虽然性能出色，但所谓“好马配好鞍”，如何能够更好的使用它，已经成为开发工程师的必修课，我们经常会从职位描述上看到诸如“精通mysql”、“sql语句优化”、“了解数据库原理”等要求。我们知道一般的应用系统，读写比例在10:1左右，而且插入操作和一般的更新操作很少出现性能问题，遇到最多的，也是最容易出问题的，还是一些复杂的查询操作，所以查询语句的优化显然是重中之重。背景 my…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-09-10">2021.09.10</time><span>10 MIN</span></div>
+        <h2><a href="/2021/09/10/MySQL/04.MySQL%E7%B4%A2%E5%BC%95%E5%8E%9F%E7%90%86%E5%8F%8A%E6%85%A2%E6%9F%A5%E8%AF%A2%E4%BC%98%E5%8C%96/">04.MySQL索引原理及慢查询优化</a></h2>
+        <p>背景 MySQL凭借着出色的性能、低廉的成本、丰富的资源，已经成为绝大多数互联网公司的首选关系型数据库。虽然性能出色，但所谓“好马配好鞍”，如何能够更好的使用它，已经成为开发工程师的必修课，我们经常会从职位描述上看到诸如“精通MySQL”、“SQL语句优化”、“了解数据库原理”等要求。我们知道一般的…</p>
+        <div class="chip-row"><span>MySQL</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/09/10/MySQL/04.MySQL%E7%B4%A2%E5%BC%95%E5%8E%9F%E7%90%86%E5%8F%8A%E6%85%A2%E6%9F%A5%E8%AF%A2%E4%BC%98%E5%8C%96/" aria-label="阅读《04.MySQL索引原理及慢查询优化》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="03.一条sql查询语句如何执行 mysql 一条sql查询语句如何执行 mysql可以分为server层和存储引擎层两部分 server层包括 连接器、查询缓存、分析器、优化器、执行器 等，涵盖了mysql的大多数核心功能，以及所有的内置函数（如日期、时间、数学和加密函数等），所有跨存储引擎的功能都在这一层实现，比如存储过程，触发器，视图等。 而存储引擎层负责数据的存储和提取。其架构模式是插件式的，支持innodb、myisam、memory等多个存储引擎。现在最常用的存储引擎innodb，它从mysql5.5.5版本…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-09-09">2021.09.09</time><span>7 MIN</span></div>
+        <h2><a href="/2021/09/09/MySQL/03.MySQL%E6%9F%A5%E8%AF%A2%E8%BF%87%E7%A8%8B/">03.一条SQL查询语句如何执行</a></h2>
+        <p>一条SQL查询语句如何执行 MySQL可以分为Server层和存储引擎层两部分 Server层包括 连接器、查询缓存、分析器、优化器、执行器 等，涵盖了MySQL的大多数核心功能，以及所有的内置函数（如日期、时间、数学和加密函数等），所有跨存储引擎的功能都在这一层实现，比如存储过程，触发器，视图等。…</p>
+        <div class="chip-row"><span>MySQL</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/09/09/MySQL/03.MySQL%E6%9F%A5%E8%AF%A2%E8%BF%87%E7%A8%8B/" aria-label="阅读《03.一条SQL查询语句如何执行》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="http和rpc简介 tcp/ip http 的本质？http 和 rpc 的区别？ http 的本质 首先你要明确 http 是一个协议，是一个超文本传输协议。 它基于 tcp/ip 来传输文本、图片、视频、音频等。 重点来了 。 http 不提供数据包的传输功能，也就是数据包从浏览器到服务端再来回的 传输 和它没关系。 这是 tcp/ip 干的。 那 http 有啥用？我们来分析一波。 我们上网要么就是获取一些信息来看，要么就是修改一些信息。 比如你用浏览器刷微博就是获取信息，发微博就是修改信息。 所以说浏…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-09-09">2021.09.09</time><span>4 MIN</span></div>
+        <h2><a href="/2021/09/09/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/10.http%E5%92%8Crpc%E7%AE%80%E4%BB%8B/">http和rpc简介</a></h2>
+        <p>HTTP 的本质？HTTP 和 RPC 的区别？ HTTP 的本质 首先你要明确 HTTP 是一个协议，是一个超文本传输协议。 它基于 TCP/IP 来传输文本、图片、视频、音频等。 重点来了 。 HTTP 不提供数据包的传输功能，也就是数据包从浏览器到服务端再来回的 传输 和它没关系。 这是 TC…</p>
+        <div class="chip-row"><span>TCP/IP</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/09/09/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/10.http%E5%92%8Crpc%E7%AE%80%E4%BB%8B/" aria-label="阅读《http和rpc简介》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="浏览器输入url后 tcp/ip 步骤 （1）dns 解析 （2）tcp 连接 （3）发送 http 请求 （4）服务器处理请求并返回 http 报文 （5）浏览器解析渲染页面 （6）连接结束 详细内容 dns解析 输入 ip，此时电脑发送一个 dns 请求到本地 dns 服务器（一般是网络接入服务商提供 eg:电信，移动）; 本地 dns 服务器会首先查询它的缓存记录，如果有，则直接返回结果，若没有，本地 dns 服务器还要向 dns 根服务器进行查询； dns 根服务器没有记录具体域名和 ip 地址的对应…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-09-09">2021.09.09</time><span>5 MIN</span></div>
+        <h2><a href="/2021/09/09/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/9.%E6%B5%8F%E8%A7%88%E5%99%A8%E8%BE%93%E5%85%A5url%E5%90%8E%E5%8F%91%E7%94%9F%E4%BB%80%E4%B9%88/">浏览器输入url后</a></h2>
+        <p>步骤 （1）DNS 解析 （2）TCP 连接 （3）发送 HTTP 请求 （4）服务器处理请求并返回 HTTP 报文 （5）浏览器解析渲染页面 （6）连接结束 详细内容 DNS解析 输入 IP，此时电脑发送一个 DNS 请求到本地 DNS 服务器（一般是网络接入服务商提供 eg:电信，移动）; 本地…</p>
+        <div class="chip-row"><span>TCP/IP</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/09/09/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/9.%E6%B5%8F%E8%A7%88%E5%99%A8%E8%BE%93%E5%85%A5url%E5%90%8E%E5%8F%91%E7%94%9F%E4%BB%80%E4%B9%88/" aria-label="阅读《浏览器输入url后》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="三次握手和四次挥手 http tcp/ip 一、tcp 报文段简介 在介绍三次握手和四次挥手之前，先来简单认识一下 tcp 报文段的结构- - tcp 首部包含以下内容，请留意其中的控制位，在三次握手和四次挥手过程中会频繁出现： 端口号 (source port and destination port)：每个 tcp 报文段都包含源端和目的端的端口号，用于寻找发送端和接收端应用进程。这两个值加上 ip 首部中的源端 ip 地址和目的端 ip 地址就可以确定一个唯一的 tcp 连接。 序号 (sequence numb…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-09-05">2021.09.05</time><span>17 MIN</span></div>
+        <h2><a href="/2021/09/05/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/7.%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B/">三次握手和四次挥手</a></h2>
+        <p>一、TCP 报文段简介 在介绍三次握手和四次挥手之前，先来简单认识一下 TCP 报文段的结构- - TCP 首部包含以下内容，请留意其中的控制位，在三次握手和四次挥手过程中会频繁出现： 端口号 (Source Port and Destination Port)：每个 TCP 报文段都包含源端和目的…</p>
+        <div class="chip-row"><span>HTTP</span><span>TCP/IP</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/09/05/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/7.%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B/" aria-label="阅读《三次握手和四次挥手》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="滑动窗口 tcp/ip 滑动窗口 我们都知道 tcp 是每发送一个数据，都要进行一次确认应答。当上一个数据包收到了应答了， 再发送下一个。 这个模式就有点像我和你面对面聊天，你一句我一句。但这种方式的缺点是效率比较低的。 如果你说完一句话，我在处理其他事情，没有及时回复你，那你不是要干等着我做完其他事情后，我回复你，你才能说下一句话，很显然这不现实。 按数据包进行确认应答 所以，这样的传输方式有一个缺点：数据包的 往返时间越长，通信的效率就越低 。 为解决这个问题，tcp 引入了 窗口 这个概念。即…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-09-05">2021.09.05</time><span>5 MIN</span></div>
+        <h2><a href="/2021/09/05/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/8.%E4%BA%92%E5%8A%A8%E7%AA%97%E5%8F%A3/">滑动窗口</a></h2>
+        <p>滑动窗口 我们都知道 TCP 是每发送一个数据，都要进行一次确认应答。当上一个数据包收到了应答了， 再发送下一个。 这个模式就有点像我和你面对面聊天，你一句我一句。但这种方式的缺点是效率比较低的。 如果你说完一句话，我在处理其他事情，没有及时回复你，那你不是要干等着我做完其他事情后，我回复你，你才能…</p>
+        <div class="chip-row"><span>TCP/IP</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/09/05/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/8.%E4%BA%92%E5%8A%A8%E7%AA%97%E5%8F%A3/" aria-label="阅读《滑动窗口》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="4.hashmap实现原理 collection hashmap的实现原理 概述 hashmap是java中对map接口的实现类，是最常用的实现类中之一。主要有以下几个特性： hashmap中的key 和 value 都允许为null， 但最多智能拥有一个null的key hashmap不保证顺序性 hashmap非线性安全 hashmap的数据结构： hashmap内部是以数组+链表的方式存储的数据。 hashmap的数组中，每个元素称之为“ 桶 ”。需要注意的是，这个“桶”并不等同于“键值对（entity）”。至于它是什…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-09-05">2021.09.05</time><span>10 MIN</span></div>
+        <h2><a href="/2021/09/05/Collection/4.HashMap%E7%9A%84%E6%89%A9%E5%AE%B9%E6%9C%BA%E5%88%B6/">4.HashMap实现原理</a></h2>
+        <p>HashMap的实现原理 概述 HashMap是Java中对Map接口的实现类，是最常用的实现类中之一。主要有以下几个特性： HashMap中的key 和 value 都允许为null， 但最多智能拥有一个null的key HashMap不保证顺序性 HashMap非线性安全 HashMap的数据结…</p>
+        <div class="chip-row"><span>Collection</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/09/05/Collection/4.HashMap%E7%9A%84%E6%89%A9%E5%AE%B9%E6%9C%BA%E5%88%B6/" aria-label="阅读《4.HashMap实现原理》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="02.索引 mysql 索引 什么是索引 索引是一个单独的，存储在磁盘上的数据结构，包含着对数据表里所有记录的引用指针，使用索引可以快速记录找出在某个或多个列中有一特定值的行，所有mysql列数据都可以被索引，所有mysql列类型都可以被索引，对相关列使用时提高查询操作速度的最佳途径。 索引是在存储引擎中实现的，因此，每种存储引擎的索引都不一定完全相同，并且每种存储引擎也不一定支持所有索引类型。mysql中索引的存储类型有两种，即btree和hash，具体和表的存储引擎相关。 myisam和inno…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-09-04">2021.09.04</time><span>11 MIN</span></div>
+        <h2><a href="/2021/09/04/MySQL/02.%E7%B4%A2%E5%BC%95/">02.索引</a></h2>
+        <p>索引 什么是索引 索引是一个单独的，存储在磁盘上的数据结构，包含着对数据表里所有记录的引用指针，使用索引可以快速记录找出在某个或多个列中有一特定值的行，所有MySQL列数据都可以被索引，所有MySQL列类型都可以被索引，对相关列使用时提高查询操作速度的最佳途径。 索引是在存储引擎中实现的，因此，每种…</p>
+        <div class="chip-row"><span>MySQL</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/09/04/MySQL/02.%E7%B4%A2%E5%BC%95/" aria-label="阅读《02.索引》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="01.事务的隔离性 mysql mysql事务 mysql事务主要用于处理操作量大，复杂度高的数据。比如说，在人员管理系统中，你删除一个人员，你既需要删除人员的基本资料，也要删除该人员相关的信息，如信箱、文章等等，这样，这些数据库操作语句就构成一个事务 在mysql中只有使用了innodb数据库引擎的数据库或表才支持事务 事务处理可以用来维护数据库的完整性，保证成批的sql语句要么全部执行，要么全部不执行 事务用来管理insert、update、delete语句 一般来说，事务是必须满足四个条件（acid）…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-09-04">2021.09.04</time><span>8 MIN</span></div>
+        <h2><a href="/2021/09/04/MySQL/01.%E4%BA%8B%E5%8A%A1%E7%9A%84%E9%9A%94%E7%A6%BB%E6%80%A7/">01.事务的隔离性</a></h2>
+        <p>MySQL事务 MySQL事务主要用于处理操作量大，复杂度高的数据。比如说，在人员管理系统中，你删除一个人员，你既需要删除人员的基本资料，也要删除该人员相关的信息，如信箱、文章等等，这样，这些数据库操作语句就构成一个事务 在MySql中只有使用了Innodb数据库引擎的数据库或表才支持事务 事务处理…</p>
+        <div class="chip-row"><span>MySQL</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/09/04/MySQL/01.%E4%BA%8B%E5%8A%A1%E7%9A%84%E9%9A%94%E7%A6%BB%E6%80%A7/" aria-label="阅读《01.事务的隔离性》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="redis基础 redis 概述 什么是redis redis是一个使用c语言写成，凯源的高性能key-value非关系缓存数据库。他支持存储的value类型比较多，包括string(字符串)、list(集合)、set(集合)、zset(sorted-set–有序集合) 和 hash (哈希类型）。redis都是基于缓存的，所以很快，每秒都可以处理10万读写操作，是一直性能最好的key-value db。redis也可以实现数据写入磁盘中，保证了数据的安全不丢失，而且redis的操作时原子性的 redi…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-09-01">2021.09.01</time><span>17 MIN</span></div>
+        <h2><a href="/2021/09/01/Redis/Redis%E5%9F%BA%E7%A1%80%EF%BC%881%EF%BC%89/">Redis基础</a></h2>
+        <p>概述 什么是Redis Redis是一个使用C语言写成，凯源的高性能key-value非关系缓存数据库。他支持存储的value类型比较多，包括String(字符串)、list(集合)、set(集合)、zset(sorted-set–有序集合) 和 hash (哈希类型）。Redis都是基于缓存的，所…</p>
+        <div class="chip-row"><span>Redis</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/09/01/Redis/Redis%E5%9F%BA%E7%A1%80%EF%BC%881%EF%BC%89/" aria-label="阅读《Redis基础》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="17.锁升级和锁状态 jvm 前言 锁的状态总共有四种，级别由低到高依次为：无锁、偏向锁、轻量级锁、重量级锁，这四种锁状态分别代表什么，为什么会有锁升级。在jdk1.6之前，synchronized还是一个重量级锁，是一个效率比较低下的锁，但在jdk1.6后，jvm为了提高锁的获取与释放效率(sychronized) 进行了优化，引入了偏向锁和轻量级锁，从此以后锁的状态就有四种（无锁， 偏向锁， 轻量级锁，重量级锁），并且四种状态会随着竞争的情况逐渐升级，而且是不可逆的过程，即不可降级，也就是说只能进行锁…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-08-30">2021.08.30</time><span>11 MIN</span></div>
+        <h2><a href="/2021/08/30/JVM/17.%E9%94%81%E5%8D%87%E7%BA%A7%E5%92%8C%E9%94%81%E7%8A%B6%E6%80%81/">17.锁升级和锁状态</a></h2>
+        <p>前言 锁的状态总共有四种，级别由低到高依次为：无锁、偏向锁、轻量级锁、重量级锁，这四种锁状态分别代表什么，为什么会有锁升级。在JDK1.6之前，synchronized还是一个重量级锁，是一个效率比较低下的锁，但在JDK1.6后，JVM为了提高锁的获取与释放效率(sychronized) 进行了优化…</p>
+        <div class="chip-row"><span>JVM</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/08/30/JVM/17.%E9%94%81%E5%8D%87%E7%BA%A7%E5%92%8C%E9%94%81%E7%8A%B6%E6%80%81/" aria-label="阅读《17.锁升级和锁状态》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="java异常  java把异常作为一类，当做对象来处理。所有异常类的基类是throwable类，两大子类分别是error 和 exception。 系统错误由java虚拟机抛出，用error类表示，error类描述的是内部系统错误，例如java虚拟机崩溃。这种情况仅凭程序自身是无法处理的，在程序中也不会对error异常进行捕捉和抛出。 异常（exception）又分为runtimeexception（运行时异常）和 checkedexception（检查时异常），两者区别如下： runtim…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-08-30">2021.08.30</time><span>5 MIN</span></div>
+        <h2><a href="/2021/08/30/java%E5%9F%BA%E7%A1%80/java%E5%BC%82%E5%B8%B8%E4%BD%93%E7%B3%BB/">java异常</a></h2>
+        <p>java把异常作为一类，当做对象来处理。所有异常类的基类是Throwable类，两大子类分别是Error 和 Exception。 系统错误由Java虚拟机抛出，用Error类表示，Error类描述的是内部系统错误，例如Java虚拟机崩溃。这种情况仅凭程序自身是无法处理的，在程序中也不会对Error…</p>
+        <div class="chip-row"></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/08/30/java%E5%9F%BA%E7%A1%80/java%E5%BC%82%E5%B8%B8%E4%BD%93%E7%B3%BB/" aria-label="阅读《java异常》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="10.threadlocal 多线程与并发 threadlocal介绍 官方介绍 从java官方文档中描述：threadlocal类用来提供线程内部局部变量，这种变量在多线程环境下访问（通过get 和set 方法访问）时能保证各个线程的变量相对于独立于其他线程内的变量。threadlocal实例通常来说都是private static类型的，用于关联线程和线程上下文 可以得知threadlocal作用是：提供线程内部的局部变量，不同的线程之间不会相互干扰，这种变量在线程声明周期内其作用，减少同一个线程内多个函数或组件之…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-08-29">2021.08.29</time><span>8 MIN</span></div>
+        <h2><a href="/2021/08/29/Thread/10.ThreadLocal/">10.ThreadLocal</a></h2>
+        <p>ThreadLocal介绍 官方介绍 从Java官方文档中描述：ThreadLocal类用来提供线程内部局部变量，这种变量在多线程环境下访问（通过get 和set 方法访问）时能保证各个线程的变量相对于独立于其他线程内的变量。ThreadLocal实例通常来说都是private static类型的，…</p>
+        <div class="chip-row"><span>多线程与并发</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/08/29/Thread/10.ThreadLocal/" aria-label="阅读《10.ThreadLocal》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="平衡二叉树、b 树、b+树 二叉树 平衡二叉树 平衡二叉树是基于二分法的策略提高数据的查找速度的二叉树的数据结构 特点： 平衡二叉树是采用二分法思维把数据按规则组装成一个树型结构的数据，用这个树形结构的数据减少无关数据的检索，大大的提升了数据检索的速度；平衡二叉树的数据结构组装过程有以下规则： 非叶子节点只能允许最多两个子节点存在 每一个非叶子检点数据分布规则按照左边的子节点小于当前节点的值，右边的子节点大于当前节点的值（这里的值是基于自己的算法规则而定的，比如hash值） 平衡树的层级结构：因为平衡二叉树查询…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-08-29">2021.08.29</time><span>7 MIN</span></div>
+        <h2><a href="/2021/08/29/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%A0%91/%E5%B9%B3%E8%A1%A1%E4%BA%8C%E5%8F%89%E6%A0%91%E3%80%81B%20%E6%A0%91%E3%80%81B+%E6%A0%91/">平衡二叉树、B 树、B+树</a></h2>
+        <p>平衡二叉树 平衡二叉树是基于二分法的策略提高数据的查找速度的二叉树的数据结构 特点： 平衡二叉树是采用二分法思维把数据按规则组装成一个树型结构的数据，用这个树形结构的数据减少无关数据的检索，大大的提升了数据检索的速度；平衡二叉树的数据结构组装过程有以下规则： 非叶子节点只能允许最多两个子节点存在 每…</p>
+        <div class="chip-row"><span>二叉树</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/08/29/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%A0%91/%E5%B9%B3%E8%A1%A1%E4%BA%8C%E5%8F%89%E6%A0%91%E3%80%81B%20%E6%A0%91%E3%80%81B+%E6%A0%91/" aria-label="阅读《平衡二叉树、B 树、B+树》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="如何保证消息队列的可靠性传输 消息队列 rabbitmq如何保证消息队列的可靠性传输 生产者弄丢数据 生产者将数据发送到rabbitmq的时候，可能数据就在半路丢失。此时rabbitmq提供事务功能，就是生产者发送数据之前开启rabbitmq事务channel.txselect，然后发送消息，如果消息没有成功被rabbitmq接受到，那么生产者就会异常报错，此时回滚事务channel.txrollback，然后重发消息，如果收到消息就可以提交事务channel.txcommit 但是问题是，rabbitmq 事务机…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-08-26">2021.08.26</time><span>3 MIN</span></div>
+        <h2><a href="/2021/08/26/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/%E5%A6%82%E4%BD%95%E4%BF%9D%E8%AF%81%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E7%9A%84%E5%8F%AF%E9%9D%A0%E6%80%A7%E4%BC%A0%E8%BE%93/">如何保证消息队列的可靠性传输</a></h2>
+        <p>RabbitMQ如何保证消息队列的可靠性传输 生产者弄丢数据 生产者将数据发送到RabbitMQ的时候，可能数据就在半路丢失。此时RabbitMQ提供事务功能，就是生产者发送数据之前开启RabbitMQ事务channel.txSelect，然后发送消息，如果消息没有成功被RabbitMQ接受到，那么…</p>
+        <div class="chip-row"><span>消息队列</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/08/26/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/%E5%A6%82%E4%BD%95%E4%BF%9D%E8%AF%81%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E7%9A%84%E5%8F%AF%E9%9D%A0%E6%80%A7%E4%BC%A0%E8%BE%93/" aria-label="阅读《如何保证消息队列的可靠性传输》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="9.synchronized、lock、volatile 多线程与并发 概述 java的内存模型 每个线程都有自己的本地内存空间（java栈中的帧），线程执行时，先把变量从内存读到线程自己的本地内存空间，然后对变量进行操作 对该变量操作完成后，在某个时间再把变量刷新回主内存 锁提供的两种特性： 互斥（mutual exclusion） 和可见性（visibility） 互斥：互斥即一次只允许一个线程持有某个特定的锁，因此可使用该特性实现对共享数据的协调访问协议，这样一次只有一个线程能够使用该共享数据 可见性：简单来说就是一个线程修改了变量，其他线…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-08-25">2021.08.25</time><span>10 MIN</span></div>
+        <h2><a href="/2021/08/25/Thread/9.synchronized%E3%80%81Lock%E3%80%81volatile/">9.synchronized、Lock、volatile</a></h2>
+        <p>概述 java的内存模型 每个线程都有自己的本地内存空间（java栈中的帧），线程执行时，先把变量从内存读到线程自己的本地内存空间，然后对变量进行操作 对该变量操作完成后，在某个时间再把变量刷新回主内存 锁提供的两种特性： 互斥（mutual exclusion） 和可见性（visibility）…</p>
+        <div class="chip-row"><span>多线程与并发</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/08/25/Thread/9.synchronized%E3%80%81Lock%E3%80%81volatile/" aria-label="阅读《9.synchronized、Lock、volatile》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="3.hashmap、concurrenthashmap、hashtable collection hashmap、concurrenthashmap、hashtable的区别 hashmap vs concurrenthashmap 引入concurrenthashmap是为了同步集合hashtable之间有更好的选择，hashtable与hashmap,concurrenthashmap主要区别于hashmap不是同步的，线程不安全的和不适合应用于多线程并发环境下，而concurrenthashmap是线程安全的集合容器，特别是在多线程和并发环境中，通常作为map的主要…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-08-24">2021.08.24</time><span>6 MIN</span></div>
+        <h2><a href="/2021/08/24/Collection/3.java%E9%9B%86%E5%90%88%5B3%5D--HashMap%E3%80%81ConcurrentHashMap%E3%80%81HashTable%E7%9A%84%E5%8C%BA%E5%88%AB/">3.HashMap、ConcurrentHashMap、HashTable</a></h2>
+        <p>HashMap、ConcurrentHashMap、HashTable的区别 HashMap vs ConcurrentHashMap 引入ConcurrentHashMap是为了同步集合HashTable之间有更好的选择，HashTable与HashMap,ConcurrentHashMap主要区…</p>
+        <div class="chip-row"><span>Collection</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/08/24/Collection/3.java%E9%9B%86%E5%90%88%5B3%5D--HashMap%E3%80%81ConcurrentHashMap%E3%80%81HashTable%E7%9A%84%E5%8C%BA%E5%88%AB/" aria-label="阅读《3.HashMap、ConcurrentHashMap、HashTable》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="2.java集合 collection 集合容器概述 什么是集合 集合就是一个放数据的容器，准确的说是放数据对象引用的容器 集合类存放的都是对象的引用，而不是对象的本身 集合类型主要有三种： set(集)、list(列表) 和 map(映射) 集合的特点 集合用于存储对象的容器，对象是用来封装数据，对象多了也需要存储集中式管理 和数组对比对象的大小是不确定的，集合的长度是可变的，数组需要提前定义大小 集合和数组的区别 数组是 固定长度的，集合可变长度的 数组可以存储基本数据类型，也可以存储引用数据类型，集合只能存储…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-08-20">2021.08.20</time><span>28 MIN</span></div>
+        <h2><a href="/2021/08/20/Collection/2.%E9%9B%86%E5%90%88%5B2%5D/">2.Java集合</a></h2>
+        <p>集合容器概述 什么是集合 集合就是一个放数据的容器，准确的说是放数据对象引用的容器 集合类存放的都是对象的引用，而不是对象的本身 集合类型主要有三种： set(集)、list(列表) 和 map(映射) 集合的特点 集合用于存储对象的容器，对象是用来封装数据，对象多了也需要存储集中式管理 和数组对比…</p>
+        <div class="chip-row"><span>Collection</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/08/20/Collection/2.%E9%9B%86%E5%90%88%5B2%5D/" aria-label="阅读《2.Java集合》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="04.spring-bean spring bean的作用域 一般情况下，我们书写在ioc容器中的配置信息，会在我们的ioc容器运行时被创建，这就导致我们通过ioc容器获取到bean对象的时候，往往都是获取到了单例的bean对象。 这样就意味着无论我们使用多少个 getbean()方法，获取到的同一个 javabean 都是同一个对象，这就是单实例 bean，整个项目都会共享这一个 bean 对象。 在 spring 中，可以在元素的 scope 属性里设置 bean 的作用域，以决定这个 bean 是单实例的还是多实…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-08-07">2021.08.07</time><span>5 MIN</span></div>
+        <h2><a href="/2021/08/07/Spring/04.Spring-Bean/">04.Spring-Bean</a></h2>
+        <p>Bean的作用域 一般情况下，我们书写在IOC容器中的配置信息，会在我们的IOC容器运行时被创建，这就导致我们通过IOC容器获取到bean对象的时候，往往都是获取到了单例的Bean对象。 这样就意味着无论我们使用多少个 getBean()方法，获取到的同一个 JavaBean 都是同一个对象，这就是…</p>
+        <div class="chip-row"><span>Spring</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/08/07/Spring/04.Spring-Bean/" aria-label="阅读《04.Spring-Bean》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="03.spring-aop spring 关于aop 面向切面编程(aspect-oriented programming，俗称aop)提供了一种面向对象编程(object-oriented programming，俗称oop)的补充，面向对象编程最核心的单元是类(class)，然而面向切面编程最核心的单元是切面(aspects)。与面向对象的顺序流程不同，aop采用的是横向切面的方式，注入与主业务流程无关的功能，例如事务管理和日志管理。 spring的一个关键组件是aop框架。 虽然spring ioc容器不依赖于…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-08-06">2021.08.06</time><span>5 MIN</span></div>
+        <h2><a href="/2021/08/06/Spring/03.Spring-AOP/">03.Spring-AOP</a></h2>
+        <p>关于AOP 面向切面编程(Aspect-oriented Programming，俗称AOP)提供了一种面向对象编程(Object-oriented Programming，俗称OOP)的补充，面向对象编程最核心的单元是类(class)，然而面向切面编程最核心的单元是切面(Aspects)。与面向对…</p>
+        <div class="chip-row"><span>Spring</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/08/06/Spring/03.Spring-AOP/" aria-label="阅读《03.Spring-AOP》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="02.spring-ioc spring ioc是什么 ioc—inversion of control，即“控制反转”，不是什么技术，而是一种设计思想。 在java开发中， ioc意味着将你设计好的对象交给容器控制，而不是传统的在你的对象内部直接控制。 如何理解好ioc呢？理解好ioc的关键是要明确“谁控制谁，控制什么，为何是反转（有反转就应该有正转了），哪些方面反转了”，那我们来深入分析一下： 谁控制谁，控制什么： 传统java se程序设计，我们直接在对象内部通过new进行创建对象，是程序主动去创建依赖对象；而…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-08-05">2021.08.05</time><span>7 MIN</span></div>
+        <h2><a href="/2021/08/05/Spring/02.Spring-IoC/">02.Spring-IoC</a></h2>
+        <p>IoC是什么 Ioc—Inversion of Control，即“控制反转”，不是什么技术，而是一种设计思想。 在Java开发中， Ioc意味着将你设计好的对象交给容器控制，而不是传统的在你的对象内部直接控制。 如何理解好Ioc呢？理解好Ioc的关键是要明确“谁控制谁，控制什么，为何是反转（有反转…</p>
+        <div class="chip-row"><span>Spring</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/08/05/Spring/02.Spring-IoC/" aria-label="阅读《02.Spring-IoC》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="01.springboot常用的注解 spring 前言： springmvc的层：dao、service、controller、view的关系 dao层： 负责数据持久化，与数据库进行联络的任务都封装在其中，dao层的数据源以及相关的数据库连接参数都在spring配置文件中进行配置。dao接口中的方法都大同小异，因为对数据库的基本操作类似：insert、delete、update、select。在dao层定义的一些方法，在service层并没有被使用的情况。dao层的操作经过抽象后基本都是通用的，在dao层完成相关的定义，有…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-08-04">2021.08.04</time><span>4 MIN</span></div>
+        <h2><a href="/2021/08/04/Spring/01.SpringBoot%E5%B8%B8%E7%94%A8%E7%9A%84%E6%B3%A8%E8%A7%A3/">01.SpringBoot常用的注解</a></h2>
+        <p>前言： SpringMVC的层：Dao、Service、Controller、View的关系 Dao层： 负责数据持久化，与数据库进行联络的任务都封装在其中，Dao层的数据源以及相关的数据库连接参数都在Spring配置文件中进行配置。Dao接口中的方法都大同小异，因为对数据库的基本操作类似：inse…</p>
+        <div class="chip-row"><span>Spring</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/08/04/Spring/01.SpringBoot%E5%B8%B8%E7%94%A8%E7%9A%84%E6%B3%A8%E8%A7%A3/" aria-label="阅读《01.SpringBoot常用的注解》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="tcp保证传输的可靠性 http tcp/ip tcp 如何保证可靠性 检验和 tcp检验和的计算与udp一样，在计算时要加上12byte的伪首部，检验范围包括tcp首部及数据部分，但是udp的检验和字段为可选的，而tcp中是必须有的。计算方法为：在发送方将整个报文段分为多个16位的段，然后将所有段进行反码相加，将结果存放在检验和字段中，接收方用相同的方法进行计算，如最终结果为检验字段所有位是全1则正确（udp中也是全为1则正确），否则存在错误。 确认应答与序列号 tcp将每个数据包都进行编号，这就是序列号 序列号的作用：…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-07-05">2021.07.05</time><span>8 MIN</span></div>
+        <h2><a href="/2021/07/05/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/6.%20TCP%20%E4%BF%9D%E8%AF%81%E4%BC%A0%E8%BE%93%E7%9A%84%E5%8F%AF%E9%9D%A0%E6%80%A7/">TCP保证传输的可靠性</a></h2>
+        <p>TCP 如何保证可靠性 检验和 TCP检验和的计算与UDP一样，在计算时要加上12byte的伪首部，检验范围包括TCP首部及数据部分，但是UDP的检验和字段为可选的，而TCP中是必须有的。计算方法为：在发送方将整个报文段分为多个16位的段，然后将所有段进行反码相加，将结果存放在检验和字段中，接收方用…</p>
+        <div class="chip-row"><span>HTTP</span><span>TCP/IP</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/07/05/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/6.%20TCP%20%E4%BF%9D%E8%AF%81%E4%BC%A0%E8%BE%93%E7%9A%84%E5%8F%AF%E9%9D%A0%E6%80%A7/" aria-label="阅读《TCP保证传输的可靠性》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="http1.0 1.1 2.0 http tcp/ip http1.0 1.0的http版本，是一种无状态，无连接的应用层协议。http1.0 规定浏览器和服务器保持短暂的连接 浏览器每次请求都需要与服务器建立一个tcp连接，服务器处理完成以后立即断开tcp连接（无连接），服务器也不跟踪每个客户端，也不记录过去的请求（无状态） 这种无状态性可以借助cookie/session机制来做身份认证和状态记录 存在问题 无法复用连接 每次发送请求，都需要进行一次tcp连接，而tcp的连接释放过程又是比较费事的，这种无连接的特性会使得网络的…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-07-04">2021.07.04</time><span>9 MIN</span></div>
+        <h2><a href="/2021/07/04/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/5.Http1.0%201.1%202.0.3.0/">HTTP1.0 1.1 2.0</a></h2>
+        <p>HTTP1.0 1.0的HTTP版本，是一种无状态，无连接的应用层协议。HTTP1.0 规定浏览器和服务器保持短暂的连接 浏览器每次请求都需要与服务器建立一个TCP连接，服务器处理完成以后立即断开TCP连接（无连接），服务器也不跟踪每个客户端，也不记录过去的请求（无状态） 这种无状态性可以借助coo…</p>
+        <div class="chip-row"><span>HTTP</span><span>TCP/IP</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/07/04/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/5.Http1.0%201.1%202.0.3.0/" aria-label="阅读《HTTP1.0 1.1 2.0》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="redis缓存穿透，雪崩 redis 缓存雪崩 什么是缓存雪崩 由于 设置缓存时，key都采用了相同expire 更新策略 数据热点 缓存服务宕机 等原因，可能导致缓存数据同一时刻大规模不可用，或者都更新 解决方案 更新策略在时间上做到比较均匀 使用的热数据尽量分散到不同的机器上 多台机器做主从复制或者多副本，实现高可用 实现熔断限流机制，对系统进行负载能力控制 在原有失效时间基础上增加一个随机值，比如1~5分钟的随机，这样每个缓存的过期时间重复率就会降低，集体失效概率也会大大降低。 缓存穿透 什么是缓存穿透 大…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-07-04">2021.07.04</time><span>4 MIN</span></div>
+        <h2><a href="/2021/07/04/Redis/Redis%E7%BC%93%E5%AD%98%E7%A9%BF%E9%80%8F%E3%80%81redis%E7%BC%93%E5%AD%98%E9%9B%AA%E5%B4%A9%E9%97%AE%E9%A2%98/">Redis缓存穿透，雪崩</a></h2>
+        <p>缓存雪崩 什么是缓存雪崩 由于 设置缓存时，key都采用了相同expire 更新策略 数据热点 缓存服务宕机 等原因，可能导致缓存数据同一时刻大规模不可用，或者都更新 解决方案 更新策略在时间上做到比较均匀 使用的热数据尽量分散到不同的机器上 多台机器做主从复制或者多副本，实现高可用 实现熔断限流机…</p>
+        <div class="chip-row"><span>Redis</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/07/04/Redis/Redis%E7%BC%93%E5%AD%98%E7%A9%BF%E9%80%8F%E3%80%81redis%E7%BC%93%E5%AD%98%E9%9B%AA%E5%B4%A9%E9%97%AE%E9%A2%98/" aria-label="阅读《Redis缓存穿透，雪崩》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="2.计算机网络 —— 应用层 http tcp/ip 应用层 http头部包含那些信息 http头部本质上是一个传递额外重要信息的键值对。主要分为： 通用头部、请求头部、响应头部、实体头部 通用头部 协议头 说明 举例 cache-control 用来指定当前的请求/回复中是否使用缓存机制 cache-control:no-store connection 客户端（浏览器）想要优先使用的连接类型 connetion: keep-alive(upgrade) date 报文创建时间 date：dec,26 2015 17:30:0…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-07-04">2021.07.04</time><span>28 MIN</span></div>
+        <h2><a href="/2021/07/04/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/2.%E5%BA%94%E7%94%A8%E5%B1%82/">2.计算机网络 —— 应用层</a></h2>
+        <p>应用层 HTTP头部包含那些信息 HTTP头部本质上是一个传递额外重要信息的键值对。主要分为： 通用头部、请求头部、响应头部、实体头部 通用头部 协议头 说明 举例 Cache-Control 用来指定当前的请求/回复中是否使用缓存机制 Cache-Control:no-store Connecti…</p>
+        <div class="chip-row"><span>HTTP</span><span>TCP/IP</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/07/04/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/2.%E5%BA%94%E7%94%A8%E5%B1%82/" aria-label="阅读《2.计算机网络 —— 应用层》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="3.计算机网络 —— 传输层 http tcp/ip 传输层 三次握手 三次握手是tcp连接的建立过程。在握手之前，主动打开连接的客户端结束close阶段，被动打开的服务器也结束close阶段，并进入listen阶段。随后进入三次握手阶段： 首先客户端向服务器发送一个syn包，并等待服务器确认，其中： 标志位为syn，表示请求建立连接。 序号为seq = x (x 一般为1) 随后客户端进入syn-sent阶段 服务器接收到客户端发来的syn包后，对该包进行确认后结束listen阶段，并返回一段tcp报文，其中： 标志位为syn…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-07-04">2021.07.04</time><span>4 MIN</span></div>
+        <h2><a href="/2021/07/04/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/3.%E4%BC%A0%E8%BE%93%E5%B1%82/">3.计算机网络 —— 传输层</a></h2>
+        <p>传输层 三次握手 三次握手是TCP连接的建立过程。在握手之前，主动打开连接的客户端结束CLOSE阶段，被动打开的服务器也结束CLOSE阶段，并进入LISTEN阶段。随后进入三次握手阶段： 首先客户端向服务器发送一个SYN包，并等待服务器确认，其中： 标志位为SYN，表示请求建立连接。 序号为Seq…</p>
+        <div class="chip-row"><span>HTTP</span><span>TCP/IP</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/07/04/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/3.%E4%BC%A0%E8%BE%93%E5%B1%82/" aria-label="阅读《3.计算机网络 —— 传输层》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="1.计算机网络 —— 协议层次以及服务 http tcp/ip osi七层模型 osi模型全称为 ，是国际标准化（iso）提出的一个视图使各种计算机在世界范围内互连为网络的标准框架。osi将计算机网络体系结构划分为七层，每一层实现各自的功能和协议，并完成与相邻层的接口通信。osi的服务定义详细说明了各层所提供的服务。某一层的服务就是该层及其下各层的一种能力，它通过接口提供给更高的一层。 应用层 应用层位于osi参考模型的第七层，其作用是 通过应用程序间的交互来完成特定的网络应用。 该层协议定义了应用进程之间的交互规则，通过不同的应用层协议…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-06-09">2021.06.09</time><span>8 MIN</span></div>
+        <h2><a href="/2021/06/09/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/1.%E5%8D%8F%E8%AE%AE%E5%B1%82%E6%AC%A1%E4%BB%A5%E5%8F%8A%E5%AE%83%E4%BB%AC%E7%9A%84%E6%9C%8D%E5%8A%A1%E7%B1%BB%E5%9E%8B/">1.计算机网络 —— 协议层次以及服务</a></h2>
+        <p>OSI七层模型 OSI模型全称为 ，是国际标准化（ISO）提出的一个视图使各种计算机在世界范围内互连为网络的标准框架。OSI将计算机网络体系结构划分为七层，每一层实现各自的功能和协议，并完成与相邻层的接口通信。OSI的服务定义详细说明了各层所提供的服务。某一层的服务就是该层及其下各层的一种能力，它通…</p>
+        <div class="chip-row"><span>HTTP</span><span>TCP/IP</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/06/09/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/1.%E5%8D%8F%E8%AE%AE%E5%B1%82%E6%AC%A1%E4%BB%A5%E5%8F%8A%E5%AE%83%E4%BB%AC%E7%9A%84%E6%9C%8D%E5%8A%A1%E7%B1%BB%E5%9E%8B/" aria-label="阅读《1.计算机网络 —— 协议层次以及服务》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="16.jvm —— 垃圾回收器 jvm 垃圾回收器 gc分类与性能指标 垃圾收集器没有在规范中进行过多的规定，可以由不同的厂商，不用版本的jvm来实现。 由于jdk的版本处于高速迭代过程中，因此java发展至今已经衍生了众多的gc版本。 从不同角度分析垃圾收集器，可以将gc分为不同的类型。 java不同版本新特性 语法层面：lambda表达式、switch、自动拆箱装箱、enum api层面：stream api、新的日期时间、optional、string、集合框架 底层优化：jvm优化、gc的变化、元空间、静态…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-06-05">2021.06.05</time><span>40 MIN</span></div>
+        <h2><a href="/2021/06/05/JVM/16.%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E5%99%A8/">16.JVM —— 垃圾回收器</a></h2>
+        <p>垃圾回收器 GC分类与性能指标 垃圾收集器没有在规范中进行过多的规定，可以由不同的厂商，不用版本的JVM来实现。 由于JDK的版本处于高速迭代过程中，因此Java发展至今已经衍生了众多的GC版本。 从不同角度分析垃圾收集器，可以将GC分为不同的类型。 Java不同版本新特性 语法层面：Lambda表…</p>
+        <div class="chip-row"><span>JVM</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/06/05/JVM/16.%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E5%99%A8/" aria-label="阅读《16.JVM —— 垃圾回收器》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="15.jvm —— 垃圾回收概述 jvm 垃圾回收概述 概念 内存的分配与回收 什么是垃圾 在提到什么是垃圾之前，我们先看下面一张图 从上图可以看到，java和c++的区别，就在于垃圾收集技术和内存动态分配上，c语言没有垃圾收集技术，需要我们手动的收集 垃圾收集 不是java的伴生物，早在1960年，第一门开始使用内存动态分配和垃圾收集的lisp语言诞生 关于垃圾收集的三个经典问题： 那些内存需要回收 什么时候回收 如何回收 垃圾收集机制是java的招牌能力，极大的提高了开发效率。如今，垃圾收集几乎成为现代语言的标配…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-05-25">2021.05.25</time><span>37 MIN</span></div>
+        <h2><a href="/2021/05/25/JVM/15.%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E6%A6%82%E8%BF%B0/">15.JVM —— 垃圾回收概述</a></h2>
+        <p>垃圾回收概述 概念 内存的分配与回收 什么是垃圾 在提到什么是垃圾之前，我们先看下面一张图 从上图可以看到，Java和C++的区别，就在于垃圾收集技术和内存动态分配上，C语言没有垃圾收集技术，需要我们手动的收集 垃圾收集 不是Java的伴生物，早在1960年，第一门开始使用内存动态分配和垃圾收集的L…</p>
+        <div class="chip-row"><span>JVM</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/05/25/JVM/15.%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E6%A6%82%E8%BF%B0/" aria-label="阅读《15.JVM —— 垃圾回收概述》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="14.jvm —— stringtable jvm stringtable string的基本特性 string：字符串，使用一对””引起来表示 string s1 = “mogublog”； // 字面量的定义方式 创建一个对象 或者不创建对象 string s2 = new string(“moxi”)； //创建一个或者两个对象 s2 为新创建的 string声明为final 的，不可被继承 string实现了serializable接口：表示字符串是支持序列化的。实现了comparable接口：表示string 可以比…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-05-17">2021.05.17</time><span>11 MIN</span></div>
+        <h2><a href="/2021/05/17/JVM/14.StringTable/">14.JVM —— StringTable</a></h2>
+        <p>StringTable String的基本特性 String：字符串，使用一对””引起来表示 String s1 = “mogublog”； // 字面量的定义方式 创建一个对象 或者不创建对象 String s2 = new String(“moxi”)； //创建一个或者两个对象 s2 为新创建…</p>
+        <div class="chip-row"><span>JVM</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/05/17/JVM/14.StringTable/" aria-label="阅读《14.JVM —— StringTable》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="13.jvm —— 执行引擎 jvm 执行引擎 执行引擎概述 执行引擎属于jvm的下层，里面包括 执行引擎是java虚拟核心的组成部分之一。”虚拟机”是一个相对于”物理机”的概念，这两种都有代码执行能力，其区别是物理机的执行引擎是直接建立在处理器、缓存、指令集和操作系统层面上的，而虚拟机的执行引擎则是由软件自行实现的，因此可以不受物理条件制约的定制指令集与执行引擎的结构体系，能够执行那些不被硬件直接支持的指令集格式 jvm的主要任务是负责装在字节码到其内部，但字节码并不能够直接运行在操作系统之上，因为字节码指令并…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-05-15">2021.05.15</time><span>17 MIN</span></div>
+        <h2><a href="/2021/05/15/JVM/13.%E6%89%A7%E8%A1%8C%E5%BC%95%E6%93%8E/">13.JVM —— 执行引擎</a></h2>
+        <p>执行引擎 执行引擎概述 执行引擎属于JVM的下层，里面包括 执行引擎是Java虚拟核心的组成部分之一。”虚拟机”是一个相对于”物理机”的概念，这两种都有代码执行能力，其区别是物理机的执行引擎是直接建立在处理器、缓存、指令集和操作系统层面上的，而虚拟机的执行引擎则是由软件自行实现的，因此可以不受物理条…</p>
+        <div class="chip-row"><span>JVM</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/05/15/JVM/13.%E6%89%A7%E8%A1%8C%E5%BC%95%E6%93%8E/" aria-label="阅读《13.JVM —— 执行引擎》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="12.jvm —— 直接内存 jvm 直接内存direct memory 不是虚拟机运行数据区的一部分，也不是《java虚拟机规范》中定义的内存区域 直接内存是在java堆外的，直接想系统申请的内存区间 ，是一种同步非阻塞的i/o模型，也是i/o多路复用的基础 来源于nio，通过存在堆中的 操作 通常，访问直接内存的速度优于java堆内存，即读写性能高 因此出于性能考虑，读写频繁的场合可能会考虑使用直接内存 java的nio库允许java程序使用直接内存，用于数据缓冲区 使用下面代码，直接分配本地内存空间 非直接…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-05-15">2021.05.15</time><span>1 MIN</span></div>
+        <h2><a href="/2021/05/15/JVM/12.%E7%9B%B4%E6%8E%A5%E5%86%85%E5%AD%98Direct%20Memory/">12.JVM —— 直接内存</a></h2>
+        <p>直接内存Direct Memory 不是虚拟机运行数据区的一部分，也不是《Java虚拟机规范》中定义的内存区域 直接内存是在Java堆外的，直接想系统申请的内存区间 ，是一种同步非阻塞的I/O模型，也是I/O多路复用的基础 来源于NIO，通过存在堆中的 操作 通常，访问直接内存的速度优于Java堆内…</p>
+        <div class="chip-row"><span>JVM</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/05/15/JVM/12.%E7%9B%B4%E6%8E%A5%E5%86%85%E5%AD%98Direct%20Memory/" aria-label="阅读《12.JVM —— 直接内存》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="11.jvm —— 对象实例化内存布局与访问定位 jvm 对象实例化内存布局与访问定位 对象实例化 面试题 对象在jvm是怎样存储的？ 对象头信息里面有哪些东西？ java对象头有什么？ 从对象创建的方式 和 步骤开始说 对象创建方式 new : 最常见的方式、单例类中调用getinstance的静态方法，xxxfactory的静态方法 class的newinstance方法：在jdk9里面被标记为过时方法，因为只能调用空参构造器 constructor的newinstance（xxx）：反射的方式，可以调用空参的，或者代参的构造器…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-05-14">2021.05.14</time><span>5 MIN</span></div>
+        <h2><a href="/2021/05/14/JVM/11.%E5%AF%B9%E8%B1%A1%E5%AE%9E%E4%BE%8B%E5%8C%96%E5%86%85%E5%AD%98%E5%B8%83%E5%B1%80%E4%B8%8E%E8%AE%BF%E9%97%AE%E5%AE%9A%E4%BD%8D/">11.JVM —— 对象实例化内存布局与访问定位</a></h2>
+        <p>对象实例化内存布局与访问定位 对象实例化 面试题 对象在JVM是怎样存储的？ 对象头信息里面有哪些东西？ Java对象头有什么？ 从对象创建的方式 和 步骤开始说 对象创建方式 new : 最常见的方式、单例类中调用getInstance的静态方法，xxxFactory的静态方法 Class的new…</p>
+        <div class="chip-row"><span>JVM</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/05/14/JVM/11.%E5%AF%B9%E8%B1%A1%E5%AE%9E%E4%BE%8B%E5%8C%96%E5%86%85%E5%AD%98%E5%B8%83%E5%B1%80%E4%B8%8E%E8%AE%BF%E9%97%AE%E5%AE%9A%E4%BD%8D/" aria-label="阅读《11.JVM —— 对象实例化内存布局与访问定位》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="10.jvm —— 方法区 jvm 方法区 前言 从线程共享与否的角度来看 如何保证多个线程在并发环境下的安全性？典型应用就是数据库连接管理，以及会话管理 栈、堆、方法区的交互关系 下面就涉及了对象的访问定位 person: 存放在元空间，也可以说方法区 person: 存放在java栈的局部变量表中 new person(): 存放在java堆中 方法区的理解 《java虚拟机规范》中明确说明：“尽管所有的方法在逻辑上是属于堆的一部分，但一些简单的实现可能不会选择去进行垃圾收集或者进行压缩。”但对于hotsp…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-05-14">2021.05.14</time><span>15 MIN</span></div>
+        <h2><a href="/2021/05/14/JVM/10.%E6%96%B9%E6%B3%95%E5%8C%BA/">10.JVM —— 方法区</a></h2>
+        <p>方法区 前言 从线程共享与否的角度来看 如何保证多个线程在并发环境下的安全性？典型应用就是数据库连接管理，以及会话管理 栈、堆、方法区的交互关系 下面就涉及了对象的访问定位 Person: 存放在元空间，也可以说方法区 person: 存放在Java栈的局部变量表中 new Person(): 存放…</p>
+        <div class="chip-row"><span>JVM</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/05/14/JVM/10.%E6%96%B9%E6%B3%95%E5%8C%BA/" aria-label="阅读《10.JVM —— 方法区》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="9.jvm —— 堆 jvm 堆 堆的核心概念 堆针对一个jvm进程来说是唯一的，也就是一个进程只有一个jvm，但进程包含多个线程，他们是共享同一堆空间的。 一个jvm实例只存在一个堆内存，堆也是java内存管理的核心区域。 java堆区在jvm启动的时候即被创建，其空间的大小也就确定了，是jvm管理的最大一块内存空间。 堆内存大小是可以调节的。 《java虚拟机规范》规定，堆可以处于物理上不连续的内训空间中，但在逻辑上它应该被视为连续的。 所有线程共享java堆，在这里还可以划分线程私有的缓冲区 -xm…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-05-14">2021.05.14</time><span>21 MIN</span></div>
+        <h2><a href="/2021/05/14/JVM/9.%E5%A0%86/">9.JVM —— 堆</a></h2>
+        <p>堆 堆的核心概念 堆针对一个JVM进程来说是唯一的，也就是一个进程只有一个JVM，但进程包含多个线程，他们是共享同一堆空间的。 一个JVM实例只存在一个堆内存，堆也是Java内存管理的核心区域。 Java堆区在JVM启动的时候即被创建，其空间的大小也就确定了，是JVM管理的最大一块内存空间。 堆内存…</p>
+        <div class="chip-row"><span>JVM</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/05/14/JVM/9.%E5%A0%86/" aria-label="阅读《9.JVM —— 堆》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="8.jvm —— 本地方法接口 jvm 本地方法接口 什么是本地方法 简单的讲，一个 是一个java调用非java代码的接口。一个native method是这样一个java方法，该方法的实现由非java语言实现，比如c。这个特征并非java所持有，很多其他的编程语言，都有这一机制，比如c++中，你可以用extern “c “告知编译器去调用一个c的函数 “a native method is a java method whose implementation is provided by non-java co…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-05-13">2021.05.13</time><span>3 MIN</span></div>
+        <h2><a href="/2021/05/13/JVM/8.%E6%9C%AC%E5%9C%B0%E6%96%B9%E6%B3%95%E6%8E%A5%E5%8F%A3/">8.JVM —— 本地方法接口</a></h2>
+        <p>本地方法接口 什么是本地方法 简单的讲，一个 是一个Java调用非Java代码的接口。一个Native Method是这样一个Java方法，该方法的实现由非Java语言实现，比如C。这个特征并非Java所持有，很多其他的编程语言，都有这一机制，比如C++中，你可以用extern “c “告知编译器去…</p>
+        <div class="chip-row"><span>JVM</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/05/13/JVM/8.%E6%9C%AC%E5%9C%B0%E6%96%B9%E6%B3%95%E6%8E%A5%E5%8F%A3/" aria-label="阅读《8.JVM —— 本地方法接口》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="7.jvm —— 虚拟机栈 jvm 虚拟机栈 虚拟机栈概述 由于跨平台的设计，java的指令都是根据栈来设计的。不同平台cpu架构不同，所以不能设计基于寄存器的。 优点是跨平台，指令集小，编译器容易实现，缺点是性能下降，实现同样的功能需要更多的指令。 有不少java开发人员一提到java内存结构，就会非常粗粒度的将jvm中的内存区理解为仅有java堆（heap）和java栈（stack）为什么？ 首先栈是运行时的单位，而堆是存储的单位 栈解决程序的运行问题，即程序如何执行，或者说如何处理数据 堆解决的是数据存储…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-05-12">2021.05.12</time><span>20 MIN</span></div>
+        <h2><a href="/2021/05/12/JVM/7.%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%A0%88/">7.JVM —— 虚拟机栈</a></h2>
+        <p>虚拟机栈 虚拟机栈概述 由于跨平台的设计，Java的指令都是根据栈来设计的。不同平台CPU架构不同，所以不能设计基于寄存器的。 优点是跨平台，指令集小，编译器容易实现，缺点是性能下降，实现同样的功能需要更多的指令。 有不少Java开发人员一提到Java内存结构，就会非常粗粒度的将JVM中的内存区理解…</p>
+        <div class="chip-row"><span>JVM</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/05/12/JVM/7.%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%A0%88/" aria-label="阅读《7.JVM —— 虚拟机栈》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="6.jvm —— 程序计数器 jvm 程序计数器 介绍 jvm中的 中，register的命名源于cpu的寄存器，寄存器存储指令相关的现场信息。cpu只有吧数据装在寄存器才能够运行。这里，并非是广义上所指的物理寄存器，或许将其翻译为pc寄存器（或指令寄存器）会更加贴切（也称为程序钩子)，并且不容易引起一些不必要的误会。jvm中的pc寄存器是对物理pc寄存器的一种抽象模拟。 它是一块很小的内存空间，几乎可以忽略不计。也是运行速度最快的存储区域。 在jvm规范中，每个线程都会有自己的额程序计数器，是线程私有的，生命周…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-05-12">2021.05.12</time><span>3 MIN</span></div>
+        <h2><a href="/2021/05/12/JVM/6.%E7%A8%8B%E5%BA%8F%E8%AE%A1%E6%95%B0%E5%99%A8/">6.JVM —— 程序计数器</a></h2>
+        <p>程序计数器 介绍 JVM中的 中，Register的命名源于CPU的寄存器，寄存器存储指令相关的现场信息。CPU只有吧数据装在寄存器才能够运行。这里，并非是广义上所指的物理寄存器，或许将其翻译为PC寄存器（或指令寄存器）会更加贴切（也称为程序钩子)，并且不容易引起一些不必要的误会。JVM中的PC寄存…</p>
+        <div class="chip-row"><span>JVM</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/05/12/JVM/6.%E7%A8%8B%E5%BA%8F%E8%AE%A1%E6%95%B0%E5%99%A8/" aria-label="阅读《6.JVM —— 程序计数器》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="5.jvm —— 运行时数据区概述及线程 jvm 运行时数据区概述及线程 前言 本节主要讲的是运行时数据区，也就是下图这部分，他是类加载完成后的阶段 当我们通过前面的：类的 加载- 验证- 准备- 解析- 初始化 这几个阶段完成后，就会用到执行引擎对我们的类进行使用，同时执行引擎将会使用到我们运行时数据区。 也就是大厨做饭，我们把大厨后面的东西（切好的菜，刀，调料），比作是运行时数据区。而厨师可以类比于执行引擎，将通过准备的东西进行制作成精美的菜品 内存是非常重要的系统资源，是硬盘和cpu的中间仓库及桥梁，承载着操作系统和应…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-05-11">2021.05.11</time><span>3 MIN</span></div>
+        <h2><a href="/2021/05/11/JVM/5.%E8%BF%90%E8%A1%8C%E6%97%B6%E6%95%B0%E6%8D%AE%E5%8C%BA%E6%A6%82%E8%BF%B0%E5%8F%8A%E7%BA%BF%E7%A8%8B/">5.JVM —— 运行时数据区概述及线程</a></h2>
+        <p>运行时数据区概述及线程 前言 本节主要讲的是运行时数据区，也就是下图这部分，他是类加载完成后的阶段 当我们通过前面的：类的 加载- 验证- 准备- 解析- 初始化 这几个阶段完成后，就会用到执行引擎对我们的类进行使用，同时执行引擎将会使用到我们运行时数据区。 也就是大厨做饭，我们把大厨后面的东西（切…</p>
+        <div class="chip-row"><span>JVM</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/05/11/JVM/5.%E8%BF%90%E8%A1%8C%E6%97%B6%E6%95%B0%E6%8D%AE%E5%8C%BA%E6%A6%82%E8%BF%B0%E5%8F%8A%E7%BA%BF%E7%A8%8B/" aria-label="阅读《5.JVM —— 运行时数据区概述及线程》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="4.jvm —— 类加载子系统 jvm 类加载子系统 概述 完整图如下 如果自己想手写一个java虚拟机的话，主要考虑哪些结构呢？ 类加载器 执行引擎 类加载器子系统作用 类加载器子系统负责从文件系统或者网络中加载class文件，class文件在文件开头有特定的文件标识。 classloader只负责class文件的加载，至于他是否可以运行，则有execution engine决定。 加载的信息存放于一块称为方法区的内存空间。除了类的信息外，方法区中还会存放运行时常量池信息，可能还包括字符串字面量和数字常量（这部分…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-05-10">2021.05.10</time><span>10 MIN</span></div>
+        <h2><a href="/2021/05/10/JVM/4.%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%AD%90%E7%B3%BB%E7%BB%9F/">4.JVM —— 类加载子系统</a></h2>
+        <p>类加载子系统 概述 完整图如下 如果自己想手写一个Java虚拟机的话，主要考虑哪些结构呢？ 类加载器 执行引擎 类加载器子系统作用 类加载器子系统负责从文件系统或者网络中加载Class文件，class文件在文件开头有特定的文件标识。 ClassLoader只负责class文件的加载，至于他是否可以运…</p>
+        <div class="chip-row"><span>JVM</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/05/10/JVM/4.%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%AD%90%E7%B3%BB%E7%BB%9F/" aria-label="阅读《4.JVM —— 类加载子系统》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="8.cas &amp; aba &amp; aqs 多线程与并发 cas 什么是cas 指比较并交换。cas算法cas(v,e, n)包含3个参数，v表示要更新的变量，e表示预期的值，n表示新值。在且仅在v值等于 e值时，才会将v值设为 n，如果 v值和 e值不同，则说明已经有其他线程做了更新，当前线程什么都不做。最后，cas返回当前v的真实值。 cas的特性：乐观锁 cas操作采用了乐观锁的思想，总是认为自己可以成功完成操作。在有多个线程同时使用cas操作一个变量时，只有一个会胜出并成功更新，其余均会失败。失败的线程不会被挂起，仅被告知失…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-05-04">2021.05.04</time><span>5 MIN</span></div>
+        <h2><a href="/2021/05/04/Thread/8.CAS%20&amp;%20ABA%20&amp;%20AQS/">8.CAS &amp; ABA &amp; AQS</a></h2>
+        <p>CAS 什么是CAS 指比较并交换。CAS算法CAS(V,E, N)包含3个参数，V表示要更新的变量，E表示预期的值，N表示新值。在且仅在V值等于 E值时，才会将V值设为 N，如果 V值和 E值不同，则说明已经有其他线程做了更新，当前线程什么都不做。最后，CAS返回当前V的真实值。 CAS的特性：乐…</p>
+        <div class="chip-row"><span>多线程与并发</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/05/04/Thread/8.CAS%20&amp;%20ABA%20&amp;%20AQS/" aria-label="阅读《8.CAS &amp; ABA &amp; AQS》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="7.线程上下文切换与阻塞队列 多线程与并发 线程上下文切换 cpu利用时间片轮询来为每个任务都服务一定的时间，然后把当前任务的状态保存下来，继续服务下一个任务。任务的状态保存及再加载交做线程的上下文切换。 进程： 指一个运行中的程序的示例。在一个进程内部可以有多个线程在同时运行，并与创建它的进程共享同一个地址空间（一段内存区域）和其他资源。 上下文： 指线程切换时cpu寄存器和程序计数器所保存的当前线程信息。 寄存器： 指cpu内部容量较小但速度很快的内存区域（与之对应的是cpu外部相对较慢的ram主内存）。寄存器通过…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-05-04">2021.05.04</time><span>10 MIN</span></div>
+        <h2><a href="/2021/05/04/Thread/7.%E7%BA%BF%E7%A8%8B%E4%B8%8A%E4%B8%8B%E6%96%87%E5%88%87%E6%8D%A2%E4%B8%8E%E9%98%BB%E5%A1%9E%E9%98%9F%E5%88%97/">7.线程上下文切换与阻塞队列</a></h2>
+        <p>线程上下文切换 CPU利用时间片轮询来为每个任务都服务一定的时间，然后把当前任务的状态保存下来，继续服务下一个任务。任务的状态保存及再加载交做线程的上下文切换。 进程： 指一个运行中的程序的示例。在一个进程内部可以有多个线程在同时运行，并与创建它的进程共享同一个地址空间（一段内存区域）和其他资源。…</p>
+        <div class="chip-row"><span>多线程与并发</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/05/04/Thread/7.%E7%BA%BF%E7%A8%8B%E4%B8%8A%E4%B8%8B%E6%96%87%E5%88%87%E6%8D%A2%E4%B8%8E%E9%98%BB%E5%A1%9E%E9%98%9F%E5%88%97/" aria-label="阅读《7.线程上下文切换与阻塞队列》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="6.java中的锁 多线程与并发 java中的锁 java中的锁主要用于保障多并发线程情况下数据的一致性，在多线程编程中为了保障数据的一致性，我们通常需要在使用对象或者方法之前加锁，这是如果有其他线程也需要使用该对象或者该方法，则首先要获得锁，如果某个线程发现锁正在被其他线程使用就会进入阻塞队列，等待锁的释放，知道其他线程执行完成并释放锁，该线程才有机会再次获取锁进行操作。这样就保障了在同一时刻只有一个线程持有该对象的锁并修改对象，从而保障数据的安全。 乐观锁与悲观锁 乐观锁 乐观锁采用乐观的思想处理数据，在…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-05-03">2021.05.03</time><span>23 MIN</span></div>
+        <h2><a href="/2021/05/03/Thread/6.java%E4%B8%AD%E7%9A%84%E9%94%81/">6.java中的锁</a></h2>
+        <p>Java中的锁 java中的锁主要用于保障多并发线程情况下数据的一致性，在多线程编程中为了保障数据的一致性，我们通常需要在使用对象或者方法之前加锁，这是如果有其他线程也需要使用该对象或者该方法，则首先要获得锁，如果某个线程发现锁正在被其他线程使用就会进入阻塞队列，等待锁的释放，知道其他线程执行完成并…</p>
+        <div class="chip-row"><span>多线程与并发</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/05/03/Thread/6.java%E4%B8%AD%E7%9A%84%E9%94%81/" aria-label="阅读《6.java中的锁》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="5.线程的生命周期和常用方法 多线程与并发 线程的生命周期 当线程被创建并启动以后，它既不是一启动就进入了执行状态，也不是一直处于执行状态。在线程的生命周期中，它要经过 新建（new）、就绪（runnable）、运行（running）、阻塞（blocked）和死亡（dead）5种状态 。尤其是当线程启动以后，它不可能一直”霸占”着cpu独自运行，所以cpu需要在多条线程之间切换，于是 线程状态也会多次在运行、阻塞之间切换 。 其流程： 调用 方法新建一个线程，这时线程处于 调用 方法启动一个线程， 这时线程处于 处于就…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-04-29">2021.04.29</time><span>12 MIN</span></div>
+        <h2><a href="/2021/04/29/Thread/5.%E7%BA%BF%E7%A8%8B%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E5%92%8C%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95/">5.线程的生命周期和常用方法</a></h2>
+        <p>线程的生命周期 当线程被创建并启动以后，它既不是一启动就进入了执行状态，也不是一直处于执行状态。在线程的生命周期中，它要经过 新建（New）、就绪（Runnable）、运行（Running）、阻塞（Blocked）和死亡（Dead）5种状态 。尤其是当线程启动以后，它不可能一直”霸占”着CPU独自运…</p>
+        <div class="chip-row"><span>多线程与并发</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/04/29/Thread/5.%E7%BA%BF%E7%A8%8B%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E5%92%8C%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95/" aria-label="阅读《5.线程的生命周期和常用方法》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="4.常用的线程池 多线程与并发 常用的线程池 java定义了executor接口并在该接口中定义了 用于执行一个线程任务，然后通过 实现 接口并指向具体线程操作。 接口有多个实现类可用于创建不同的线程池。 名称 说明 可缓存的线程池 固定大小的线程池 可做任务调度的线程池 单个线程的线程池 足够大小的线程池，jdk1.8新增 newworkstealingpool newworkstealingpool用于创建一个缓存线程池。之所以叫缓存线程池，是因为它创建新线程时如果有可重用的线程，则重用他们，否则重新创…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-04-29">2021.04.29</time><span>2 MIN</span></div>
+        <h2><a href="/2021/04/29/Thread/4.%E5%B8%B8%E7%94%A8%E7%BA%BF%E7%A8%8B%E6%B1%A0/">4.常用的线程池</a></h2>
+        <p>常用的线程池 Java定义了Executor接口并在该接口中定义了 用于执行一个线程任务，然后通过 实现 接口并指向具体线程操作。 接口有多个实现类可用于创建不同的线程池。 名称 说明 可缓存的线程池 固定大小的线程池 可做任务调度的线程池 单个线程的线程池 足够大小的线程池，JDK1.8新增 ne…</p>
+        <div class="chip-row"><span>多线程与并发</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/04/29/Thread/4.%E5%B8%B8%E7%94%A8%E7%BA%BF%E7%A8%8B%E6%B1%A0/" aria-label="阅读《4.常用的线程池》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="3.线程池的工作原理 多线程与并发 线程池的工作原理 java线程池主要用于主要用于管理线程组及其运行状态，以便java虚拟机更好地利用cpu资源。java线程池的工作原理为：jvm先根据用户的参数创建一定数量的可运行的线程任务，并将其放入队列中，在线程创建这些任务，如果正在运行的线程数量，超过了最大线程数量（用户设置的线程池大小），则超出数量的线程派对等候，在任务执行完毕后，线程池调度器会发现有可用的线程，进而再次从队列中取出任务并执行。 线程池相关概念 核心线程corepool： 当有新任务提交时，如果核心…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-04-28">2021.04.28</time><span>7 MIN</span></div>
+        <h2><a href="/2021/04/28/Thread/3.%E7%BA%BF%E7%A8%8B%E6%B1%A0%E7%9A%84%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/">3.线程池的工作原理</a></h2>
+        <p>线程池的工作原理 Java线程池主要用于主要用于管理线程组及其运行状态，以便java虚拟机更好地利用CPU资源。Java线程池的工作原理为：JVM先根据用户的参数创建一定数量的可运行的线程任务，并将其放入队列中，在线程创建这些任务，如果正在运行的线程数量，超过了最大线程数量（用户设置的线程池大小），…</p>
+        <div class="chip-row"><span>多线程与并发</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/04/28/Thread/3.%E7%BA%BF%E7%A8%8B%E6%B1%A0%E7%9A%84%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/" aria-label="阅读《3.线程池的工作原理》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="2.java中多线程的实现 多线程与并发 java多线程编程 java给多线程编程提供了内置的支持。一个线程指的是进程中一个单一顺序的控制流，一个进程中可以并发多个线程 ，每条线程并行执行不同的任务。 一个进程包括由操作系统分配的内存空间，包括一个或多个线程。一个线程不能独立的存在，他必须是进程的一部分。一个进程一直运行，直到所有的非收回线程都结束运行后才能结束。 一个线程的生命周期 线程是一个动态执行的过程，它也有一个从产生到死亡的过程。 新建状态 使用new关键字和thread类或器子类建立一个线程对象后，该线程…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-04-24">2021.04.24</time><span>6 MIN</span></div>
+        <h2><a href="/2021/04/24/Thread/2.java%E4%B8%AD%E5%A4%9A%E7%BA%BF%E7%A8%8B%E7%9A%84%E5%AE%9E%E7%8E%B0/">2.java中多线程的实现</a></h2>
+        <p>Java多线程编程 java给多线程编程提供了内置的支持。一个线程指的是进程中一个单一顺序的控制流，一个进程中可以并发多个线程 ，每条线程并行执行不同的任务。 一个进程包括由操作系统分配的内存空间，包括一个或多个线程。一个线程不能独立的存在，他必须是进程的一部分。一个进程一直运行，直到所有的非收回线…</p>
+        <div class="chip-row"><span>多线程与并发</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/04/24/Thread/2.java%E4%B8%AD%E5%A4%9A%E7%BA%BF%E7%A8%8B%E7%9A%84%E5%AE%9E%E7%8E%B0/" aria-label="阅读《2.java中多线程的实现》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="1.java集合-框架 collection java集合[1]–java集合分类 之前大概分为三种， ， ， 三种，jdk5之后，增加 .主要由 和 两个接口衍生出来,同时 接口继承 接口，所以我们也可以说java里面的集合类主要是由 和 两个接口以及他们的子接口或者其实现类组成。我们可以认为 接口定义了单列集合的规范，每次只能存储一个元素，而 接口定义了双列集合的规范，每次能存储一对元素。 iterable接口:主要是实现遍历功能 collection接口: 允许重复 set接口：无序，元素不可重复,访问元素只能通过…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-03-26">2021.03.26</time><span>12 MIN</span></div>
+        <h2><a href="/2021/03/26/Collection/1.Java%E9%9B%86%E5%90%88-%E6%A1%86%E6%9E%B6/">1.Java集合-框架</a></h2>
+        <p>Java集合[1]–java集合分类 之前大概分为三种， ， ， 三种，JDK5之后，增加 .主要由 和 两个接口衍生出来,同时 接口继承 接口，所以我们也可以说java里面的集合类主要是由 和 两个接口以及他们的子接口或者其实现类组成。我们可以认为 接口定义了单列集合的规范，每次只能存储一个元素，…</p>
+        <div class="chip-row"><span>Collection</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/03/26/Collection/1.Java%E9%9B%86%E5%90%88-%E6%A1%86%E6%9E%B6/" aria-label="阅读《1.Java集合-框架》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="win10连接linux服务器的工具 ssh 常用的远程连接linux工具 常用的远程连接linux工具有：vscode、xshell、finallshell等。下面重点介绍该三种工具： 1 vscode的remote插件 vscode是一款开源的跨平台编辑器。默认情况下，vscode使用的语言为英文(us) 1.1 下载安装 官方下载地址： https://code.visualstudio.com/#alt-downloads 选择自己的系统版本，安装时一直下一步即可，安装完成后直接运行code.exe 1.2 修改…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-01-09">2021.01.09</time><span>3 MIN</span></div>
+        <h2><a href="/2021/01/09/%E5%B7%A5%E5%85%B7/win10%E8%BF%9E%E6%8E%A5linux%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E5%B7%A5%E5%85%B7/">win10连接linux服务器的工具</a></h2>
+        <p>常用的远程连接Linux工具 常用的远程连接Linux工具有：Vscode、XShell、FinallShell等。下面重点介绍该三种工具： 1 VsCode的Remote插件 Vscode是一款开源的跨平台编辑器。默认情况下，vscode使用的语言为英文(us) 1.1 下载安装 官方下载地址：…</p>
+        <div class="chip-row"><span>ssh</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/01/09/%E5%B7%A5%E5%85%B7/win10%E8%BF%9E%E6%8E%A5linux%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E5%B7%A5%E5%85%B7/" aria-label="阅读《win10连接linux服务器的工具》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="十大经典排序算法（java实现）  排序算法概述 定义 将杂乱无章的数据元素，通过一定的方法按关键字顺序排列的过程叫做排序。 分类 十种常见排序算法可以分为两大类： 非线性时间比较类排序： 通过比较来决定元素间的相对次序，由于其时间复杂度不能突破o(nlogn)，因此称为非线性时间比较类排序。 线性时间非比较类排序： 不通过比较来决定元素间的相对次序，它可以突破基于比较排序的时间下界，以线性时间运行，因此称为线性时间非比较类排序。 比较 相关概念 稳定： 如果a原本在b前面且a=b，排序之后a仍然在b的前面。…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2020-12-06">2020.12.06</time><span>19 MIN</span></div>
+        <h2><a href="/2020/12/06/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95/%E5%8D%81%E5%A4%A7%E7%BB%8F%E5%85%B8%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95%EF%BC%88Java%E5%AE%9E%E7%8E%B0%EF%BC%89/">十大经典排序算法（Java实现）</a></h2>
+        <p>排序算法概述 定义 将杂乱无章的数据元素，通过一定的方法按关键字顺序排列的过程叫做排序。 分类 十种常见排序算法可以分为两大类： 非线性时间比较类排序： 通过比较来决定元素间的相对次序，由于其时间复杂度不能突破O(nlogn)，因此称为非线性时间比较类排序。 线性时间非比较类排序： 不通过比较来决定…</p>
+        <div class="chip-row"></div>
+      </div>
+      <a class="writing-row__arrow" href="/2020/12/06/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95/%E5%8D%81%E5%A4%A7%E7%BB%8F%E5%85%B8%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95%EF%BC%88Java%E5%AE%9E%E7%8E%B0%EF%BC%89/" aria-label="阅读《十大经典排序算法（Java实现）》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="2.操作系统-进程管理 操作系统 进程与线程 进程 程序与进程 进程是计算机中处于运行中程序的实体。程序本身只是指令、数据及其组织形式的描述，进程才是程序（指令和数据）的真正运行实例。 进程结构一般由3部分组成： 代码段、数据段和堆栈段 。代码段用于存放程序代码数据，数个进程可以共享同一个代码段。数据段存放程序的全局变量、常量和静态变量。堆栈段中栈用于函数调用，它存放着函数的参数，它存放着函数的参数，函数内部定义的局部变量。堆栈段还包括了进程控制块（process control block， pcb）。pc…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2020-11-30">2020.11.30</time><span>18 MIN</span></div>
+        <h2><a href="/2020/11/30/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/2.%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F-%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/">2.操作系统-进程管理</a></h2>
+        <p>进程与线程 进程 程序与进程 进程是计算机中处于运行中程序的实体。程序本身只是指令、数据及其组织形式的描述，进程才是程序（指令和数据）的真正运行实例。 进程结构一般由3部分组成： 代码段、数据段和堆栈段 。代码段用于存放程序代码数据，数个进程可以共享同一个代码段。数据段存放程序的全局变量、常量和静态…</p>
+        <div class="chip-row"><span>操作系统</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2020/11/30/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/2.%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F-%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/" aria-label="阅读《2.操作系统-进程管理》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="video analysis 相关领域 video analysis action recognition(行为识别) 也可以叫 action classification 任务目的 给一个视频片段进行分类，类别通常是各类人的动作 任务特点 简化了问题，一般使用的数据库都先将动作分割好了，一个视频片断中包含一段明确的动作，时间较短（几秒钟）且有唯一确定的label。所以也可以看作是输入为视频，输出为动作标签的多分类问题。此外，动作识别数据库中的动作一般都比较明确，周围的干扰也相对较少（不那么real-world）。有点像图像分析中的image…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2020-11-24">2020.11.24</time><span>10 MIN</span></div>
+        <h2><a href="/2020/11/24/Video%20Analysis%20%E7%9B%B8%E5%85%B3%E9%A2%86%E5%9F%9F/CV%E4%BB%BB%E5%8A%A1/">Video Analysis 相关领域</a></h2>
+        <p>Action Recognition(行为识别) 也可以叫 Action Classification 任务目的 给一个视频片段进行分类，类别通常是各类人的动作 任务特点 简化了问题，一般使用的数据库都先将动作分割好了，一个视频片断中包含一段明确的动作，时间较短（几秒钟）且有唯一确定的label。所…</p>
+        <div class="chip-row"><span>Video Analysis</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2020/11/24/Video%20Analysis%20%E7%9B%B8%E5%85%B3%E9%A2%86%E5%9F%9F/CV%E4%BB%BB%E5%8A%A1/" aria-label="阅读《Video Analysis 相关领域》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="1.操作系统-操作系统概述 操作系统 操作系统 操作系统举例 操作系统的层次结构 操作系统的概念 是系统最基本最核心的软件，属于系统软件 控制和管理整个计算机的硬件和软件资源 合理的组织、调度计算机的工作与资源分配 为用户和其他软件提供方便的接口和环境 操作系统的功能和目标 计算机系统资源的管理者 处理机管理（进程管理） 存储器管理（内存） 文件管理（文件系统） 设备管理（i/o） 处理机管理(进程管理) 在多道程序环境下，处理机的分配和运行都以进程（或线程）为基本单位，因而对处理机的管理可归纳为进程的管理。并发…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2020-11-22">2020.11.22</time><span>16 MIN</span></div>
+        <h2><a href="/2020/11/22/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/1.%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E6%A6%82%E8%BF%B0/">1.操作系统-操作系统概述</a></h2>
+        <p>操作系统 操作系统举例 操作系统的层次结构 操作系统的概念 是系统最基本最核心的软件，属于系统软件 控制和管理整个计算机的硬件和软件资源 合理的组织、调度计算机的工作与资源分配 为用户和其他软件提供方便的接口和环境 操作系统的功能和目标 计算机系统资源的管理者 处理机管理（进程管理） 存储器管理（内…</p>
+        <div class="chip-row"><span>操作系统</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2020/11/22/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/1.%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E6%A6%82%E8%BF%B0/" aria-label="阅读《1.操作系统-操作系统概述》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="elasticsearch7.6.1 入门到实战 java elasticsearch 概述 elasticsearch ，简称为es，是一个开源的、高拓展的分布式全文检索引擎，它可以近乎实时的存储、检索数据。本身拓展性很好，可以拓展到上百台服务器，处理pb级别的数据。elasticsearch使用java开发并且使用lucene作为其核心来实现所有索引和搜索的功能，但是他的目的是通过简单的restful api来隐藏lucene的复杂性，从而让全文检索变得简单。 elasticsearch和solr的比较 es基本上是开箱即用，非常简单，solr安装略麻烦；…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2020-11-20">2020.11.20</time><span>15 MIN</span></div>
+        <h2><a href="/2020/11/20/ElasticSearch/ElasticSearch%E5%85%A5%E9%97%A8%E5%88%B0%E5%AE%9E%E6%88%98/">ElasticSearch7.6.1 入门到实战</a></h2>
+        <p>概述 ElasticSearch ，简称为es，是一个开源的、高拓展的分布式全文检索引擎，它可以近乎实时的存储、检索数据。本身拓展性很好，可以拓展到上百台服务器，处理PB级别的数据。ElasticSearch使用java开发并且使用Lucene作为其核心来实现所有索引和搜索的功能，但是他的目的是通过…</p>
+        <div class="chip-row"><span>Java</span><span>ElasticSearch</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2020/11/20/ElasticSearch/ElasticSearch%E5%85%A5%E9%97%A8%E5%88%B0%E5%AE%9E%E6%88%98/" aria-label="阅读《ElasticSearch7.6.1 入门到实战》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="100的阶乘是0？ java 100的阶乘的0？ 有趣的疑问 超出数据类型取值范围 会输出什么数字： 数据类型：int 取值范围：-2^31–2^31-1 测试1： 为了更详细的看出其变化，将在临界值前后输出更多值，测试2： 分析：当前int型数据达到最大值2147483647时，是第一位为0，其余31位为全1，01111111111111111111111111111111；再加1则进1，第一位为1，其余全零，10000000000000000000000000000000。系统把第一位判断为负号，而且…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2020-11-18">2020.11.18</time><span>3 MIN</span></div>
+        <h2><a href="/2020/11/18/%E9%A1%B9%E7%9B%AE%E7%9B%B8%E5%85%B3/100%E9%98%B6%E4%B9%98/">100的阶乘是0？</a></h2>
+        <p>100的阶乘的0？ 有趣的疑问 超出数据类型取值范围 会输出什么数字： 数据类型：int 取值范围：-2^31–2^31-1 测试1： 为了更详细的看出其变化，将在临界值前后输出更多值，测试2： 分析：当前int型数据达到最大值2147483647时，是第一位为0，其余31位为全1，01111111…</p>
+        <div class="chip-row"><span>Java</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2020/11/18/%E9%A1%B9%E7%9B%AE%E7%9B%B8%E5%85%B3/100%E9%98%B6%E4%B9%98/" aria-label="阅读《100的阶乘是0？》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="3.jvm —— 类文件结构 jvm 概述 在 java 中，jvm 可以理解的代码就叫做 （即扩展名为 的文件），它不面向任何特定的处理器，只面向虚拟机。java 语言通过字节码的方式，在一定程度上解决了传统解释型语言执行效率低的问题，同时又保留了解释型语言可移植的特点。所以 java 程序运行时比较高效，而且，由于字节码并不针对一种特定的机器，因此，java 程序无须重新编译便可在多种不同操作系统的计算机上运行。 clojure（lisp 语言的一种方言）、groovy、scala 等语言都是运行在 java…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2020-11-15">2020.11.15</time><span>6 MIN</span></div>
+        <h2><a href="/2020/11/15/JVM/3.%E7%B1%BB%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/">3.JVM —— 类文件结构</a></h2>
+        <p>概述 在 Java 中，JVM 可以理解的代码就叫做 （即扩展名为 的文件），它不面向任何特定的处理器，只面向虚拟机。Java 语言通过字节码的方式，在一定程度上解决了传统解释型语言执行效率低的问题，同时又保留了解释型语言可移植的特点。所以 Java 程序运行时比较高效，而且，由于字节码并不针对一种…</p>
+        <div class="chip-row"><span>JVM</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2020/11/15/JVM/3.%E7%B1%BB%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/" aria-label="阅读《3.JVM —— 类文件结构》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="2.jvm —— 垃圾回收 jvm 本文导火索 当需要排查各种内存溢出问题、当垃圾收集成为系统达到更高并发的瓶颈时，我们就需要对这些“自动化”的技术实施必要的监控和调节。 jvm内存分配与回收 java的自动内存管理主要是针对对象内存的回收和对象内存的分配。同时，java自动内存管理最核心的功能是堆内存中对象的分配与回收。 java堆是垃圾收集器管理的主要区域，因此也被称作为gc堆（garbage collected heap）. 从垃圾回收的角度，由于现在收集器基本都采用分代垃圾收集算法，所以java堆还可以…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2020-11-13">2020.11.13</time><span>24 MIN</span></div>
+        <h2><a href="/2020/11/13/JVM/2.JVM%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6/">2.JVM —— 垃圾回收</a></h2>
+        <p>本文导火索 当需要排查各种内存溢出问题、当垃圾收集成为系统达到更高并发的瓶颈时，我们就需要对这些“自动化”的技术实施必要的监控和调节。 JVM内存分配与回收 Java的自动内存管理主要是针对对象内存的回收和对象内存的分配。同时，Java自动内存管理最核心的功能是堆内存中对象的分配与回收。 Java堆…</p>
+        <div class="chip-row"><span>JVM</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2020/11/13/JVM/2.JVM%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6/" aria-label="阅读《2.JVM —— 垃圾回收》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="1.线程、进程、协程 多线程与并发 进程 进程是具有一定独立功能的程序关于某个数据集合上的一次运行活动,进程是系统进行资源分配和调度的一个独立单位。每个进程都有自己的独立内存空间，不同进程通过进程间通信来通信。由于进程比较重量，占据独立的内存，所以上下文进程间的切换开销（栈、寄存器、虚拟内存、文件句柄等）比较大，但相对比较稳定安全。 直白地讲，进程就是应用程序的启动实例。比如我们运行一个游戏，打开一个软件，就是开启了一个进程。 进程拥有代码和打开的文件资源、数据资源、独立的内存空间。 线程 线程是进程的一个实体…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2020-11-11">2020.11.11</time><span>16 MIN</span></div>
+        <h2><a href="/2020/11/11/Thread/1.%E7%BA%BF%E7%A8%8B%E3%80%81%E8%BF%9B%E7%A8%8B%E3%80%81%E5%8D%8F%E7%A8%8B%E7%AE%80%E4%BB%8B/">1.线程、进程、协程</a></h2>
+        <p>进程 进程是具有一定独立功能的程序关于某个数据集合上的一次运行活动,进程是系统进行资源分配和调度的一个独立单位。每个进程都有自己的独立内存空间，不同进程通过进程间通信来通信。由于进程比较重量，占据独立的内存，所以上下文进程间的切换开销（栈、寄存器、虚拟内存、文件句柄等）比较大，但相对比较稳定安全。…</p>
+        <div class="chip-row"><span>多线程与并发</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2020/11/11/Thread/1.%E7%BA%BF%E7%A8%8B%E3%80%81%E8%BF%9B%E7%A8%8B%E3%80%81%E5%8D%8F%E7%A8%8B%E7%AE%80%E4%BB%8B/" aria-label="阅读《1.线程、进程、协程》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="1.jvm —— 内存区域简介 jvm 概述 对于java程序员来说，在虚拟机自动内存管理机制的帮助下，不再需要为每一个new操作去写配对的delete/free代码，不容易出现内存泄漏和内存溢出问题，看起来由虚拟机管理内存一切都很美好。不过，也正是因为java程序员把控制内存的权力交给了java虚拟机，一旦出现内存泄漏和溢出方面的问题，如果不了解虚拟机是怎样使用内存的，那排查错误、修正问题将会成为一项异常艰难的工作。 运行时数据区域 java虚拟机在执行java程序的过程中会把它所管理的内存划分为若干个不同的数据…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2020-11-10">2020.11.10</time><span>17 MIN</span></div>
+        <h2><a href="/2020/11/10/JVM/1.Java%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E7%AE%80%E4%BB%8B/">1.JVM —— 内存区域简介</a></h2>
+        <p>概述 对于Java程序员来说，在虚拟机自动内存管理机制的帮助下，不再需要为每一个new操作去写配对的delete/free代码，不容易出现内存泄漏和内存溢出问题，看起来由虚拟机管理内存一切都很美好。不过，也正是因为Java程序员把控制内存的权力交给了Java虚拟机，一旦出现内存泄漏和溢出方面的问题，…</p>
+        <div class="chip-row"><span>JVM</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2020/11/10/JVM/1.Java%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E7%AE%80%E4%BB%8B/" aria-label="阅读《1.JVM —— 内存区域简介》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="0.jvm —— jvm与java体系结构 jvm jvm与java体系结构 前言 作为java工程师的你曾被伤害过吗？你是否也遇到过这些问题？ 运行着的线上系统突然卡死，系统无法访问，甚至直接oomm！ 想解决线上jvm gc问题，但却无从下手。 新项目上线，对各种jvm参数设置一脸茫然，直接默认吧然后就jj了 每次面试之前都要重新背一遍jvm的一些原理概念性的东西，然而面试官却经常问你在实际项目中如何调优vm参数，如何解决gc、oom等问题，一脸懵逼。 大部分java开发人员，除会在项目中使用到与java平台相关的各种高精…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2020-11-09">2020.11.09</time><span>18 MIN</span></div>
+        <h2><a href="/2020/11/09/JVM/0.JVM%E4%B8%8EJava%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/">0.JVM —— JVM与Java体系结构</a></h2>
+        <p>JVM与Java体系结构 前言 作为Java工程师的你曾被伤害过吗？你是否也遇到过这些问题？ 运行着的线上系统突然卡死，系统无法访问，甚至直接OOMM！ 想解决线上JVM GC问题，但却无从下手。 新项目上线，对各种JVM参数设置一脸茫然，直接默认吧然后就JJ了 每次面试之前都要重新背一遍JVM的一…</p>
+        <div class="chip-row"><span>JVM</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2020/11/09/JVM/0.JVM%E4%B8%8EJava%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/" aria-label="阅读《0.JVM —— JVM与Java体系结构》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="数据结构简介  数据结构简介 数据结构是为实现对计算机数据有效使用的各种数据组织形式，服务于各类计算机操作。不同的数据结构具有各自对应的适用场景，旨在降低各种算法计算的时间与空间复杂度，达到最佳的任务执行效率。 如下图所示，常见的数据结构可分为「线性数据结构」与「非线性数据结构」，具体为：「数组」、「链表」、「栈」、「队列」、「树」、「图」、「散列表」、「堆」。 数组 数组（array）是一种最简单的复合数据类型，它是有序数据的集合，数组中的每个元素具有相同的数据类型，可以用一个统一的数组名…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2020-11-08">2020.11.08</time><span>10 MIN</span></div>
+        <h2><a href="/2020/11/08/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E7%AE%80%E4%BB%8B/">数据结构简介</a></h2>
+        <p>数据结构简介 数据结构是为实现对计算机数据有效使用的各种数据组织形式，服务于各类计算机操作。不同的数据结构具有各自对应的适用场景，旨在降低各种算法计算的时间与空间复杂度，达到最佳的任务执行效率。 如下图所示，常见的数据结构可分为「线性数据结构」与「非线性数据结构」，具体为：「数组」、「链表」、「栈」…</p>
+        <div class="chip-row"></div>
+      </div>
+      <a class="writing-row__arrow" href="/2020/11/08/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E7%AE%80%E4%BB%8B/" aria-label="阅读《数据结构简介》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="浅谈bfs和dfs bfs dfs 深度优先遍历（depth first search, 简称dfs）与广度优先遍历（breath first search，简称bfs）是图论中两种非常重要的算法，生产上广泛用于拓扑排序，寻路（走迷宫）、搜索引擎、爬虫等。 dfs (deep first search) dfs：从当前节点开始，先标记当前节点，再寻找与当前节点相邻，且未标记过的节点（ 这是一个递归思想的dfs） 当前节点不存在下一个节点，则返回前一个节点进行dfs 当前节点存在下一个节点，则从下一个节点进行df…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2020-11-07">2020.11.07</time><span>7 MIN</span></div>
+        <h2><a href="/2020/11/07/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%A0%91/BFS%E5%92%8CDFS%E8%AF%A6%E8%A7%A3/">浅谈BFS和DFS</a></h2>
+        <p>深度优先遍历（Depth First Search, 简称DFS）与广度优先遍历（Breath First Search，简称BFS）是图论中两种非常重要的算法，生产上广泛用于拓扑排序，寻路（走迷宫）、搜索引擎、爬虫等。 DFS (Deep First Search) DFS：从当前节点开始，先标记…</p>
+        <div class="chip-row"><span>BFS</span><span>DFS</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2020/11/07/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%A0%91/BFS%E5%92%8CDFS%E8%AF%A6%E8%A7%A3/" aria-label="阅读《浅谈BFS和DFS》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="二叉树的前、中、后序遍历（递归和循环） 二叉树 二叉树节点结构 前序遍历 前序遍历：根结点 — 左子树 — 右子树 （根节点在 前中后 那个位置 就叫什么遍历） 前序遍历：1 2 4 6 7 8 3 5 题目 144.二叉树的前序遍历 递归算法 迭代法 中序遍历 中序遍历：左子树— 根结点 — 右子树 （根节点在 前中后 那个位置 就叫什么遍历） 中序遍历 ：4 7 6 8 2 1 3 5 题目 94.二叉树的中序遍历 递归算法 迭代法 后续遍历 后序遍历： 左子树 — 右子树 — 根结点 （根节点在 前中后 那个位置 就…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2020-11-02">2020.11.02</time><span>1 MIN</span></div>
+        <h2><a href="/2020/11/02/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%A0%91/%E5%89%8D%E3%80%81%E4%B8%AD%E3%80%81%E5%90%8E%E5%BA%8F%E9%81%8D%E5%8E%86%EF%BC%88%E9%80%92%E5%BD%92%E5%92%8C%E5%BE%AA%E7%8E%AF%EF%BC%89/">二叉树的前、中、后序遍历（递归和循环）</a></h2>
+        <p>二叉树节点结构 前序遍历 前序遍历：根结点 — 左子树 — 右子树 （根节点在 前中后 那个位置 就叫什么遍历） 前序遍历：1 2 4 6 7 8 3 5 题目 144.二叉树的前序遍历 递归算法 迭代法 中序遍历 中序遍历：左子树— 根结点 — 右子树 （根节点在 前中后 那个位置 就叫什么遍历）…</p>
+        <div class="chip-row"><span>二叉树</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2020/11/02/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%A0%91/%E5%89%8D%E3%80%81%E4%B8%AD%E3%80%81%E5%90%8E%E5%BA%8F%E9%81%8D%E5%8E%86%EF%BC%88%E9%80%92%E5%BD%92%E5%92%8C%E5%BE%AA%E7%8E%AF%EF%BC%89/" aria-label="阅读《二叉树的前、中、后序遍历（递归和循环）》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="图解http-（6-11章） http tcp/ip 6. http首部 6.1 http报文首部 上图是http 请求报文 的结构 http请求报文由方法、uri、http版本、http首部字段等组成。 请求报文首部信息实例： http响应报文由http版本、状态码（数字和原因短语）、http首部字段三部分组成。 下面是http 响应报文 结构： 响应报文的首部实例： 6.2 http首部字段 6.2.1 http首部字段结构 http首部字段传递重要信息，其结构基本如下： 6.2.2 http首部字段类型 http首部字段根…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2020-10-30">2020.10.30</time><span>42 MIN</span></div>
+        <h2><a href="/2020/10/30/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E5%9B%BE%E8%A7%A3Http/%E5%9B%BE%E8%A7%A3HTTP-%EF%BC%886-11%E7%AB%A0%EF%BC%89/">图解HTTP-（6-11章）</a></h2>
+        <p>6. HTTP首部 6.1 HTTP报文首部 上图是HTTP 请求报文 的结构 HTTP请求报文由方法、URI、HTTP版本、HTTP首部字段等组成。 请求报文首部信息实例： HTTP响应报文由HTTP版本、状态码（数字和原因短语）、HTTP首部字段三部分组成。 下面是HTTP 响应报文 结构： 响…</p>
+        <div class="chip-row"><span>HTTP</span><span>TCP/IP</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2020/10/30/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E5%9B%BE%E8%A7%A3Http/%E5%9B%BE%E8%A7%A3HTTP-%EF%BC%886-11%E7%AB%A0%EF%BC%89/" aria-label="阅读《图解HTTP-（6-11章）》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="图解http-（1-5章） http tcp/ip 1.了解web及网络基础 1.1 web基于http通信 ​ web使用一种名为http（hypertext transfer protocol,超文本传输协议，“超文本转义协议”）的协议作为规范，完成从客户端到服务端等一系列运作流程。而协议是规则的约定。可以说，web是建立在http协议上通信的。 1.2 http的诞生 1.2.1 http的诞生 ​ 这一节主要讲 http 的诞生背景，了解 http 协议的诞生背景有利于我们学习理解 http 协议。 ​ http起初的…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2020-10-29">2020.10.29</time><span>21 MIN</span></div>
+        <h2><a href="/2020/10/29/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E5%9B%BE%E8%A7%A3Http/%E5%9B%BE%E8%A7%A3HTTP-%EF%BC%881-5%E7%AB%A0%EF%BC%89/">图解HTTP-（1-5章）</a></h2>
+        <p>1.了解Web及网络基础 1.1 Web基于HTTP通信 ​ Web使用一种名为HTTP（HyperText Transfer Protocol,超文本传输协议，“超文本转义协议”）的协议作为规范，完成从客户端到服务端等一系列运作流程。而协议是规则的约定。可以说，Web是建立在HTTP协议上通信的。…</p>
+        <div class="chip-row"><span>HTTP</span><span>TCP/IP</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2020/10/29/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E5%9B%BE%E8%A7%A3Http/%E5%9B%BE%E8%A7%A3HTTP-%EF%BC%881-5%E7%AB%A0%EF%BC%89/" aria-label="阅读《图解HTTP-（1-5章）》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="从新开始  天下熙熙，皆为利来；天下攘攘，皆为利往。 周书曰：「农不出则乏其食，工不出则乏其事，商不出则三宝绝，虞不出则财匮少。」财匮少而山泽不辟矣。此四者，民所衣食之原也。原大则饶，原小则鲜。上则富国，下则富家。贫富之道，莫之夺予，而巧者有馀，拙者不足。故太公望封於营丘，地潟卤，人民寡，於是太公劝其女功，极技巧，通鱼盐，则人物归之，繦至而辐凑。故齐冠带衣履天下，海岱之间敛袂而往朝焉。其後齐中衰，管子修之，设轻重九府，则桓公以霸，九合诸侯，一匡天下；而管氏亦有三归，位在陪臣，富於列国之君…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2020-10-28">2020.10.28</time><span>1 MIN</span></div>
+        <h2><a href="/2020/10/28/Reboot/">从新开始</a></h2>
+        <p>天下熙熙，皆为利来；天下攘攘，皆为利往。 周书曰：「农不出则乏其食，工不出则乏其事，商不出则三宝绝，虞不出则财匮少。」财匮少而山泽不辟矣。此四者，民所衣食之原也。原大则饶，原小则鲜。上则富国，下则富家。贫富之道，莫之夺予，而巧者有馀，拙者不足。故太公望封於营丘，地潟卤，人民寡，於是太公劝其女功，极技…</p>
+        <div class="chip-row"></div>
+      </div>
+      <a class="writing-row__arrow" href="/2020/10/28/Reboot/" aria-label="阅读《从新开始》">↗</a>
+    </article>
+  
+</div>
+
+  <p class="writing-empty" data-writing-empty hidden>没有找到匹配的文章，换个关键词试试。</p>
+</section>
+</main>
+    <footer class="site-footer">
+  <div class="footer-grid">
+    <div>
+      <p class="footer-kicker">Leslie Zhang</p>
+      <p class="footer-statement">把真实世界的问题，<br>变成可以运行的智能系统。</p>
+    </div>
+    <div class="footer-links">
+      <a href="https://github.com/leslieAIbin" target="_blank" rel="noreferrer">GitHub ↗</a>
+      <a href="mailto:aibinzhangleslie@gmail.com">Email ↗</a>
+      <a href="/atom.xml">RSS ↗</a>
+    </div>
+    <div class="footer-meta">
+      <span>© 2026 Leslie Zhang</span>
+      <span>Writing, research and working systems.</span>
+    </div>
+  </div>
+</footer>
+
+    <dialog class="ask-dialog" id="ask-leslie" aria-labelledby="ask-title">
+  <div class="ask-dialog__shell">
+    <div class="ask-dialog__topbar">
+      <div>
+        <h2 id="ask-title">Ask Leslie</h2>
+      </div>
+      <button class="icon-button" type="button" data-ask-close aria-label="关闭">×</button>
+    </div>
+    <p class="ask-dialog__intro">从本站公开文章中寻找答案。当前版本在浏览器本地检索，不上传问题，也不会编造不存在的经历。</p>
+    <form class="ask-form" data-ask-form>
+      <label class="sr-only" for="ask-query">输入问题</label>
+      <textarea id="ask-query" rows="2" placeholder="例如：Agent Runtime 应该怎么设计？" data-ask-input></textarea>
+      <button type="submit">检索知识库 <span aria-hidden="true">↗</span></button>
+    </form>
+    <div class="ask-suggestions" aria-label="推荐问题">
+      
+        <button type="button" data-ask-suggestion="Agent Runtime 应该怎么设计？">Agent Runtime 应该怎么设计？</button>
+      
+        <button type="button" data-ask-suggestion="如何让 AI 操控真实世界设备？">如何让 AI 操控真实世界设备？</button>
+      
+        <button type="button" data-ask-suggestion="Leslie 最近在研究什么？">Leslie 最近在研究什么？</button>
+      
+    </div>
+    <div class="ask-results" data-ask-results aria-live="polite">
+      <div class="ask-empty">
+        <p>输入一个问题，我会把你带到 Leslie 写过的相关内容。</p>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+    <script>window.ORBITAL_ROOT = '/';</script>
+    <script src="/js/orbital.js" defer></script>
+  </body>
+</html>

@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+  <head>
+
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#050b18">
+<meta name="color-scheme" content="dark light">
+<title>DeepSeek的推理为什么比别人便宜一个数量级？——MLA、MoE、MTP技术拆解 | Leslie Zhang</title>
+<meta name="description" content="构建能够感知、规划、行动与反馈的智能体系统，长期关注 Agent Runtime、多模态与真实世界自动化。">
+<meta name="author" content="Leslie Zhang">
+<link rel="canonical" href="https://leslieaibin.github.io/2026/06/14/attention-field/DeepSeek%E6%8E%A8%E7%90%86%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BE%BF%E5%AE%9C-MLA-MoE-MTP%E6%8A%80%E6%9C%AF%E6%8B%86%E8%A7%A3/">
+<link rel="icon" href="/imgs/01.jpg">
+<link rel="alternate" type="application/atom+xml" title="Leslie Zhang" href="/atom.xml">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DeepSeek的推理为什么比别人便宜一个数量级？——MLA、MoE、MTP技术拆解 | Leslie Zhang">
+<meta property="og:description" content="构建能够感知、规划、行动与反馈的智能体系统，长期关注 Agent Runtime、多模态与真实世界自动化。">
+<meta property="og:url" content="https://leslieaibin.github.io/2026/06/14/attention-field/DeepSeek%E6%8E%A8%E7%90%86%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BE%BF%E5%AE%9C-MLA-MoE-MTP%E6%8A%80%E6%9C%AF%E6%8B%86%E8%A7%A3/">
+<meta property="og:image" content="https://leslieaibin.github.io/2026/06/14/attention-field/DeepSeek%E6%8E%A8%E7%90%86%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BE%BF%E5%AE%9C-MLA-MoE-MTP%E6%8A%80%E6%9C%AF%E6%8B%86%E8%A7%A3/imgs/cover.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="DeepSeek的推理为什么比别人便宜一个数量级？——MLA、MoE、MTP技术拆解 | Leslie Zhang">
+<meta name="twitter:description" content="构建能够感知、规划、行动与反馈的智能体系统，长期关注 Agent Runtime、多模态与真实世界自动化。">
+<meta name="twitter:image" content="https://leslieaibin.github.io/2026/06/14/attention-field/DeepSeek%E6%8E%A8%E7%90%86%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BE%BF%E5%AE%9C-MLA-MoE-MTP%E6%8A%80%E6%9C%AF%E6%8B%86%E8%A7%A3/imgs/cover.png">
+<script>
+  (function () {
+    var saved = localStorage.getItem('orbital-theme');
+    var theme = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    document.documentElement.dataset.theme = theme;
+  })();
+</script>
+<link rel="stylesheet" href="/css/orbital.css">
+<meta name="generator" content="Hexo 5.2.0"></head>
+  <body class="page-post">
+    <a class="skip-link" href="#main-content">跳到主要内容</a>
+    <div class="reading-progress" data-reading-progress></div>
+    <header class="site-header" data-header>
+  <div class="nav-shell">
+    <a class="brand" href="/" aria-label="返回首页">
+      <span class="brand-mark" aria-hidden="true"><img src="/images/brand/leslie-mythos-avatar.webp" alt="" width="512" height="512"></span>
+      <span class="brand-copy">
+        <strong>LESLIE</strong>
+        <small>REAL-WORLD AGENTS</small>
+      </span>
+    </a>
+
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav" data-nav-toggle>
+      <span></span><span></span>
+      <span class="sr-only">打开导航</span>
+    </button>
+
+    <nav class="main-nav" id="main-nav" aria-label="主导航" data-nav>
+      
+        <a href="/" class="">首页</a>
+      
+        <a href="/writing/" class="">写作</a>
+      
+        <a href="/projects/" class="">项目</a>
+      
+        <a href="/about/" class="">关于</a>
+      
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换明暗主题">
+        <span class="theme-toggle__sun" aria-hidden="true">☼</span>
+        <span class="theme-toggle__moon" aria-hidden="true">◐</span>
+      </button>
+      <button class="ask-nav" type="button" data-ask-open>ASK LESLIE</button>
+    </nav>
+  </div>
+</header>
+
+    <main id="main-content"><article class="post-shell">
+  <header class="post-hero shell">
+    <a class="post-back" href="/writing/">← 返回写作</a>
+    <div class="post-hero__meta">
+      <time datetime="2026-06-14">2026 年 06 月 14 日</time>
+      <span>12 分钟阅读</span>
+    </div>
+    <h1>DeepSeek的推理为什么比别人便宜一个数量级？——MLA、MoE、MTP技术拆解</h1>
+    
+    <div class="chip-row"><a href="/tags/LLM/">LLM</a><a href="/tags/DeepSeek/">DeepSeek</a><a href="/tags/Inference/">Inference</a><a href="/tags/MLA/">MLA</a><a href="/tags/MoE/">MoE</a><a href="/tags/MTP/">MTP</a><a href="/tags/KV-Cache/">KV-Cache</a></div>
+  </header>
+
+  <div class="post-cover shell"><img src="/2026/06/14/attention-field/DeepSeek%E6%8E%A8%E7%90%86%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BE%BF%E5%AE%9C-MLA-MoE-MTP%E6%8A%80%E6%9C%AF%E6%8B%86%E8%A7%A3/imgs/cover.png" alt="DeepSeek的推理为什么比别人便宜一个数量级？——MLA、MoE、MTP技术拆解"></div>
+
+  <div class="post-layout shell">
+    <aside class="post-toc" aria-label="文章目录">
+      <span class="aside-title">目录</span>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%88%E6%90%9E%E6%B8%85%E6%A5%9A%EF%BC%9A%E6%8E%A8%E7%90%86%E6%88%90%E6%9C%AC%E5%88%B0%E5%BA%95%E8%8A%B1%E5%9C%A8%E5%93%AA"><span class="toc-text">先搞清楚：推理成本到底花在哪</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MLA%EF%BC%9A%E6%8A%8A-KV-Cache-%E5%8E%8B%E7%BC%A9%E5%88%B0%E5%8E%9F%E6%9D%A5%E7%9A%84-1-5"><span class="toc-text">MLA：把 KV Cache 压缩到原来的 1&#x2F;5</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MoE%EF%BC%9A671B-%E5%8F%82%E6%95%B0%EF%BC%8C%E6%AF%8F%E6%AC%A1%E6%8E%A8%E7%90%86%E5%8F%AA%E7%94%A8-37B"><span class="toc-text">MoE：671B 参数，每次推理只用 37B</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MTP%EF%BC%9A%E4%B8%80%E6%AC%A1%E7%94%9F%E6%88%90%E5%A4%9A%E4%B8%AA-token"><span class="toc-text">MTP：一次生成多个 token</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E8%80%85%E5%8F%A0%E5%8A%A0%EF%BC%9A%E4%B8%80%E4%B8%AA%E6%95%B0%E9%87%8F%E7%BA%A7%E7%9A%84%E6%88%90%E6%9C%AC%E5%B7%AE%E6%98%AF%E6%80%8E%E4%B9%88%E6%89%93%E5%87%BA%E6%9D%A5%E7%9A%84"><span class="toc-text">三者叠加：一个数量级的成本差是怎么打出来的</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E5%85%B6%E4%BB%96%E5%A4%A7%E5%8E%82%E4%B8%8D%E8%B7%9F%E8%BF%9B%EF%BC%9F"><span class="toc-text">为什么其他大厂不跟进？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E5%BC%A0%E5%9B%BE%E6%80%BB%E7%BB%93-DeepSeek-%E7%9A%84%E6%8E%A8%E7%90%86%E6%9E%B6%E6%9E%84"><span class="toc-text">一张图总结 DeepSeek 的推理架构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%99%E5%9C%A8%E6%9C%80%E5%90%8E"><span class="toc-text">写在最后</span></a></li></ol>
+    </aside>
+    <div class="article-content"><h1 id="DeepSeek的推理为什么比别人便宜一个数量级？——MLA、MoE、MTP技术拆解"><a href="#DeepSeek的推理为什么比别人便宜一个数量级？——MLA、MoE、MTP技术拆解" class="headerlink" title="DeepSeek的推理为什么比别人便宜一个数量级？——MLA、MoE、MTP技术拆解"></a>DeepSeek的推理为什么比别人便宜一个数量级？——MLA、MoE、MTP技术拆解</h1><p>如果你最近调过各家大模型的API，你一定注意到一件事。</p>
+<p>GPT-4o 的价格大概是输入 $2.5/1M token，输出 $10/1M token。Claude Opus 4 更贵一些。但 DeepSeek V3 呢？输入 $0.27/1M token，输出 $1.1/1M token。输出价格差了将近10倍。</p>
+<p>这就引出一个很自然的问题：DeepSeek 凭什么便宜这么多？是补贴烧钱？还是有什么硬核的技术突破？</p>
+<p>答案在后半段。DeepSeek 的推理成本优势来自三项核心技术的组合：<strong>MLA</strong>（Multi-Head Latent Attention，多头潜在注意力）、<strong>MoE</strong>（Mixture of Experts，专家混合）和 <strong>MTP</strong>（Multi-Token Prediction，多token预测）。</p>
+<p>这三项技术单独拿出来，每一项都能省一些成本。组合在一起，打出了一个数量级的成本差。</p>
+<p>这篇文章把这三项技术从头拆一遍。读完你会知道，不是 DeepSeek 在烧钱补贴——是它的推理架构确实和 GPT-4o 不在同一代。</p>
+<p><img src="imgs/cover.png" alt="Cover"></p>
+<h2 id="先搞清楚：推理成本到底花在哪"><a href="#先搞清楚：推理成本到底花在哪" class="headerlink" title="先搞清楚：推理成本到底花在哪"></a>先搞清楚：推理成本到底花在哪</h2><p>在拆 MLA 之前，先得回答一个更基础的问题：一次推理到底哪里花钱？</p>
+<p>你在 API 上花的每一分钱，对应的是 GPU 上的一次计算。而 GPU 上最贵的东西，不是计算本身，是<strong>显存带宽</strong>。</p>
+<p>回顾一下 Transformer 的推理过程。当模型收到你的输入 token 序列后，分两个阶段工作。</p>
+<p><strong>Prefill 阶段</strong>：所有输入 token 并行通过 Transformer 各层，一次性算出每个 token 在每一层的 Key 和 Value 向量，存进 KV Cache。这个阶段是<strong>算力密集</strong>的——GPU 的 Tensor Core 被喂饱，利用率高。</p>
+<p><strong>Decode 阶段</strong>：每生成一个新 token，都要用新 token 的 Query 去和 KV Cache 里所有历史 token 的 Key/Value 做注意力计算。这个阶段是<strong>显存带宽密集</strong>的——每次生成都要把整个 KV Cache 从显存读到计算单元，搬运数据的开销远大于计算本身。</p>
+<p>问题就出在这个 KV Cache 上。</p>
+<p>KV Cache 的大小跟四个因素成正比：层数 × 隐藏维度 × 上下文长度 × 批处理大小。一个 70B 参数的标准 Transformer 模型，在 8K 上下文、batch=32 的场景下，KV Cache 可以轻松占满 80GB 显存。</p>
+<p>而 GPU 的显存是有限的。H100 单卡 80GB，H200 141GB。模型参数本身就要占掉一半以上，留给 KV Cache 的空间非常紧张。</p>
+<p><strong>推理成本的核心矛盾就在这</strong>：KV Cache 越大 → 单卡能同时服务的请求越少 → 摊到每个请求上的 GPU 成本越高。</p>
+<p>如果你能把 KV Cache 缩小 10 倍，一张卡就能服务 10 倍的请求。单次推理的成本就降下来了。</p>
+<p>DeepSeek 的 MLA 干的就是这件事。</p>
+<p><img src="imgs/01-inference-cost.png" alt="推理成本矛盾"></p>
+<h2 id="MLA：把-KV-Cache-压缩到原来的-1-5"><a href="#MLA：把-KV-Cache-压缩到原来的-1-5" class="headerlink" title="MLA：把 KV Cache 压缩到原来的 1/5"></a>MLA：把 KV Cache 压缩到原来的 1/5</h2><p>标准的多头注意力（MHA）是怎么产生 KV Cache 的？</p>
+<p>假设当前这一层的输入隐藏维度是 d（比如 4096）。对每个 token，模型会通过三个权重矩阵分别算出 Q、K、V 向量：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Q &#x3D; x · W_Q    （维度: d → d_q）</span><br><span class="line">K &#x3D; x · W_K    （维度: d → d_k）</span><br><span class="line">V &#x3D; x · W_V    （维度: d → d_v）</span><br></pre></td></tr></table></figure>
+
+<p>其中 <code>W_Q</code>、<code>W_K</code>、<code>W_V</code> 是三个可训练的权重矩阵。对于标准的 MHA，d_q = d_k = d_v = d。每个 token 每层产生的 KV 向量总大小就是 2 × d 个元素。如果用 bf16 存储（每个元素 2 字节），一个 token 一层的 KV Cache 就是 4 × d 字节。</p>
+<p>但问题来了：K 和 V 这两个向量，真的是独立的吗？</p>
+<p>MLA 的核心洞察是：<strong>K 和 V 不是独立的信息源，它们共享很大一部分底层表示</strong>。与其分别从 x 投影到 K 和 V，不如先把 x 压缩到一个低维的”潜在空间”，再从潜在空间分别展开成 K 和 V。</p>
+<p>具体来说，MLA 的做法是：</p>
+<p>第一步，把输入 x 通过一个<strong>降维矩阵</strong> <code>W_DKV</code> 压缩成一个低维向量 c（维度 d_c &lt;&lt; d）：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">c &#x3D; x · W_DKV    （维度: d → d_c）</span><br></pre></td></tr></table></figure>
+
+<p>这个 c 就是所谓的”潜在向量”（Latent Vector）。d_c 的大小通常是 d 的 1/3 到 1/5。比如 DeepSeek V3 里，d ≈ 7168，d_c ≈ 512。</p>
+<p>第二步，当需要 K 和 V 的时候，再从 c 分别通过两个<strong>升维矩阵</strong>展开：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">K &#x3D; c · W_UK    （维度: d_c → d_k）</span><br><span class="line">V &#x3D; c · W_UV    （维度: d_c → d_v）</span><br></pre></td></tr></table></figure>
+
+<p>这里的 <code>W_UK</code> 和 <code>W_UV</code> 是升维矩阵（U 代表 Up-projection）。</p>
+<p><strong>关键来了：缓存什么？</strong></p>
+<p>在标准 MHA 里，你必须缓存完整的 K 和 V 向量，每个 token 每层的大小是 d_k + d_v ≈ 2d。</p>
+<p>在 MLA 里，你只需要缓存那个压缩后的潜在向量 c。每个 token 每层的大小只有 d_c（通常是 d 的 1/3 到 1/5）。</p>
+<p>需要做注意力的时候，临时把 c 展开成 K 和 V。虽然展开需要额外计算，但这个计算量远小于省下来的显存带宽。</p>
+<p>KV Cache 缩小了多少？以 DeepSeek V3 的参数为例：d ≈ 7168，d_c ≈ 512。标准 K+V 每 token 每层大约 14K 元素，MLA 只需要 512 元素。<strong>压缩比接近 28 倍</strong>。</p>
+<p>但注意，这只是 KV Cache 存储部分的压缩。实际做注意力时，Q 的维度没变，和 K 做点积的复杂度不变。也就是说，MLA 省的是<strong>显存</strong>，不省<strong>计算量</strong>。</p>
+<p>但对于 Decode 阶段（显存带宽密集），省显存就是省钱。KV Cache 缩小 5-10 倍，意味着同样的 GPU 可以同时服务 5-10 倍的并发请求，每次请求分摊的 GPU 成本也就降了 5-10 倍。</p>
+<p>而且 MLA 还有一个隐形收益：可以<strong>支持更长的上下文</strong>。如果 KV Cache 占用显存变小了，你就能在同样的硬件上塞进更多 token 的历史，支持更大的上下文窗口。</p>
+<p><img src="imgs/02-mla-principle.png" alt="MLA原理"></p>
+<h2 id="MoE：671B-参数，每次推理只用-37B"><a href="#MoE：671B-参数，每次推理只用-37B" class="headerlink" title="MoE：671B 参数，每次推理只用 37B"></a>MoE：671B 参数，每次推理只用 37B</h2><p>MLA 解决的是<strong>显存</strong>问题。MoE 解决的是<strong>计算量</strong>问题。</p>
+<p>DeepSeek V3 是一个总参数量 671B 的超大模型。如果每次推理都把全部 671B 参数跑一遍，那就算 KV Cache 优化得再好，计算成本也压不下来。</p>
+<p>MoE 的思路是：模型虽然大，但每次推理只激活其中一小部分。</p>
+<p>具体怎么做的？把 Transformer 的 FFN 层（前馈网络，Transformer 里最吃计算的部分）拆成多个”专家”（Expert）。每个专家是一个独立的小 FFN。</p>
+<p>DeepSeek V3 有 256 个路由专家（Routed Expert），外加少量共享专家（Shared Expert）。每层一个 Router（路由器，一个小型门控网络），根据当前 token 的内容，动态选择激活哪几个专家。</p>
+<p>对于一个给定的 token：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Router 输出：softmax(x · W_r) → [256 个分数]</span><br><span class="line">选 Top-8 激活，其余 248 个专家这轮不参与计算</span><br></pre></td></tr></table></figure>
+
+<p>也就是说，每个 token 只经过 8 个专家的计算，加上 1 个共享专家，总共约<strong>37B 激活参数</strong>。占 671B 总参数的 5.5%。</p>
+<p>计算量直接砍了 18 倍。</p>
+<p>这带来了几个工程上的影响：</p>
+<p><strong>训练时</strong>：671B 的模型，实际每次前向只需要 37B 的计算量。意味着训练速度大幅提升——DeepSeek V3 的训练成本约 560 万美元，而同等参数量的 Dense 模型（比如 LLaMA 3 405B）训练成本是这个的 5-10 倍。</p>
+<p><strong>推理时</strong>：虽然需要把所有 671B 参数加载到显存（因为不同 token 可能激活不同专家），但每次前向的实际 FLOPs 只相当于一个 37B 的模型。推理延迟由激活参数决定，不是总参数。</p>
+<p><strong>专家负载均衡</strong>：MoE 训练的一个核心挑战是”专家坍塌”——Router 可能只把 token 分配给少数几个专家，其他专家被闲置。DeepSeek 通过一个辅助的负载均衡损失（Load Balancing Loss）来鼓励均匀分配，同时用设备级的路由策略来减少跨节点的通信开销。</p>
+<p>MoE 还有一个在长序列下很关键的优势：<strong>Attention 层的总内存不变</strong>，但因为 FFN 只激活一小部分专家，KV Cache 和模型并发的压力被分开了——模型本体大，但计算量小。这恰好和 MLA 形成了互补：MLA 压 KV Cache（显存瓶颈），MoE 压 FFN 计算（算力瓶颈）。</p>
+<p><img src="imgs/03-moe-architecture.png" alt="MoE架构"></p>
+<h2 id="MTP：一次生成多个-token"><a href="#MTP：一次生成多个-token" class="headerlink" title="MTP：一次生成多个 token"></a>MTP：一次生成多个 token</h2><p>MLA 压显存，MoE 压计算。现在来看第三个优化：MTP，它从<strong>吞吐量</strong>角度省钱。</p>
+<p>标准的自回归生成（Autoregressive Decoding）是”一次一个 token”。生成第 i 个 token → 拼到输入序列末尾 → 再生成第 i+1 个。每一步都要走一遍完整的 Transformer 前向。</p>
+<p>MTP 的做法是：<strong>一次前向，同时预测未来 N 个 token</strong>。</p>
+<p>DeepSeek V3 用 N=2（同时预测当前 token 和下一个 token），DeepSeek 的论文中提到他们验证了 N=2 到 N=4，在 N=2 时性价比最优。</p>
+<p>具体架构上，MTP 在 Transformer 的主输出层之上，加了一个额外的预测头（Prediction Head）。主模型输出当前 token 的 logits 的同时，MTP 头用一个小的 Transformer 模块去预测下一个 token。可以理解为在 Decode 阶段打了”提前量”。</p>
+<p>带来的收益：</p>
+<p><strong>吞吐量翻倍</strong>：一次前向出 2 个 token，同样时间多生成一倍内容。虽然 MTP 头本身也消耗少量计算，但这部分远小于重新跑一次完整 Decode。</p>
+<p><strong>验证阶段加速</strong>：在投机解码（Speculative Decoding）场景下，MTP 可以直接作为”草稿模型”（Draft Model），不需要额外的小模型。大模型自己预测未来 token，然后一次性验证。这在在线服务场景下特别有用。</p>
+<p><strong>训练信号增强</strong>：MTP 让模型在训练时就学会预测”未来”，这个更强的任务反过来提升了模型对因果关系的建模能力。DeepSeek 的论文数据显示，MTP 对下游任务（尤其是长文本和推理任务）有持续的微小提升。</p>
+<p>MTP 的代价主要是<strong>训练成本增加</strong>（多了 MTP 头的参数和梯度），对推理来说几乎没有额外成本。是一次性的训练投资，换来后续每次推理的吞吐量翻倍。</p>
+<p><img src="imgs/04-mtp-principle.png" alt="MTP原理"></p>
+<h2 id="三者叠加：一个数量级的成本差是怎么打出来的"><a href="#三者叠加：一个数量级的成本差是怎么打出来的" class="headerlink" title="三者叠加：一个数量级的成本差是怎么打出来的"></a>三者叠加：一个数量级的成本差是怎么打出来的</h2><p>现在把 MLA、MoE、MTP 放在一起看。</p>
+<p>假设有一个标准 70B Dense Transformer 模型作为 Baseline。我们看一下 DeepSeek V3 在每个成本维度上的优化：</p>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>Baseline(70B Dense)</th>
+<th>DeepSeek V3</th>
+<th>优化倍数</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>KV Cache 显存</td>
+<td>每 token 每层 2d 元素</td>
+<td>MLA：d_c ≈ d/5</td>
+<td><strong>~5x</strong></td>
+</tr>
+<tr>
+<td>激活参数</td>
+<td>70B 全激活</td>
+<td>MoE：37B/671B</td>
+<td><strong>~2x vs 70B Dense</strong>（若按同等总参比则是 18x）</td>
+</tr>
+<tr>
+<td>单次 Decode 效率</td>
+<td>1 token/前向</td>
+<td>MTP：2 token/前向</td>
+<td><strong>~2x</strong></td>
+</tr>
+</tbody></table>
+<p>这三项是<strong>乘法关系</strong>：</p>
+<ul>
+<li>MLA 让同样显存服务更多并发 → 每请求 GPU 成本 ÷ 5</li>
+<li>MoE 让每次前向计算量更小 → 每请求 GPU 耗时 ÷ 2</li>
+<li>MTP 让每次前向产出更多 token → 每请求 GPU 耗时 ÷ 2</li>
+</ul>
+<p>综合下来，<strong>推理成本节省了约 5 × 2 × 2 ≈ 20 倍</strong>。这就是你看到的 API 价格差 10-20 倍的技术解释。</p>
+<p>但数字不是精确乘出来的。实际业务中，推理成本还受以下因素影响：</p>
+<ul>
+<li><strong>请求并发度</strong>：MLA 的收益在高并发场景下更明显。低并发时，KV Cache 本来就不紧张，MLA 的优势打折。</li>
+<li><strong>请求长度分布</strong>：MTP 对长输出（长文生成、代码生成）收益大。对短问答场景（平均输出 &lt; 50 token），MTP 多预测的那一个 token 价值不大。</li>
+<li><strong>MoE 的通信开销</strong>：分布式推理时，不同专家可能分布在不同 GPU 上，token 的动态路由会产生跨卡通信。这是 MoE 的隐形开销，在单卡推理时不明显，跨卡时会吃掉一部分收益。</li>
+<li><strong>硬件适配</strong>：MLA 和 MTP 需要专门的算子优化才能充分发挥。如果用标准 PyTorch 实现，性能可能远不如 DeepSeek 内部高度优化的 C++/CUDA kernel。</li>
+</ul>
+<p>这也是为什么 DeepSeek 选择把这些技术全部开源：MLA 的论文、V3 的技术报告、甚至部分训练细节都公开了。因为技术壁垒不在于”知道这些方案”，而在于把它们在工程层面高效实现出来。</p>
+<p><img src="imgs/05-cost-breakdown.png" alt="三者叠加"></p>
+<h2 id="为什么其他大厂不跟进？"><a href="#为什么其他大厂不跟进？" class="headerlink" title="为什么其他大厂不跟进？"></a>为什么其他大厂不跟进？</h2><p>一个很自然的疑问：如果 MLA + MoE + MTP 这么好，为什么 OpenAI、Google、Anthropic 不直接抄？</p>
+<p>原因很复杂，但核心有几条：</p>
+<p><strong>MoE 的工程复杂度</strong>：训练一个 671B 的 MoE 模型，需要处理专家负载均衡、跨节点路由通信、MoE 特有的训练不稳定性。Dense 模型（如 GPT-4o 可能是 ~200B Dense）架构更简单，工程风险更低。不是不能做，而是需要投入大量的工程精力去做——而大厂的既有模型架构已经沉淀了大量优化资源，短时间切 MoE 不一定是理性的。</p>
+<p><strong>推理部署的不同策略</strong>：OpenAI/Anthropic 的商业模式更偏向<strong>超大规模集中推理</strong>——同一个模型服务几千万用户，通过极致的批处理和定制硬件（如 TPU）摊薄成本。DeepSeek 的选择是<strong>用架构创新换硬件成本</strong>——让没那么强的硬件（H800 而不是 H100）也能高效推理。两种策略的优化方向不同。</p>
+<p><strong>MLA 的兼容性成本</strong>：标准 MHA 有成熟的 FlashAttention 优化（Dao 的 FlashAttention-2/3 已成为事实标准）。MLA 需要重新实现注意力 kernel，这不是几个工程师几个月能搞定的事。DeepSeek 自己为 MLA 写了专门的 CUDA kernel，这个工程量大部分团队负担不起。</p>
+<p><strong>MTP 不是 DeepSeek 首创</strong>：一次预测多个 token 的想法学术界早就有（Meta 的 Multi-Token Prediction、Google 的 Medusa），但 DeepSeek 把它和 MLA/MoE 组合在一起，并且在超大规模模型上验证了有效性。这是”组合创新”而非”原创发明”。</p>
+<p>本质上，DeepSeek 的竞争策略是：<strong>用算法创新弥补算力差距</strong>。在芯片受限的情况下（H800 而不是 H100/H200），通过架构设计让有限算力发挥更大价值。而美国大厂拿着最强的硬件，优化的优先级是最大吞吐而非最低成本。</p>
+<p><img src="imgs/06-comparison.png" alt="技术对比"></p>
+<h2 id="一张图总结-DeepSeek-的推理架构"><a href="#一张图总结-DeepSeek-的推理架构" class="headerlink" title="一张图总结 DeepSeek 的推理架构"></a>一张图总结 DeepSeek 的推理架构</h2><p>把上面这些东西串起来，一次 DeepSeek V3 的推理过程是这样的：</p>
+<p><strong>第一步</strong>：Tokenize 输入文本，转化成 token ID 序列。</p>
+<p><strong>第二步</strong>：Prefill。所有输入 token 并行通过 Transformer 各层。每个 token 在每层通过 MLA 算出压缩的潜在向量 c，存入 KV Cache（而不是存完整的 K/V）。MoE 的 Router 为每个 token 动态选择激活 8/256 个专家。Prefill 产出的 KV Cache 体积大约是标准 MHA 的 1/5。</p>
+<p><strong>第三步</strong>：Decode 循环。每一步通过 MTP 一次预测 2 个 token。新 token 的 Q 通过标准投影计算，K/V 从缓存的 c 实时展开。MoE 为每个新 token 激活不同的专家子集。每步完成后，新 token 的 c 追加到 KV Cache。</p>
+<p>整个过程中，MLA 控制显存占用，MoE 控制计算量，MTP 控制吞吐密度。三项技术在不同的维度上各自节省成本，叠加出一个数量级的 API 价格差。</p>
+<h2 id="写在最后"><a href="#写在最后" class="headerlink" title="写在最后"></a>写在最后</h2><p>DeepSeek 的”便宜”，不是补贴烧钱，不是 VC 的免费午餐。是三个技术决策的叠加：</p>
+<ul>
+<li>MLA 把 KV Cache 压缩了 5-10 倍</li>
+<li>MoE 让 671B 模型每次只算 37B</li>
+<li>MTP 让一次前向产出两个 token</li>
+</ul>
+<p>这三件事，单独拿出来都不算颠覆性创新。MLA 本质是一个低秩分解（SVD/PCA 的思路在深度学习里用了几十年），MoE 早在 2017 年就被 Google 提出，MTP 在学术界也有先例。</p>
+<p>但 DeepSeek 是第一个把这三项技术在大规模生产模型中同时工程化落地的团队。而且他们选择了开源，把技术细节、训练方法、模型权重都公开了。结果就是：一个 API 价格只有 GPT-4o 1/10 的模型，在大多数评测基准上分数持平甚至反超。</p>
+<p>这对所有做 AI 应用的人都是一个信号：<strong>模型推理的价格，还没有降到地板</strong>。MLA 之后还会有新的注意力压缩方法，MoE 之后还会有更高效的路由策略，MTP 的 N 还可能从 2 变 4、变 8。</p>
+<p>明年这个时候，”便宜一个数量级”可能就不再是新闻了。</p>
+<p>以上，既然看到这里了，如果觉得不错，随手点个赞、在看、转发三连吧，如果想第一时间收到推送，也可以给我个星标⭐~<br>谢谢你看我的文章，我们，下次再见。</p>
+<blockquote>
+<p>/ 参考资料<br>DeepSeek-V3 Technical Report (DeepSeek-AI, 2024)<br>DeepSeek-V2: A Strong, Economical, and Efficient Mixture-of-Experts Language Model (DeepSeek-AI, 2024)<br>Multi-Head Latent Attention: A First-Principles Derivation (DeepSeek-AI, 2024)<br>Outrageously Large Neural Networks: The Sparsely-Gated Mixture-of-Experts Layer (Shazeer et al., 2017)<br>Better &amp; Faster Large Language Models via Multi-token Prediction (Gloeckle et al., 2024)<br>FlashAttention-3: Fast and Accurate Attention with Asynchrony and Low-precision (Shah et al., 2024)<br>vLLM: Efficient Memory Management for Large Language Model Serving with PagedAttention (Kwon et al., 2023)</p>
+</blockquote>
+</div>
+    <aside class="post-rail">
+      <span class="post-rail__line"></span>
+      <span>LESLIE / WRITING</span>
+    </aside>
+  </div>
+
+  <footer class="post-footer shell">
+    <div><h2>如果这篇文章帮到了你，<br>也许下一篇会更有意思。</h2></div>
+    <a class="button button--primary" href="/writing/">继续阅读 →</a>
+  </footer>
+</article>
+</main>
+    <footer class="site-footer">
+  <div class="footer-grid">
+    <div>
+      <p class="footer-kicker">Leslie Zhang</p>
+      <p class="footer-statement">把真实世界的问题，<br>变成可以运行的智能系统。</p>
+    </div>
+    <div class="footer-links">
+      <a href="https://github.com/leslieAIbin" target="_blank" rel="noreferrer">GitHub ↗</a>
+      <a href="mailto:aibinzhangleslie@gmail.com">Email ↗</a>
+      <a href="/atom.xml">RSS ↗</a>
+    </div>
+    <div class="footer-meta">
+      <span>© 2026 Leslie Zhang</span>
+      <span>Writing, research and working systems.</span>
+    </div>
+  </div>
+</footer>
+
+    <dialog class="ask-dialog" id="ask-leslie" aria-labelledby="ask-title">
+  <div class="ask-dialog__shell">
+    <div class="ask-dialog__topbar">
+      <div>
+        <h2 id="ask-title">Ask Leslie</h2>
+      </div>
+      <button class="icon-button" type="button" data-ask-close aria-label="关闭">×</button>
+    </div>
+    <p class="ask-dialog__intro">从本站公开文章中寻找答案。当前版本在浏览器本地检索，不上传问题，也不会编造不存在的经历。</p>
+    <form class="ask-form" data-ask-form>
+      <label class="sr-only" for="ask-query">输入问题</label>
+      <textarea id="ask-query" rows="2" placeholder="例如：Agent Runtime 应该怎么设计？" data-ask-input></textarea>
+      <button type="submit">检索知识库 <span aria-hidden="true">↗</span></button>
+    </form>
+    <div class="ask-suggestions" aria-label="推荐问题">
+      
+        <button type="button" data-ask-suggestion="Agent Runtime 应该怎么设计？">Agent Runtime 应该怎么设计？</button>
+      
+        <button type="button" data-ask-suggestion="如何让 AI 操控真实世界设备？">如何让 AI 操控真实世界设备？</button>
+      
+        <button type="button" data-ask-suggestion="Leslie 最近在研究什么？">Leslie 最近在研究什么？</button>
+      
+    </div>
+    <div class="ask-results" data-ask-results aria-live="polite">
+      <div class="ask-empty">
+        <p>输入一个问题，我会把你带到 Leslie 写过的相关内容。</p>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+    <script>window.ORBITAL_ROOT = '/';</script>
+    <script src="/js/orbital.js" defer></script>
+  </body>
+</html>

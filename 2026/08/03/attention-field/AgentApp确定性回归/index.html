@@ -1,0 +1,406 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+  <head>
+
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#050b18">
+<meta name="color-scheme" content="dark light">
+<title>App 没有死：Agent 只是把软件入口改成了自然语言 | Leslie Zhang</title>
+<meta name="description" content="通用 Agent 没有失败，传统 App 也不会消失。真正可靠的 AI 应用，正在把自然语言交给模型，把事实、状态、权限和执行留给确定性系统，再用 GUI 完成展示与确认。">
+<meta name="author" content="Leslie Zhang">
+<link rel="canonical" href="https://leslieaibin.github.io/2026/08/03/attention-field/AgentApp%E7%A1%AE%E5%AE%9A%E6%80%A7%E5%9B%9E%E5%BD%92/">
+<link rel="icon" href="/imgs/01.jpg">
+<link rel="alternate" type="application/atom+xml" title="Leslie Zhang" href="/atom.xml">
+<meta property="og:type" content="article">
+<meta property="og:title" content="App 没有死：Agent 只是把软件入口改成了自然语言 | Leslie Zhang">
+<meta property="og:description" content="通用 Agent 没有失败，传统 App 也不会消失。真正可靠的 AI 应用，正在把自然语言交给模型，把事实、状态、权限和执行留给确定性系统，再用 GUI 完成展示与确认。">
+<meta property="og:url" content="https://leslieaibin.github.io/2026/08/03/attention-field/AgentApp%E7%A1%AE%E5%AE%9A%E6%80%A7%E5%9B%9E%E5%BD%92/">
+<meta property="og:image" content="https://leslieaibin.github.io/2026/08/03/attention-field/AgentApp%E7%A1%AE%E5%AE%9A%E6%80%A7%E5%9B%9E%E5%BD%92/imgs/cover.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="App 没有死：Agent 只是把软件入口改成了自然语言 | Leslie Zhang">
+<meta name="twitter:description" content="通用 Agent 没有失败，传统 App 也不会消失。真正可靠的 AI 应用，正在把自然语言交给模型，把事实、状态、权限和执行留给确定性系统，再用 GUI 完成展示与确认。">
+<meta name="twitter:image" content="https://leslieaibin.github.io/2026/08/03/attention-field/AgentApp%E7%A1%AE%E5%AE%9A%E6%80%A7%E5%9B%9E%E5%BD%92/imgs/cover.png">
+<script>
+  (function () {
+    var saved = localStorage.getItem('orbital-theme');
+    var theme = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    document.documentElement.dataset.theme = theme;
+  })();
+</script>
+<link rel="stylesheet" href="/css/orbital.css">
+<meta name="generator" content="Hexo 5.2.0"></head>
+  <body class="page-post">
+    <a class="skip-link" href="#main-content">跳到主要内容</a>
+    <div class="reading-progress" data-reading-progress></div>
+    <header class="site-header" data-header>
+  <div class="nav-shell">
+    <a class="brand" href="/" aria-label="返回首页">
+      <span class="brand-mark" aria-hidden="true"><img src="/images/brand/leslie-mythos-avatar.webp" alt="" width="512" height="512"></span>
+      <span class="brand-copy">
+        <strong>LESLIE</strong>
+        <small>REAL-WORLD AGENTS</small>
+      </span>
+    </a>
+
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav" data-nav-toggle>
+      <span></span><span></span>
+      <span class="sr-only">打开导航</span>
+    </button>
+
+    <nav class="main-nav" id="main-nav" aria-label="主导航" data-nav>
+      
+        <a href="/" class="">首页</a>
+      
+        <a href="/writing/" class="">写作</a>
+      
+        <a href="/projects/" class="">项目</a>
+      
+        <a href="/about/" class="">关于</a>
+      
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换明暗主题">
+        <span class="theme-toggle__sun" aria-hidden="true">☼</span>
+        <span class="theme-toggle__moon" aria-hidden="true">◐</span>
+      </button>
+      <button class="ask-nav" type="button" data-ask-open>ASK LESLIE</button>
+    </nav>
+  </div>
+</header>
+
+    <main id="main-content"><article class="post-shell">
+  <header class="post-hero shell">
+    <a class="post-back" href="/writing/">← 返回写作</a>
+    <div class="post-hero__meta">
+      <time datetime="2026-08-03">2026 年 08 月 03 日</time>
+      <span>16 分钟阅读</span>
+    </div>
+    <h1>App 没有死：Agent 只是把软件入口改成了自然语言</h1>
+    <p class="post-hero__summary">通用 Agent 没有失败，传统 App 也不会消失。真正可靠的 AI 应用，正在把自然语言交给模型，把事实、状态、权限和执行留给确定性系统，再用 GUI 完成展示与确认。</p>
+    <div class="chip-row"><a href="/tags/AI-Agent/">AI Agent</a><a href="/tags/Agent-App/">Agent App</a><a href="/tags/Workflow/">Workflow</a><a href="/tags/UX/">UX</a><a href="/tags/Generative-UI/">Generative UI</a><a href="/tags/Software-Engineering/">Software Engineering</a></div>
+  </header>
+
+  <div class="post-cover shell"><img src="/2026/08/03/attention-field/AgentApp%E7%A1%AE%E5%AE%9A%E6%80%A7%E5%9B%9E%E5%BD%92/imgs/cover.png" alt="App 没有死：Agent 只是把软件入口改成了自然语言"></div>
+
+  <div class="post-layout shell">
+    <aside class="post-toc" aria-label="文章目录">
+      <span class="aside-title">目录</span>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%88%91%E4%BB%AC%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%80%E5%BA%A6%E7%9B%B8%E4%BF%A1-App-%E4%BC%9A%E6%B6%88%E5%A4%B1"><span class="toc-text">我们为什么一度相信 App 会消失</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%90%86%E8%A7%A3%E4%BD%A0%E7%9A%84%E6%84%8F%E6%80%9D%EF%BC%8C%E4%B8%8D%E7%AD%89%E4%BA%8E%E6%9B%BF%E4%BD%A0%E5%86%B3%E5%AE%9A%E4%BA%8B%E5%AE%9E"><span class="toc-text">理解你的意思，不等于替你决定事实</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%83%BD%E7%94%A8%E7%A8%8B%E5%BA%8F%E7%A1%AE%E5%AE%9A%E7%9A%84%E4%BA%8B%E6%83%85%EF%BC%8C%E4%B8%8D%E5%BF%85%E6%AF%8F%E6%AC%A1%E9%83%BD%E8%AE%A9%E6%A8%A1%E5%9E%8B%E7%8C%9C"><span class="toc-text">能用程序确定的事情，不必每次都让模型猜</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#OpenAI-%E8%87%AA%E5%B7%B1%E7%9A%84%E6%95%B0%E6%8D%AE-Agent%EF%BC%8C%E4%B9%9F%E4%B8%8D%E6%98%AF%E9%9D%A0%E2%80%9C%E8%AE%B0%E5%BF%86%E2%80%9D%E5%9B%9E%E7%AD%94%E9%97%AE%E9%A2%98"><span class="toc-text">OpenAI 自己的数据 Agent，也不是靠“记忆”回答问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#GUI-%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E4%BC%9A%E8%A2%AB%E4%B8%80%E4%B8%AA%E8%81%8A%E5%A4%A9%E6%A1%86%E5%BD%BB%E5%BA%95%E6%9B%BF%E4%BB%A3"><span class="toc-text">GUI 为什么不会被一个聊天框彻底替代</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%87%8F%E5%B0%91%E5%B9%BB%E8%A7%89%EF%BC%8C%E4%B8%8D%E6%98%AF%E7%BB%99-Agent-%E5%A1%9E%E8%BF%9B%E6%9B%B4%E5%A4%9A-Memory"><span class="toc-text">减少幻觉，不是给 Agent 塞进更多 Memory</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%AA%E9%9D%A0-Prompt%EF%BC%8C%E4%B8%BA%E4%BB%80%E4%B9%88%E8%BF%98%E6%98%AF%E4%B8%8D%E5%A4%9F"><span class="toc-text">只靠 Prompt，为什么还是不够</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%80%9A%E7%94%A8-Agent-%E5%B9%B6%E6%B2%A1%E6%9C%89%E5%9B%A0%E6%AD%A4%E5%A4%B1%E5%8E%BB%E4%BB%B7%E5%80%BC"><span class="toc-text">通用 Agent 并没有因此失去价值</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E4%B8%AA%E6%9B%B4%E5%AE%B9%E6%98%93%E8%90%BD%E5%9C%B0%E7%9A%84-Agent-App-%E6%9E%B6%E6%9E%84"><span class="toc-text">一个更容易落地的 Agent App 架构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9C%9F%E6%AD%A3%E7%9A%84%E6%9C%BA%E4%BC%9A%EF%BC%8C%E4%B8%8D%E4%B8%80%E5%AE%9A%E6%98%AF%E5%86%8D%E9%80%A0%E4%B8%80%E4%B8%AA%E9%80%9A%E7%94%A8-Agent"><span class="toc-text">真正的机会，不一定是再造一个通用 Agent</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%99%E5%9C%A8%E6%9C%80%E5%90%8E"><span class="toc-text">写在最后</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="toc-text">参考资料</span></a></li></ol>
+    </aside>
+    <div class="article-content"><h1 id="App-没有死：Agent-只是把软件入口改成了自然语言"><a href="#App-没有死：Agent-只是把软件入口改成了自然语言" class="headerlink" title="App 没有死：Agent 只是把软件入口改成了自然语言"></a>App 没有死：Agent 只是把软件入口改成了自然语言</h1><p><img src="imgs/cover.png" alt="App 没有死：Agent 只是把软件入口改成了自然语言"></p>
+<p>过去两年，AI 应用经历了一次很有意思的摇摆。</p>
+<p>最早做 Agent 时，大家还不太相信模型能自己干活。于是我们在 Dify、Coze 或自建平台里画 Workflow，把上下文一段段传下去，再想办法从模型输出里解析 JSON。</p>
+<p>模型偶尔说错一句没关系，流程会把它拉回预先设计好的轨道。</p>
+<p>后来 Claude Code、Codex、OpenClaw 这类产品出现了。模型会读文件、运行命令、操作浏览器，还能临时加载 Skill。很多人开始相信，只要给通用 Agent 足够多的工具和上下文，它就能接管过去由 App 完成的一切。</p>
+<p>菜单不需要了。</p>
+<p>表单不需要了。</p>
+<p>甚至 App 本身也可以消失，最后只剩一个聊天框。</p>
+<p>这个想象很诱人。说一句话，Agent 自己理解、规划、执行，我们再也不用学习软件里那些层层叠叠的按钮。</p>
+<p>但当 Agent 真正进入数据分析、客服、财务、审批和企业协作，人们慢慢发现事情没有这么简单。</p>
+<p>一个能调用命令行工具的 Agent，可以在开放任务里表现得非常聪明。可一个真正要给用户使用的 Agent App，还得处理账号、权限、订单状态、失败重试、数据一致性、人工审批和操作记录。</p>
+<p>这些事情与模型会不会推理，并不是同一个问题。</p>
+<p>所以我现在更愿意用一句不那么激进的话描述这轮变化：</p>
+<p><strong>App 没有死。Agent 只是把软件的入口，从“寻找功能”改成了“表达意图”。</strong></p>
+<p>自然语言负责告诉系统「我想做什么」。</p>
+<p>大模型负责理解这句话，补全可能缺失的条件，并生成候选计划。</p>
+<p>至于事实是什么、用户有没有权限、动作能不能执行、执行以后怎样恢复，依然应该由规则明确、结果可检查的程序负责。后文把这类部分统称为“确定性系统”。</p>
+<p>这不是 Agent 的退步。</p>
+<p>恰恰是 Agent 开始成为真正的产品。</p>
+<p><img src="imgs/01-timeline-agent-evolution.png" alt="Agent 应用的三次演变"></p>
+<h2 id="我们为什么一度相信-App-会消失"><a href="#我们为什么一度相信-App-会消失" class="headerlink" title="我们为什么一度相信 App 会消失"></a>我们为什么一度相信 App 会消失</h2><p>这个判断并不荒唐。</p>
+<p>过去的软件要求人去适应机器。用户得知道功能在哪个菜单里，表单里的每个字段是什么意思，还要按照开发者预设的顺序完成操作。</p>
+<p>自然语言把这件事反了过来。</p>
+<p>用户不再需要知道「区域筛选」在哪，也不必记住导出报表的五个步骤。只要说：</p>
+<blockquote>
+<p>帮我找出上个月华东区退款率最高的三个产品，和全国平均值做个对比，确认无误后发给王总。</p>
+</blockquote>
+<p>一句话里同时包含目标、时间、区域、指标、比较对象、验收要求和后续动作。</p>
+<p>传统界面往往要让用户跨过多个页面。模型却能直接从语言里识别出这些意图，再决定应该查数据、计算指标、生成图表还是发送消息。</p>
+<p>在代码场景里，这种能力更让人兴奋。</p>
+<p>一个 Coding Agent 可以先搜索仓库，读懂相关模块，再修改代码、运行测试，根据报错继续修复。任务路径事先很难写死，模型确实比固定 Workflow 更适合临场决定下一步。</p>
+<p>问题是，我们很容易把这种成功推广得太远。</p>
+<p>会在代码仓库里探索，并不等于适合自由修改订单状态。</p>
+<p>能从测试失败中恢复，也不等于应该自己决定退款金额。</p>
+<p>代码 Agent 所处的环境其实很特殊。Git 可以保存历史，测试可以验证结果，沙箱可以隔离风险，Pull Request 还能让人类在合并之前检查修改。</p>
+<p>它看起来很自由，背后却站着一整套确定性的工程系统。</p>
+<p>Agent 的能力是真的。</p>
+<p>支撑它可靠工作的传统软件，同样是真的。</p>
+<h2 id="理解你的意思，不等于替你决定事实"><a href="#理解你的意思，不等于替你决定事实" class="headerlink" title="理解你的意思，不等于替你决定事实"></a>理解你的意思，不等于替你决定事实</h2><p>回到刚才那句报表需求。</p>
+<p>模型很适合把自然语言变成一份结构化计划：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">&quot;time_range&quot;</span>: <span class="string">&quot;上个月&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;region&quot;</span>: <span class="string">&quot;华东&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;metric&quot;</span>: <span class="string">&quot;退款率&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;top_n&quot;</span>: <span class="number">3</span>,</span><br><span class="line">  <span class="attr">&quot;comparison&quot;</span>: <span class="string">&quot;全国平均值&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;action&quot;</span>: <span class="string">&quot;确认后发送&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这一步解决的是语义问题。</p>
+<p>同一句需求，用户可能说成「华东退货最严重的几个商品」「上月哪些产品退款偏高」，也可能省略年份、收件人身份或报表格式。大模型善于处理这种模糊、变化和省略。</p>
+<p>但结构化计划出来以后，另一组问题才刚刚开始。</p>
+<p>「上个月」按照自然月还是最近 30 天计算？</p>
+<p>退款率的分母是付款订单、发货订单还是签收订单？</p>
+<p>王总具体是哪一个账号？</p>
+<p>当前用户能否查看全国数据，又是否拥有外发权限？</p>
+<p>这些答案不能靠模型从语言习惯里猜。</p>
+<p>它们应该来自指标平台、组织通讯录、权限服务和业务数据库。退款率要由程序按照统一口径计算，报表发出前要检查收件人和数据范围，真正发送还应经过明确确认。</p>
+<p>可以把分工记成三句话：</p>
+<table>
+<thead>
+<tr>
+<th>系统部分</th>
+<th>更适合负责什么</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>大模型</td>
+<td>理解意图、处理模糊输入、生成候选计划、解释结果</td>
+</tr>
+<tr>
+<td>确定性程序</td>
+<td>查询事实、计算指标、检查权限、保存状态、执行动作</td>
+</tr>
+<tr>
+<td>图形界面（GUI）</td>
+<td>展示候选、修改参数、比较结果、确认风险、撤销操作</td>
+</tr>
+</tbody></table>
+<p>这里的大模型不是一个无所不知的经理。</p>
+<p>它更像一名翻译员，把人的模糊表达翻译成机器可以检查和执行的结构。</p>
+<p>但它又不只是传统的意图分类器。面对研究、编程和故障排查，它仍然可以在受控范围里规划多步路径，根据环境反馈改变方案。</p>
+<p>准确的定位不是「Agent 只是 UX」。</p>
+<p>而是：<strong>在产品化系统里，Agent 应该把不确定性用在最有价值的地方。</strong></p>
+<p><img src="imgs/02-flow-intent-to-action.png" alt="一句话怎样变成可靠动作"></p>
+<h2 id="能用程序确定的事情，不必每次都让模型猜"><a href="#能用程序确定的事情，不必每次都让模型猜" class="headerlink" title="能用程序确定的事情，不必每次都让模型猜"></a>能用程序确定的事情，不必每次都让模型猜</h2><p>Anthropic 在《Building effective agents》中，把 Workflow 和 Agent 分得很清楚。</p>
+<p>Workflow 是预先写好的代码路径。系统知道下一步要做什么，只在某些环节调用模型。</p>
+<p>Agent 则由模型动态决定路径和工具。它适合那些步骤数量未知、执行过程中需要不断观察和调整的任务。</p>
+<p>两者没有高低之分。</p>
+<p>如果用户提交发票以后，系统必须依次完成格式校验、税号检查、重复报销检测和入账，这条路径很稳定。把顺序写进代码，比每次询问模型「下一步该做什么」更便宜，也更容易审计。</p>
+<p>如果用户要求调查某次线上故障，模型可能需要查看日志、搜索代码、对比监控指标，再根据新线索改变方向。没人能提前列出所有步骤，这里才适合让 Agent 掌握更大的行动空间。</p>
+<p>OpenAI 的 Agent 构建指南也给出了相近边界。它建议把 Agent 用在三类传统自动化比较难处理的任务中：需要细腻判断、规则和例外太多，以及大量依赖非结构化信息。</p>
+<p>如果问题不具备这些特征，确定性方案可能已经足够。</p>
+<p>因此，一个成熟的 Agent App 往往不是纯 Agent，也不是纯 Workflow。</p>
+<p>它更像一条有宽有窄的河道。</p>
+<p>需要探索的地方，让模型选择路线。</p>
+<p>靠近权限、资金、数据修改和外部发布时，河道逐渐收窄，程序规则、人工审批和确定性验证开始接管。</p>
+<p>微软 Copilot Studio 的设计就采用类似思路：低风险查询可以让 AI 自主编排；需要控制的步骤放进 Hybrid 层；付款、删除记录等不可逆操作，则进入严格规则或固定 Flow。</p>
+<p>越靠近模糊意图，越适合概率模型。</p>
+<p>越靠近现实副作用，越需要确定性。</p>
+<h2 id="OpenAI-自己的数据-Agent，也不是靠“记忆”回答问题"><a href="#OpenAI-自己的数据-Agent，也不是靠“记忆”回答问题" class="headerlink" title="OpenAI 自己的数据 Agent，也不是靠“记忆”回答问题"></a>OpenAI 自己的数据 Agent，也不是靠“记忆”回答问题</h2><p>2026 年 1 月，OpenAI 公开介绍了内部数据 Agent 的架构。</p>
+<p>这套系统服务超过 3500 名内部用户，要面对约 600 PB 数据和 7 万个数据集。员工可以直接用自然语言询问业务、产品和研究问题，Agent 会寻找数据、编写 SQL、运行查询并总结结论。</p>
+<p>看上去，这是一个很典型的通用数据 Agent。</p>
+<p>可真正让它能够工作的，并不是模型记住了 600 PB 数据。</p>
+<p>OpenAI 给它搭了多层事实来源：表结构和数据血缘、历史查询、专家标注、生成数据表的代码、Slack 与文档中的组织知识、用户确认过的 Memory，以及需要时发起的实时数据仓库查询。</p>
+<p>事实仍然存放在原来的系统里。</p>
+<p>Agent 负责决定应该去哪里找，以及怎样把找到的信息组织成用户能理解的答案。</p>
+<p>权限也没有交给模型自由判断。这个 Agent 继承现有数据平台的访问控制，用户原本不能看的表，通过 Agent 同样不能看。官方甚至直接把它称为运行在数据系统之上的「接口层」。</p>
+<p>验证也没有省掉。</p>
+<p>团队为重要分析问题准备人工编写的标准 SQL，执行模型生成的 SQL，再比较真实结果。这些评测像单元测试一样持续运行，避免 Agent 更新后悄悄改变指标口径。</p>
+<p>这个案例很有代表性。</p>
+<p>自然语言降低了使用数据的门槛，但数据平台没有消失。</p>
+<p>Memory 帮助保存用户纠正过的特殊规则，但它没有取代数据库。</p>
+<p>模型可以自由探索查询路径，但最后仍然要回到真实查询结果。</p>
+<p><strong>Agent 负责找到答案，事实系统负责证明答案。</strong></p>
+<p><img src="imgs/03-framework-data-agent.png" alt="数据 Agent 如何找到真答案"></p>
+<h2 id="GUI-为什么不会被一个聊天框彻底替代"><a href="#GUI-为什么不会被一个聊天框彻底替代" class="headerlink" title="GUI 为什么不会被一个聊天框彻底替代"></a>GUI 为什么不会被一个聊天框彻底替代</h2><p>自然语言有一个巨大的优点：表达目标很快。</p>
+<p>它也有一个天然问题：容易产生歧义。</p>
+<p>「帮我订一张周五去上海的票」很自然，但它没有说明出发城市、时间、预算、机场偏好和能否接受中转。</p>
+<p>如果系统继续追问十轮，聊天框会变成一张效率很低的表单。</p>
+<p>如果系统全部替用户猜，又可能买错。</p>
+<p>更自然的交互方式，是让模型先理解大致意图，生成几组候选，再用界面让用户筛选、比较和确认。</p>
+<p>语言负责打开空间。</p>
+<p>界面负责收紧选择。</p>
+<p>这也是 OpenAI Apps SDK 的方向。ChatGPT 里的 App 可以响应自然语言，同时显示地图、播放列表、课程、演示文稿等交互组件。用户可以先对 Zillow 说出购房需求，再直接在聊天里的地图上浏览房源。</p>
+<p>App 没有被聊天框吃掉。</p>
+<p>它只是从固定入口，变成了在合适时机出现的能力和界面。</p>
+<p>Microsoft Research 的 Magentic-UI 更能说明 GUI 在 Agent 时代的新作用。它不仅有对话框，还提供计划编辑器、实时浏览器画面、暂停与接管，以及高风险动作前的确认。</p>
+<p>因为用户不仅要告诉 Agent 做什么，还需要看见：</p>
+<ul>
+<li>Agent 如何理解了任务；</li>
+<li>它准备执行哪些步骤；</li>
+<li>当前进行到哪里；</li>
+<li>哪个动作会产生不可逆结果；</li>
+<li>出错以后怎样修改或撤回。</li>
+</ul>
+<p>早在 2018 年，微软研究人员就在自然语言调用 API 的实验中发现，纯语言输入存在歧义。让用户检查模型解析出的参数并进行细粒度修正，可以明显提高任务成功率和满意度。</p>
+<p>今天的大模型强了很多，问题却没有消失。</p>
+<p>自然语言适合说「我要什么」。</p>
+<p>GUI 适合指出「就是这个」。</p>
+<p>未来的 GUI 也未必还是固定菜单。Google Research 在 2026 年研究了能够根据用户意图动态生成和调整组件的自适应界面。在一个包含 72 名参与者的数字银行原型实验中，动态界面获得了更高的可用性评分。</p>
+<p>所以该保留的不是每一个按钮的位置。</p>
+<p>该保留的是用户对状态、选择和风险的控制。</p>
+<p>界面可以动态生成，账户余额不能动态生成。</p>
+<p>按钮可以改变位置，付款规则不能临场发挥。</p>
+<p><img src="imgs/04-comparison-language-gui.png" alt="自然语言与 GUI 各做擅长的事"></p>
+<h2 id="减少幻觉，不是给-Agent-塞进更多-Memory"><a href="#减少幻觉，不是给-Agent-塞进更多-Memory" class="headerlink" title="减少幻觉，不是给 Agent 塞进更多 Memory"></a>减少幻觉，不是给 Agent 塞进更多 Memory</h2><p>原讨论里有一句话很接近关键问题：解决幻觉，要从上下文入手。</p>
+<p>但如果把它理解成「不给模型上下文，就不会产生幻觉」，方向正好反了。</p>
+<p>没有可信上下文时，模型更容易根据训练记忆和语言概率补出一个听起来合理的答案。</p>
+<p>真正可靠的做法是：<strong>没有可验证的上下文，就不要允许模型决定事实。</strong></p>
+<p>用户询问账户余额，系统就查询账户服务。</p>
+<p>用户询问订单状态，系统就读取订单数据库。</p>
+<p>用户询问最新政策，系统就检索带日期和来源的正式文件。</p>
+<p>如果找不到对应信息，Agent 应该继续查询、向用户澄清、明确表示不知道，或者把任务交给人工，而不是用一段更流畅的话填补空白。</p>
+<p>这里还要区分“当前上下文（Context）”和“长期记忆（Memory）”。</p>
+<p>Context 是当前决策需要看到的信息。</p>
+<p>Memory 更适合保存用户偏好、历史纠正和任务进度。</p>
+<p>它们都不应该取代事实系统。用户曾经说过「以后默认选经济舱」，可以放进 Memory；今天某个航班还剩几张票，必须重新查询。</p>
+<p>Anthropic 在 Context Engineering 的实践中还发现，信息也不是越多越好。上下文变长以后，模型会被无关内容干扰。因此 Claude Code 一类 Agent 会先保留轻量索引，再通过文件路径、搜索和工具按需获取信息。</p>
+<p>不是把整个世界塞给模型。</p>
+<p>是让模型知道去哪里找当前需要的那一小块事实。</p>
+<p>一个简单的可靠性链路可以这样设计：</p>
+<ol>
+<li>模型把自然语言转成结构化意图；</li>
+<li>程序检查必填参数、类型和允许范围；</li>
+<li>工具从权威系统读取实时事实；</li>
+<li>业务规则检查权限、状态与风险；</li>
+<li>高风险动作交给用户确认；</li>
+<li>执行后用查询结果、数据格式校验、测试或审计日志验收。</li>
+</ol>
+<p>模型输出的是候选。</p>
+<p>系统证据决定它能不能成为结果。</p>
+<h2 id="只靠-Prompt，为什么还是不够"><a href="#只靠-Prompt，为什么还是不够" class="headerlink" title="只靠 Prompt，为什么还是不够"></a>只靠 Prompt，为什么还是不够</h2><p>有人可能会说，只要在系统提示词里写清楚「不要猜」「不确定就询问」「付款前必须确认」，不就行了吗？</p>
+<p>提示词当然重要。</p>
+<p>但提示词是一种语言约束，不是权限系统。</p>
+<p>Microsoft Research 在 ICLR 2026 发表了一项关于 Computer-Use Agent 的研究。他们设计了 90 个包含信息不足、目标矛盾或不可执行要求的任务，测试 9 个前沿模型。在这组特定测试里，模型平均出现 80.8% 的「盲目目标导向」行为：它们更关注怎样继续执行，而不是先判断这件事是否合理、可行或安全。</p>
+<p>研究人员把其中一种表现叫作执行优先偏差。</p>
+<p>这很像一个只想把待办事项打勾的人。需求里即使缺少关键条件，它也倾向于先找一个办法做下去。</p>
+<p>改 Prompt 可以降低问题，但没有把风险完全消掉。</p>
+<p>所以生产系统不能只希望模型永远记住规则。真正的权限要由认证和授权系统执行，网络访问要有白名单，文件写入要受隔离环境限制，付款和发布要有审批门，重复执行还要依靠唯一请求标记，避免同一指令被执行两次、产生两笔订单。</p>
+<p>这些机制的共同点，是模型无法靠一句自然语言绕过去。</p>
+<p>Prompt 告诉 Agent 应该怎样做。</p>
+<p>程序边界决定它最多能做什么。</p>
+<h2 id="通用-Agent-并没有因此失去价值"><a href="#通用-Agent-并没有因此失去价值" class="headerlink" title="通用 Agent 并没有因此失去价值"></a>通用 Agent 并没有因此失去价值</h2><p>讲到这里，也不能走向另一个极端：既然确定性系统更可靠，那所有工作都应该写成固定流程。</p>
+<p>这同样行不通。</p>
+<p>研究一个陌生问题时，你不知道下一条关键线索藏在哪篇论文里。</p>
+<p>修复代码时，你不知道问题会落在配置、依赖、数据还是并发逻辑上。</p>
+<p>排查线上故障时，新的日志可能随时推翻之前的判断。</p>
+<p>这些任务的共同点是路径无法提前穷举。Agent 的价值就在这里：它可以根据环境的新反馈决定下一步，而不是要求开发者事先把所有可能分支写出来。</p>
+<p>OpenAI 自己的数据 Agent 也发现，过度规定每一步的 Prompt 反而会把模型推向错误路径。团队后来减少了对过程的死板要求，更多描述目标，让模型自己选择分析方法，效果反而更稳定。</p>
+<p>所以确定性不应该用来锁死所有推理。</p>
+<p>它应该用来守住事实、权限、副作用和验收。</p>
+<p>开放空间交给 Agent。</p>
+<p>现实边界交给系统。</p>
+<h2 id="一个更容易落地的-Agent-App-架构"><a href="#一个更容易落地的-Agent-App-架构" class="headerlink" title="一个更容易落地的 Agent App 架构"></a>一个更容易落地的 Agent App 架构</h2><p>如果把前面的讨论压缩成一条链路，大致可以写成：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">用户自然语言</span><br><span class="line">    ↓</span><br><span class="line">模型理解意图，生成候选参数与计划</span><br><span class="line">    ↓</span><br><span class="line">结构化状态和工具契约</span><br><span class="line">    ↓</span><br><span class="line">检索、数据库、业务规则、权限系统、API</span><br><span class="line">    ↓</span><br><span class="line">GUI 展示候选，允许编辑、批准或撤销</span><br><span class="line">    ↓</span><br><span class="line">验证器检查结果，并记录审计证据</span><br></pre></td></tr></table></figure>
+
+<p>这条链路里，模型不是被关进一个只能分类的盒子。</p>
+<p>它仍然可以处理模糊需求、调用工具、分解任务、解释结果，在开放区间里动态探索。</p>
+<p>只是当它准备触碰真实世界时，动作需要经过清楚的接口。</p>
+<p>工具输入有明确的数据格式。</p>
+<p>业务状态存进数据库，而不是只留在聊天记录里。</p>
+<p>系统中断后从检查点恢复，而不是期待模型回忆之前做过什么。</p>
+<p>发送、付款、删除和发布等动作经过审批，并且可以审计。</p>
+<p>任务是否完成，由查询结果、测试、业务规则或人工确认判断，而不是由 Agent 自己宣布。</p>
+<p>这类产品看起来可能没有「让一个 Agent 自己做所有事」那么科幻。</p>
+<p>但它更容易真的被人使用。</p>
+<p><img src="imgs/05-framework-reliable-agent-app.png" alt="可靠 Agent App 六层架构"></p>
+<h2 id="真正的机会，不一定是再造一个通用-Agent"><a href="#真正的机会，不一定是再造一个通用-Agent" class="headerlink" title="真正的机会，不一定是再造一个通用 Agent"></a>真正的机会，不一定是再造一个通用 Agent</h2><p>现在很多团队都在造 Agent Runtime、Skill 平台、Memory 框架和多 Agent 编排器。</p>
+<p>这些基础设施当然重要。</p>
+<p>但真正靠近用户价值的机会，可能藏在更具体的位置。</p>
+<p>某个行业的指标到底怎样定义。</p>
+<p>哪些数据才是可信来源。</p>
+<p>一个模糊需求应该被翻译成哪些结构化字段。</p>
+<p>哪些动作可以自动执行，哪些必须审批。</p>
+<p>结果用什么证据验收。</p>
+<p>用户需要看见哪些状态，才能放心把下一步交给 Agent。</p>
+<p>这些问题与基础模型关系没有想象中那么大，却决定了 Agent 是一个漂亮演示，还是能稳定使用的产品。</p>
+<p>GitHub Copilot coding agent 就是一个很直观的例子。</p>
+<p>用户从自然语言 Issue 发起任务，Agent 负责分析代码和提交修改。但整个过程仍然运行在 GitHub Actions 环境中，改动持续进入草稿合并请求（Draft Pull Request），分支保护规则继续生效，自动检查（CI）和人工审查决定代码能否合并。</p>
+<p>Agent 没有替代软件开发流程。</p>
+<p>它进入了软件开发流程。</p>
+<p><img src="imgs/06-flow-coding-agent.png" alt="Coding Agent 工作链路"></p>
+<p>同样的机会会出现在客服、财务、医疗、法务、销售和供应链里。不是简单地给一个通用 Agent 接上行业数据库，而是把行业里的状态、权限、规则、证据和交互方式重新做成适合模型调用、也适合人类检查的产品。</p>
+<p>这部分工作依然需要大量传统软件工程。</p>
+<p>甚至可能比以前更多。</p>
+<h2 id="写在最后"><a href="#写在最后" class="headerlink" title="写在最后"></a>写在最后</h2><p>回头看 Agent 的三次「看山」，每一阶段都抓住了一部分事实。</p>
+<p>早期 Workflow 告诉我们，稳定流程需要确定性结构。</p>
+<p>通用 Agent 告诉我们，模型可以处理过去很难自动化的开放任务。</p>
+<p>现在的 Agent App，则开始把两者放回各自合适的位置。</p>
+<p>自然语言不会消灭 App。</p>
+<p>它会消灭一部分寻找按钮、记忆路径和学习操作手册的成本。</p>
+<p>GUI 也不会消失。</p>
+<p>它会从一张静态功能清单，变成展示候选、修改意图、观察状态和确认风险的协作界面。</p>
+<p>确定性程序更不会消失。</p>
+<p>当 Agent 能够采取真实动作以后，事实、权限、状态、交易和审计只会变得更重要。</p>
+<p>所以未来的软件，未必是一个 Agent 加一堆 CLI。</p>
+<p>更可能是一套为具体场景重新设计的系统：模型理解人，程序连接现实，界面让双方互相确认。</p>
+<p>App 没有死。</p>
+<p>它只是多了一扇可以说人话的门。</p>
+<hr>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ol>
+<li>Anthropic, <a target="_blank" rel="noopener" href="https://www.anthropic.com/engineering/building-effective-agents">Building effective agents</a></li>
+<li>Anthropic, <a target="_blank" rel="noopener" href="https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents">Effective context engineering for AI agents</a></li>
+<li>OpenAI, <a target="_blank" rel="noopener" href="https://openai.com/business/guides-and-resources/a-practical-guide-to-building-ai-agents/">A practical guide to building agents</a></li>
+<li>OpenAI, <a target="_blank" rel="noopener" href="https://openai.com/index/inside-our-in-house-data-agent/">Inside OpenAI’s in-house data agent</a></li>
+<li>OpenAI, <a target="_blank" rel="noopener" href="https://openai.com/index/introducing-apps-in-chatgpt/">Introducing apps in ChatGPT and the new Apps SDK</a></li>
+<li>Microsoft Research, <a target="_blank" rel="noopener" href="https://www.microsoft.com/en-us/research/blog/magentic-ui-an-experimental-human-centered-web-agent/">Magentic-UI, an experimental human-centered web agent</a></li>
+<li>Microsoft Research, <a target="_blank" rel="noopener" href="https://www.microsoft.com/en-us/research/publication/interaction-augmented-instruction-modeling-the-synergy-of-prompts-and-interactions-in-human-genai-collaboration/">Interaction-Augmented Instruction</a></li>
+<li>Microsoft Research, <a target="_blank" rel="noopener" href="https://www.microsoft.com/en-us/research/uploads/prod/2018/04/sigir18_nl2api.pdf">Natural Language Interfaces with Fine-Grained User Interaction</a></li>
+<li>Microsoft Research, <a target="_blank" rel="noopener" href="https://www.microsoft.com/en-us/research/publication/just-do-it-computer-use-agents-exhibit-blind-goal-directedness/">Just Do It!? Computer-Use Agents Exhibit Blind Goal-Directedness</a></li>
+<li>Google Research, <a target="_blank" rel="noopener" href="https://research.google/pubs/self-evolving-systems-moving-beyond-deterministic-interfaces-to-adaptive-generative-interfaces/">Self-Evolving Systems: Moving Beyond Deterministic Interfaces to Adaptive Generative Interfaces</a></li>
+<li>LangChain, <a target="_blank" rel="noopener" href="https://docs.langchain.com/oss/python/langgraph/workflows-agents">Workflows and agents</a></li>
+<li>HumanLayer, <a target="_blank" rel="noopener" href="https://github.com/humanlayer/12-factor-agents">12-Factor Agents</a></li>
+<li>Microsoft Learn, <a target="_blank" rel="noopener" href="https://learn.microsoft.com/en-us/microsoft-copilot-studio/guidance/generative-orchestration">Apply generative orchestration capabilities</a></li>
+<li>GitHub Docs, <a target="_blank" rel="noopener" href="https://docs.github.com/en/copilot/concepts/agents/cloud-agent/risks-and-mitigations">Risks and mitigations for GitHub Copilot cloud agent</a></li>
+</ol>
+</div>
+    <aside class="post-rail">
+      <span class="post-rail__line"></span>
+      <span>LESLIE / WRITING</span>
+    </aside>
+  </div>
+
+  <footer class="post-footer shell">
+    <div><h2>如果这篇文章帮到了你，<br>也许下一篇会更有意思。</h2></div>
+    <a class="button button--primary" href="/writing/">继续阅读 →</a>
+  </footer>
+</article>
+</main>
+    <footer class="site-footer">
+  <div class="footer-grid">
+    <div>
+      <p class="footer-kicker">Leslie Zhang</p>
+      <p class="footer-statement">把真实世界的问题，<br>变成可以运行的智能系统。</p>
+    </div>
+    <div class="footer-links">
+      <a href="https://github.com/leslieAIbin" target="_blank" rel="noreferrer">GitHub ↗</a>
+      <a href="mailto:aibinzhangleslie@gmail.com">Email ↗</a>
+      <a href="/atom.xml">RSS ↗</a>
+    </div>
+    <div class="footer-meta">
+      <span>© 2026 Leslie Zhang</span>
+      <span>Writing, research and working systems.</span>
+    </div>
+  </div>
+</footer>
+
+    <dialog class="ask-dialog" id="ask-leslie" aria-labelledby="ask-title">
+  <div class="ask-dialog__shell">
+    <div class="ask-dialog__topbar">
+      <div>
+        <h2 id="ask-title">Ask Leslie</h2>
+      </div>
+      <button class="icon-button" type="button" data-ask-close aria-label="关闭">×</button>
+    </div>
+    <p class="ask-dialog__intro">从本站公开文章中寻找答案。当前版本在浏览器本地检索，不上传问题，也不会编造不存在的经历。</p>
+    <form class="ask-form" data-ask-form>
+      <label class="sr-only" for="ask-query">输入问题</label>
+      <textarea id="ask-query" rows="2" placeholder="例如：Agent Runtime 应该怎么设计？" data-ask-input></textarea>
+      <button type="submit">检索知识库 <span aria-hidden="true">↗</span></button>
+    </form>
+    <div class="ask-suggestions" aria-label="推荐问题">
+      
+        <button type="button" data-ask-suggestion="Agent Runtime 应该怎么设计？">Agent Runtime 应该怎么设计？</button>
+      
+        <button type="button" data-ask-suggestion="如何让 AI 操控真实世界设备？">如何让 AI 操控真实世界设备？</button>
+      
+        <button type="button" data-ask-suggestion="Leslie 最近在研究什么？">Leslie 最近在研究什么？</button>
+      
+    </div>
+    <div class="ask-results" data-ask-results aria-live="polite">
+      <div class="ask-empty">
+        <p>输入一个问题，我会把你带到 Leslie 写过的相关内容。</p>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+    <script>window.ORBITAL_ROOT = '/';</script>
+    <script src="/js/orbital.js" defer></script>
+  </body>
+</html>

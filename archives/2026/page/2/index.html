@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+  <head>
+
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#050b18">
+<meta name="color-scheme" content="dark light">
+<title>Leslie Zhang | AI Agent &amp; Agent Infra Engineer</title>
+<meta name="description" content="构建能够感知、规划、行动与反馈的智能体系统，长期关注 Agent Runtime、多模态与真实世界自动化。">
+<meta name="author" content="Leslie Zhang">
+<link rel="canonical" href="https://leslieaibin.github.io/archives/2026/page/2/index.html">
+<link rel="icon" href="/imgs/01.jpg">
+<link rel="alternate" type="application/atom+xml" title="Leslie Zhang" href="/atom.xml">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Leslie Zhang | AI Agent &amp; Agent Infra Engineer">
+<meta property="og:description" content="构建能够感知、规划、行动与反馈的智能体系统，长期关注 Agent Runtime、多模态与真实世界自动化。">
+<meta property="og:url" content="https://leslieaibin.github.io/archives/2026/page/2/index.html">
+<meta property="og:image" content="https://leslieaibin.github.io/og-blue.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Leslie Zhang | AI Agent &amp; Agent Infra Engineer">
+<meta name="twitter:description" content="构建能够感知、规划、行动与反馈的智能体系统，长期关注 Agent Runtime、多模态与真实世界自动化。">
+<meta name="twitter:image" content="https://leslieaibin.github.io/og-blue.png">
+<script>
+  (function () {
+    var saved = localStorage.getItem('orbital-theme');
+    var theme = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    document.documentElement.dataset.theme = theme;
+  })();
+</script>
+<link rel="stylesheet" href="/css/orbital.css">
+<meta name="generator" content="Hexo 5.2.0"></head>
+  <body class="page-index">
+    <a class="skip-link" href="#main-content">跳到主要内容</a>
+    <div class="reading-progress" data-reading-progress></div>
+    <header class="site-header" data-header>
+  <div class="nav-shell">
+    <a class="brand" href="/" aria-label="返回首页">
+      <span class="brand-mark" aria-hidden="true"><img src="/images/brand/leslie-mythos-avatar.webp" alt="" width="512" height="512"></span>
+      <span class="brand-copy">
+        <strong>LESLIE</strong>
+        <small>REAL-WORLD AGENTS</small>
+      </span>
+    </a>
+
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav" data-nav-toggle>
+      <span></span><span></span>
+      <span class="sr-only">打开导航</span>
+    </button>
+
+    <nav class="main-nav" id="main-nav" aria-label="主导航" data-nav>
+      
+        <a href="/" class="">首页</a>
+      
+        <a href="/writing/" class="">写作</a>
+      
+        <a href="/projects/" class="">项目</a>
+      
+        <a href="/about/" class="">关于</a>
+      
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换明暗主题">
+        <span class="theme-toggle__sun" aria-hidden="true">☼</span>
+        <span class="theme-toggle__moon" aria-hidden="true">◐</span>
+      </button>
+      <button class="ask-nav" type="button" data-ask-open>ASK LESLIE</button>
+    </nav>
+  </div>
+</header>
+
+    <main id="main-content"><section class="page-hero shell">
+  <p class="page-kicker">Writing archive</p>
+  <h1>全部归档</h1>
+  <p>按时间回看一路留下的工程笔记。</p>
+</section>
+<section class="section shell"><div class="writing-list" data-writing-list>
+  
+    <article class="writing-row reveal" data-writing-item data-search="大模型为什么第一个字最慢？从 ttft 到 tpot 拆解推理延迟 llm inference kv-cache prompt-cache ttft prefill tpot decode 大模型为什么第一个字最慢？从 ttft 到 tpot 拆解推理延迟 如果你经常用 chatgpt、claude、gemini，或者自己写过一点 agent，你一定遇到过一个很微妙的瞬间。 你按下回车。 屏幕安静了几秒。 然后第一个字终于蹦出来。 最奇怪的是，一旦第一个字出来，后面又好像顺了很多。模型开始一行一行往外吐，虽然偶尔也会卡，但那种「等第一个字」的感觉，和后面「字一个个出来」的感觉，明显不是一回事。 以前我也只是粗暴地把它理解成，模型在想。 但后来越做 agent，越…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2026-06-23">2026.06.23</time><span>15 MIN</span></div>
+        <h2><a href="/2026/06/23/attention-field/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%B8%BA%E4%BB%80%E4%B9%88%E7%AC%AC%E4%B8%80%E4%B8%AA%E5%AD%97%E6%9C%80%E6%85%A2/">大模型为什么第一个字最慢？从 TTFT 到 TPOT 拆解推理延迟</a></h2>
+        <p>大模型为什么第一个字最慢？从 TTFT 到 TPOT 拆解推理延迟 如果你经常用 ChatGPT、Claude、Gemini，或者自己写过一点 Agent，你一定遇到过一个很微妙的瞬间。 你按下回车。 屏幕安静了几秒。 然后第一个字终于蹦出来。 最奇怪的是，一旦第一个字出来，后面又好像顺了很多。模型…</p>
+        <div class="chip-row"><span>LLM</span><span>Inference</span><span>KV-Cache</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2026/06/23/attention-field/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%B8%BA%E4%BB%80%E4%B9%88%E7%AC%AC%E4%B8%80%E4%B8%AA%E5%AD%97%E6%9C%80%E6%85%A2/" aria-label="阅读《大模型为什么第一个字最慢？从 TTFT 到 TPOT 拆解推理延迟》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="大模型推理引擎到底在调度什么？从 vllm 到 sglang 看服务端黑箱 llm inference pagedattention vllm sglang scheduling distserve 大模型推理引擎到底在调度什么？从 vllm 到 sglang 看服务端黑箱 如果你只是在 api 层面用大模型，很容易把这件事想得特别简单。 发请求。 等结果。 结束。 但你只要开始真做线上服务，就会发现这套东西根本不是“发出去、回回来”这么朴素。你看到的只是一个接口，后面其实是一个不停调度请求、抢显存、拆批次、复用缓存、分配 gpu、平衡 ttft 和 tpot 的服务系统。 它更像一个小型操作系统。 只是这个操作系统管理的不是文件和进程，而是 token、kv cache…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2026-06-23">2026.06.23</time><span>10 MIN</span></div>
+        <h2><a href="/2026/06/23/attention-field/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E6%8E%A8%E7%90%86%E5%BC%95%E6%93%8E%E5%88%B0%E5%BA%95%E5%9C%A8%E8%B0%83%E5%BA%A6%E4%BB%80%E4%B9%88/">大模型推理引擎到底在调度什么？从 vLLM 到 SGLang 看服务端黑箱</a></h2>
+        <p>大模型推理引擎到底在调度什么？从 vLLM 到 SGLang 看服务端黑箱 如果你只是在 API 层面用大模型，很容易把这件事想得特别简单。 发请求。 等结果。 结束。 但你只要开始真做线上服务，就会发现这套东西根本不是“发出去、回回来”这么朴素。你看到的只是一个接口，后面其实是一个不停调度请求、抢…</p>
+        <div class="chip-row"><span>LLM</span><span>Inference</span><span>PagedAttention</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2026/06/23/attention-field/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E6%8E%A8%E7%90%86%E5%BC%95%E6%93%8E%E5%88%B0%E5%BA%95%E5%9C%A8%E8%B0%83%E5%BA%A6%E4%BB%80%E4%B9%88/" aria-label="阅读《大模型推理引擎到底在调度什么？从 vLLM 到 SGLang 看服务端黑箱》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="长上下文到底贵在哪里？kv cache 压缩、淘汰和 offload 全景拆解 llm inference kv-cache long-context offload compression eviction 长上下文到底贵在哪里？kv cache 压缩、淘汰和 offload 全景拆解 这两年大模型最容易把人带偏的一件事，就是上下文窗口越报越大，大家就越容易产生一种错觉， 上下文好像是免费的。 128k。 200k。 1m。 这些数字看上去都很爽，像是模型终于学会记东西了。你把资料全塞进去，它就能一口气读完、分析完、回答完。 但只要你自己真去做长上下文应用，很快就会撞上一堵墙。 不是模型看不懂。 是它太贵了。 贵的不是那个 token 数字本身，贵的是每个 token 背后都要付…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2026-06-23">2026.06.23</time><span>11 MIN</span></div>
+        <h2><a href="/2026/06/23/attention-field/%E9%95%BF%E4%B8%8A%E4%B8%8B%E6%96%87%E5%88%B0%E5%BA%95%E8%B4%B5%E5%9C%A8%E5%93%AA%E9%87%8C/">长上下文到底贵在哪里？KV Cache 压缩、淘汰和 Offload 全景拆解</a></h2>
+        <p>长上下文到底贵在哪里？KV Cache 压缩、淘汰和 Offload 全景拆解 这两年大模型最容易把人带偏的一件事，就是上下文窗口越报越大，大家就越容易产生一种错觉， 上下文好像是免费的。 128K。 200K。 1M。 这些数字看上去都很爽，像是模型终于学会记东西了。你把资料全塞进去，它就能一口气…</p>
+        <div class="chip-row"><span>LLM</span><span>Inference</span><span>KV-Cache</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2026/06/23/attention-field/%E9%95%BF%E4%B8%8A%E4%B8%8B%E6%96%87%E5%88%B0%E5%BA%95%E8%B4%B5%E5%9C%A8%E5%93%AA%E9%87%8C/" aria-label="阅读《长上下文到底贵在哪里？KV Cache 压缩、淘汰和 Offload 全景拆解》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="deepseek的推理为什么比别人便宜一个数量级？——mla、moe、mtp技术拆解 llm deepseek inference mla moe mtp kv-cache deepseek的推理为什么比别人便宜一个数量级？——mla、moe、mtp技术拆解 如果你最近调过各家大模型的api，你一定注意到一件事。 gpt-4o 的价格大概是输入 $2.5/1m token，输出 $10/1m token。claude opus 4 更贵一些。但 deepseek v3 呢？输入 $0.27/1m token，输出 $1.1/1m token。输出价格差了将近10倍。 这就引出一个很自然的问题：deepseek 凭什么便宜这么多？是补贴烧钱？还是有…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2026-06-14">2026.06.14</time><span>12 MIN</span></div>
+        <h2><a href="/2026/06/14/attention-field/DeepSeek%E6%8E%A8%E7%90%86%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BE%BF%E5%AE%9C-MLA-MoE-MTP%E6%8A%80%E6%9C%AF%E6%8B%86%E8%A7%A3/">DeepSeek的推理为什么比别人便宜一个数量级？——MLA、MoE、MTP技术拆解</a></h2>
+        <p>DeepSeek的推理为什么比别人便宜一个数量级？——MLA、MoE、MTP技术拆解 如果你最近调过各家大模型的API，你一定注意到一件事。 GPT-4o 的价格大概是输入 $2.5/1M token，输出 $10/1M token。Claude Opus 4 更贵一些。但 DeepSeek V3…</p>
+        <div class="chip-row"><span>LLM</span><span>DeepSeek</span><span>Inference</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2026/06/14/attention-field/DeepSeek%E6%8E%A8%E7%90%86%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BE%BF%E5%AE%9C-MLA-MoE-MTP%E6%8A%80%E6%9C%AF%E6%8B%86%E8%A7%A3/" aria-label="阅读《DeepSeek的推理为什么比别人便宜一个数量级？——MLA、MoE、MTP技术拆解》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="ai coding到底是怎么写出能用的代码的？——spec coding工程化全链路 agent llm ai-coding spec-coding 代码生成 ai coding到底是怎么写出能用的代码的？——spec coding工程化全链路 如果你用过 cursor 或 claude code 写代码，你一定体验过这种感觉： 给它一句”帮我加一个用户登录功能”，它刷刷刷生成几百行代码，看着像模像样。但你细看——密码没加密，session 没过期时间，sql 查询有注入风险，错误处理全是一个 。能用吗？能用。敢用吗？不敢。 这就是 ai coding 的核心难题： 能写代码 ≠ 能写能用的代码 。 从”能写”到”能用的”之间，差了…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2026-06-14">2026.06.14</time><span>10 MIN</span></div>
+        <h2><a href="/2026/06/14/attention-field/Spec-Coding%E5%B7%A5%E7%A8%8B%E5%8C%96%E5%85%A8%E9%93%BE%E8%B7%AF-AI%E5%A6%82%E4%BD%95%E5%86%99%E5%87%BA%E8%83%BD%E7%94%A8%E7%9A%84%E4%BB%A3%E7%A0%81/">AI Coding到底是怎么写出能用的代码的？——Spec Coding工程化全链路</a></h2>
+        <p>AI Coding到底是怎么写出能用的代码的？——Spec Coding工程化全链路 如果你用过 Cursor 或 Claude Code 写代码，你一定体验过这种感觉： 给它一句”帮我加一个用户登录功能”，它刷刷刷生成几百行代码，看着像模像样。但你细看——密码没加密，session 没过期时间，S…</p>
+        <div class="chip-row"><span>Agent</span><span>LLM</span><span>AI-Coding</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2026/06/14/attention-field/Spec-Coding%E5%B7%A5%E7%A8%8B%E5%8C%96%E5%85%A8%E9%93%BE%E8%B7%AF-AI%E5%A6%82%E4%BD%95%E5%86%99%E5%87%BA%E8%83%BD%E7%94%A8%E7%9A%84%E4%BB%A3%E7%A0%81/" aria-label="阅读《AI Coding到底是怎么写出能用的代码的？——Spec Coding工程化全链路》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="控制链路到底该用webrtc还是websocket？——实时双向通信的选型拆解 webrtc websocket 实时通信 控制链路 系统设计 控制链路到底该用webrtc还是websocket？——实时双向通信的选型拆解 几年前我做无人机远程操控系统的时候，遇到过一个至今记忆犹新的架构决策：无人机和地面站之间的控制链路，用 webrtc 还是 websocket？ 当时的直觉是”webrtc 延迟低”，但团队里一个资深工程师反问了一句：”webrtc 可能丢包，控制链路用它，你不怕无人机收不到返航指令？” 这个问题问得好。它指向一个很多人没想清楚的问题： 实时通信的”低延迟”和控制链路的”高可靠”不是一回事 。你选…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2026-06-14">2026.06.14</time><span>10 MIN</span></div>
+        <h2><a href="/2026/06/14/attention-field/WebRTC-vs-WebSocket%E5%AE%9E%E6%97%B6%E6%8E%A7%E5%88%B6%E9%93%BE%E8%B7%AF%E9%80%89%E5%9E%8B%E6%8B%86%E8%A7%A3/">控制链路到底该用WebRTC还是WebSocket？——实时双向通信的选型拆解</a></h2>
+        <p>控制链路到底该用WebRTC还是WebSocket？——实时双向通信的选型拆解 几年前我做无人机远程操控系统的时候，遇到过一个至今记忆犹新的架构决策：无人机和地面站之间的控制链路，用 WebRTC 还是 WebSocket？ 当时的直觉是”WebRTC 延迟低”，但团队里一个资深工程师反问了一句：”…</p>
+        <div class="chip-row"><span>WebRTC</span><span>WebSocket</span><span>实时通信</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2026/06/14/attention-field/WebRTC-vs-WebSocket%E5%AE%9E%E6%97%B6%E6%8E%A7%E5%88%B6%E9%93%BE%E8%B7%AF%E9%80%89%E5%9E%8B%E6%8B%86%E8%A7%A3/" aria-label="阅读《控制链路到底该用WebRTC还是WebSocket？——实时双向通信的选型拆解》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="agent沙箱token安全：怎么让工具可用但密钥不可见 安全 agent 沙箱 token管理 oauth2.0 agent沙箱token安全：怎么让工具可用但密钥不可见 很多人觉得沙箱就是安全边界。把agent放在docker容器里跑，隔离开文件系统和网络，便认为安全问题已解决。 但问题是： agent需要调用外部api——github、飞书、数据库、llm。这些调用需要token。token放在哪里？ 放环境变量里？放配置文件里？不管放哪里，只要在沙箱内部，agent（也就是llm）就能读到——而llm生成的代码可能会把你的token发到任何地方。 这不是假设。已有研究表明，通过间接…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2026-06-07">2026.06.07</time><span>6 MIN</span></div>
+        <h2><a href="/2026/06/07/attention-field/Agent%E6%B2%99%E7%AE%B1Token%E5%AE%89%E5%85%A8/">Agent沙箱Token安全：怎么让工具可用但密钥不可见</a></h2>
+        <p>Agent沙箱Token安全：怎么让工具可用但密钥不可见 很多人觉得沙箱就是安全边界。把Agent放在Docker容器里跑，隔离开文件系统和网络，便认为安全问题已解决。 但问题是： Agent需要调用外部API——GitHub、飞书、数据库、LLM。这些调用需要Token。Token放在哪里？ 放环…</p>
+        <div class="chip-row"><span>安全</span><span>Agent</span><span>沙箱</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2026/06/07/attention-field/Agent%E6%B2%99%E7%AE%B1Token%E5%AE%89%E5%85%A8/" aria-label="阅读《Agent沙箱Token安全：怎么让工具可用但密钥不可见》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="agent评测：从golden set到业务指标 agent llm 评测 质量保障 agent评测：从golden set到业务指标 很多人觉得agent评测就是”写几个测试用例，跑一下看结果对不对”。和单元测试有些相似，但本质不同。 但agent的行为是 非确定性 的——同样的输入，今天能过明天可能就不过了。你改了一个prompt的措辞，或者llm provider悄悄更新了模型，agent的行为就可能漂移。 你需要的不是”通过/不通过”的二值判断，而是一套 能持续度量质量、定位退化、驱动迭代的评测体系 。 为什么agent评测难 原因有三，且个个棘手。…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2026-06-07">2026.06.07</time><span>5 MIN</span></div>
+        <h2><a href="/2026/06/07/attention-field/Agent%E8%AF%84%E6%B5%8B/">Agent评测：从Golden Set到业务指标</a></h2>
+        <p>Agent评测：从Golden Set到业务指标 很多人觉得Agent评测就是”写几个测试用例，跑一下看结果对不对”。和单元测试有些相似，但本质不同。 但Agent的行为是 非确定性 的——同样的输入，今天能过明天可能就不过了。你改了一个Prompt的措辞，或者LLM provider悄悄更新了模型…</p>
+        <div class="chip-row"><span>Agent</span><span>LLM</span><span>评测</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2026/06/07/attention-field/Agent%E8%AF%84%E6%B5%8B/" aria-label="阅读《Agent评测：从Golden Set到业务指标》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="claude managed agents到底在做什么 anthropic claude agent 产品分析 claude managed agents到底在做什么 初次接触 claude managed agents 时，容易将其理解为 claude code 的 api 版本——通过 api 创建 agent，在沙箱中执行代码并返回结果。 但查阅官方文档后会发现，它不是一个产品，而是一套 agent基础设施 。它定义了agent怎么跑、怎么授权、怎么和外部世界交互。这更像是aws lambda给serverless的定义——不是又一个计算服务，而是对”函数即服务”这个范式的基础设…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2026-06-07">2026.06.07</time><span>5 MIN</span></div>
+        <h2><a href="/2026/06/07/attention-field/Claude-Managed-Agents/">Claude Managed Agents到底在做什么</a></h2>
+        <p>Claude Managed Agents到底在做什么 初次接触 Claude Managed Agents 时，容易将其理解为 Claude Code 的 API 版本——通过 API 创建 Agent，在沙箱中执行代码并返回结果。 但查阅官方文档后会发现，它不是一个产品，而是一套 Agent基础…</p>
+        <div class="chip-row"><span>Anthropic</span><span>Claude</span><span>Agent</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2026/06/07/attention-field/Claude-Managed-Agents/" aria-label="阅读《Claude Managed Agents到底在做什么》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="大规模agent系统设计：从个人助手到十亿用户服务 agent 系统设计 分布式系统 llm应用 大规模agent系统设计：从个人助手到十亿用户服务 很多人第一次搭agent系统，觉得就是”套个llm api + 加几个工具调用”。跑通了一个demo，问它”今天天气怎么样”能正确调用天气api，就以为agent系统的复杂度仅此而已。 但实际情况是： 你的系统能服务1个用户、10个用户、10万个用户，架构完全不同。 这不是夸张。一个能正确调用工具的agent，和一个能稳定服务百万用户的agent系统，中间隔着的东西，和你写一个hello world到构建一个淘宝的距离差不多…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2026-06-07">2026.06.07</time><span>6 MIN</span></div>
+        <h2><a href="/2026/06/07/attention-field/%E5%A4%A7%E8%A7%84%E6%A8%A1Agent%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/">大规模Agent系统设计：从个人助手到十亿用户服务</a></h2>
+        <p>大规模Agent系统设计：从个人助手到十亿用户服务 很多人第一次搭Agent系统，觉得就是”套个LLM API + 加几个工具调用”。跑通了一个Demo，问它”今天天气怎么样”能正确调用天气API，就以为Agent系统的复杂度仅此而已。 但实际情况是： 你的系统能服务1个用户、10个用户、10万个用…</p>
+        <div class="chip-row"><span>Agent</span><span>系统设计</span><span>分布式系统</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2026/06/07/attention-field/%E5%A4%A7%E8%A7%84%E6%A8%A1Agent%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/" aria-label="阅读《大规模Agent系统设计：从个人助手到十亿用户服务》">↗</a>
+    </article>
+  
+</div>
+<a class="extend prev" rel="prev" href="/archives/2026/">Prev</a><a class="page-number" href="/archives/2026/">1</a><span class="page-number current">2</span><a class="page-number" href="/archives/2026/page/3/">3</a><a class="page-number" href="/archives/2026/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/archives/2026/page/6/">6</a><a class="extend next" rel="next" href="/archives/2026/page/3/">Next</a></section>
+</main>
+    <footer class="site-footer">
+  <div class="footer-grid">
+    <div>
+      <p class="footer-kicker">Leslie Zhang</p>
+      <p class="footer-statement">把真实世界的问题，<br>变成可以运行的智能系统。</p>
+    </div>
+    <div class="footer-links">
+      <a href="https://github.com/leslieAIbin" target="_blank" rel="noreferrer">GitHub ↗</a>
+      <a href="mailto:aibinzhangleslie@gmail.com">Email ↗</a>
+      <a href="/atom.xml">RSS ↗</a>
+    </div>
+    <div class="footer-meta">
+      <span>© 2026 Leslie Zhang</span>
+      <span>Writing, research and working systems.</span>
+    </div>
+  </div>
+</footer>
+
+    <dialog class="ask-dialog" id="ask-leslie" aria-labelledby="ask-title">
+  <div class="ask-dialog__shell">
+    <div class="ask-dialog__topbar">
+      <div>
+        <h2 id="ask-title">Ask Leslie</h2>
+      </div>
+      <button class="icon-button" type="button" data-ask-close aria-label="关闭">×</button>
+    </div>
+    <p class="ask-dialog__intro">从本站公开文章中寻找答案。当前版本在浏览器本地检索，不上传问题，也不会编造不存在的经历。</p>
+    <form class="ask-form" data-ask-form>
+      <label class="sr-only" for="ask-query">输入问题</label>
+      <textarea id="ask-query" rows="2" placeholder="例如：Agent Runtime 应该怎么设计？" data-ask-input></textarea>
+      <button type="submit">检索知识库 <span aria-hidden="true">↗</span></button>
+    </form>
+    <div class="ask-suggestions" aria-label="推荐问题">
+      
+        <button type="button" data-ask-suggestion="Agent Runtime 应该怎么设计？">Agent Runtime 应该怎么设计？</button>
+      
+        <button type="button" data-ask-suggestion="如何让 AI 操控真实世界设备？">如何让 AI 操控真实世界设备？</button>
+      
+        <button type="button" data-ask-suggestion="Leslie 最近在研究什么？">Leslie 最近在研究什么？</button>
+      
+    </div>
+    <div class="ask-results" data-ask-results aria-live="polite">
+      <div class="ask-empty">
+        <p>输入一个问题，我会把你带到 Leslie 写过的相关内容。</p>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+    <script>window.ORBITAL_ROOT = '/';</script>
+    <script src="/js/orbital.js" defer></script>
+  </body>
+</html>

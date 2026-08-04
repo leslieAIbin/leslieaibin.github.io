@@ -1,156 +1,94 @@
-<!DOCTYPE html><html lang="zh-Hans" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>我文章里那些好看的信息图，都是这一个免费工具画的 | Mr.Ai</title><meta name="keywords" content="AI,Skills,Claude Code,开源,效率,AI画图"><meta name="author" content="Leslie"><meta name="copyright" content="Leslie"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><meta name="description" content="我文章里那些好看的信息图，都是这一个免费工具画的最近有朋友问我，你文章里那些信息图是怎么画的，配色统一风格统一，看着像一个人做的。 我当时回了一句，确实是一个「人」做的，只不过这个人是 AI。 然后对方来了兴趣，追问用的什么工具。我想了想，觉得这个东西可能不止他一个人好奇，干脆写篇文章聊聊。 先说个背景。 我写文章有个习惯，每篇都会配信息图。不是随便找张网图凑数的那种，是根据文章内容专门做的。环形">
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+  <head>
+
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#050b18">
+<meta name="color-scheme" content="dark light">
+<title>我文章里那些好看的信息图，都是这一个免费工具画的 | Leslie Zhang</title>
+<meta name="description" content="很多人问我文章里的信息图是怎么画的。答案是一个叫 baoyu-skills 的开源工具，加上 Google 的 nano-banana 模型。支持 9 个供应商、21 种布局、20 种风格，免费开源，一行命令安装。它的核心不是让 AI 画得更好看，而是让 AI 画图这件事变得稳定可复现。">
+<meta name="author" content="Leslie Zhang">
+<link rel="canonical" href="https://leslieaibin.github.io/2026/04/08/%E6%88%91%E6%96%87%E7%AB%A0%E9%87%8C%E9%82%A3%E4%BA%9B%E5%A5%BD%E7%9C%8B%E7%9A%84%E4%BF%A1%E6%81%AF%E5%9B%BE%EF%BC%8C%E9%83%BD%E6%98%AF%E8%BF%99%E4%B8%80%E4%B8%AA%E5%85%8D%E8%B4%B9%E5%B7%A5%E5%85%B7%E7%94%BB%E7%9A%84/">
+<link rel="icon" href="/imgs/01.jpg">
+<link rel="alternate" type="application/atom+xml" title="Leslie Zhang" href="/atom.xml">
 <meta property="og:type" content="article">
-<meta property="og:title" content="我文章里那些好看的信息图，都是这一个免费工具画的">
-<meta property="og:url" content="https://leslieaibin.github.io/2026/04/08/%E6%88%91%E6%96%87%E7%AB%A0%E9%87%8C%E9%82%A3%E4%BA%9B%E5%A5%BD%E7%9C%8B%E7%9A%84%E4%BF%A1%E6%81%AF%E5%9B%BE%EF%BC%8C%E9%83%BD%E6%98%AF%E8%BF%99%E4%B8%80%E4%B8%AA%E5%85%8D%E8%B4%B9%E5%B7%A5%E5%85%B7%E7%94%BB%E7%9A%84/index.html">
-<meta property="og:site_name" content="Mr.Ai">
-<meta property="og:description" content="我文章里那些好看的信息图，都是这一个免费工具画的最近有朋友问我，你文章里那些信息图是怎么画的，配色统一风格统一，看着像一个人做的。 我当时回了一句，确实是一个「人」做的，只不过这个人是 AI。 然后对方来了兴趣，追问用的什么工具。我想了想，觉得这个东西可能不止他一个人好奇，干脆写篇文章聊聊。 先说个背景。 我写文章有个习惯，每篇都会配信息图。不是随便找张网图凑数的那种，是根据文章内容专门做的。环形">
-<meta property="og:locale">
+<meta property="og:title" content="我文章里那些好看的信息图，都是这一个免费工具画的 | Leslie Zhang">
+<meta property="og:description" content="很多人问我文章里的信息图是怎么画的。答案是一个叫 baoyu-skills 的开源工具，加上 Google 的 nano-banana 模型。支持 9 个供应商、21 种布局、20 种风格，免费开源，一行命令安装。它的核心不是让 AI 画得更好看，而是让 AI 画图这件事变得稳定可复现。">
+<meta property="og:url" content="https://leslieaibin.github.io/2026/04/08/%E6%88%91%E6%96%87%E7%AB%A0%E9%87%8C%E9%82%A3%E4%BA%9B%E5%A5%BD%E7%9C%8B%E7%9A%84%E4%BF%A1%E6%81%AF%E5%9B%BE%EF%BC%8C%E9%83%BD%E6%98%AF%E8%BF%99%E4%B8%80%E4%B8%AA%E5%85%8D%E8%B4%B9%E5%B7%A5%E5%85%B7%E7%94%BB%E7%9A%84/">
 <meta property="og:image" content="https://leslieaibin.github.io/2026/04/08/%E6%88%91%E6%96%87%E7%AB%A0%E9%87%8C%E9%82%A3%E4%BA%9B%E5%A5%BD%E7%9C%8B%E7%9A%84%E4%BF%A1%E6%81%AF%E5%9B%BE%EF%BC%8C%E9%83%BD%E6%98%AF%E8%BF%99%E4%B8%80%E4%B8%AA%E5%85%8D%E8%B4%B9%E5%B7%A5%E5%85%B7%E7%94%BB%E7%9A%84/01-infographic-9-providers.png">
-<meta property="article:published_time" content="2026-04-07T16:00:00.000Z">
-<meta property="article:modified_time" content="2026-04-12T09:00:24.717Z">
-<meta property="article:author" content="Leslie">
-<meta property="article:tag" content="AI">
-<meta property="article:tag" content="Skills">
-<meta property="article:tag" content="Claude Code">
-<meta property="article:tag" content="开源">
-<meta property="article:tag" content="效率">
-<meta property="article:tag" content="AI画图">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://leslieaibin.github.io/2026/04/08/%E6%88%91%E6%96%87%E7%AB%A0%E9%87%8C%E9%82%A3%E4%BA%9B%E5%A5%BD%E7%9C%8B%E7%9A%84%E4%BF%A1%E6%81%AF%E5%9B%BE%EF%BC%8C%E9%83%BD%E6%98%AF%E8%BF%99%E4%B8%80%E4%B8%AA%E5%85%8D%E8%B4%B9%E5%B7%A5%E5%85%B7%E7%94%BB%E7%9A%84/01-infographic-9-providers.png"><link rel="shortcut icon" href="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/01.jpg?raw=true"><link rel="canonical" href="https://leslieaibin.github.io/2026/04/08/%E6%88%91%E6%96%87%E7%AB%A0%E9%87%8C%E9%82%A3%E4%BA%9B%E5%A5%BD%E7%9C%8B%E7%9A%84%E4%BF%A1%E6%81%AF%E5%9B%BE%EF%BC%8C%E9%83%BD%E6%98%AF%E8%BF%99%E4%B8%80%E4%B8%AA%E5%85%8D%E8%B4%B9%E5%B7%A5%E5%85%B7%E7%94%BB%E7%9A%84/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css"><script>var GLOBAL_CONFIG = { 
-  root: '/',
-  algolia: undefined,
-  localSearch: undefined,
-  translate: undefined,
-  noticeOutdate: undefined,
-  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":false},
-  copy: {
-    success: 'Copy successfully',
-    error: 'Copy error',
-    noSupport: 'The browser does not support'
-  },
-  relativeDate: {
-    homepage: false,
-    post: false
-  },
-  runtime: '',
-  date_suffix: {
-    just: 'Just',
-    min: 'minutes ago',
-    hour: 'hours ago',
-    day: 'days ago',
-    month: 'months ago'
-  },
-  copyright: undefined,
-  ClickShowText: undefined,
-  lightbox: 'fancybox',
-  Snackbar: undefined,
-  justifiedGallery: {
-    js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
-    css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
-  },
-  isPhotoFigcaption: false,
-  islazyload: false,
-  isanchor: false
-};
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="我文章里那些好看的信息图，都是这一个免费工具画的 | Leslie Zhang">
+<meta name="twitter:description" content="很多人问我文章里的信息图是怎么画的。答案是一个叫 baoyu-skills 的开源工具，加上 Google 的 nano-banana 模型。支持 9 个供应商、21 种布局、20 种风格，免费开源，一行命令安装。它的核心不是让 AI 画得更好看，而是让 AI 画图这件事变得稳定可复现。">
+<meta name="twitter:image" content="https://leslieaibin.github.io/2026/04/08/%E6%88%91%E6%96%87%E7%AB%A0%E9%87%8C%E9%82%A3%E4%BA%9B%E5%A5%BD%E7%9C%8B%E7%9A%84%E4%BF%A1%E6%81%AF%E5%9B%BE%EF%BC%8C%E9%83%BD%E6%98%AF%E8%BF%99%E4%B8%80%E4%B8%AA%E5%85%8D%E8%B4%B9%E5%B7%A5%E5%85%B7%E7%94%BB%E7%9A%84/01-infographic-9-providers.png">
+<script>
+  (function () {
+    var saved = localStorage.getItem('orbital-theme');
+    var theme = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    document.documentElement.dataset.theme = theme;
+  })();
+</script>
+<link rel="stylesheet" href="/css/orbital.css">
+<meta name="generator" content="Hexo 5.2.0"></head>
+  <body class="page-post">
+    <a class="skip-link" href="#main-content">跳到主要内容</a>
+    <div class="reading-progress" data-reading-progress></div>
+    <header class="site-header" data-header>
+  <div class="nav-shell">
+    <a class="brand" href="/" aria-label="返回首页">
+      <span class="brand-mark" aria-hidden="true"><img src="/images/brand/leslie-mythos-avatar.webp" alt="" width="512" height="512"></span>
+      <span class="brand-copy">
+        <strong>LESLIE</strong>
+        <small>REAL-WORLD AGENTS</small>
+      </span>
+    </a>
 
-var saveToLocal = {
-  set: function setWithExpiry(key, value, ttl) {
-    const now = new Date()
-    const expiryDay = ttl * 86400000
-    const item = {
-      value: value,
-      expiry: now.getTime() + expiryDay,
-    }
-    localStorage.setItem(key, JSON.stringify(item))
-  },
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav" data-nav-toggle>
+      <span></span><span></span>
+      <span class="sr-only">打开导航</span>
+    </button>
 
-  get: function getWithExpiry(key) {
-    const itemStr = localStorage.getItem(key)
+    <nav class="main-nav" id="main-nav" aria-label="主导航" data-nav>
+      
+        <a href="/" class="">首页</a>
+      
+        <a href="/writing/" class="">写作</a>
+      
+        <a href="/projects/" class="">项目</a>
+      
+        <a href="/about/" class="">关于</a>
+      
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换明暗主题">
+        <span class="theme-toggle__sun" aria-hidden="true">☼</span>
+        <span class="theme-toggle__moon" aria-hidden="true">◐</span>
+      </button>
+      <button class="ask-nav" type="button" data-ask-open>ASK LESLIE</button>
+    </nav>
+  </div>
+</header>
 
-    if (!itemStr) {
-      return undefined
-    }
-    const item = JSON.parse(itemStr)
-    const now = new Date()
+    <main id="main-content"><article class="post-shell">
+  <header class="post-hero shell">
+    <a class="post-back" href="/writing/">← 返回写作</a>
+    <div class="post-hero__meta">
+      <time datetime="2026-04-08">2026 年 04 月 08 日</time>
+      <span>10 分钟阅读</span>
+    </div>
+    <h1>我文章里那些好看的信息图，都是这一个免费工具画的</h1>
+    <p class="post-hero__summary">很多人问我文章里的信息图是怎么画的。答案是一个叫 baoyu-skills 的开源工具，加上 Google 的 nano-banana 模型。支持 9 个供应商、21 种布局、20 种风格，免费开源，一行命令安装。它的核心不是让 AI 画得更好看，而是让 AI 画图这件事变得稳定可复现。</p>
+    <div class="chip-row"><a href="/tags/AI/">AI</a><a href="/tags/Claude-Code/">Claude Code</a><a href="/tags/Skills/">Skills</a><a href="/tags/%E5%BC%80%E6%BA%90/">开源</a><a href="/tags/%E6%95%88%E7%8E%87/">效率</a><a href="/tags/AI%E7%94%BB%E5%9B%BE/">AI画图</a></div>
+  </header>
 
-    if (now.getTime() > item.expiry) {
-      localStorage.removeItem(key)
-      return undefined
-    }
-    return item.value
-  }
-}</script><script id="config_change">var GLOBAL_CONFIG_SITE = { 
-  isPost: true,
-  isHome: false,
-  isHighlightShrink: false,
-  isToc: true,
-  postUpdate: '2026-04-12 17:00:24'
-}</script><noscript><style type="text/css">
-  #nav {
-    opacity: 1
-  }
-  .justified-gallery img {
-    opacity: 1
-  }
+  <div class="post-cover shell"><img src="/2026/04/08/%E6%88%91%E6%96%87%E7%AB%A0%E9%87%8C%E9%82%A3%E4%BA%9B%E5%A5%BD%E7%9C%8B%E7%9A%84%E4%BF%A1%E6%81%AF%E5%9B%BE%EF%BC%8C%E9%83%BD%E6%98%AF%E8%BF%99%E4%B8%80%E4%B8%AA%E5%85%8D%E8%B4%B9%E5%B7%A5%E5%85%B7%E7%94%BB%E7%9A%84/01-infographic-9-providers.png" alt="我文章里那些好看的信息图，都是这一个免费工具画的"></div>
 
-  #recent-posts time,
-  #post-meta time {
-    display: inline !important
-  }
-</style></noscript><script>(function () {  window.activateDarkMode = function () {
-    document.documentElement.setAttribute('data-theme', 'dark')
-    if (document.querySelector('meta[name="theme-color"]') !== null) {
-      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
-    }
-  }
-  window.activateLightMode = function () {
-    document.documentElement.setAttribute('data-theme', 'light')
-   if (document.querySelector('meta[name="theme-color"]') !== null) {
-      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
-    }
-  }
-  const autoChangeMode = 'false'
-  const t = saveToLocal.get('theme')
-  if (autoChangeMode === '1') {
-    const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
-    const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
-    const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
-    const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
-    if (t === undefined) {
-      if (isLightMode) activateLightMode()
-      else if (isDarkMode) activateDarkMode()
-      else if (isNotSpecified || hasNoSupport) {
-        const now = new Date()
-        const hour = now.getHours()
-        const isNight = hour <= 6 || hour >= 18
-        isNight ? activateDarkMode() : activateLightMode()
-      }
-      window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
-        if (saveToLocal.get('theme') === undefined) {
-          e.matches ? activateDarkMode() : activateLightMode()
-        }
-      })
-    } else if (t === 'light') activateLightMode()
-    else activateDarkMode()
-  } else if (autoChangeMode === '2') {
-    const now = new Date()
-    const hour = now.getHours()
-    const isNight = hour <= 6 || hour >= 18
-    if (t === undefined) isNight ? activateDarkMode() : activateLightMode()
-    else if (t === 'light') activateLightMode()
-    else activateDarkMode()
-  } else {
-    if (t === 'dark') activateDarkMode()
-    else if (t === 'light') activateLightMode()
-  }const asideStatus = saveToLocal.get('aside-status')
-if (asideStatus !== undefined) {
-   if (asideStatus === 'hide') {
-     document.documentElement.classList.add('hide-aside')
-   } else {
-     document.documentElement.classList.remove('hide-aside')
-   }
-}})()</script><meta name="generator" content="Hexo 5.2.0"><link rel="alternate" href="/atom.xml" title="Mr.Ai" type="application/atom+xml">
-</head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="author-avatar"><img class="avatar-img" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/01.jpg?raw=true" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">135</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">Tags</div><div class="length-num">51</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">Categories</div><div class="length-num">17</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/projects/"><i class="fa-fw fas fa-rocket"></i><span> 项目</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/artitalk/"><i class="fa-fw fas fa-pen"></i><span> 自言自语</span></a></div></div></div></div><div id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/2026/04/08/%E6%88%91%E6%96%87%E7%AB%A0%E9%87%8C%E9%82%A3%E4%BA%9B%E5%A5%BD%E7%9C%8B%E7%9A%84%E4%BF%A1%E6%81%AF%E5%9B%BE%EF%BC%8C%E9%83%BD%E6%98%AF%E8%BF%99%E4%B8%80%E4%B8%AA%E5%85%8D%E8%B4%B9%E5%B7%A5%E5%85%B7%E7%94%BB%E7%9A%84/01-infographic-9-providers.png)"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Mr.Ai</a></span><span id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/projects/"><i class="fa-fw fas fa-rocket"></i><span> 项目</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/artitalk/"><i class="fa-fw fas fa-pen"></i><span> 自言自语</span></a></div></div><span class="close" id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></span></span></nav><div id="post-info"><h1 class="post-title">我文章里那些好看的信息图，都是这一个免费工具画的</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2026-04-07T16:00:00.000Z" title="Created 2026-04-08 00:00:00">2026-04-08</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2026-04-12T09:00:24.717Z" title="Updated 2026-04-12 17:00:24">2026-04-12</time></span></div><div class="meta-secondline"> <span class="post-meta-separator">|</span><span class="post-meta-pv-cv"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post View:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="我文章里那些好看的信息图，都是这一个免费工具画的"><a href="#我文章里那些好看的信息图，都是这一个免费工具画的" class="headerlink" title="我文章里那些好看的信息图，都是这一个免费工具画的"></a>我文章里那些好看的信息图，都是这一个免费工具画的</h1><p>最近有朋友问我，你文章里那些信息图是怎么画的，配色统一风格统一，看着像一个人做的。</p>
+  <div class="post-layout shell">
+    <aside class="post-toc" aria-label="文章目录">
+      <span class="aside-title">目录</span>
+      
+    </aside>
+    <div class="article-content"><h1 id="我文章里那些好看的信息图，都是这一个免费工具画的"><a href="#我文章里那些好看的信息图，都是这一个免费工具画的" class="headerlink" title="我文章里那些好看的信息图，都是这一个免费工具画的"></a>我文章里那些好看的信息图，都是这一个免费工具画的</h1><p>最近有朋友问我，你文章里那些信息图是怎么画的，配色统一风格统一，看着像一个人做的。</p>
 <p>我当时回了一句，确实是一个「人」做的，只不过这个人是 AI。</p>
 <p>然后对方来了兴趣，追问用的什么工具。我想了想，觉得这个东西可能不止他一个人好奇，干脆写篇文章聊聊。</p>
 <p>先说个背景。</p>
@@ -233,4 +171,69 @@ if (asideStatus !== undefined) {
 <p>![](Pasted image 20260408204644.png)<br>![](Pasted image 20260408204702.png)</p>
 <p>![](Pasted image 20260408204720.png)<br>Jim Liu 在 GitHub 上维护这个项目，持续在更新。如果你觉得好用，去给他一个 Star。</p>
 <p>以上，既然看到这里了，如果觉得不错，随手点个赞、在看、转发三连吧，如果想第一时间收到推送，也可以给我个星标⭐～<br>谢谢你看我的文章，我们，下次再见。</p>
-</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined">Leslie</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="https://leslieaibin.github.io/2026/04/08/%E6%88%91%E6%96%87%E7%AB%A0%E9%87%8C%E9%82%A3%E4%BA%9B%E5%A5%BD%E7%9C%8B%E7%9A%84%E4%BF%A1%E6%81%AF%E5%9B%BE%EF%BC%8C%E9%83%BD%E6%98%AF%E8%BF%99%E4%B8%80%E4%B8%AA%E5%85%8D%E8%B4%B9%E5%B7%A5%E5%85%B7%E7%94%BB%E7%9A%84/">https://leslieaibin.github.io/2026/04/08/%E6%88%91%E6%96%87%E7%AB%A0%E9%87%8C%E9%82%A3%E4%BA%9B%E5%A5%BD%E7%9C%8B%E7%9A%84%E4%BF%A1%E6%81%AF%E5%9B%BE%EF%BC%8C%E9%83%BD%E6%98%AF%E8%BF%99%E4%B8%80%E4%B8%AA%E5%85%8D%E8%B4%B9%E5%B7%A5%E5%85%B7%E7%94%BB%E7%9A%84/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/AI/">AI</a><a class="post-meta__tags" href="/tags/Skills/">Skills</a><a class="post-meta__tags" href="/tags/Claude-Code/">Claude Code</a><a class="post-meta__tags" href="/tags/%E5%BC%80%E6%BA%90/">开源</a><a class="post-meta__tags" href="/tags/%E6%95%88%E7%8E%87/">效率</a><a class="post-meta__tags" href="/tags/AI%E7%94%BB%E5%9B%BE/">AI画图</a></div><div class="post_share"><div class="social-share" data-image="/2026/04/08/%E6%88%91%E6%96%87%E7%AB%A0%E9%87%8C%E9%82%A3%E4%BA%9B%E5%A5%BD%E7%9C%8B%E7%9A%84%E4%BF%A1%E6%81%AF%E5%9B%BE%EF%BC%8C%E9%83%BD%E6%98%AF%E8%BF%99%E4%B8%80%E4%B8%AA%E5%85%8D%E8%B4%B9%E5%B7%A5%E5%85%B7%E7%94%BB%E7%9A%84/01-infographic-9-providers.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2026/04/08/YC-%E7%9A%84-CEO-%E5%85%BC%E8%81%8C-60-%E5%A4%A9%E5%86%99%E4%BA%86-60-%E4%B8%87%E8%A1%8C%E4%BB%A3%E7%A0%81%EF%BC%8C%E4%BB%96%E6%8A%8A%E6%96%B9%E6%B3%95%E5%BC%80%E6%BA%90%E4%BA%86/"><img class="prev-cover" src="/2026/04/08/YC-%E7%9A%84-CEO-%E5%85%BC%E8%81%8C-60-%E5%A4%A9%E5%86%99%E4%BA%86-60-%E4%B8%87%E8%A1%8C%E4%BB%A3%E7%A0%81%EF%BC%8C%E4%BB%96%E6%8A%8A%E6%96%B9%E6%B3%95%E5%BC%80%E6%BA%90%E4%BA%86/01-infographic-sprint-workflow.png" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">Previous Post</div><div class="prev_info">YC 的 CEO 兼职 60 天写了 60 万行代码，他把方法开源了</div></div></a></div><div class="next-post pull-right"><a href="/2026/04/06/%E5%BD%93-AI-%E5%BC%80%E5%A7%8B%E6%89%AE%E6%BC%94%E4%BD%A0%E7%9A%84%E5%90%8C%E4%BA%8B%E3%80%81%E5%89%8D%E4%BB%BB%E5%92%8C%E8%80%81%E6%9D%BF/"><img class="next-cover" src="/2026/04/06/%E5%BD%93-AI-%E5%BC%80%E5%A7%8B%E6%89%AE%E6%BC%94%E4%BD%A0%E7%9A%84%E5%90%8C%E4%BA%8B%E3%80%81%E5%89%8D%E4%BB%BB%E5%92%8C%E8%80%81%E6%9D%BF/01-infographic-relationship-skills-spectrum.jpg" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">当 AI 开始扮演你的同事、前任和老板</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span> Related Articles</span></div><div class="relatedPosts-list"><div><a href="/2026/04/08/YC-的-CEO-兼职-60-天写了-60-万行代码，他把方法开源了/" title="YC 的 CEO 兼职 60 天写了 60 万行代码，他把方法开源了"><img class="cover" src="/2026/04/08/YC-%E7%9A%84-CEO-%E5%85%BC%E8%81%8C-60-%E5%A4%A9%E5%86%99%E4%BA%86-60-%E4%B8%87%E8%A1%8C%E4%BB%A3%E7%A0%81%EF%BC%8C%E4%BB%96%E6%8A%8A%E6%96%B9%E6%B3%95%E5%BC%80%E6%BA%90%E4%BA%86/01-infographic-sprint-workflow.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-08</div><div class="title">YC 的 CEO 兼职 60 天写了 60 万行代码，他把方法开源了</div></div></a></div><div><a href="/2026/03/31/这-8-个-Skills，装了就回不去了/" title="这 8 个 Skills，装了就回不去了"><img class="cover" src="/2026/03/31/%E8%BF%99-8-%E4%B8%AA-Skills%EF%BC%8C%E8%A3%85%E4%BA%86%E5%B0%B1%E5%9B%9E%E4%B8%8D%E5%8E%BB%E4%BA%86/01-infographic-frontend-design.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-31</div><div class="title">这 8 个 Skills，装了就回不去了</div></div></a></div><div><a href="/2026/04/06/当-AI-开始扮演你的同事、前任和老板/" title="当 AI 开始扮演你的同事、前任和老板"><img class="cover" src="/2026/04/06/%E5%BD%93-AI-%E5%BC%80%E5%A7%8B%E6%89%AE%E6%BC%94%E4%BD%A0%E7%9A%84%E5%90%8C%E4%BA%8B%E3%80%81%E5%89%8D%E4%BB%BB%E5%92%8C%E8%80%81%E6%9D%BF/01-infographic-relationship-skills-spectrum.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-06</div><div class="title">当 AI 开始扮演你的同事、前任和老板</div></div></a></div><div><a href="/2026/04/08/Anthropic-发布最强模型-Claude-Mythos，但不让你用/" title="Anthropic 发布最强模型 Claude Mythos，但不让你用"><img class="cover" src="/2026/04/08/Anthropic-%E5%8F%91%E5%B8%83%E6%9C%80%E5%BC%BA%E6%A8%A1%E5%9E%8B-Claude-Mythos%EF%BC%8C%E4%BD%86%E4%B8%8D%E8%AE%A9%E4%BD%A0%E7%94%A8/01-vulnerability-scan.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-08</div><div class="title">Anthropic 发布最强模型 Claude Mythos，但不让你用</div></div></a></div><div><a href="/2026/04/12/Hermes-Agent-不完全指南，一个会自己长脑子的-AI-Agent/" title="Hermes Agent 不完全指南，一个会自己长脑子的 AI Agent"><img class="cover" src="/2026/04/12/Hermes-Agent-%E4%B8%8D%E5%AE%8C%E5%85%A8%E6%8C%87%E5%8D%97%EF%BC%8C%E4%B8%80%E4%B8%AA%E4%BC%9A%E8%87%AA%E5%B7%B1%E9%95%BF%E8%84%91%E5%AD%90%E7%9A%84-AI-Agent/cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-12</div><div class="title">Hermes Agent 不完全指南，一个会自己长脑子的 AI Agent</div></div></a></div><div><a href="/2026/04/06/用-Claude-自动化了一整天工作流，我总结出这些/" title="用 Claude 自动化了一整天工作流，我总结出这些"><img class="cover" src="/2026/04/06/%E7%94%A8-Claude-%E8%87%AA%E5%8A%A8%E5%8C%96%E4%BA%86%E4%B8%80%E6%95%B4%E5%A4%A9%E5%B7%A5%E4%BD%9C%E6%B5%81%EF%BC%8C%E6%88%91%E6%80%BB%E7%BB%93%E5%87%BA%E8%BF%99%E4%BA%9B/02-three-layers.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-06</div><div class="title">用 Claude 自动化了一整天工作流，我总结出这些</div></div></a></div></div></div></div><div class="aside_content" id="aside_content"><div class="card-widget card-info"><div class="card-content"><div class="card-info-avatar is-center"><img class="avatar-img" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/01.jpg?raw=true" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/><div class="author-info__name">Leslie</div><div class="author-info__description"></div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">135</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">Tags</div><div class="length-num">51</div></a></div><div class="card-info-data-item is-center"><a href="/categories/"><div class="headline">Categories</div><div class="length-num">17</div></a></div></div><a class="button--animated" id="card-info-btn"><i class="fas fa-heart"></i><span>瓶中的水 青天的云</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/leslieAIbin" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="https://www.instagram.com/leslieaibin/" target="_blank" title="Ins"><i class="fab fa-instagram"></i></a><a class="social-icon" href="mailto:aibinzhangleslie@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a><a class="social-icon" href="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/image-20201122143121657.png" target="_blank" title="weixin"><i class="fab fa-weixin"></i></a></div></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="card-content"><div class="item-headline"><i class="fas fa-stream"></i><span>Catalog</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%88%91%E6%96%87%E7%AB%A0%E9%87%8C%E9%82%A3%E4%BA%9B%E5%A5%BD%E7%9C%8B%E7%9A%84%E4%BF%A1%E6%81%AF%E5%9B%BE%EF%BC%8C%E9%83%BD%E6%98%AF%E8%BF%99%E4%B8%80%E4%B8%AA%E5%85%8D%E8%B4%B9%E5%B7%A5%E5%85%B7%E7%94%BB%E7%9A%84"><span class="toc-number">1.</span> <span class="toc-text">我文章里那些好看的信息图，都是这一个免费工具画的</span></a></li></ol></div></div></div><div class="card-widget card-recent-post"><div class="card-content"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/04/12/Hermes-Agent-%E4%B8%8D%E5%AE%8C%E5%85%A8%E6%8C%87%E5%8D%97%EF%BC%8C%E4%B8%80%E4%B8%AA%E4%BC%9A%E8%87%AA%E5%B7%B1%E9%95%BF%E8%84%91%E5%AD%90%E7%9A%84-AI-Agent/" title="Hermes Agent 不完全指南，一个会自己长脑子的 AI Agent"><img src="/2026/04/12/Hermes-Agent-%E4%B8%8D%E5%AE%8C%E5%85%A8%E6%8C%87%E5%8D%97%EF%BC%8C%E4%B8%80%E4%B8%AA%E4%BC%9A%E8%87%AA%E5%B7%B1%E9%95%BF%E8%84%91%E5%AD%90%E7%9A%84-AI-Agent/cover.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Hermes Agent 不完全指南，一个会自己长脑子的 AI Agent"/></a><div class="content"><a class="title" href="/2026/04/12/Hermes-Agent-%E4%B8%8D%E5%AE%8C%E5%85%A8%E6%8C%87%E5%8D%97%EF%BC%8C%E4%B8%80%E4%B8%AA%E4%BC%9A%E8%87%AA%E5%B7%B1%E9%95%BF%E8%84%91%E5%AD%90%E7%9A%84-AI-Agent/" title="Hermes Agent 不完全指南，一个会自己长脑子的 AI Agent">Hermes Agent 不完全指南，一个会自己长脑子的 AI Agent</a><time datetime="2026-04-11T16:00:00.000Z" title="Created 2026-04-12 00:00:00">2026-04-12</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/08/Anthropic-%E5%8F%91%E5%B8%83%E6%9C%80%E5%BC%BA%E6%A8%A1%E5%9E%8B-Claude-Mythos%EF%BC%8C%E4%BD%86%E4%B8%8D%E8%AE%A9%E4%BD%A0%E7%94%A8/" title="Anthropic 发布最强模型 Claude Mythos，但不让你用"><img src="/2026/04/08/Anthropic-%E5%8F%91%E5%B8%83%E6%9C%80%E5%BC%BA%E6%A8%A1%E5%9E%8B-Claude-Mythos%EF%BC%8C%E4%BD%86%E4%B8%8D%E8%AE%A9%E4%BD%A0%E7%94%A8/01-vulnerability-scan.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Anthropic 发布最强模型 Claude Mythos，但不让你用"/></a><div class="content"><a class="title" href="/2026/04/08/Anthropic-%E5%8F%91%E5%B8%83%E6%9C%80%E5%BC%BA%E6%A8%A1%E5%9E%8B-Claude-Mythos%EF%BC%8C%E4%BD%86%E4%B8%8D%E8%AE%A9%E4%BD%A0%E7%94%A8/" title="Anthropic 发布最强模型 Claude Mythos，但不让你用">Anthropic 发布最强模型 Claude Mythos，但不让你用</a><time datetime="2026-04-07T16:00:00.000Z" title="Created 2026-04-08 00:00:00">2026-04-08</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/08/YC-%E7%9A%84-CEO-%E5%85%BC%E8%81%8C-60-%E5%A4%A9%E5%86%99%E4%BA%86-60-%E4%B8%87%E8%A1%8C%E4%BB%A3%E7%A0%81%EF%BC%8C%E4%BB%96%E6%8A%8A%E6%96%B9%E6%B3%95%E5%BC%80%E6%BA%90%E4%BA%86/" title="YC 的 CEO 兼职 60 天写了 60 万行代码，他把方法开源了"><img src="/2026/04/08/YC-%E7%9A%84-CEO-%E5%85%BC%E8%81%8C-60-%E5%A4%A9%E5%86%99%E4%BA%86-60-%E4%B8%87%E8%A1%8C%E4%BB%A3%E7%A0%81%EF%BC%8C%E4%BB%96%E6%8A%8A%E6%96%B9%E6%B3%95%E5%BC%80%E6%BA%90%E4%BA%86/01-infographic-sprint-workflow.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="YC 的 CEO 兼职 60 天写了 60 万行代码，他把方法开源了"/></a><div class="content"><a class="title" href="/2026/04/08/YC-%E7%9A%84-CEO-%E5%85%BC%E8%81%8C-60-%E5%A4%A9%E5%86%99%E4%BA%86-60-%E4%B8%87%E8%A1%8C%E4%BB%A3%E7%A0%81%EF%BC%8C%E4%BB%96%E6%8A%8A%E6%96%B9%E6%B3%95%E5%BC%80%E6%BA%90%E4%BA%86/" title="YC 的 CEO 兼职 60 天写了 60 万行代码，他把方法开源了">YC 的 CEO 兼职 60 天写了 60 万行代码，他把方法开源了</a><time datetime="2026-04-07T16:00:00.000Z" title="Created 2026-04-08 00:00:00">2026-04-08</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/08/%E6%88%91%E6%96%87%E7%AB%A0%E9%87%8C%E9%82%A3%E4%BA%9B%E5%A5%BD%E7%9C%8B%E7%9A%84%E4%BF%A1%E6%81%AF%E5%9B%BE%EF%BC%8C%E9%83%BD%E6%98%AF%E8%BF%99%E4%B8%80%E4%B8%AA%E5%85%8D%E8%B4%B9%E5%B7%A5%E5%85%B7%E7%94%BB%E7%9A%84/" title="我文章里那些好看的信息图，都是这一个免费工具画的"><img src="/2026/04/08/%E6%88%91%E6%96%87%E7%AB%A0%E9%87%8C%E9%82%A3%E4%BA%9B%E5%A5%BD%E7%9C%8B%E7%9A%84%E4%BF%A1%E6%81%AF%E5%9B%BE%EF%BC%8C%E9%83%BD%E6%98%AF%E8%BF%99%E4%B8%80%E4%B8%AA%E5%85%8D%E8%B4%B9%E5%B7%A5%E5%85%B7%E7%94%BB%E7%9A%84/01-infographic-9-providers.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="我文章里那些好看的信息图，都是这一个免费工具画的"/></a><div class="content"><a class="title" href="/2026/04/08/%E6%88%91%E6%96%87%E7%AB%A0%E9%87%8C%E9%82%A3%E4%BA%9B%E5%A5%BD%E7%9C%8B%E7%9A%84%E4%BF%A1%E6%81%AF%E5%9B%BE%EF%BC%8C%E9%83%BD%E6%98%AF%E8%BF%99%E4%B8%80%E4%B8%AA%E5%85%8D%E8%B4%B9%E5%B7%A5%E5%85%B7%E7%94%BB%E7%9A%84/" title="我文章里那些好看的信息图，都是这一个免费工具画的">我文章里那些好看的信息图，都是这一个免费工具画的</a><time datetime="2026-04-07T16:00:00.000Z" title="Created 2026-04-08 00:00:00">2026-04-08</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/06/%E5%BD%93-AI-%E5%BC%80%E5%A7%8B%E6%89%AE%E6%BC%94%E4%BD%A0%E7%9A%84%E5%90%8C%E4%BA%8B%E3%80%81%E5%89%8D%E4%BB%BB%E5%92%8C%E8%80%81%E6%9D%BF/" title="当 AI 开始扮演你的同事、前任和老板"><img src="/2026/04/06/%E5%BD%93-AI-%E5%BC%80%E5%A7%8B%E6%89%AE%E6%BC%94%E4%BD%A0%E7%9A%84%E5%90%8C%E4%BA%8B%E3%80%81%E5%89%8D%E4%BB%BB%E5%92%8C%E8%80%81%E6%9D%BF/01-infographic-relationship-skills-spectrum.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="当 AI 开始扮演你的同事、前任和老板"/></a><div class="content"><a class="title" href="/2026/04/06/%E5%BD%93-AI-%E5%BC%80%E5%A7%8B%E6%89%AE%E6%BC%94%E4%BD%A0%E7%9A%84%E5%90%8C%E4%BA%8B%E3%80%81%E5%89%8D%E4%BB%BB%E5%92%8C%E8%80%81%E6%9D%BF/" title="当 AI 开始扮演你的同事、前任和老板">当 AI 开始扮演你的同事、前任和老板</a><time datetime="2026-04-05T16:00:00.000Z" title="Created 2026-04-06 00:00:00">2026-04-06</time></div></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(/2026/04/08/%E6%88%91%E6%96%87%E7%AB%A0%E9%87%8C%E9%82%A3%E4%BA%9B%E5%A5%BD%E7%9C%8B%E7%9A%84%E4%BF%A1%E6%81%AF%E5%9B%BE%EF%BC%8C%E9%83%BD%E6%98%AF%E8%BF%99%E4%B8%80%E4%B8%AA%E5%85%8D%E8%B4%B9%E5%B7%A5%E5%85%B7%E7%94%BB%E7%9A%84/01-infographic-9-providers.png)"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2026 By Leslie</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="Back To Top"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><div class="js-pjax"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></div></body></html>
+</div>
+    <aside class="post-rail">
+      <span class="post-rail__line"></span>
+      <span>LESLIE / WRITING</span>
+    </aside>
+  </div>
+
+  <footer class="post-footer shell">
+    <div><h2>如果这篇文章帮到了你，<br>也许下一篇会更有意思。</h2></div>
+    <a class="button button--primary" href="/writing/">继续阅读 →</a>
+  </footer>
+</article>
+</main>
+    <footer class="site-footer">
+  <div class="footer-grid">
+    <div>
+      <p class="footer-kicker">Leslie Zhang</p>
+      <p class="footer-statement">把真实世界的问题，<br>变成可以运行的智能系统。</p>
+    </div>
+    <div class="footer-links">
+      <a href="https://github.com/leslieAIbin" target="_blank" rel="noreferrer">GitHub ↗</a>
+      <a href="mailto:aibinzhangleslie@gmail.com">Email ↗</a>
+      <a href="/atom.xml">RSS ↗</a>
+    </div>
+    <div class="footer-meta">
+      <span>© 2026 Leslie Zhang</span>
+      <span>Writing, research and working systems.</span>
+    </div>
+  </div>
+</footer>
+
+    <dialog class="ask-dialog" id="ask-leslie" aria-labelledby="ask-title">
+  <div class="ask-dialog__shell">
+    <div class="ask-dialog__topbar">
+      <div>
+        <h2 id="ask-title">Ask Leslie</h2>
+      </div>
+      <button class="icon-button" type="button" data-ask-close aria-label="关闭">×</button>
+    </div>
+    <p class="ask-dialog__intro">从本站公开文章中寻找答案。当前版本在浏览器本地检索，不上传问题，也不会编造不存在的经历。</p>
+    <form class="ask-form" data-ask-form>
+      <label class="sr-only" for="ask-query">输入问题</label>
+      <textarea id="ask-query" rows="2" placeholder="例如：Agent Runtime 应该怎么设计？" data-ask-input></textarea>
+      <button type="submit">检索知识库 <span aria-hidden="true">↗</span></button>
+    </form>
+    <div class="ask-suggestions" aria-label="推荐问题">
+      
+        <button type="button" data-ask-suggestion="Agent Runtime 应该怎么设计？">Agent Runtime 应该怎么设计？</button>
+      
+        <button type="button" data-ask-suggestion="如何让 AI 操控真实世界设备？">如何让 AI 操控真实世界设备？</button>
+      
+        <button type="button" data-ask-suggestion="Leslie 最近在研究什么？">Leslie 最近在研究什么？</button>
+      
+    </div>
+    <div class="ask-results" data-ask-results aria-live="polite">
+      <div class="ask-empty">
+        <p>输入一个问题，我会把你带到 Leslie 写过的相关内容。</p>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+    <script>window.ORBITAL_ROOT = '/';</script>
+    <script src="/js/orbital.js" defer></script>
+  </body>
+</html>

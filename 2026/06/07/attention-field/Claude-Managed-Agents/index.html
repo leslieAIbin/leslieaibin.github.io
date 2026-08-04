@@ -1,0 +1,330 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+  <head>
+
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#050b18">
+<meta name="color-scheme" content="dark light">
+<title>Claude Managed Agents到底在做什么 | Leslie Zhang</title>
+<meta name="description" content="构建能够感知、规划、行动与反馈的智能体系统，长期关注 Agent Runtime、多模态与真实世界自动化。">
+<meta name="author" content="Leslie Zhang">
+<link rel="canonical" href="https://leslieaibin.github.io/2026/06/07/attention-field/Claude-Managed-Agents/">
+<link rel="icon" href="/imgs/01.jpg">
+<link rel="alternate" type="application/atom+xml" title="Leslie Zhang" href="/atom.xml">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Claude Managed Agents到底在做什么 | Leslie Zhang">
+<meta property="og:description" content="构建能够感知、规划、行动与反馈的智能体系统，长期关注 Agent Runtime、多模态与真实世界自动化。">
+<meta property="og:url" content="https://leslieaibin.github.io/2026/06/07/attention-field/Claude-Managed-Agents/">
+<meta property="og:image" content="https://leslieaibin.github.io/2026/06/07/attention-field/Claude-Managed-Agents/imgs/01-core-concepts.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Claude Managed Agents到底在做什么 | Leslie Zhang">
+<meta name="twitter:description" content="构建能够感知、规划、行动与反馈的智能体系统，长期关注 Agent Runtime、多模态与真实世界自动化。">
+<meta name="twitter:image" content="https://leslieaibin.github.io/2026/06/07/attention-field/Claude-Managed-Agents/imgs/01-core-concepts.png">
+<script>
+  (function () {
+    var saved = localStorage.getItem('orbital-theme');
+    var theme = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    document.documentElement.dataset.theme = theme;
+  })();
+</script>
+<link rel="stylesheet" href="/css/orbital.css">
+<meta name="generator" content="Hexo 5.2.0"></head>
+  <body class="page-post">
+    <a class="skip-link" href="#main-content">跳到主要内容</a>
+    <div class="reading-progress" data-reading-progress></div>
+    <header class="site-header" data-header>
+  <div class="nav-shell">
+    <a class="brand" href="/" aria-label="返回首页">
+      <span class="brand-mark" aria-hidden="true"><img src="/images/brand/leslie-mythos-avatar.webp" alt="" width="512" height="512"></span>
+      <span class="brand-copy">
+        <strong>LESLIE</strong>
+        <small>REAL-WORLD AGENTS</small>
+      </span>
+    </a>
+
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav" data-nav-toggle>
+      <span></span><span></span>
+      <span class="sr-only">打开导航</span>
+    </button>
+
+    <nav class="main-nav" id="main-nav" aria-label="主导航" data-nav>
+      
+        <a href="/" class="">首页</a>
+      
+        <a href="/writing/" class="">写作</a>
+      
+        <a href="/projects/" class="">项目</a>
+      
+        <a href="/about/" class="">关于</a>
+      
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换明暗主题">
+        <span class="theme-toggle__sun" aria-hidden="true">☼</span>
+        <span class="theme-toggle__moon" aria-hidden="true">◐</span>
+      </button>
+      <button class="ask-nav" type="button" data-ask-open>ASK LESLIE</button>
+    </nav>
+  </div>
+</header>
+
+    <main id="main-content"><article class="post-shell">
+  <header class="post-hero shell">
+    <a class="post-back" href="/writing/">← 返回写作</a>
+    <div class="post-hero__meta">
+      <time datetime="2026-06-07">2026 年 06 月 07 日</time>
+      <span>5 分钟阅读</span>
+    </div>
+    <h1>Claude Managed Agents到底在做什么</h1>
+    
+    <div class="chip-row"><a href="/tags/Anthropic/">Anthropic</a><a href="/tags/Claude/">Claude</a><a href="/tags/Agent/">Agent</a><a href="/tags/%E4%BA%A7%E5%93%81%E5%88%86%E6%9E%90/">产品分析</a></div>
+  </header>
+
+  <div class="post-cover shell"><img src="/2026/06/07/attention-field/Claude-Managed-Agents/imgs/01-core-concepts.png" alt="Claude Managed Agents到底在做什么"></div>
+
+  <div class="post-layout shell">
+    <aside class="post-toc" aria-label="文章目录">
+      <span class="aside-title">目录</span>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E4%B8%AA%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5"><span class="toc-text">四个核心概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Agent%E9%85%8D%E7%BD%AE%E8%A7%A3%E6%9E%90"><span class="toc-text">Agent配置解析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#tools%EF%BC%9A%E5%86%85%E7%BD%AE%E5%B7%A5%E5%85%B7%E9%9B%86"><span class="toc-text">tools：内置工具集</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#mcp-servers%EF%BC%9A%E5%A4%96%E9%83%A8%E5%B7%A5%E5%85%B7"><span class="toc-text">mcp_servers：外部工具</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#multiagent%EF%BC%9A%E5%A4%9AAgent%E5%8D%8F%E4%BD%9C"><span class="toc-text">multiagent：多Agent协作</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9D%83%E9%99%90%E6%A8%A1%E5%9E%8B%E2%80%94%E2%80%94%E9%BB%98%E8%AE%A4%E5%AE%89%E5%85%A8%E7%9A%84%E8%AE%BE%E8%AE%A1%E5%93%B2%E5%AD%A6"><span class="toc-text">权限模型——默认安全的设计哲学</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Event-driven%E6%9E%B6%E6%9E%84"><span class="toc-text">Event-driven架构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%92%8C%E7%AB%9E%E5%93%81%E5%AF%B9%E6%AF%94"><span class="toc-text">和竞品对比</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%83%E8%A7%A3%E5%86%B3%E4%BA%86%E4%BB%80%E4%B9%88%EF%BC%8C%E6%B2%A1%E8%A7%A3%E5%86%B3%E4%BB%80%E4%B9%88"><span class="toc-text">它解决了什么，没解决什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="toc-text">参考资料</span></a></li></ol>
+    </aside>
+    <div class="article-content"><h1 id="Claude-Managed-Agents到底在做什么"><a href="#Claude-Managed-Agents到底在做什么" class="headerlink" title="Claude Managed Agents到底在做什么"></a>Claude Managed Agents到底在做什么</h1><p>初次接触 Claude Managed Agents 时，容易将其理解为 Claude Code 的 API 版本——通过 API 创建 Agent，在沙箱中执行代码并返回结果。</p>
+<p>但查阅官方文档后会发现，它不是一个产品，而是一套<strong>Agent基础设施</strong>。它定义了Agent怎么跑、怎么授权、怎么和外部世界交互。这更像是AWS Lambda给Serverless的定义——不是又一个计算服务，而是对”函数即服务”这个范式的基础设施化。</p>
+<hr>
+<h2 id="四个核心概念"><a href="#四个核心概念" class="headerlink" title="四个核心概念"></a>四个核心概念</h2><p>Managed Agents的模型极简，围绕四个概念构建：</p>
+<table>
+<thead>
+<tr>
+<th>概念</th>
+<th>是什么</th>
+<th>类比</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Agent</strong></td>
+<td>可复用的、版本化的配置</td>
+<td>Docker Image</td>
+</tr>
+<tr>
+<td><strong>Environment</strong></td>
+<td>Agent的执行环境</td>
+<td>Docker Host</td>
+</tr>
+<tr>
+<td><strong>Session</strong></td>
+<td>一次运行实例</td>
+<td>Docker Container</td>
+</tr>
+<tr>
+<td><strong>Events</strong></td>
+<td>Session执行过程的实时事件流</td>
+<td>Docker Logs Stream</td>
+</tr>
+</tbody></table>
+<p><img src="imgs/01-core-concepts.png" alt="核心抽象"></p>
+<p>一个Agent定义了”这个AI助手长什么样”——用什么模型、系统Prompt是什么、能用哪些工具、能访问哪些MCP（Model Context Protocol，一种连接外部服务的标准协议）服务。</p>
+<p>一个Environment定义了”Agent在哪里跑”——可以是Anthropic托管的云沙箱（ephemeral, isolated），也可以是你自己的基础设施（EC2、Docker等）。</p>
+<p>一个Session就是一次具体的执行——用户发起任务、Agent运行、工具调用、返回结果。</p>
+<p>Events是Session执行过程中的实时事件流——包括Agent的文本输出、工具调用请求与结果、状态变更等。客户端通过订阅事件流来实时获取Agent的执行进度。</p>
+<p><strong>这个抽象为什么重要？</strong> 因为它把”定义Agent”和”运行Agent”解耦了。写Agent配置的人不需要关心执行环境的运维，管执行环境的人不需要理解Agent的业务逻辑。</p>
+<hr>
+<h2 id="Agent配置解析"><a href="#Agent配置解析" class="headerlink" title="Agent配置解析"></a>Agent配置解析</h2><p>一个Agent的完整配置（基于官方API）：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">&quot;name&quot;</span>: <span class="string">&quot;code-assistant&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;model&quot;</span>: <span class="string">&quot;claude-sonnet-4-6&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;system&quot;</span>: <span class="string">&quot;你是一个代码助手...&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;tools&quot;</span>: [</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">&quot;type&quot;</span>: <span class="string">&quot;agent_toolset_20260401&quot;</span>,</span><br><span class="line">      <span class="attr">&quot;name&quot;</span>: <span class="string">&quot;coding_tools&quot;</span></span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">&quot;type&quot;</span>: <span class="string">&quot;mcp_toolset&quot;</span>,</span><br><span class="line">      <span class="attr">&quot;mcp_server_name&quot;</span>: <span class="string">&quot;github&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line">  ],</span><br><span class="line">  <span class="attr">&quot;mcp_servers&quot;</span>: [</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">&quot;type&quot;</span>: <span class="string">&quot;url&quot;</span>,</span><br><span class="line">      <span class="attr">&quot;name&quot;</span>: <span class="string">&quot;github&quot;</span>,</span><br><span class="line">      <span class="attr">&quot;url&quot;</span>: <span class="string">&quot;https://api.githubcopilot.com/mcp/&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>以下对几个关键字段做展开说明。</p>
+<h3 id="tools：内置工具集"><a href="#tools：内置工具集" class="headerlink" title="tools：内置工具集"></a>tools：内置工具集</h3><p>内置工具通过 <code>agent_toolset_20260401</code> 类型统一声明，包含8个工具：</p>
+<p><img src="imgs/04-tool-tree.png" alt="工具体系"></p>
+<h3 id="mcp-servers：外部工具"><a href="#mcp-servers：外部工具" class="headerlink" title="mcp_servers：外部工具"></a>mcp_servers：外部工具</h3><p>MCP（Model Context Protocol）是连接外部服务的标准协议。通过 <code>type: &quot;url&quot;</code> 声明MCP服务端点：</p>
+<h3 id="multiagent：多Agent协作"><a href="#multiagent：多Agent协作" class="headerlink" title="multiagent：多Agent协作"></a>multiagent：多Agent协作</h3><p>一个Agent配置里可以声明它能把任务委派给哪些其他Agent。这是coordinator模式的基础——主Agent负责任务拆分和调度，子Agent各司其职。</p>
+<p>需要注意的是，子Agent的具体角色（如”researcher”、”implementer”）需要在各自的Agent配置中单独定义，而不是在coordinator的配置中硬编码。</p>
+<p>这意味着Managed Agents不只是一个单Agent执行环境，它是一个<strong>多Agent编排平台</strong>。</p>
+<hr>
+<h2 id="权限模型——默认安全的设计哲学"><a href="#权限模型——默认安全的设计哲学" class="headerlink" title="权限模型——默认安全的设计哲学"></a>权限模型——默认安全的设计哲学</h2><p>Managed Agents的权限模型只有两个选项：</p>
+<table>
+<thead>
+<tr>
+<th>权限</th>
+<th>行为</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>always_allow</code></td>
+<td>工具自动执行，无需确认</td>
+</tr>
+<tr>
+<td><code>always_ask</code></td>
+<td>Agent暂停，等待用户确认后继续</td>
+</tr>
+</tbody></table>
+<p>看起来简单，但默认值的设计体现了明确的安全哲学：</p>
+<ul>
+<li><strong>MCP工具</strong>默认 <code>always_ask</code>（安全优先）</li>
+<li><strong>内置工具</strong>默认 <code>always_allow</code>（效率优先）</li>
+</ul>
+<p><img src="imgs/02-permissions.png" alt="权限模型"></p>
+<p>为什么MCP默认需要确认？因为MCP连接的是外部服务——GitHub、Slack、数据库。这些操作有副作用（发消息、提交代码、改数据），自动执行的风险更高。内置工具（读文件、搜索）的风险相对可控。</p>
+<p>这和手机App的权限模型很像：系统App（电话、短信）默认有权限，第三方App第一次使用相机时要弹窗确认。<strong>默认安全，显式授权。</strong></p>
+<p>权限是按工具粒度配置的，可以在Agent配置的 <code>tools</code> 条目中通过 <code>permission_policy</code> 字段覆盖默认值。例如，要让bash工具需要确认：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">&quot;tools&quot;</span>: [</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">&quot;type&quot;</span>: <span class="string">&quot;agent_toolset_20260401&quot;</span>,</span><br><span class="line">      <span class="attr">&quot;name&quot;</span>: <span class="string">&quot;coding_tools&quot;</span>,</span><br><span class="line">      <span class="attr">&quot;default_config&quot;</span>: &#123;</span><br><span class="line">        <span class="attr">&quot;permission_policy&quot;</span>: <span class="string">&quot;always_ask&quot;</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="Event-driven架构"><a href="#Event-driven架构" class="headerlink" title="Event-driven架构"></a>Event-driven架构</h2><p>Agent执行的过程通过SSE（Server-Sent Events，服务端推送事件）流式推送。核心事件包括：</p>
+<ul>
+<li>Agent的文本输出</li>
+<li>工具调用请求（内置工具、MCP工具、自定义工具）</li>
+<li>工具执行结果</li>
+<li>用户确认请求（权限审批时暂停）</li>
+<li>Session状态变更</li>
+</ul>
+<p>一个完整的执行过程可能长这样：</p>
+<p><strong>SSE vs WebSocket的选择</strong>。Agent的通信模式以服务端推送为主，客户端只需要偶尔发送确认（tool confirmation）。SSE（Server-Sent Events）足够满足需求，而且比WebSocket更简单——不需要处理连接管理、心跳、重连逻辑。</p>
+<p><img src="imgs/03-event-stream.png" alt="SSE事件流"></p>
+<p>这个事件模型意味着：<strong>你可以用任何技术栈构建前端来消费Agent的输出。</strong> Web App、桌面客户端、手机App、CLI——只要能接收SSE流，就能和Managed Agent交互。</p>
+<hr>
+<h2 id="和竞品对比"><a href="#和竞品对比" class="headerlink" title="和竞品对比"></a>和竞品对比</h2><table>
+<thead>
+<tr>
+<th>维度</th>
+<th>Claude Managed Agents</th>
+<th>OpenAI Codex</th>
+<th>LangGraph</th>
+<th>AutoGPT</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Runtime</td>
+<td>托管+自托管</td>
+<td>托管</td>
+<td>自建</td>
+<td>自建</td>
+</tr>
+<tr>
+<td>工具协议</td>
+<td>MCP</td>
+<td>自有</td>
+<td>自有</td>
+<td>自有</td>
+</tr>
+<tr>
+<td>权限模型</td>
+<td>内置（always_allow/ask）</td>
+<td>有限</td>
+<td>无</td>
+<td>无</td>
+</tr>
+<tr>
+<td>多Agent</td>
+<td>内置支持</td>
+<td>单Agent</td>
+<td>支持</td>
+<td>单Agent</td>
+</tr>
+<tr>
+<td>沙箱</td>
+<td>内置</td>
+<td>内置</td>
+<td>需自建</td>
+<td>需自建</td>
+</tr>
+<tr>
+<td>适用场景</td>
+<td>企业Agent应用</td>
+<td>代码生成</td>
+<td>通用Agent框架</td>
+<td>实验/研究</td>
+</tr>
+</tbody></table>
+<p>Managed Agents的差异化在于<strong>托管Runtime + MCP生态 + 内置权限</strong>。你不需要自己搭沙箱、不需要自己实现权限管理、不需要自己维护工具协议——这些基础设施Anthropic帮你做了。代价是绑定Anthropic生态。MCP协议虽然开放，但最佳体验还是在Claude模型上。</p>
+<blockquote>
+<p>注：上表基于截至2026年6月的公开信息整理，各产品迭代较快，具体能力请以官方文档为准。</p>
+</blockquote>
+<hr>
+<h2 id="它解决了什么，没解决什么"><a href="#它解决了什么，没解决什么" class="headerlink" title="它解决了什么，没解决什么"></a>它解决了什么，没解决什么</h2><p><strong>解决了：</strong></p>
+<ol>
+<li>Agent的标准化执行环境——不用自己搭沙箱</li>
+<li>权限管理的最佳实践——默认安全，显式授权</li>
+<li>工具集成的标准接口——MCP协议</li>
+<li>多Agent编排——coordinator模式</li>
+</ol>
+<p><strong>没解决：</strong></p>
+<ol>
+<li><strong>Agent质量保障</strong>——没有内置评测体系，你需要自己搭Golden Set</li>
+<li><strong>大规模调度</strong>——目前是单Session粒度，没有集群级调度</li>
+<li><strong>成本控制</strong>——每次Session的LLM调用成本需要自己监控和管理</li>
+<li><strong>复杂状态编排</strong>——虽然有基础的Memory Store支持跨Session持久化，但复杂的多步状态编排（如长时间运行的工作流）仍需开发者自行设计</li>
+</ol>
+<p>这些”没解决”的部分，就是用Managed Agents构建产品时你需要自己补齐的。Managed Agents提供了基础设施和框架，但上层业务逻辑仍需开发者自行构建。</p>
+<hr>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://platform.claude.com/docs/en/managed-agents/overview">Claude Managed Agents Overview</a></li>
+<li><a target="_blank" rel="noopener" href="https://platform.claude.com/docs/en/managed-agents/agent-setup">Agent Setup Guide</a></li>
+<li><a target="_blank" rel="noopener" href="https://platform.claude.com/docs/en/managed-agents/permission-policies">Permission Policies</a></li>
+<li><a target="_blank" rel="noopener" href="https://modelcontextprotocol.io/">Model Context Protocol (MCP) Specification</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.anthropic.com/en/docs">Anthropic API Documentation</a></li>
+</ul>
+</div>
+    <aside class="post-rail">
+      <span class="post-rail__line"></span>
+      <span>LESLIE / WRITING</span>
+    </aside>
+  </div>
+
+  <footer class="post-footer shell">
+    <div><h2>如果这篇文章帮到了你，<br>也许下一篇会更有意思。</h2></div>
+    <a class="button button--primary" href="/writing/">继续阅读 →</a>
+  </footer>
+</article>
+</main>
+    <footer class="site-footer">
+  <div class="footer-grid">
+    <div>
+      <p class="footer-kicker">Leslie Zhang</p>
+      <p class="footer-statement">把真实世界的问题，<br>变成可以运行的智能系统。</p>
+    </div>
+    <div class="footer-links">
+      <a href="https://github.com/leslieAIbin" target="_blank" rel="noreferrer">GitHub ↗</a>
+      <a href="mailto:aibinzhangleslie@gmail.com">Email ↗</a>
+      <a href="/atom.xml">RSS ↗</a>
+    </div>
+    <div class="footer-meta">
+      <span>© 2026 Leslie Zhang</span>
+      <span>Writing, research and working systems.</span>
+    </div>
+  </div>
+</footer>
+
+    <dialog class="ask-dialog" id="ask-leslie" aria-labelledby="ask-title">
+  <div class="ask-dialog__shell">
+    <div class="ask-dialog__topbar">
+      <div>
+        <h2 id="ask-title">Ask Leslie</h2>
+      </div>
+      <button class="icon-button" type="button" data-ask-close aria-label="关闭">×</button>
+    </div>
+    <p class="ask-dialog__intro">从本站公开文章中寻找答案。当前版本在浏览器本地检索，不上传问题，也不会编造不存在的经历。</p>
+    <form class="ask-form" data-ask-form>
+      <label class="sr-only" for="ask-query">输入问题</label>
+      <textarea id="ask-query" rows="2" placeholder="例如：Agent Runtime 应该怎么设计？" data-ask-input></textarea>
+      <button type="submit">检索知识库 <span aria-hidden="true">↗</span></button>
+    </form>
+    <div class="ask-suggestions" aria-label="推荐问题">
+      
+        <button type="button" data-ask-suggestion="Agent Runtime 应该怎么设计？">Agent Runtime 应该怎么设计？</button>
+      
+        <button type="button" data-ask-suggestion="如何让 AI 操控真实世界设备？">如何让 AI 操控真实世界设备？</button>
+      
+        <button type="button" data-ask-suggestion="Leslie 最近在研究什么？">Leslie 最近在研究什么？</button>
+      
+    </div>
+    <div class="ask-results" data-ask-results aria-live="polite">
+      <div class="ask-empty">
+        <p>输入一个问题，我会把你带到 Leslie 写过的相关内容。</p>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+    <script>window.ORBITAL_ROOT = '/';</script>
+    <script src="/js/orbital.js" defer></script>
+  </body>
+</html>

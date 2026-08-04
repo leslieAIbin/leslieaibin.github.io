@@ -1,0 +1,370 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+  <head>
+
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#050b18">
+<meta name="color-scheme" content="dark light">
+<title>Compaction：让Agent长时间跑下去的上下文压缩术 | Leslie Zhang</title>
+<meta name="description" content="Compaction 是 Agent 长时间运行绕不开的上下文工程问题。这篇拆解压缩 vs 记忆的区别、常见保留策略、压缩触发时机、Token 预算方法，以及为什么这些东西跟 Prompt Cache 和上下文组织方式是一体的。">
+<meta name="author" content="Leslie Zhang">
+<link rel="canonical" href="https://leslieaibin.github.io/2026/05/31/attention-field/Compaction%E8%AE%A9Agent%E9%95%BF%E6%97%B6%E9%97%B4%E8%B7%91%E4%B8%8B%E5%8E%BB%E7%9A%84%E4%B8%8A%E4%B8%8B%E6%96%87%E5%8E%8B%E7%BC%A9%E6%9C%AF/">
+<link rel="icon" href="/imgs/01.jpg">
+<link rel="alternate" type="application/atom+xml" title="Leslie Zhang" href="/atom.xml">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Compaction：让Agent长时间跑下去的上下文压缩术 | Leslie Zhang">
+<meta property="og:description" content="Compaction 是 Agent 长时间运行绕不开的上下文工程问题。这篇拆解压缩 vs 记忆的区别、常见保留策略、压缩触发时机、Token 预算方法，以及为什么这些东西跟 Prompt Cache 和上下文组织方式是一体的。">
+<meta property="og:url" content="https://leslieaibin.github.io/2026/05/31/attention-field/Compaction%E8%AE%A9Agent%E9%95%BF%E6%97%B6%E9%97%B4%E8%B7%91%E4%B8%8B%E5%8E%BB%E7%9A%84%E4%B8%8A%E4%B8%8B%E6%96%87%E5%8E%8B%E7%BC%A9%E6%9C%AF/">
+<meta property="og:image" content="https://leslieaibin.github.io/2026/05/31/attention-field/Compaction%E8%AE%A9Agent%E9%95%BF%E6%97%B6%E9%97%B4%E8%B7%91%E4%B8%8B%E5%8E%BB%E7%9A%84%E4%B8%8A%E4%B8%8B%E6%96%87%E5%8E%8B%E7%BC%A9%E6%9C%AF/imgs/compaction-strategy/infographic.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Compaction：让Agent长时间跑下去的上下文压缩术 | Leslie Zhang">
+<meta name="twitter:description" content="Compaction 是 Agent 长时间运行绕不开的上下文工程问题。这篇拆解压缩 vs 记忆的区别、常见保留策略、压缩触发时机、Token 预算方法，以及为什么这些东西跟 Prompt Cache 和上下文组织方式是一体的。">
+<meta name="twitter:image" content="https://leslieaibin.github.io/2026/05/31/attention-field/Compaction%E8%AE%A9Agent%E9%95%BF%E6%97%B6%E9%97%B4%E8%B7%91%E4%B8%8B%E5%8E%BB%E7%9A%84%E4%B8%8A%E4%B8%8B%E6%96%87%E5%8E%8B%E7%BC%A9%E6%9C%AF/imgs/compaction-strategy/infographic.png">
+<script>
+  (function () {
+    var saved = localStorage.getItem('orbital-theme');
+    var theme = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    document.documentElement.dataset.theme = theme;
+  })();
+</script>
+<link rel="stylesheet" href="/css/orbital.css">
+<meta name="generator" content="Hexo 5.2.0"></head>
+  <body class="page-post">
+    <a class="skip-link" href="#main-content">跳到主要内容</a>
+    <div class="reading-progress" data-reading-progress></div>
+    <header class="site-header" data-header>
+  <div class="nav-shell">
+    <a class="brand" href="/" aria-label="返回首页">
+      <span class="brand-mark" aria-hidden="true"><img src="/images/brand/leslie-mythos-avatar.webp" alt="" width="512" height="512"></span>
+      <span class="brand-copy">
+        <strong>LESLIE</strong>
+        <small>REAL-WORLD AGENTS</small>
+      </span>
+    </a>
+
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav" data-nav-toggle>
+      <span></span><span></span>
+      <span class="sr-only">打开导航</span>
+    </button>
+
+    <nav class="main-nav" id="main-nav" aria-label="主导航" data-nav>
+      
+        <a href="/" class="">首页</a>
+      
+        <a href="/writing/" class="">写作</a>
+      
+        <a href="/projects/" class="">项目</a>
+      
+        <a href="/about/" class="">关于</a>
+      
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换明暗主题">
+        <span class="theme-toggle__sun" aria-hidden="true">☼</span>
+        <span class="theme-toggle__moon" aria-hidden="true">◐</span>
+      </button>
+      <button class="ask-nav" type="button" data-ask-open>ASK LESLIE</button>
+    </nav>
+  </div>
+</header>
+
+    <main id="main-content"><article class="post-shell">
+  <header class="post-hero shell">
+    <a class="post-back" href="/writing/">← 返回写作</a>
+    <div class="post-hero__meta">
+      <time datetime="2026-05-31">2026 年 05 月 31 日</time>
+      <span>10 分钟阅读</span>
+    </div>
+    <h1>Compaction：让Agent长时间跑下去的上下文压缩术</h1>
+    <p class="post-hero__summary">Compaction 是 Agent 长时间运行绕不开的上下文工程问题。这篇拆解压缩 vs 记忆的区别、常见保留策略、压缩触发时机、Token 预算方法，以及为什么这些东西跟 Prompt Cache 和上下文组织方式是一体的。</p>
+    <div class="chip-row"><a href="/tags/Agent/">Agent</a><a href="/tags/Harness-Engineering/">Harness Engineering</a><a href="/tags/Claude-Code/">Claude Code</a><a href="/tags/Prompt-Cache/">Prompt Cache</a><a href="/tags/Compaction/">Compaction</a><a href="/tags/Context-Window/">Context Window</a></div>
+  </header>
+
+  <div class="post-cover shell"><img src="/2026/05/31/attention-field/Compaction%E8%AE%A9Agent%E9%95%BF%E6%97%B6%E9%97%B4%E8%B7%91%E4%B8%8B%E5%8E%BB%E7%9A%84%E4%B8%8A%E4%B8%8B%E6%96%87%E5%8E%8B%E7%BC%A9%E6%9C%AF/imgs/compaction-strategy/infographic.png" alt="Compaction：让Agent长时间跑下去的上下文压缩术"></div>
+
+  <div class="post-layout shell">
+    <aside class="post-toc" aria-label="文章目录">
+      <span class="aside-title">目录</span>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%88%E6%90%9E%E6%B8%85%E6%A5%9A%E4%B8%80%E4%B8%AA%E9%97%AE%E9%A2%98%EF%BC%9A%E5%8E%8B%E7%BC%A9%E4%B8%8D%E6%98%AF%E8%AE%B0%E5%BF%86"><span class="toc-text">先搞清楚一个问题：压缩不是记忆</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8E%8B%E7%BC%A9%E7%AD%96%E7%95%A5%EF%BC%9A%E4%BF%9D%E7%95%99%E5%85%B3%E9%94%AE%E5%8E%9F%E6%96%87%EF%BC%8C%E5%8E%8B%E7%BC%A9%E4%B8%AD%E9%97%B4%E8%BF%87%E7%A8%8B"><span class="toc-text">压缩策略：保留关键原文，压缩中间过程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8E%8B%E7%BC%A9%E6%97%B6%E6%9C%BA%EF%BC%9A%E4%BC%98%E5%85%88%E4%B8%8D%E6%89%93%E6%96%AD-Agent-loop"><span class="toc-text">压缩时机：优先不打断 Agent loop</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Token%E9%A2%84%E7%AE%97%EF%BC%9A%E5%90%8E%E9%AA%8C-usage-%E5%BE%88%E6%9C%89%E7%94%A8%EF%BC%8C%E4%BD%86%E4%B8%8D%E8%83%BD%E6%9B%BF%E4%BB%A3%E5%89%8D%E7%BD%AE%E9%A2%84%E7%AE%97"><span class="toc-text">Token预算：后验 usage 很有用，但不能替代前置预算</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B9%E6%B3%95%E4%B8%80%EF%BC%9A%E5%AD%97%E7%AC%A6%E6%95%B0%C3%B74"><span class="toc-text">方法一：字符数÷4</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B9%E6%B3%95%E4%BA%8C%EF%BC%9ATokenizer"><span class="toc-text">方法二：Tokenizer</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B9%E6%B3%95%E4%B8%89%EF%BC%9AAPI%E8%BF%94%E5%9B%9E%E7%9A%84-usage"><span class="toc-text">方法三：API返回的 usage</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%BF%99%E4%BA%9B%E4%B8%9C%E8%A5%BF%E6%98%AF%E4%B8%80%E4%BD%93%E7%9A%84%EF%BC%9APrompt-Cache"><span class="toc-text">为什么这些东西是一体的：Prompt Cache</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E9%99%85%E7%B3%BB%E7%BB%9F%E9%87%8C%E6%80%8E%E4%B9%88%E8%90%BD%E5%9C%B0"><span class="toc-text">实际系统里怎么落地</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%99%E5%9C%A8%E6%9C%80%E5%90%8E%EF%BC%9ACompaction%E4%B8%8D%E6%98%AF%E5%8A%9F%E8%83%BD%EF%BC%8C%E6%98%AF%E7%BA%A6%E6%9D%9F%E7%9A%84%E4%BA%A7%E7%89%A9"><span class="toc-text">写在最后：Compaction不是功能，是约束的产物</span></a></li></ol>
+    </aside>
+    <div class="article-content"><h1 id="Compaction：让Agent长时间跑下去的上下文压缩术"><a href="#Compaction：让Agent长时间跑下去的上下文压缩术" class="headerlink" title="Compaction：让Agent长时间跑下去的上下文压缩术"></a>Compaction：让Agent长时间跑下去的上下文压缩术</h1><p>Agent 能不能长时间跑下去，最终都会撞上同一个问题：上下文窗口是有限的。</p>
+<p>一次任务刚开始时，模型能看到完整的 System Prompt、用户需求、工具结果和中间推理。跑久之后，对话历史越来越长，工具输出越来越多，再大的 context window 也会被填满。</p>
+<p>这时候就需要 Compaction：把旧上下文压缩成更短、更结构化、仍然足够有用的摘要，让 Agent 继续往下跑。</p>
+<p>Compaction 不是一个简单的“把历史变短”功能。它牵涉到压缩策略、触发时机、Token 预算、Prompt Cache、种子文件重新注入，以及 Agent loop 本身怎么设计。</p>
+<h2 id="先搞清楚一个问题：压缩不是记忆"><a href="#先搞清楚一个问题：压缩不是记忆" class="headerlink" title="先搞清楚一个问题：压缩不是记忆"></a>先搞清楚一个问题：压缩不是记忆</h2><p>很多人把Compaction和Memory混在一起说。它们是两件完全不同的事。</p>
+<p><strong>Compaction解决的是单session内的上下文溢出。</strong> 你跟Agent聊了50轮，对话历史越来越长，200K的context窗口快装不下了。Compaction就是把这个对话历史压缩一下，让它能继续跑下去。</p>
+<p><strong>Memory解决的是跨session的信息共享。</strong> 你今天用Agent改了一个API的接口规范，明天开新session的时候，你不希望它又从零开始。Memory就是把这些偏好、决策、踩过的坑持久化下来，下次启动时加载。</p>
+<p>一个是<strong>同一次对话里的生存问题</strong>，一个是<strong>多次对话间的延续问题</strong>。</p>
+<p>类比一下：Compaction像你收拾行李——箱子快塞不下了，你得把旧衣服压缩成真空袋，腾出空间放新东西。Memory像你搬了新家之后，把老家带过来的东西分类放进不同的柜子——下次找的时候不用回老家翻。</p>
+<p>两者的技术手段也完全不同：</p>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>Compaction</th>
+<th>Memory</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>目的</td>
+<td>维持单session内上下文不溢出</td>
+<td>跨session的信息共享和积累</td>
+</tr>
+<tr>
+<td>触发时机</td>
+<td>Context使用率到阈值时自动触发</td>
+<td>新session启动时加载</td>
+</tr>
+<tr>
+<td>存储方式</td>
+<td>通常在当前会话链路内生效</td>
+<td>MD文件/SQLite/向量数据库</td>
+</tr>
+<tr>
+<td>信息流向</td>
+<td>对话历史 → 摘要</td>
+<td>历史 → 提炼 → 持久化</td>
+</tr>
+<tr>
+<td>用户感知</td>
+<td>Agent输出质量可能突然波动</td>
+<td>新session”记得”之前的偏好</td>
+</tr>
+</tbody></table>
+<p>搞清楚这个区别之后，我们聚焦Compaction。</p>
+<h2 id="压缩策略：保留关键原文，压缩中间过程"><a href="#压缩策略：保留关键原文，压缩中间过程" class="headerlink" title="压缩策略：保留关键原文，压缩中间过程"></a>压缩策略：保留关键原文，压缩中间过程</h2><p>不同 Agent 框架的压缩策略不一样，但有一个共性思路——<strong>不是一刀切地删掉前面的对话，而是有选择地保留关键信息。</strong></p>
+<p>一种常见的策略是这样的：</p>
+<ol>
+<li><strong>头部关键上下文保留原样</strong>——这部分通常是 System Prompt、最初任务目标、项目背景、用户偏好。它们决定 Agent 到底在做什么</li>
+<li><strong>尾部最近上下文保留原样</strong>——这是最近的对话、工具调用结果、待办事项和当前卡点。它们决定 Agent 下一步怎么做</li>
+<li><strong>中间过程压缩为摘要</strong>——这部分是”过去做了但已经不那么重要”的执行轨迹。可以交给一个 LLM 调用，把长对话压缩成结构化摘要</li>
+</ol>
+<p><img src="imgs/compaction-strategy/infographic.png" alt="Compaction的保留策略：头部和尾部保留，中间压缩"></p>
+<p>这个策略的直觉很简单。你回忆一下自己处理一个长任务的过程——你不需要记住每一分钟的细节，但你一定记得<strong>最开始的目标</strong>和<strong>现在做到哪了</strong>。中间的过程，你只需要一个结构化摘要就够了。</p>
+<p>这里的”头部/尾部/中间”不是固定比例。20%+60%+20% 只是一个容易理解的示意。真实系统会根据模型上下文窗口、当前任务长度、工具输出大小和摘要质量动态调整。</p>
+<h2 id="压缩时机：优先不打断-Agent-loop"><a href="#压缩时机：优先不打断-Agent-loop" class="headerlink" title="压缩时机：优先不打断 Agent loop"></a>压缩时机：优先不打断 Agent loop</h2><p>一个关键设计问题是：到底什么时候压缩？</p>
+<p>如果每次调用 LLM 之前都无脑压缩，会导致上下文割裂感。</p>
+<p>你想象一下——Agent 正在执行一个复杂任务，中间调了好几个工具，正要推理下一步，突然 context 被压缩了。它之前仔细分析的中间结果全变成了摘要，信息密度骤降。这时候 Agent 的输出质量可能会突然变差，因为它丢失了关键细节。</p>
+<p>用户看到的现象就是：Agent前面一直很聪明，突然变傻了，然后又慢慢恢复。体验很差。</p>
+<p>所以一个稳妥原则是：<strong>能在 Agent loop 一轮结束后压缩，就尽量在轮后压缩。</strong></p>
+<p>Agent loop是什么？简单说就是Agent接收用户请求→规划→调工具→观察结果→继续推理→最终回复这个完整周期。</p>
+<p>一轮结束后触发压缩通常更合理，原因有三个：</p>
+<ol>
+<li><strong>多数任务的一轮 loop 能在当前 context 内跑完</strong>——尤其是没有读取超大文件、长日志、批量网页内容的时候</li>
+<li><strong>信息是完整的</strong>——轮结束时，任务已经完成了一个完整阶段。这时候压缩不会”打断思路”</li>
+<li><strong>不会有割裂感</strong>——用户收到的是完整的回复，压缩发生在后台，用户无感知</li>
+</ol>
+<p><img src="imgs/compaction-timing/infographic.png" alt="压缩时机对比：轮中压缩导致割裂，轮后压缩无感知"></p>
+<p>但这不是绝对规则。如果下一次 LLM 调用已经必然超过上下文窗口，系统就必须在调用前压缩，哪怕这发生在一个大任务中间。更准确的说法是：<strong>压缩时机要在”不中断推理”和”不超过上下文窗口”之间做权衡。</strong></p>
+<h2 id="Token预算：后验-usage-很有用，但不能替代前置预算"><a href="#Token预算：后验-usage-很有用，但不能替代前置预算" class="headerlink" title="Token预算：后验 usage 很有用，但不能替代前置预算"></a>Token预算：后验 usage 很有用，但不能替代前置预算</h2><p>知道了”什么时候压缩”，还差一个前置问题——<strong>怎么知道该压缩了？</strong></p>
+<p>你总得知道当前 context 用了多少 token，才能判断是否到了阈值（比如 80% 或 95%）。这个问题看起来简单，其实是个挺有意思的工程问题。</p>
+<h3 id="方法一：字符数÷4"><a href="#方法一：字符数÷4" class="headerlink" title="方法一：字符数÷4"></a>方法一：字符数÷4</h3><p>这是最快的估算方法。原理是：在英文语境下，大约4个字符≈1个token。</p>
+<p>统计当前messages的字符总数，除以4，再除以模型的context window大小（比如200K），就知道使用率了。</p>
+<p><strong>优点</strong>：极快，零开销。<br><strong>缺点</strong>：<strong>不准。</strong> 不同语言、代码、JSON、Markdown、工具输出的 token/字符比例差别很大。如果你只依赖这个方法，到了该压缩的时候可能没压缩，context 直接爆了。</p>
+<h3 id="方法二：Tokenizer"><a href="#方法二：Tokenizer" class="headerlink" title="方法二：Tokenizer"></a>方法二：Tokenizer</h3><p>用模型对应的tokenizer（比如tiktoken）对整个messages做精确分词计数。</p>
+<p><strong>优点</strong>：准确。<br><strong>缺点</strong>：有成本。现在的 Agent 一轮对话可能涉及几十个文件、几十次工具调用，messages 非常长。每次调 LLM 之前都跑一遍完整 tokenizer，会带来额外开销。不过在真正接近上下文上限时，这个成本通常是值得的。</p>
+<h3 id="方法三：API返回的-usage"><a href="#方法三：API返回的-usage" class="headerlink" title="方法三：API返回的 usage"></a>方法三：API返回的 usage</h3><p>这是很重要的后验信号。</p>
+<p>每次调用LLM API，返回结果里都会带一个<code>usage</code>字段。以Anthropic为例：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">usage: &#123;</span><br><span class="line">  input_tokens: 152348,</span><br><span class="line">  output_tokens: 2048,</span><br><span class="line">  cache_creation_input_tokens: 120000,</span><br><span class="line">  cache_read_input_tokens: 32348</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>OpenAI的类似：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">usage: &#123;</span><br><span class="line">  prompt_tokens: 152348,</span><br><span class="line">  completion_tokens: 2048,</span><br><span class="line">  total_tokens: 154396</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Agent loop 结束后，最后一次 LLM 调用返回的 <code>usage.input_tokens</code>、<code>prompt_tokens</code> 或类似字段，能告诉你：<strong>刚刚这次请求，服务端实际看到了多少输入 token。</strong></p>
+<p>这比字符数估算可靠得多，也适合作为压缩阈值判断的输入。但它不是”当前 session 总消耗 token 数”，也不应该用 <code>total_tokens</code> 来判断下一轮输入是否会超窗，因为 <code>total_tokens</code> 还包含输出 token。真正要控制的是下一次请求将发送给模型的输入上下文长度。</p>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>速度</th>
+<th>准确度</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>字符数÷4</td>
+<td>极快</td>
+<td>不准（误差累积）</td>
+<td>首轮粗估</td>
+</tr>
+<tr>
+<td>Tokenizer</td>
+<td>慢</td>
+<td>准确</td>
+<td>不适合频繁调用</td>
+</tr>
+<tr>
+<td>API usage</td>
+<td>直接可用</td>
+<td>对刚刚那次请求准确</td>
+<td>Agent loop结束后的后验判断</td>
+</tr>
+</tbody></table>
+<p>比较稳的做法是混合使用：</p>
+<ol>
+<li>平时用字符数或增量计数做快速粗估</li>
+<li>接近阈值时用 tokenizer 或模型服务返回的 usage 校正</li>
+<li>一轮 loop 结束后，用最后一次 usage 判断是否需要后台 compaction</li>
+<li>下一次调用前，仍然检查即将发送的 messages 是否可能超过模型窗口</li>
+</ol>
+<p>所以这里不能把某一种计数方法当成放之四海皆准的答案。正确的是把 token 预算放到 Agent loop 的生命周期里看：调用前防止超窗，调用后校正实际用量，轮结束时决定是否压缩。</p>
+<h2 id="为什么这些东西是一体的：Prompt-Cache"><a href="#为什么这些东西是一体的：Prompt-Cache" class="headerlink" title="为什么这些东西是一体的：Prompt Cache"></a>为什么这些东西是一体的：Prompt Cache</h2><p>聊到这儿，你可能会觉得Compaction是个独立的问题。其实不是——它跟<strong>Prompt Cache</strong>和上下文组织方式关系很密。</p>
+<p>Prompt Cache 是 LLM 提供商（Anthropic、OpenAI、Google 等）做的一个优化：如果多次请求的 prompt 前缀相同，可以复用之前计算的结果，降低延迟和成本。</p>
+<p>这类缓存通常和<strong>前缀匹配</strong>有关。简单说，越稳定、越靠前的 prompt 部分，越适合被缓存；越动态、越靠后的部分，即使变化，也只影响后面的缓存命中。</p>
+<p>这跟Compaction有什么关系？</p>
+<p>关系大了。当你设计一个Agent系统的时候，<strong>Skill元信息放在哪</strong>直接影响缓存效率：</p>
+<table>
+<thead>
+<tr>
+<th>放在System Prompt</th>
+<th>放在User Message（System Reminder）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Skill增减→System Prompt变化→缓存全废</td>
+<td>System Prompt不变→缓存持续有效</td>
+</tr>
+<tr>
+<td>每次都要重新处理整个System Prompt</td>
+<td>只有动态部分需要重新处理</td>
+</tr>
+</tbody></table>
+<p>所以设计 Agent 上下文时，一个常见原则是：<strong>稳定内容尽量放在前面，动态内容尽量放在后面。</strong> 这样 System Prompt、长期规则、项目说明这些稳定部分更容易命中缓存；Tools、Skills、检索结果、当前任务上下文这些动态内容变化时，对缓存的破坏范围更小。</p>
+<p><img src="imgs/prompt-cache-compaction/infographic.png" alt="Prompt Cache与Compaction的关系：稳定部分保缓存，动态部分容忍失效"></p>
+<p>这套设计形成了一个完整的闭环：</p>
+<ol>
+<li><strong>System Prompt保持稳定</strong> → Prompt Cache持续命中</li>
+<li><strong>动态部分（Tools/Skills）放在后面</strong> → 即使失效，token开销小</li>
+<li><strong>Agent loop结束后优先触发Compaction</strong> → 用 API usage 校正实际输入规模</li>
+<li><strong>压缩后重新注入种子文件</strong> → 恢复项目规则、用户偏好、长期记忆等关键上下文</li>
+</ol>
+<p>每一个设计选择都不是孤立的，它们互相支撑。</p>
+<h2 id="实际系统里怎么落地"><a href="#实际系统里怎么落地" class="headerlink" title="实际系统里怎么落地"></a>实际系统里怎么落地</h2><p>不同 Agent 框架的 compaction 细节差异很大。有些是公开文档能确认的，有些只能从源码或运行行为推断，不能混在一起当成确定事实。</p>
+<p>以 Claude Code 为例，官方文档能确认的是：</p>
+<ul>
+<li>支持 <code>/compact</code> 手动压缩当前对话</li>
+<li>支持 auto-compact，在上下文接近上限时自动压缩</li>
+<li>官方成本文档提到 auto-compact 通常在 context 超过约 95% 时触发</li>
+<li>hooks 里有 <code>PreCompact</code> 事件，可以区分 manual 和 auto compaction</li>
+</ul>
+<p>这些信息能证明 Claude Code 有自动压缩机制，也能证明它的触发阈值很靠后。但它具体怎么选择原始消息、摘要、种子文件重注入比例，公开文档没有把所有内部细节讲完。写文章时最好把“公开可确认”和“源码/经验推断”分开。</p>
+<p>对任何 Agent 系统来说，落地时都可以按这几项检查：</p>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>需要回答的问题</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>触发阈值</td>
+<td>到多少 context 使用率开始压缩？是否区分软阈值和硬阈值？</td>
+</tr>
+<tr>
+<td>触发时机</td>
+<td>优先轮后压缩，还是调用前压缩？超窗时怎么兜底？</td>
+</tr>
+<tr>
+<td>压缩策略</td>
+<td>保留哪些原文？哪些变摘要？工具输出怎么处理？</td>
+</tr>
+<tr>
+<td>恢复机制</td>
+<td>压缩后是否重新加载项目规则、用户偏好、长期记忆、任务计划？</td>
+</tr>
+<tr>
+<td>Token 预算</td>
+<td>调用前怎么估算？调用后怎么用 usage 校正？</td>
+</tr>
+<tr>
+<td>用户感知</td>
+<td>压缩是否会导致 Agent 突然忘记当前任务？是否需要提示用户？</td>
+</tr>
+</tbody></table>
+<p>这个表比硬背某个框架的实现更有用。因为不同模型、不同 API、不同工具调用模式下，最优压缩策略会变。</p>
+<h2 id="写在最后：Compaction不是功能，是约束的产物"><a href="#写在最后：Compaction不是功能，是约束的产物" class="headerlink" title="写在最后：Compaction不是功能，是约束的产物"></a>写在最后：Compaction不是功能，是约束的产物</h2><p>拆完这些，我有一个很深的感受。</p>
+<p>Compaction不是因为”我们需要一个压缩功能”而设计的。它是因为<strong>大模型有两个硬约束</strong>——context窗口有限、API调用无状态——所以你<strong>不得不</strong>压缩。</p>
+<p>所有围绕Compaction的设计选择——保留策略、触发时机、Token估算、缓存联动——全都是在这些约束下做权衡。</p>
+<ul>
+<li>头部关键上下文常常需要保留，是因为 System Prompt 和任务目标丢了，Agent 就不认识自己了</li>
+<li>优先 Agent loop 结束后触发，是因为这样更不容易打断推理，用户感知也更平滑</li>
+<li>API usage 很重要，是因为它能校正实际输入规模，但调用前仍然需要预算</li>
+<li>动态内容尽量放后面，是因为前缀稳定性直接影响 Prompt Cache 的命中范围</li>
+</ul>
+<p><strong>每一个选择都不是”最佳实践”，而是”在特定约束下的最优解”。</strong></p>
+<p>下次再设计 Compaction，别急着说”前20%后20%保留”。先想清楚三个问题：</p>
+<ol>
+<li><strong>什么时候压缩？</strong> → 优先 Agent loop 结束后；即将超窗时必须调用前压缩</li>
+<li><strong>怎么判断该压缩了？</strong> → 调用前预算 + 调用后 usage 校正</li>
+<li><strong>压缩后怎么恢复？</strong> → 重新注入项目规则、长期记忆、任务计划和最近状态</li>
+</ol>
+<p>这三个答案背后，是context有限、API无状态、缓存按prefix匹配这三个硬约束。理解了约束，答案就自然出来了。</p>
+<p>以上，既然看到这里了，如果觉得不错，随手点个赞、在看、转发三连吧，如果想第一时间收到推送，也可以给我个星标⭐～</p>
+<p>谢谢你看我的文章，我们，下次再见。</p>
+</div>
+    <aside class="post-rail">
+      <span class="post-rail__line"></span>
+      <span>LESLIE / WRITING</span>
+    </aside>
+  </div>
+
+  <footer class="post-footer shell">
+    <div><h2>如果这篇文章帮到了你，<br>也许下一篇会更有意思。</h2></div>
+    <a class="button button--primary" href="/writing/">继续阅读 →</a>
+  </footer>
+</article>
+</main>
+    <footer class="site-footer">
+  <div class="footer-grid">
+    <div>
+      <p class="footer-kicker">Leslie Zhang</p>
+      <p class="footer-statement">把真实世界的问题，<br>变成可以运行的智能系统。</p>
+    </div>
+    <div class="footer-links">
+      <a href="https://github.com/leslieAIbin" target="_blank" rel="noreferrer">GitHub ↗</a>
+      <a href="mailto:aibinzhangleslie@gmail.com">Email ↗</a>
+      <a href="/atom.xml">RSS ↗</a>
+    </div>
+    <div class="footer-meta">
+      <span>© 2026 Leslie Zhang</span>
+      <span>Writing, research and working systems.</span>
+    </div>
+  </div>
+</footer>
+
+    <dialog class="ask-dialog" id="ask-leslie" aria-labelledby="ask-title">
+  <div class="ask-dialog__shell">
+    <div class="ask-dialog__topbar">
+      <div>
+        <h2 id="ask-title">Ask Leslie</h2>
+      </div>
+      <button class="icon-button" type="button" data-ask-close aria-label="关闭">×</button>
+    </div>
+    <p class="ask-dialog__intro">从本站公开文章中寻找答案。当前版本在浏览器本地检索，不上传问题，也不会编造不存在的经历。</p>
+    <form class="ask-form" data-ask-form>
+      <label class="sr-only" for="ask-query">输入问题</label>
+      <textarea id="ask-query" rows="2" placeholder="例如：Agent Runtime 应该怎么设计？" data-ask-input></textarea>
+      <button type="submit">检索知识库 <span aria-hidden="true">↗</span></button>
+    </form>
+    <div class="ask-suggestions" aria-label="推荐问题">
+      
+        <button type="button" data-ask-suggestion="Agent Runtime 应该怎么设计？">Agent Runtime 应该怎么设计？</button>
+      
+        <button type="button" data-ask-suggestion="如何让 AI 操控真实世界设备？">如何让 AI 操控真实世界设备？</button>
+      
+        <button type="button" data-ask-suggestion="Leslie 最近在研究什么？">Leslie 最近在研究什么？</button>
+      
+    </div>
+    <div class="ask-results" data-ask-results aria-live="polite">
+      <div class="ask-empty">
+        <p>输入一个问题，我会把你带到 Leslie 写过的相关内容。</p>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+    <script>window.ORBITAL_ROOT = '/';</script>
+    <script src="/js/orbital.js" defer></script>
+  </body>
+</html>

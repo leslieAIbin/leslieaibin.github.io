@@ -1,0 +1,660 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+  <head>
+
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#050b18">
+<meta name="color-scheme" content="dark light">
+<title>Codex 企业级落地（下）：4 个生产场景的真实落地 | Leslie Zhang</title>
+<meta name="description" content="构建能够感知、规划、行动与反馈的智能体系统，长期关注 Agent Runtime、多模态与真实世界自动化。">
+<meta name="author" content="Leslie Zhang">
+<link rel="canonical" href="https://leslieaibin.github.io/2026/05/09/attention-field/Codex%E4%BC%81%E4%B8%9A%E7%BA%A7%E8%90%BD%E5%9C%B0-%E4%B8%8B-4%E4%B8%AA%E7%94%9F%E4%BA%A7%E5%9C%BA%E6%99%AF%E7%9A%84%E7%9C%9F%E5%AE%9E%E8%90%BD%E5%9C%B0/">
+<link rel="icon" href="/imgs/01.jpg">
+<link rel="alternate" type="application/atom+xml" title="Leslie Zhang" href="/atom.xml">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Codex 企业级落地（下）：4 个生产场景的真实落地 | Leslie Zhang">
+<meta property="og:description" content="构建能够感知、规划、行动与反馈的智能体系统，长期关注 Agent Runtime、多模态与真实世界自动化。">
+<meta property="og:url" content="https://leslieaibin.github.io/2026/05/09/attention-field/Codex%E4%BC%81%E4%B8%9A%E7%BA%A7%E8%90%BD%E5%9C%B0-%E4%B8%8B-4%E4%B8%AA%E7%94%9F%E4%BA%A7%E5%9C%BA%E6%99%AF%E7%9A%84%E7%9C%9F%E5%AE%9E%E8%90%BD%E5%9C%B0/">
+<meta property="og:image" content="https://leslieaibin.github.io/2026/05/09/attention-field/Codex%E4%BC%81%E4%B8%9A%E7%BA%A7%E8%90%BD%E5%9C%B0-%E4%B8%8B-4%E4%B8%AA%E7%94%9F%E4%BA%A7%E5%9C%BA%E6%99%AF%E7%9A%84%E7%9C%9F%E5%AE%9E%E8%90%BD%E5%9C%B0/illustrations/S1-4%E5%9C%BA%E6%99%AF%E5%85%A8%E6%99%AF%E5%AF%B9%E6%AF%94.webp">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Codex 企业级落地（下）：4 个生产场景的真实落地 | Leslie Zhang">
+<meta name="twitter:description" content="构建能够感知、规划、行动与反馈的智能体系统，长期关注 Agent Runtime、多模态与真实世界自动化。">
+<meta name="twitter:image" content="https://leslieaibin.github.io/2026/05/09/attention-field/Codex%E4%BC%81%E4%B8%9A%E7%BA%A7%E8%90%BD%E5%9C%B0-%E4%B8%8B-4%E4%B8%AA%E7%94%9F%E4%BA%A7%E5%9C%BA%E6%99%AF%E7%9A%84%E7%9C%9F%E5%AE%9E%E8%90%BD%E5%9C%B0/illustrations/S1-4%E5%9C%BA%E6%99%AF%E5%85%A8%E6%99%AF%E5%AF%B9%E6%AF%94.webp">
+<script>
+  (function () {
+    var saved = localStorage.getItem('orbital-theme');
+    var theme = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    document.documentElement.dataset.theme = theme;
+  })();
+</script>
+<link rel="stylesheet" href="/css/orbital.css">
+<meta name="generator" content="Hexo 5.2.0"></head>
+  <body class="page-post">
+    <a class="skip-link" href="#main-content">跳到主要内容</a>
+    <div class="reading-progress" data-reading-progress></div>
+    <header class="site-header" data-header>
+  <div class="nav-shell">
+    <a class="brand" href="/" aria-label="返回首页">
+      <span class="brand-mark" aria-hidden="true"><img src="/images/brand/leslie-mythos-avatar.webp" alt="" width="512" height="512"></span>
+      <span class="brand-copy">
+        <strong>LESLIE</strong>
+        <small>REAL-WORLD AGENTS</small>
+      </span>
+    </a>
+
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav" data-nav-toggle>
+      <span></span><span></span>
+      <span class="sr-only">打开导航</span>
+    </button>
+
+    <nav class="main-nav" id="main-nav" aria-label="主导航" data-nav>
+      
+        <a href="/" class="">首页</a>
+      
+        <a href="/writing/" class="">写作</a>
+      
+        <a href="/projects/" class="">项目</a>
+      
+        <a href="/about/" class="">关于</a>
+      
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换明暗主题">
+        <span class="theme-toggle__sun" aria-hidden="true">☼</span>
+        <span class="theme-toggle__moon" aria-hidden="true">◐</span>
+      </button>
+      <button class="ask-nav" type="button" data-ask-open>ASK LESLIE</button>
+    </nav>
+  </div>
+</header>
+
+    <main id="main-content"><article class="post-shell">
+  <header class="post-hero shell">
+    <a class="post-back" href="/writing/">← 返回写作</a>
+    <div class="post-hero__meta">
+      <time datetime="2026-05-09">2026 年 05 月 09 日</time>
+      <span>15 分钟阅读</span>
+    </div>
+    <h1>Codex 企业级落地（下）：4 个生产场景的真实落地</h1>
+    
+    <div class="chip-row"><a href="/tags/Codex/">Codex</a><a href="/tags/LLM-Agent/">LLM-Agent</a><a href="/tags/Production/">Production</a><a href="/tags/Enterprise/">Enterprise</a><a href="/tags/Copilot/">Copilot</a><a href="/tags/CI-CD/">CI/CD</a><a href="/tags/DataScience/">DataScience</a><a href="/tags/MultiAgent/">MultiAgent</a></div>
+  </header>
+
+  <div class="post-cover shell"><img src="/2026/05/09/attention-field/Codex%E4%BC%81%E4%B8%9A%E7%BA%A7%E8%90%BD%E5%9C%B0-%E4%B8%8B-4%E4%B8%AA%E7%94%9F%E4%BA%A7%E5%9C%BA%E6%99%AF%E7%9A%84%E7%9C%9F%E5%AE%9E%E8%90%BD%E5%9C%B0/illustrations/S1-4%E5%9C%BA%E6%99%AF%E5%85%A8%E6%99%AF%E5%AF%B9%E6%AF%94.webp" alt="Codex 企业级落地（下）：4 个生产场景的真实落地"></div>
+
+  <div class="post-layout shell">
+    <aside class="post-toc" aria-label="文章目录">
+      <span class="aside-title">目录</span>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BC%95%E8%A8%80%EF%BC%9A%E4%BB%8E%E6%9E%B6%E6%9E%84%E5%88%B0%E4%BA%A7%E5%93%81%E7%9A%84%E6%9C%80%E5%90%8E%E4%B8%80%E5%85%AC%E9%87%8C"><span class="toc-text">引言：从架构到产品的最后一公里</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9C%BA%E6%99%AF-1%EF%BC%9A%E5%86%85%E9%83%A8-Copilot-%E6%9B%BF%E4%BB%A3"><span class="toc-text">场景 1：内部 Copilot 替代</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%97%9B%E7%82%B9%EF%BC%9ACopilot-%E7%94%A8%E4%B8%8D%E4%BA%86%E7%9A%84-5-%E4%B8%AA%E7%90%86%E7%94%B1"><span class="toc-text">痛点：Copilot 用不了的 5 个理由</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9E%B6%E6%9E%84%EF%BC%9A%E6%8A%8A%E2%80%9DAI-%E5%86%99%E4%BB%A3%E7%A0%81%E2%80%9D%E5%81%9A%E6%88%90%E4%B8%80%E4%B8%AA%E5%86%85%E9%83%A8-SaaS"><span class="toc-text">架构：把”AI 写代码”做成一个内部 SaaS</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E9%94%AE%E8%AE%BE%E8%AE%A1-1%EF%BC%9AMCP-Server-%E7%9A%84%E6%9C%80%E5%B0%8F%E6%9D%83%E9%99%90%E8%AE%BE%E8%AE%A1"><span class="toc-text">关键设计 1：MCP Server 的最小权限设计</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E9%94%AE%E8%AE%BE%E8%AE%A1-2%EF%BC%9AEmbedding-RAG%EF%BC%8C%E8%AE%A9-AI-%E7%9C%9F%E7%9A%84%E2%80%9D%E6%87%82%E2%80%9D%E4%BD%A0%E5%85%AC%E5%8F%B8%E4%BB%A3%E7%A0%81"><span class="toc-text">关键设计 2：Embedding + RAG，让 AI 真的”懂”你公司代码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E9%94%AE%E8%AE%BE%E8%AE%A1-3%EF%BC%9ALLM-Gateway-%E7%9A%84%E4%B8%89%E5%A4%A7%E8%81%8C%E8%B4%A3"><span class="toc-text">关键设计 3：LLM Gateway 的三大职责</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%8A%E7%BA%BF%E8%B7%AF%E5%BE%84%E4%B8%8E%E4%BB%B7%E5%80%BC%E4%BC%B0%E7%AE%97"><span class="toc-text">上线路径与价值估算</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E6%88%98%E5%9D%91"><span class="toc-text">实战坑</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9C%BA%E6%99%AF-2%EF%BC%9ACI-CD-AI-%E4%BF%AE%E5%A4%8D%E6%9C%BA%E5%99%A8%E4%BA%BA"><span class="toc-text">场景 2：CI&#x2F;CD AI 修复机器人</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%97%9B%E7%82%B9%EF%BC%9A%E6%AF%8F%E4%B8%AA%E5%B7%A5%E7%A8%8B%E5%B8%88%E6%AF%8F%E5%91%A8%E6%B5%AA%E8%B4%B9%E5%9C%A8-CI-%E7%BA%A2%E7%81%AF%E4%B8%8A%E7%9A%84-5-%E5%B0%8F%E6%97%B6"><span class="toc-text">痛点：每个工程师每周浪费在 CI 红灯上的 5 小时</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9E%B6%E6%9E%84%EF%BC%9A%E4%BB%8E-GitLab-webhook-%E5%88%B0%E8%87%AA%E5%8A%A8-MR"><span class="toc-text">架构：从 GitLab webhook 到自动 MR</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E9%94%AE%E8%AE%BE%E8%AE%A1-1%EF%BC%9ACI-%E5%A4%B1%E8%B4%A5%E7%9A%84%E2%80%9DAI-%E5%8F%AF%E8%A7%A3%E6%80%A7%E2%80%9D%E5%88%86%E7%B1%BB"><span class="toc-text">关键设计 1：CI 失败的”AI 可解性”分类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E9%94%AE%E8%AE%BE%E8%AE%A1-2%EF%BC%9A%E8%AE%A9-AI-%E5%9C%A8-sandbox-%E9%87%8C%E2%80%9D%E5%AE%9E%E8%B7%91%E2%80%9D"><span class="toc-text">关键设计 2：让 AI 在 sandbox 里”实跑”</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E9%94%AE%E8%AE%BE%E8%AE%A1-3%EF%BC%9A%E6%B0%B8%E8%BF%9C%E6%98%AF%E6%96%B0%E5%88%86%E6%94%AF-%E6%96%B0-MR%EF%BC%8C%E4%B8%8D%E7%9B%B4%E6%8E%A5%E6%94%B9%E7%94%A8%E6%88%B7%E5%88%86%E6%94%AF"><span class="toc-text">关键设计 3：永远是新分支 + 新 MR，不直接改用户分支</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%8A%E7%BA%BF%E8%B7%AF%E5%BE%84"><span class="toc-text">上线路径</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E6%88%98%E5%9D%91-1"><span class="toc-text">实战坑</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9C%BA%E6%99%AF-3%EF%BC%9A%E6%95%B0%E6%8D%AE%E7%A7%91%E5%AD%A6-%E5%86%85%E9%83%A8%E6%9F%A5%E8%AF%A2%E5%B9%B3%E5%8F%B0"><span class="toc-text">场景 3：数据科学 &#x2F; 内部查询平台</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%97%9B%E7%82%B9%EF%BC%9A%E4%B8%9A%E5%8A%A1%E5%90%8C%E4%BA%8B%E9%97%AE%E6%95%B0%E6%8D%AE%EF%BC%8C%E6%95%B0%E6%8D%AE%E5%9B%A2%E9%98%9F%E5%8A%A0%E7%8F%AD%E5%8A%A0%E7%82%B9%E5%9B%9E%E4%B8%8D%E5%AE%8C"><span class="toc-text">痛点：业务同事问数据，数据团队加班加点回不完</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9E%B6%E6%9E%84%EF%BC%9A%E4%B8%9A%E5%8A%A1%E8%87%AA%E7%84%B6%E8%AF%AD%E8%A8%80-%E2%86%92-AI-%E2%86%92-Sandbox-%E5%86%85%E6%89%A7%E8%A1%8C-%E2%86%92-%E7%BB%93%E6%9E%9C"><span class="toc-text">架构：业务自然语言 → AI → Sandbox 内执行 → 结果</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E9%94%AE%E8%AE%BE%E8%AE%A1-2%EF%BC%9ASchema-%E5%8F%AC%E5%9B%9E-Few-shot-Examples"><span class="toc-text">关键设计 2：Schema 召回 + Few-shot Examples</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E9%94%AE%E8%AE%BE%E8%AE%A1-3%EF%BC%9A%E5%8F%AF%E8%A7%A3%E9%87%8A%E6%80%A7%E4%BC%98%E5%85%88%E4%BA%8E%E8%87%AA%E5%8A%A8%E5%8C%96"><span class="toc-text">关键设计 3：可解释性优先于自动化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%8A%E7%BA%BF%E8%B7%AF%E5%BE%84-1"><span class="toc-text">上线路径</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E6%88%98%E5%9D%91-2"><span class="toc-text">实战坑</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9C%BA%E6%99%AF-4%EF%BC%9A%E5%A4%9A-Agent-%E5%B9%B6%E5%8F%91"><span class="toc-text">场景 4：多 Agent 并发</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%97%9B%E7%82%B9%EF%BC%9A%E5%8D%95-agent-%E8%A7%A3%E4%B8%8D%E4%BA%86%E7%9A%84%E5%A4%8D%E6%9D%82%E5%B7%A5%E7%A8%8B%E4%BB%BB%E5%8A%A1"><span class="toc-text">痛点：单 agent 解不了的复杂工程任务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9E%B6%E6%9E%84%EF%BC%9AAgent-%E6%8B%93%E6%89%91%E8%AE%BE%E8%AE%A1"><span class="toc-text">架构：Agent 拓扑设计</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E9%94%AE%E8%AE%BE%E8%AE%A1-1%EF%BC%9AAgent-%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%9A%E5%85%B1%E4%BA%AB-PVC-%E4%BA%8B%E4%BB%B6%E6%80%BB%E7%BA%BF"><span class="toc-text">关键设计 1：Agent 间通信：共享 PVC + 事件总线</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E9%94%AE%E8%AE%BE%E8%AE%A1-2%EF%BC%9A%E6%AF%8F%E4%B8%AA-agent-%E4%B8%80%E4%BB%BD%E7%8B%AC%E7%AB%8B-PermissionProfile"><span class="toc-text">关键设计 2：每个 agent 一份独立 PermissionProfile</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E9%94%AE%E8%AE%BE%E8%AE%A1-3%EF%BC%9A%E4%BA%BA%E5%B7%A5-Approval-Gate%EF%BC%88%E9%98%B2%E6%AD%A2-AI-%E8%B7%91%E9%A3%9E%EF%BC%89"><span class="toc-text">关键设计 3：人工 Approval Gate（防止 AI 跑飞）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%8A%E7%BA%BF%E8%B7%AF%E5%BE%84-2"><span class="toc-text">上线路径</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E6%88%98%E5%9D%91-3"><span class="toc-text">实战坑</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93%EF%BC%9A4-%E4%B8%AA%E5%9C%BA%E6%99%AF%E7%9A%84%E5%85%B1%E6%80%A7%E6%9E%B6%E6%9E%84"><span class="toc-text">总结：4 个场景的共性架构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%A0%E7%9A%84%E4%B8%8B%E4%B8%80%E6%AD%A5"><span class="toc-text">你的下一步</span></a></li></ol>
+    </aside>
+    <div class="article-content"><h1 id="Codex-企业级落地（下）：4-个生产场景的真实落地"><a href="#Codex-企业级落地（下）：4-个生产场景的真实落地" class="headerlink" title="Codex 企业级落地（下）：4 个生产场景的真实落地"></a>Codex 企业级落地（下）：4 个生产场景的真实落地</h1><blockquote>
+<p>本系列三篇：</p>
+<ul>
+<li><strong>21</strong>《<a href="../21.%E6%8A%8AAI%E5%85%B3%E8%BF%9B%E7%AC%BC%E5%AD%90%E9%87%8C-Codex-Sandbox%E5%85%A8%E6%99%AF%E6%8B%86%E8%A7%A3/%E6%8A%8AAI%E5%85%B3%E8%BF%9B%E7%AC%BC%E5%AD%90%E9%87%8C-Codex-Sandbox%E5%85%A8%E6%99%AF%E6%8B%86%E8%A7%A3.md">把 AI 关进笼子里：Codex Sandbox 全景拆解</a>》单机 sandbox 五层防御</li>
+<li><strong>22</strong>《<a href="../22.Codex%E4%BC%81%E4%B8%9A%E7%BA%A7%E8%90%BD%E5%9C%B0-%E4%B8%8A-%E4%BB%8E%E5%8D%95%E6%9C%BAsandbox%E5%88%B0K8s%E7%94%9F%E4%BA%A7%E6%9E%B6%E6%9E%84/Codex%E4%BC%81%E4%B8%9A%E7%BA%A7%E8%90%BD%E5%9C%B0-%E4%B8%8A-%E4%BB%8E%E5%8D%95%E6%9C%BAsandbox%E5%88%B0K8s%E7%94%9F%E4%BA%A7%E6%9E%B6%E6%9E%84.md">Codex 企业级落地（上）：从单机 sandbox 到 K8s 生产架构</a>》K8s 生产架构</li>
+<li><strong>23</strong>（本篇）4 个生产场景的真实落地</li>
+</ul>
+</blockquote>
+<h2 id="引言：从架构到产品的最后一公里"><a href="#引言：从架构到产品的最后一公里" class="headerlink" title="引言：从架构到产品的最后一公里"></a>引言：从架构到产品的最后一公里</h2><p>上一篇我们讲了怎么把 Codex 装进 K8s：架构很优雅，gVisor + OPA + Cilium + Falco 一应俱全，但你可能心里有个挥之不去的疑问：</p>
+<p><strong>这玩意搭起来给谁用？</strong></p>
+<p>公司里跑了一个企业级 AI agent 平台，不是用来当摆设的。它得有具体场景、具体用户、具体能解决的问题，最好能直接换算成钱（省的或赚的）。否则就是一个 SRE 团队自嗨的玩具，半年后被砍掉。</p>
+<p><img src="illustrations/S1-4%E5%9C%BA%E6%99%AF%E5%85%A8%E6%99%AF%E5%AF%B9%E6%AF%94.webp" alt="4 个企业级 AI agent 真实落地场景的全景对比"></p>
+<p>这一篇讲 4 个我认为<strong>最值得起步的企业级场景</strong>，每个都满足三个判定标准：</p>
+<ol>
+<li><strong>痛点真实</strong> —— 用户不是被 AI 噱头吸引，而是有一个具体的工作日常被解决</li>
+<li><strong>风险可控</strong> —— Codex sandbox 哲学能直接覆盖，不需要额外的安全设计</li>
+<li><strong>价值可量化</strong> —— 能算出每月省多少工时 / 多少 incident / 多少美元</li>
+</ol>
+<p>四个场景：</p>
+<table>
+<thead>
+<tr>
+<th>场景</th>
+<th>用户</th>
+<th>解决的问题</th>
+<th>落地难度</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>1. 内部 Copilot 替代</strong></td>
+<td>全公司工程师</td>
+<td>GitHub Copilot 数据出海合规问题 + 接不上内部系统</td>
+<td>中</td>
+</tr>
+<tr>
+<td><strong>2. CI/CD AI 修复机器人</strong></td>
+<td>平台 / DevOps 团队</td>
+<td>PR 提交后红的测试人工修复成本</td>
+<td>中-高</td>
+</tr>
+<tr>
+<td><strong>3. 数据科学 / 内部查询平台</strong></td>
+<td>业务 / 产品 / 运营</td>
+<td>不会 SQL 的人天天找数据团队，数据团队被烦疯</td>
+<td>高</td>
+</tr>
+<tr>
+<td><strong>4. 多 Agent 并发</strong></td>
+<td>复杂工程任务</td>
+<td>单 agent 解不了的多步骤任务</td>
+<td>高（前沿）</td>
+</tr>
+</tbody></table>
+<p>每个场景都给完整的架构、关键代码、上线路径、踩坑经验。读完你能直接拿去和老板、安全部门、数据团队过方案。</p>
+<hr>
+<h2 id="场景-1：内部-Copilot-替代"><a href="#场景-1：内部-Copilot-替代" class="headerlink" title="场景 1：内部 Copilot 替代"></a>场景 1：内部 Copilot 替代</h2><h3 id="痛点：Copilot-用不了的-5-个理由"><a href="#痛点：Copilot-用不了的-5-个理由" class="headerlink" title="痛点：Copilot 用不了的 5 个理由"></a>痛点：Copilot 用不了的 5 个理由</h3><p>GitHub Copilot 是好东西，但很多公司用不了：</p>
+<ol>
+<li><strong>合规过不了</strong>：代码片段会发到微软的服务器，敏感行业（金融、医疗、政府）法务直接否</li>
+<li><strong>接不上内网</strong>：Copilot 不知道公司内部 SDK、内部 API、内部 RPC 协议，写出来的代码全是开源风</li>
+<li><strong>不能用内部知识库</strong>：你公司 Confluence 上沉淀了几千页架构文档，Copilot 看不到</li>
+<li><strong>跨服务理解弱</strong>：跨 repo / 跨语言 / 跨服务的重构，Copilot 给不出方案</li>
+<li><strong>预算分摊难</strong>：Copilot 按人头收钱，但谁该掏钱、不同团队怎么算账，IT 部门一头包</li>
+</ol>
+<p>Codex 在 K8s 上跑一个<strong>内部 Copilot 替代品</strong>，能干净地解决这 5 个问题。</p>
+<h3 id="架构：把”AI-写代码”做成一个内部-SaaS"><a href="#架构：把”AI-写代码”做成一个内部-SaaS" class="headerlink" title="架构：把”AI 写代码”做成一个内部 SaaS"></a>架构：把”AI 写代码”做成一个内部 SaaS</h3><p><img src="illustrations/S2-%E5%86%85%E9%83%A8Copilot%E6%9E%B6%E6%9E%84.webp" alt="内部 Copilot 替代：Codex + 公司 LLM Gateway + GitLab/Jira/Confluence MCP 的完整架构"></p>
+<p>核心组件 6 个：</p>
+<table>
+<thead>
+<tr>
+<th>组件</th>
+<th>作用</th>
+<th>选型</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>VS Code 插件</strong> / Web IDE</td>
+<td>用户接入端，提供 inline 补全、chat、agent 模式</td>
+<td>自研，参考 Continue.dev</td>
+</tr>
+<tr>
+<td><strong>Codex Backend</strong>（K8s）</td>
+<td>真正的 AI agent 进程，跑在 sandbox pod 里</td>
+<td>上一篇的 K8s 架构</td>
+</tr>
+<tr>
+<td><strong>公司 LLM Gateway</strong></td>
+<td>统一接 GPT / Claude / 内部模型，做配额、审计、路由</td>
+<td>自研或用 LiteLLM / Portkey</td>
+</tr>
+<tr>
+<td><strong>GitLab MCP Server</strong></td>
+<td>让 AI 能查代码、看 PR、发 issue</td>
+<td>基于 MCP 协议自研</td>
+</tr>
+<tr>
+<td><strong>Confluence MCP Server</strong></td>
+<td>让 AI 能查内部架构文档、API 规范</td>
+<td>同上</td>
+</tr>
+<tr>
+<td><strong>Embedding 服务</strong></td>
+<td>公司代码 / 文档的向量化检索（RAG）</td>
+<td>bge-m3 / 公司自研</td>
+</tr>
+</tbody></table>
+<h3 id="关键设计-1：MCP-Server-的最小权限设计"><a href="#关键设计-1：MCP-Server-的最小权限设计" class="headerlink" title="关键设计 1：MCP Server 的最小权限设计"></a>关键设计 1：MCP Server 的最小权限设计</h3><p>Codex 通过 <strong>MCP</strong>（Model Context Protocol，Anthropic 提出，目前事实上的 LLM-工具通信标准）协议调用工具。每个内部服务都包装成一个 MCP server，AI 看到的是一组工具，不是直接看到 GitLab API。</p>
+<p>举例：GitLab MCP Server 暴露的工具集要刻意收窄。给 AI 的不该是 “你有 GitLab 全部 API”，而是”你能干这 6 件事”：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># gitlab-mcp-server config</span></span><br><span class="line"><span class="attr">tools:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">search_code</span></span><br><span class="line">    <span class="attr">description:</span> <span class="string">在公司</span> <span class="string">GitLab</span> <span class="string">仓库里搜代码</span></span><br><span class="line">    <span class="attr">permissions:</span> [<span class="string">read</span>]</span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">read_file</span></span><br><span class="line">    <span class="attr">description:</span> <span class="string">读某个</span> <span class="string">repo</span> <span class="string">的某个文件</span></span><br><span class="line">    <span class="attr">permissions:</span> [<span class="string">read</span>]</span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">list_merge_requests</span></span><br><span class="line">    <span class="attr">description:</span> <span class="string">列某个</span> <span class="string">repo</span> <span class="string">的</span> <span class="string">MR</span></span><br><span class="line">    <span class="attr">permissions:</span> [<span class="string">read</span>]</span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">get_merge_request_diff</span></span><br><span class="line">    <span class="attr">description:</span> <span class="string">看</span> <span class="string">MR</span> <span class="string">diff</span></span><br><span class="line">    <span class="attr">permissions:</span> [<span class="string">read</span>]</span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">comment_on_merge_request</span></span><br><span class="line">    <span class="attr">description:</span> <span class="string">在</span> <span class="string">MR</span> <span class="string">上加评论</span></span><br><span class="line">    <span class="attr">permissions:</span> [<span class="string">write</span>]      <span class="comment"># ← 写权限：限制到只能加评论</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">create_branch</span></span><br><span class="line">    <span class="attr">description:</span> <span class="string">创建分支</span></span><br><span class="line">    <span class="attr">permissions:</span> [<span class="string">write</span>]</span><br><span class="line">  <span class="comment"># 没有 delete_branch / force_push / delete_repo</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>核心原则</strong>：MCP server 是 AI 看世界的窗口，窗口大小由你定。你给 AI 越窄的工具集，可控性越强。AI 不需要的权限<strong>绝不暴露</strong>——即使将来想加，加之前再说。</p>
+<h3 id="关键设计-2：Embedding-RAG，让-AI-真的”懂”你公司代码"><a href="#关键设计-2：Embedding-RAG，让-AI-真的”懂”你公司代码" class="headerlink" title="关键设计 2：Embedding + RAG，让 AI 真的”懂”你公司代码"></a>关键设计 2：Embedding + RAG，让 AI 真的”懂”你公司代码</h3><p>光接 GitLab API 不够。AI 想理解”我们公司的支付系统怎么设计”，单看几个文件名不行，得能在几十万行代码、几千页文档里语义检索。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">┌──────────────────────────────────┐</span><br><span class="line">│   公司代码 (GitLab) + 文档 (Confluence)</span><br><span class="line">└────────────────┬─────────────────┘</span><br><span class="line">                 │ webhook on push&#x2F;edit</span><br><span class="line">                 ▼</span><br><span class="line">┌──────────────────────────────────┐</span><br><span class="line">│   Indexing Pipeline               │</span><br><span class="line">│   - 切片（按函数 &#x2F; 按段落）       │</span><br><span class="line">│   - Embedding (bge-m3 &#x2F; OpenAI)   │</span><br><span class="line">│   - 存向量库 (Qdrant &#x2F; Milvus)    │</span><br><span class="line">└────────────────┬─────────────────┘</span><br><span class="line">                 │</span><br><span class="line">┌────────────────▼─────────────────┐</span><br><span class="line">│   Codex Sandbox Pod               │</span><br><span class="line">│   ↓ AI 提问 &quot;支付鉴权怎么做&quot;      │</span><br><span class="line">│   ↓ MCP 调 search_knowledge_base  │</span><br><span class="line">│   ↓ MCP server 查向量库 → top-K   │</span><br><span class="line">│   ↓ 注入 prompt，AI 用 context 回答 │</span><br><span class="line">└──────────────────────────────────┘</span><br></pre></td></tr></table></figure>
+
+<p><strong>生产建议</strong>：embedding 一定要走<strong>增量索引</strong>（webhook on push/edit），不要 nightly 全量。代码改了 30 秒后向量库要更新，用户体验才会接近 ChatGPT。</p>
+<h3 id="关键设计-3：LLM-Gateway-的三大职责"><a href="#关键设计-3：LLM-Gateway-的三大职责" class="headerlink" title="关键设计 3：LLM Gateway 的三大职责"></a>关键设计 3：LLM Gateway 的三大职责</h3><p>Codex sandbox pod 不直接调外部 LLM API，永远走公司 LLM Gateway。这一层做三件事：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">Codex Pod ──HTTP─→ LLM Gateway ──HTTP─→ OpenAI &#x2F; Anthropic &#x2F; 内部模型</span><br><span class="line">                       │</span><br><span class="line">                       ├── 1. 鉴权 + 配额</span><br><span class="line">                       │     检查 namespace 当日 token 预算</span><br><span class="line">                       │     超了就 429</span><br><span class="line">                       │</span><br><span class="line">                       ├── 2. 路由 + Failover</span><br><span class="line">                       │     主用 GPT-4o，挂了切 Claude Sonnet</span><br><span class="line">                       │     便宜任务用 Haiku，复杂任务用 Opus</span><br><span class="line">                       │</span><br><span class="line">                       └── 3. 审计 + 脱敏</span><br><span class="line">                             记录每次调用：用户 &#x2F; 模型 &#x2F; 输入输出 &#x2F; 成本</span><br><span class="line">                             敏感字段（手机号、身份证）出门前正则脱敏</span><br></pre></td></tr></table></figure>
+
+<p>不接 LLM Gateway，直接让每个 Codex pod 拿着 API key 自己出门，等于把 300 个工程师的 token 配额、failover、审计、脱敏全部分散管理——这是不可维护的。<strong>LLM Gateway 是企业级 AI 的 control plane，必须从第一天就有</strong>。</p>
+<h3 id="上线路径与价值估算"><a href="#上线路径与价值估算" class="headerlink" title="上线路径与价值估算"></a>上线路径与价值估算</h3><table>
+<thead>
+<tr>
+<th>阶段</th>
+<th>周期</th>
+<th>用户</th>
+<th>月成本（300 工程师）</th>
+<th>月省工时（保守估计）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>MVP</td>
+<td>2 周</td>
+<td>5 内测</td>
+<td>$200</td>
+<td>50h</td>
+</tr>
+<tr>
+<td>Beta</td>
+<td>1 月</td>
+<td>30 早期</td>
+<td>$1,500</td>
+<td>300h</td>
+</tr>
+<tr>
+<td>生产</td>
+<td>3 月</td>
+<td>全公司 300</td>
+<td>$15,000</td>
+<td>4500h</td>
+</tr>
+</tbody></table>
+<p><strong>ROI 估算（保守版）</strong>：假设每位活跃工程师每月省 15 小时（约一周 4 小时左右），按公司全成本 $50/h 计算，300 人月省 22.5 万美元，对应月成本 $15K 的 ROI 约 <strong>15x</strong>。即使把”每人每月省 15 小时”砍半到 7.5 小时，ROI 仍有 7.5x。这套数字老板很难拒。</p>
+<blockquote>
+<p>关键假设：(1) 工程师真活跃使用而非偶尔点开（这一点需要内推 + champion 来保障）；(2) “省的工时”按公司全成本而非工资计算（标准 BizCase 算法）；(3) 不计入 AI 写错代码的隐性成本（所以叫”保守版”）。</p>
+</blockquote>
+<h3 id="实战坑"><a href="#实战坑" class="headerlink" title="实战坑"></a>实战坑</h3><p><strong>坑 1：embedding 不更新 = 用户立刻流失</strong>。代码改了 AI 不知道，用户用一周就不再信任。webhook 增量索引必须在 MVP 阶段就有。</p>
+<p><strong>坑 2：LLM Gateway 的 token 计费要按 namespace 而非按用户</strong>。按用户算账户操作复杂、用户跨团队时数据混乱；按 namespace 一目了然，CFO 看着舒服。</p>
+<p><strong>坑 3：不要让 AI 直接发 MR</strong>。AI 在 sandbox 里<strong>生成</strong> patch、<strong>人工审核</strong>后再走正常 MR 流程。直接发会让 GitLab Activity 被 AI 噪音淹没，也容易出大事。</p>
+<hr>
+<h2 id="场景-2：CI-CD-AI-修复机器人"><a href="#场景-2：CI-CD-AI-修复机器人" class="headerlink" title="场景 2：CI/CD AI 修复机器人"></a>场景 2：CI/CD AI 修复机器人</h2><h3 id="痛点：每个工程师每周浪费在-CI-红灯上的-5-小时"><a href="#痛点：每个工程师每周浪费在-CI-红灯上的-5-小时" class="headerlink" title="痛点：每个工程师每周浪费在 CI 红灯上的 5 小时"></a>痛点：每个工程师每周浪费在 CI 红灯上的 5 小时</h3><p>工程师典型的一天：</p>
+<blockquote>
+<p>提了个 PR → CI 跑了 8 分钟 → 测试红了 → 一看是个跨服务的依赖更新引起的 → 改完 push → CI 又跑 8 分钟 → 又红，因为另一个服务的 mock 也要更新 → 改完 push → CI 跑 8 分钟 → 终于绿了 → 已经过去 1 小时了</p>
+</blockquote>
+<p>CI 红灯修复的特征：</p>
+<ul>
+<li><strong>大部分是机械性的</strong>（lint 错、import 缺、mock 没更新、版本号没改）</li>
+<li><strong>修复路径单一</strong>（看 CI log → 改某个文件 → push）</li>
+<li><strong>占用工程师高质量时间</strong>（思维被打断比修复本身更贵）</li>
+</ul>
+<p>这个工作流<strong>完全适合 AI 替代</strong>。AI 在 sandbox 里跑一遍测试、看错误、改代码、再跑一遍，完全不需要人参与。</p>
+<h3 id="架构：从-GitLab-webhook-到自动-MR"><a href="#架构：从-GitLab-webhook-到自动-MR" class="headerlink" title="架构：从 GitLab webhook 到自动 MR"></a>架构：从 GitLab webhook 到自动 MR</h3><p><img src="illustrations/S3-CI%E4%BF%AE%E5%A4%8D%E6%9C%BA%E5%99%A8%E4%BA%BA%E6%B5%81%E7%A8%8B.webp" alt="CI/CD AI 修复机器人完整流程：从 PR 红灯到 AI 自动修复并提 MR"></p>
+<p>完整工作流：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">1. 用户 push 代码到 feature 分支</span><br><span class="line">        │</span><br><span class="line">        ▼</span><br><span class="line">2. GitLab CI 跑测试 → 失败 → webhook 触发</span><br><span class="line">        │</span><br><span class="line">        ▼</span><br><span class="line">3. AI Bot 接收 webhook，创建一个 K8s Job：</span><br><span class="line">   - kind: AgentSession</span><br><span class="line">   - mode: ci-fix</span><br><span class="line">   - inputs: &#123; repo, branch, failing_job_id &#125;</span><br><span class="line">        │</span><br><span class="line">        ▼</span><br><span class="line">4. K8s 创建一个 Sandbox Pod (gVisor + restricted)：</span><br><span class="line">   - git clone 用户的 PR 分支</span><br><span class="line">   - 拉 CI 失败的 log</span><br><span class="line">   - 跑 codex exec 让 AI 分析 + 修复</span><br><span class="line">   - codex 在 sandbox 里跑 npm test &#x2F; cargo test 验证</span><br><span class="line">   - 通过后生成 patch</span><br><span class="line">        │</span><br><span class="line">        ▼</span><br><span class="line">5. AI Bot 把 patch 提成新 MR：</span><br><span class="line">   - 标题: &quot;AI fix: &#123;original PR title&#125;&quot;</span><br><span class="line">   - 描述: 引用 CI log + AI 推理过程</span><br><span class="line">   - reviewer: 原 PR author</span><br><span class="line">        │</span><br><span class="line">        ▼</span><br><span class="line">6. 原作者人工审核 → merge</span><br></pre></td></tr></table></figure>
+
+<h3 id="关键设计-1：CI-失败的”AI-可解性”分类"><a href="#关键设计-1：CI-失败的”AI-可解性”分类" class="headerlink" title="关键设计 1：CI 失败的”AI 可解性”分类"></a>关键设计 1：CI 失败的”AI 可解性”分类</h3><p>不是所有 CI 失败都该让 AI 来修。第一步要做的是<strong>分类器</strong>，区分哪些适合 AI、哪些不适合。</p>
+<table>
+<thead>
+<tr>
+<th>CI 失败类别</th>
+<th>AI 可解性</th>
+<th>例子</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Lint / 格式错误</strong></td>
+<td>⭐⭐⭐⭐⭐ 极高</td>
+<td>eslint / black / clippy 报错</td>
+</tr>
+<tr>
+<td><strong>Type 错误</strong></td>
+<td>⭐⭐⭐⭐ 高</td>
+<td>mypy / tsc 报错，缺 type annotation</td>
+</tr>
+<tr>
+<td><strong>Mock / 依赖未更新</strong></td>
+<td>⭐⭐⭐⭐ 高</td>
+<td>API schema 变了，mock 没改</td>
+</tr>
+<tr>
+<td><strong>Import / module not found</strong></td>
+<td>⭐⭐⭐⭐⭐ 极高</td>
+<td>重构后的 import 路径错</td>
+</tr>
+<tr>
+<td><strong>单元测试断言失败</strong></td>
+<td>⭐⭐⭐ 中</td>
+<td>业务逻辑改了但测试没跟</td>
+</tr>
+<tr>
+<td><strong>集成测试失败</strong></td>
+<td>⭐ 低</td>
+<td>跨服务、依赖外部状态</td>
+</tr>
+<tr>
+<td><strong>环境 / 资源问题</strong></td>
+<td>⛔ 不可解</td>
+<td>OOM、外部服务挂了</td>
+</tr>
+</tbody></table>
+<p>只对前 4-5 类自动触发 AI fix。后两类直接通知人。</p>
+<p>实现是一个简单的 webhook handler：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ci-bot/classifier.py</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">classify_failure</span>(<span class="params">ci_log: <span class="built_in">str</span></span>) -&gt; str:</span></span><br><span class="line">    <span class="keyword">if</span> <span class="string">&quot;ESLint&quot;</span> <span class="keyword">in</span> ci_log <span class="keyword">or</span> <span class="string">&quot;black&quot;</span> <span class="keyword">in</span> ci_log <span class="keyword">or</span> <span class="string">&quot;clippy&quot;</span> <span class="keyword">in</span> ci_log:</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;lint&quot;</span></span><br><span class="line">    <span class="keyword">if</span> <span class="string">&quot;TS2304&quot;</span> <span class="keyword">in</span> ci_log <span class="keyword">or</span> <span class="string">&quot;mypy&quot;</span> <span class="keyword">in</span> ci_log:</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;type&quot;</span></span><br><span class="line">    <span class="keyword">if</span> <span class="string">&quot;ModuleNotFoundError&quot;</span> <span class="keyword">in</span> ci_log <span class="keyword">or</span> <span class="string">&quot;Cannot find module&quot;</span> <span class="keyword">in</span> ci_log:</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;import&quot;</span></span><br><span class="line">    <span class="keyword">if</span> <span class="string">&quot;ConnectionError&quot;</span> <span class="keyword">in</span> ci_log <span class="keyword">or</span> <span class="string">&quot;OOMKilled&quot;</span> <span class="keyword">in</span> ci_log:</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;env&quot;</span></span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;unknown&quot;</span></span><br><span class="line"></span><br><span class="line">AI_FIXABLE = &#123;<span class="string">&quot;lint&quot;</span>, <span class="string">&quot;type&quot;</span>, <span class="string">&quot;import&quot;</span>, <span class="string">&quot;mock&quot;</span>&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="关键设计-2：让-AI-在-sandbox-里”实跑”"><a href="#关键设计-2：让-AI-在-sandbox-里”实跑”" class="headerlink" title="关键设计 2：让 AI 在 sandbox 里”实跑”"></a>关键设计 2：让 AI 在 sandbox 里”实跑”</h3><p>AI 改完代码不能直接相信，必须在 sandbox 里<strong>真的跑一遍</strong>测试。这是 CI fix bot 区别于普通 LLM 写代码的核心 —— 反馈循环（feedback loop）在 sandbox 内闭环。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Codex 启动参数（CI fix mode）</span></span><br><span class="line"><span class="string">codex</span> <span class="string">exec</span> <span class="string">--mode</span> <span class="string">ci-fix</span> <span class="string">\</span></span><br><span class="line">  <span class="string">--repo</span> <span class="string">/workspace</span> <span class="string">\</span></span><br><span class="line">  <span class="string">--max-iterations</span> <span class="number">5</span> <span class="string">\</span></span><br><span class="line">  <span class="string">--tool-timeout</span> <span class="string">300s</span> <span class="string">\</span></span><br><span class="line">  <span class="string">--instruction</span> <span class="string">&quot;$(cat &lt;&lt;EOF</span></span><br><span class="line"><span class="string">请修复下面的 CI 失败：</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">CI Log:</span></span><br><span class="line"><span class="string">$(cat /workspace/ci.log)</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">Failed Test:</span></span><br><span class="line"><span class="string">$(cat /workspace/failing_test.txt)</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">策略：</span></span><br><span class="line"><span class="string">1. 分析根因</span></span><br><span class="line"><span class="string">2. 改代码</span></span><br><span class="line"><span class="string">3. 在 sandbox 里跑 \`npm test\` (或 \`cargo test\`) 验证</span></span><br><span class="line"><span class="string">4. 如果还失败，回到第 1 步，最多 5 轮</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"><span class="string">)&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong><code>--max-iterations 5</code></strong> 是上限。超过 5 轮还修不好，说明问题超出 AI 能力范围，bot 通知人接手。这个数字不要太大——AI 死循环烧 token 是 CI fix bot 最常见的事故。</p>
+<h3 id="关键设计-3：永远是新分支-新-MR，不直接改用户分支"><a href="#关键设计-3：永远是新分支-新-MR，不直接改用户分支" class="headerlink" title="关键设计 3：永远是新分支 + 新 MR，不直接改用户分支"></a>关键设计 3：永远是新分支 + 新 MR，不直接改用户分支</h3><p>这条是<strong>铁律</strong>：</p>
+<p>❌ 不要：AI 直接 commit 到用户的 feature 分支<br>✅ 要：AI 在新分支（如 <code>ai-fix/&#123;original-branch&#125;</code>）上 commit，提一个新 MR 让用户合</p>
+<p>理由：</p>
+<ul>
+<li>AI 改错了，用户能直接 close MR，原分支不受影响</li>
+<li>用户能 review AI 改了什么再决定是否合</li>
+<li>AI 行为有完整审计（每个 MR 一个审计单元）</li>
+</ul>
+<h3 id="上线路径"><a href="#上线路径" class="headerlink" title="上线路径"></a>上线路径</h3><table>
+<thead>
+<tr>
+<th>阶段</th>
+<th>周期</th>
+<th>范围</th>
+<th>月修复 PR 数</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>MVP</td>
+<td>2 周</td>
+<td>1 个 repo + lint 类</td>
+<td>50</td>
+</tr>
+<tr>
+<td>Beta</td>
+<td>1 月</td>
+<td>5 个 repo + lint/import/type</td>
+<td>500</td>
+</tr>
+<tr>
+<td>生产</td>
+<td>3 月</td>
+<td>全公司 + 全 AI 可解类</td>
+<td>5000+</td>
+</tr>
+</tbody></table>
+<p><strong>ROI 估算</strong>：每个被 AI 修掉的 PR 平均替工程师省 30 分钟（修复 + 等 CI 重跑 2 个 round），月修复 5000 个 PR 等于节约 2500 工时，按 $50/h 算约 12.5 万美元/月。</p>
+<blockquote>
+<p>这是上限值，实际要打 6 折左右（AI 修错的成本、人工 review 时间、CI 重跑的 runner 费用）。即使打折后仍有约 7.5 万/月，相对于 bot 本身月成本几千美元仍然非常划算 —— 关键是要控制好”AI 修不对就立刻停下让人接手”，否则 token 成本会反过来吃掉所有节约。</p>
+</blockquote>
+<h3 id="实战坑-1"><a href="#实战坑-1" class="headerlink" title="实战坑"></a>实战坑</h3><p><strong>坑 1：webhook 噪音控制</strong>。GitLab 一个仓库每天可能几百个 CI 事件，全送给 AI 会瞬间烧爆 token 预算。在 webhook 这一层就要去重 + 限频，每个 PR 最多触发 3 次 AI fix。</p>
+<p><strong>坑 2：AI 改不动但坚持改</strong>。AI 改 5 轮还失败，bot 必须停下并发通知，不能”再试一次”。Token 预算就是这么爆的。</p>
+<p><strong>坑 3：AI 改了无关代码</strong>。约束 AI 只能改 CI log 里提到的文件 + import 它们的文件，不要让它顺手”清理”其他代码。这是 prompt 工程的硬约束。</p>
+<hr>
+<h2 id="场景-3：数据科学-内部查询平台"><a href="#场景-3：数据科学-内部查询平台" class="headerlink" title="场景 3：数据科学 / 内部查询平台"></a>场景 3：数据科学 / 内部查询平台</h2><h3 id="痛点：业务同事问数据，数据团队加班加点回不完"><a href="#痛点：业务同事问数据，数据团队加班加点回不完" class="headerlink" title="痛点：业务同事问数据，数据团队加班加点回不完"></a>痛点：业务同事问数据，数据团队加班加点回不完</h3><p>每个互联网公司都有这个图景：</p>
+<ul>
+<li><strong>业务方</strong>（产品、运营、市场）：每天有几十个”帮我看一下 XXX”的需求 —— 退款率、留存、转化漏斗、AB 实验结果</li>
+<li><strong>数据团队</strong>：3 个人维护 200 张表，被业务的需求淹没，写 SQL 写到深夜</li>
+<li><strong>结果</strong>：业务等数据等三天，数据团队被烦得想离职，老板觉得数据团队效率低</li>
+</ul>
+<p>让业务自己写 SQL？大部分人不会，会的也写得乱七八糟。让 AI 写？数据是公司核心资产，<strong>绝不能流到第三方 AI 服务</strong>。</p>
+<p>Codex 在 K8s 上跑一个<strong>内部数据查询平台</strong>，让业务用自然语言问问题，AI 在 sandbox 里写 SQL/Python、跑、出结果，全过程数据不出公司。</p>
+<h3 id="架构：业务自然语言-→-AI-→-Sandbox-内执行-→-结果"><a href="#架构：业务自然语言-→-AI-→-Sandbox-内执行-→-结果" class="headerlink" title="架构：业务自然语言 → AI → Sandbox 内执行 → 结果"></a>架构：业务自然语言 → AI → Sandbox 内执行 → 结果</h3><p><img src="illustrations/S4-%E6%95%B0%E6%8D%AE%E7%A7%91%E5%AD%A6%E5%B9%B3%E5%8F%B0%E6%9E%B6%E6%9E%84.webp" alt="数据科学 / 内部查询平台：自然语言 → SQL → Sandbox 执行 → 可视化"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">### 关键设计 1：数据库账号最小权限 + 行级权限</span><br><span class="line"></span><br><span class="line">Sandbox pod 拿的数据库账号**只能 SELECT，不能 DELETE&#x2F;UPDATE&#x2F;INSERT&#x2F;DROP**。再叠一层行级权限（**RLS**，Row Level Security，按用户身份过滤行）。下面用 PostgreSQL 举例（语义最标准、最容易理解；ClickHouse &#x2F; MySQL 8.0+ 有等价机制）：</span><br><span class="line"></span><br><span class="line">&#96;&#96;&#96;sql</span><br><span class="line">-- 1. 启用表的 RLS</span><br><span class="line">ALTER TABLE salary_records ENABLE ROW LEVEL SECURITY;</span><br><span class="line"></span><br><span class="line">-- 2. 定义策略：codex_sandbox_role 只能看到 app.user_department 设的部门</span><br><span class="line">CREATE POLICY hr_data_filter ON salary_records</span><br><span class="line">FOR SELECT</span><br><span class="line">TO codex_sandbox_role</span><br><span class="line">USING (</span><br><span class="line">  department &#x3D; current_setting(&#39;app.user_department&#39;, true)::text</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line">-- 3. Sandbox pod 在每次连接 DB 后，按当前用户身份注入 session 变量</span><br><span class="line">--    这一步由 Codex 编排层做，AI 看不到也改不了</span><br><span class="line">SET app.user_department &#x3D; &#39;sales&#39;;</span><br></pre></td></tr></table></figure>
+
+<p>效果：销售部门的同事问”我们部门的销售数据”，AI 写出来的 SQL 即使想查全公司，<strong>数据库本身在执行时只返回 department=’sales’ 的行</strong>。AI 是否守规矩根本不影响结果。<strong>安全策略落到数据库层，不依赖 AI 自律</strong>。</p>
+<h3 id="关键设计-2：Schema-召回-Few-shot-Examples"><a href="#关键设计-2：Schema-召回-Few-shot-Examples" class="headerlink" title="关键设计 2：Schema 召回 + Few-shot Examples"></a>关键设计 2：Schema 召回 + Few-shot Examples</h3><p>不要把 200 张表的 schema 全塞 prompt（token 爆炸）。用<strong>RAG</strong>召回：</p>
+<ol>
+<li>离线把每张表的 schema + 业务描述 + 历史好的 SQL 例子都做 embedding</li>
+<li>用户提问时，先用问题的 embedding 检索 top-5 最相关的表</li>
+<li>只把这 5 张表的 schema 塞进 prompt</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 表元数据示例</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;table&quot;</span>: <span class="string">&quot;orders&quot;</span>,</span><br><span class="line">  <span class="string">&quot;description&quot;</span>: <span class="string">&quot;电商订单主表，按天分区&quot;</span>,</span><br><span class="line">  <span class="string">&quot;columns&quot;</span>: [</span><br><span class="line">    &#123;<span class="string">&quot;name&quot;</span>: <span class="string">&quot;order_id&quot;</span>, <span class="string">&quot;type&quot;</span>: <span class="string">&quot;string&quot;</span>, <span class="string">&quot;desc&quot;</span>: <span class="string">&quot;订单号&quot;</span>&#125;,</span><br><span class="line">    &#123;<span class="string">&quot;name&quot;</span>: <span class="string">&quot;user_id&quot;</span>, <span class="string">&quot;type&quot;</span>: <span class="string">&quot;string&quot;</span>, <span class="string">&quot;desc&quot;</span>: <span class="string">&quot;用户 ID&quot;</span>&#125;,</span><br><span class="line">    &#123;<span class="string">&quot;name&quot;</span>: <span class="string">&quot;amount&quot;</span>, <span class="string">&quot;type&quot;</span>: <span class="string">&quot;decimal&quot;</span>, <span class="string">&quot;desc&quot;</span>: <span class="string">&quot;订单金额（元）&quot;</span>&#125;,</span><br><span class="line">    &#123;<span class="string">&quot;name&quot;</span>: <span class="string">&quot;region&quot;</span>, <span class="string">&quot;type&quot;</span>: <span class="string">&quot;string&quot;</span>, <span class="string">&quot;desc&quot;</span>: <span class="string">&quot;地区代码：huanan/huabei/...&quot;</span>&#125;,</span><br><span class="line">    &#123;<span class="string">&quot;name&quot;</span>: <span class="string">&quot;status&quot;</span>, <span class="string">&quot;type&quot;</span>: <span class="string">&quot;string&quot;</span>, <span class="string">&quot;desc&quot;</span>: <span class="string">&quot;状态：paid/refunded/cancelled&quot;</span>&#125;,</span><br><span class="line">    &#123;<span class="string">&quot;name&quot;</span>: <span class="string">&quot;ds&quot;</span>, <span class="string">&quot;type&quot;</span>: <span class="string">&quot;string&quot;</span>, <span class="string">&quot;desc&quot;</span>: <span class="string">&quot;分区日期 YYYY-MM-DD&quot;</span>&#125;</span><br><span class="line">  ],</span><br><span class="line">  <span class="string">&quot;good_examples&quot;</span>: [</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="string">&quot;question&quot;</span>: <span class="string">&quot;上周华南订单总额&quot;</span>,</span><br><span class="line">      <span class="string">&quot;sql&quot;</span>: <span class="string">&quot;SELECT SUM(amount) FROM orders WHERE region=&#x27;huanan&#x27; AND ds BETWEEN &#x27;2026-04-28&#x27; AND &#x27;2026-05-04&#x27;&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>good_examples</code> 是 few-shot learning 的关键 —— AI 看到一个好例子，下次问类似问题时模仿，准确率立刻上一个档次。<strong>第一年最好的投资就是积累这些好例子</strong>。</p>
+<h3 id="关键设计-3：可解释性优先于自动化"><a href="#关键设计-3：可解释性优先于自动化" class="headerlink" title="关键设计 3：可解释性优先于自动化"></a>关键设计 3：可解释性优先于自动化</h3><p>Sandbox 跑出结果后，给用户看的不是只有数字 / 图，而是<strong>完整的执行轨迹</strong>：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">┌─ 你的问题 ──────────────────────────────────────┐</span><br><span class="line">│ 上周华南区订单退款率同比变化怎么样？            │</span><br><span class="line">├─ 我理解为 ──────────────────────────────────────┤</span><br><span class="line">│ 对比 [2026-04-28 到 2026-05-04] 和              │</span><br><span class="line">│ [2025-04-28 到 2025-05-04] 两段时间             │</span><br><span class="line">│ 华南地区的退款率（refunded 数 &#x2F; 总订单数）       │</span><br><span class="line">├─ 数据源 ────────────────────────────────────────┤</span><br><span class="line">│ orders 表（ClickHouse &#x2F; data-warehouse）        │</span><br><span class="line">├─ 我写的 SQL ────────────────────────────────────┤</span><br><span class="line">│ WITH this_year AS (                             │</span><br><span class="line">│   SELECT COUNT(*) FILTER (WHERE status&#x3D;&#39;refund&#39;)│</span><br><span class="line">│          &#x2F; COUNT(*) AS rate                     │</span><br><span class="line">│   FROM orders ...                               │</span><br><span class="line">│ ), last_year AS (...)                           │</span><br><span class="line">│ SELECT ...                                       │</span><br><span class="line">├─ 结果 ──────────────────────────────────────────┤</span><br><span class="line">│ 本期: 3.2%  同期: 2.8%  环比: +14%              │</span><br><span class="line">│ [折线图]                                         │</span><br><span class="line">├─ 我的解读 ──────────────────────────────────────┤</span><br><span class="line">│ 退款率上升 14%，主要发生在 4-30 到 5-2 三天，   │</span><br><span class="line">│ 可能与 [活动 X] 的退货政策变化有关。            │</span><br><span class="line">└─────────────────────────────────────────────────┘</span><br></pre></td></tr></table></figure>
+
+<p>这种透明度的好处：</p>
+<ul>
+<li><strong>业务方学到了 SQL</strong>（半年后他们自己会写）</li>
+<li><strong>数据团队能 review</strong>（错的 SQL 能被发现并反馈到 few-shot 库）</li>
+<li><strong>建立信任</strong>（用户知道数字是怎么来的，不是 AI 瞎编）</li>
+</ul>
+<h3 id="上线路径-1"><a href="#上线路径-1" class="headerlink" title="上线路径"></a>上线路径</h3><table>
+<thead>
+<tr>
+<th>阶段</th>
+<th>周期</th>
+<th>范围</th>
+<th>月查询次数</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>MVP</td>
+<td>1 月</td>
+<td>1 个数据域 + 数据团队内测</td>
+<td>100</td>
+</tr>
+<tr>
+<td>Beta</td>
+<td>2 月</td>
+<td>3 个数据域 + 50 业务用户</td>
+<td>1,000</td>
+</tr>
+<tr>
+<td>生产</td>
+<td>6 月</td>
+<td>全公司 / 全数据域</td>
+<td>10,000+</td>
+</tr>
+</tbody></table>
+<p>把数据团队从”SQL 翻译机”解放出来，他们能去做模型 / 平台 / 分析的高价值工作。这是文化层面的胜利，不是单纯的工时节约。</p>
+<h3 id="实战坑-2"><a href="#实战坑-2" class="headerlink" title="实战坑"></a>实战坑</h3><p><strong>坑 1：第一版准确率会很差</strong>。表的命名不规范、业务描述模糊、schema 文档过时，AI 根本写不对 SQL。<strong>MVP 阶段最大的工作量在数据治理（梳理 schema 描述）</strong>，不在 AI 工程。</p>
+<p><strong>坑 2：用户问的问题千奇百怪</strong>。”我老板让我看一下昨天那个事情” 这种问题 AI 解不了。需要在前端引导用户问得<strong>具体</strong>——给问题模板、给历史问题示例、不让用户自由发挥。</p>
+<p><strong>坑 3：Sandbox 资源管理</strong>。SQL 跑超时怎么办？把 sandbox pod 设 5 分钟硬超时，超时杀掉，告诉用户”这个查询太重了，请联系数据团队”。绝不要让 AI 死跑慢查询拖垮数据仓库。</p>
+<hr>
+<h2 id="场景-4：多-Agent-并发"><a href="#场景-4：多-Agent-并发" class="headerlink" title="场景 4：多 Agent 并发"></a>场景 4：多 Agent 并发</h2><h3 id="痛点：单-agent-解不了的复杂工程任务"><a href="#痛点：单-agent-解不了的复杂工程任务" class="headerlink" title="痛点：单 agent 解不了的复杂工程任务"></a>痛点：单 agent 解不了的复杂工程任务</h3><p>前面 3 个场景都是<strong>单 agent 模式</strong> —— 一个 AI 进程负责一件事。但有些任务需要多个 agent 协作：</p>
+<ul>
+<li>“给这个新功能写完整需求文档 + 设计文档 + 代码 + 单测 + 集成测 + PR 描述”</li>
+<li>“调研 5 个开源方案 + 各做一个 POC + 出对比报告”</li>
+<li>“重构这个微服务，分别处理 4 个依赖它的下游服务的兼容性”</li>
+</ul>
+<p>单个 agent 处理这种任务会出现：</p>
+<ul>
+<li><strong>上下文溢出</strong>（一个 task 的所有信息塞不进 200K context）</li>
+<li><strong>角色混乱</strong>（写代码时还要兼顾文档风格、PM 视角、测试 case）</li>
+<li><strong>没法并行</strong>（5 个 POC 串行做要 5 倍时间）</li>
+</ul>
+<p><strong>多 agent 模式</strong>就是把任务拆成多个子任务，每个交给一个独立的 sandbox pod 跑，agent 之间通过消息或共享存储通信。</p>
+<h3 id="架构：Agent-拓扑设计"><a href="#架构：Agent-拓扑设计" class="headerlink" title="架构：Agent 拓扑设计"></a>架构：Agent 拓扑设计</h3><p><img src="illustrations/S5-%E5%A4%9AAgent%E5%B9%B6%E5%8F%91%E6%8B%93%E6%89%91.webp" alt="多 Agent 协作拓扑：PM Agent / Dev Agents / Test Agent / Reviewer Agent，每个独立 sandbox"></p>
+<p>典型的”开发一个新功能”任务的 agent 拓扑：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">              ┌─────────────────────┐</span><br><span class="line">              │   PM Agent          │</span><br><span class="line">              │   - 拆需求          │</span><br><span class="line">              │   - 画 spec         │</span><br><span class="line">              │   - 创建 sub-tasks  │</span><br><span class="line">              └──────────┬──────────┘</span><br><span class="line">                         │ 创建多个子任务</span><br><span class="line">        ┌────────────────┼────────────────┐</span><br><span class="line">        ▼                ▼                ▼</span><br><span class="line">┌─────────────┐  ┌─────────────┐  ┌─────────────┐</span><br><span class="line">│  Backend    │  │  Frontend   │  │  Database   │</span><br><span class="line">│  Dev Agent  │  │  Dev Agent  │  │  Migration  │</span><br><span class="line">│             │  │             │  │  Agent      │</span><br><span class="line">└──────┬──────┘  └──────┬──────┘  └──────┬──────┘</span><br><span class="line">       │                │                │</span><br><span class="line">       └────────────────┼────────────────┘</span><br><span class="line">                        ▼</span><br><span class="line">              ┌─────────────────────┐</span><br><span class="line">              │   Test Agent        │</span><br><span class="line">              │   - 跑所有测试      │</span><br><span class="line">              │   - 集成验证        │</span><br><span class="line">              └──────────┬──────────┘</span><br><span class="line">                         │</span><br><span class="line">                         ▼</span><br><span class="line">              ┌─────────────────────┐</span><br><span class="line">              │   Reviewer Agent    │</span><br><span class="line">              │   - 代码 review     │</span><br><span class="line">              │   - 写 PR 描述      │</span><br><span class="line">              └─────────────────────┘</span><br></pre></td></tr></table></figure>
+
+<p>每个 agent 都跑在<strong>独立的 sandbox pod</strong> 里：</p>
+<ul>
+<li>PM agent：能调 Jira / Confluence MCP，写权限</li>
+<li>Dev agents：能读全部代码，只能写自己负责的 service 目录</li>
+<li>Test agent：能跑测试，不能改代码</li>
+<li>Reviewer agent：只读 + 评论权限</li>
+</ul>
+<h3 id="关键设计-1：Agent-间通信：共享-PVC-事件总线"><a href="#关键设计-1：Agent-间通信：共享-PVC-事件总线" class="headerlink" title="关键设计 1：Agent 间通信：共享 PVC + 事件总线"></a>关键设计 1：Agent 间通信：共享 PVC + 事件总线</h3><p>K8s 里两种 agent 通信方式：</p>
+<table>
+<thead>
+<tr>
+<th>方式</th>
+<th>适合</th>
+<th>实现</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>共享 PVC</strong></td>
+<td>文件类产物（代码、文档、测试报告）</td>
+<td>ReadWriteMany PVC，挂到所有 agent pod 的 <code>/workspace</code></td>
+</tr>
+<tr>
+<td><strong>消息总线</strong></td>
+<td>事件 / 状态变更 / 任务调度</td>
+<td>NATS / Redis Streams / Kafka</td>
+</tr>
+</tbody></table>
+<p><strong>示例消息流</strong>：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">PM Agent → publish: &#123;topic: &quot;task.created&quot;, task_id: T1, type: &quot;backend&quot;, spec: ...&#125;</span><br><span class="line">Backend Dev Agent → subscribe → 拉取 → 在 PVC 写代码 → 完成 → publish: &#123;topic: &quot;task.completed&quot;, task_id: T1&#125;</span><br><span class="line">Test Agent → subscribe &quot;task.completed&quot; → 跑相关测试 → publish: &#123;topic: &quot;test.passed&quot;, task_id: T1&#125;</span><br><span class="line">Reviewer Agent → subscribe &quot;test.passed&quot; → 写 review → publish: &#123;topic: &quot;review.done&quot;, task_id: T1&#125;</span><br><span class="line">PM Agent → subscribe &quot;review.done&quot; → 标记任务完成</span><br></pre></td></tr></table></figure>
+
+<p>这种<strong>事件驱动</strong>比 polling 高效得多，agent 之间松耦合（一个挂了不影响其他）。</p>
+<h3 id="关键设计-2：每个-agent-一份独立-PermissionProfile"><a href="#关键设计-2：每个-agent-一份独立-PermissionProfile" class="headerlink" title="关键设计 2：每个 agent 一份独立 PermissionProfile"></a>关键设计 2：每个 agent 一份独立 PermissionProfile</h3><p>回到 Codex 的核心 —— <strong>execpolicy</strong>。多 agent 场景下，每个 agent 有不同的 PermissionProfile，用 Codex 的 Starlark 语法写规则文件：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># pm-agent.codexpolicy</span></span><br><span class="line">prefix_rule(pattern = [<span class="string">&quot;jira&quot;</span>],       decision = <span class="string">&quot;allow&quot;</span>,</span><br><span class="line">    justification = <span class="string">&quot;PM agent 操作 Jira&quot;</span>)</span><br><span class="line">prefix_rule(pattern = [<span class="string">&quot;confluence&quot;</span>], decision = <span class="string">&quot;allow&quot;</span>)</span><br><span class="line">prefix_rule(pattern = [<span class="string">&quot;codex&quot;</span>, <span class="string">&quot;create-task&quot;</span>], decision = <span class="string">&quot;allow&quot;</span>)</span><br><span class="line">prefix_rule(pattern = [<span class="string">&quot;git&quot;</span>],        decision = <span class="string">&quot;forbidden&quot;</span>,</span><br><span class="line">    justification = <span class="string">&quot;PM 不能动 git，代码归 dev agent 管&quot;</span>)</span><br><span class="line">prefix_rule(pattern = [<span class="string">&quot;kubectl&quot;</span>],    decision = <span class="string">&quot;forbidden&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># backend-dev-agent.codexpolicy</span></span><br><span class="line">prefix_rule(pattern = [<span class="string">&quot;cargo&quot;</span>, [<span class="string">&quot;build&quot;</span>, <span class="string">&quot;test&quot;</span>, <span class="string">&quot;fmt&quot;</span>, <span class="string">&quot;clippy&quot;</span>]], decision = <span class="string">&quot;allow&quot;</span>)</span><br><span class="line">prefix_rule(pattern = [<span class="string">&quot;git&quot;</span>, <span class="string">&quot;checkout&quot;</span>, <span class="string">&quot;-b&quot;</span>], decision = <span class="string">&quot;allow&quot;</span>)</span><br><span class="line">prefix_rule(pattern = [<span class="string">&quot;git&quot;</span>, <span class="string">&quot;commit&quot;</span>], decision = <span class="string">&quot;allow&quot;</span>)</span><br><span class="line">prefix_rule(pattern = [<span class="string">&quot;git&quot;</span>, <span class="string">&quot;push&quot;</span>, <span class="string">&quot;origin&quot;</span>], decision = <span class="string">&quot;prompt&quot;</span>,</span><br><span class="line">    justification = <span class="string">&quot;push 前人工确认；push 到 main 走下一条规则&quot;</span>)</span><br><span class="line">prefix_rule(pattern = [<span class="string">&quot;git&quot;</span>, <span class="string">&quot;push&quot;</span>, <span class="string">&quot;--force&quot;</span>], decision = <span class="string">&quot;forbidden&quot;</span>)</span><br><span class="line">prefix_rule(pattern = [<span class="string">&quot;git&quot;</span>, <span class="string">&quot;push&quot;</span>, <span class="string">&quot;origin&quot;</span>, <span class="string">&quot;main&quot;</span>], decision = <span class="string">&quot;forbidden&quot;</span>,</span><br><span class="line">    justification = <span class="string">&quot;禁止直接 push main，必须走 MR&quot;</span>)</span><br><span class="line">prefix_rule(pattern = [<span class="string">&quot;rm&quot;</span>, <span class="string">&quot;-rf&quot;</span>], decision = <span class="string">&quot;forbidden&quot;</span>)</span><br><span class="line">prefix_rule(pattern = [<span class="string">&quot;kubectl&quot;</span>],   decision = <span class="string">&quot;forbidden&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>执行时把 profile 通过环境变量注入 sandbox pod，Codex 启动时按 profile 加载 execpolicy。规则文件本身能进 git，PR 改规则要安全团队 review —— 这就把”AI 能干什么”做成了 GitOps 化、可审计的资产。</p>
+<h3 id="关键设计-3：人工-Approval-Gate（防止-AI-跑飞）"><a href="#关键设计-3：人工-Approval-Gate（防止-AI-跑飞）" class="headerlink" title="关键设计 3：人工 Approval Gate（防止 AI 跑飞）"></a>关键设计 3：人工 Approval Gate（防止 AI 跑飞）</h3><p>多 agent 系统的最大风险是<strong>级联错误</strong>：PM agent 拆错任务 → 4 个 dev agent 都按错的方向写代码 → 浪费几小时几十美元 token。</p>
+<p>在关键节点强制<strong>人工 approval</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>节点</th>
+<th>谁审批</th>
+<th>审批什么</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>PM agent 出 spec 后</td>
+<td>真人 PM</td>
+<td>spec 是否合理</td>
+</tr>
+<tr>
+<td>Dev agent 完成代码后</td>
+<td>真人 senior dev</td>
+<td>代码方向对不对</td>
+</tr>
+<tr>
+<td>Test agent 全过后</td>
+<td>真人 reviewer</td>
+<td>测试覆盖够不够</td>
+</tr>
+<tr>
+<td>Reviewer agent 出 PR 后</td>
+<td>真人 PR reviewer</td>
+<td>最终 merge 前看一眼</td>
+</tr>
+</tbody></table>
+<p>实现：每个 approval node 都是一个 K8s <code>AgentSession</code> 资源里的 phase，K8s controller 监听到 phase = <code>awaiting_approval</code> 就推消息到 Slack / Web UI，等待用户点 ✓。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># K8s CRD 状态机示例</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">codex.company.io/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">AgentSession</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">feature-payment-v2</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">topology:</span> <span class="string">&quot;feature-development&quot;</span></span><br><span class="line">  <span class="attr">task:</span> <span class="string">&quot;为支付系统新增 Apple Pay 支持&quot;</span></span><br><span class="line"><span class="attr">status:</span></span><br><span class="line">  <span class="attr">phase:</span> <span class="string">&quot;awaiting_approval&quot;</span>  <span class="comment"># ← 卡在这里等人</span></span><br><span class="line">  <span class="attr">current_step:</span> <span class="string">&quot;PM agent draft spec&quot;</span></span><br><span class="line">  <span class="attr">approvers:</span> [<span class="string">&quot;alice@company.com&quot;</span>]</span><br><span class="line">  <span class="attr">approval_url:</span> <span class="string">&quot;https://codex.company.io/approve/sess-abc&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="上线路径-2"><a href="#上线路径-2" class="headerlink" title="上线路径"></a>上线路径</h3><p>多 agent 是<strong>前沿场景</strong>，落地难度高，建议作为”高级用户内测”项目，不要全公司推：</p>
+<table>
+<thead>
+<tr>
+<th>阶段</th>
+<th>周期</th>
+<th>范围</th>
+<th>用户</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>实验室</td>
+<td>2 月</td>
+<td>内部 1-2 个团队、固定 topology</td>
+<td>5 人</td>
+</tr>
+<tr>
+<td>Beta</td>
+<td>4 月</td>
+<td>5-6 种 topology、可配置</td>
+<td>30 人</td>
+</tr>
+<tr>
+<td>生产</td>
+<td>12 月+</td>
+<td>topology 市场（用户自定义）</td>
+<td>全公司</td>
+</tr>
+</tbody></table>
+<p>注意：<strong>多 agent 不是越多越好</strong>。我见过的最成功的多 agent 系统都是 2-4 个 agent，超过 5 个就开始难以管理（消息混乱、调试困难、token 爆炸）。</p>
+<h3 id="实战坑-3"><a href="#实战坑-3" class="headerlink" title="实战坑"></a>实战坑</h3><p><strong>坑 1：消息总线选型踩坑</strong>。早期不要用 Kafka（运维太重）。NATS / Redis Streams 起步够了，等规模真的上来再迁。</p>
+<p><strong>坑 2：Agent 死循环烧钱</strong>。两个 agent 互相 ping 等对方完成，谁也不完成，几小时内烧光预算。每个 agent 都要有 max_iterations 和 budget。</p>
+<p><strong>坑 3：可观测性是生死线</strong>。多 agent 必须有<strong>全链路追踪</strong>（OTel + traceId），出事时能立刻看到”哪个 agent 在哪一步出了什么”。没追踪的多 agent 系统等于黑箱，运维心态会崩。</p>
+<hr>
+<h2 id="总结：4-个场景的共性架构"><a href="#总结：4-个场景的共性架构" class="headerlink" title="总结：4 个场景的共性架构"></a>总结：4 个场景的共性架构</h2><p>把 4 个场景放在一起看，能抽出 5 条共性架构原则：</p>
+<p><strong>1. Codex Sandbox Pod 是统一的执行单元</strong>。无论是 Copilot 后端、CI fix bot worker、SQL runner、还是多 agent 中的 dev agent —— 底层都是同一个 sandbox pod 抽象。这种统一带来的复用价值巨大：你只用维护一套 K8s 部署、一套监控、一套审计，所有场景共享。</p>
+<p><strong>2. MCP 是 AI 看世界的统一接口</strong>。GitLab / Jira / Confluence / 数据库 / 内部 SDK —— 全部 MCP 化。MCP server 是权限边界，AI 看到的工具集就是它能做的全部。这种设计让你能渐进地扩展能力，每加一个 MCP server 等于给 AI 新增一项可控能力。</p>
+<p><strong>3. LLM Gateway 是 control plane</strong>。所有 AI 调用走统一 gateway，gateway 上做配额、路由、failover、审计。这一层是企业级 AI 的”电网”——少了它，你只是把 ChatGPT 重新发明一遍，没法治理。</p>
+<p><strong>4. 人工 approval 留在关键节点</strong>。完全自动化是诱人的，也是危险的。每个场景都要有”出问题时 AI 必须停下来等人”的节点：CI fix 的 max iterations、数据查询的可解释结果、多 agent 的 phase approval。<strong>好的 AI 系统不是消除人，而是把人放在最关键的决策节点</strong>。</p>
+<p><strong>5. 全链路追踪 + 完整审计</strong>。每一次 AI 行为都要能追溯：用户 → 模型选择 → token 消耗 → execpolicy 决策 → sandbox syscall。这不是为了复盘事故，而是为了<strong>建立用户信任</strong>。用户能查到 AI 干了什么，才敢让 AI 干更多。</p>
+<hr>
+<h2 id="你的下一步"><a href="#你的下一步" class="headerlink" title="你的下一步"></a>你的下一步</h2><p>如果你公司刚开始考虑做企业级 AI agent，从这 4 个场景里挑：</p>
+<table>
+<thead>
+<tr>
+<th>你的情况</th>
+<th>推荐起步场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>有 100+ 工程师、被 Copilot 合规挡了</td>
+<td><strong>场景 1</strong>（内部 Copilot）—— 价值立竿见影</td>
+</tr>
+<tr>
+<td>有完善 CI/CD、PR 红灯多</td>
+<td><strong>场景 2</strong>（CI fix bot）—— ROI 最快</td>
+</tr>
+<tr>
+<td>数据团队是瓶颈、业务方天天催</td>
+<td><strong>场景 3</strong>（数据查询平台）—— 价值最大但最难</td>
+</tr>
+<tr>
+<td>想做技术领先、招聘吸引力</td>
+<td><strong>场景 4</strong>（多 agent）—— 前沿但慎重</td>
+</tr>
+</tbody></table>
+<p>不要一上来想做全部 4 个。<strong>选一个，做深，做好，再推下一个</strong>。每个场景至少需要 3-6 个月才能从 MVP 走到生产，急不得。</p>
+<p>整套系统跑起来后，你公司就拥有了一个<strong>AI-native 工程文化</strong>。这不再是”我们用了某个 AI 工具”，而是”我们用 AI 重新发明了开发流程”。这种差距，在未来 3 年会决定哪些公司能继续拿到顶级工程师，哪些只能做老旧业务。</p>
+<hr>
+<blockquote>
+<p>本系列结束。三篇连起来读，你会有一个完整的从 sandbox 设计哲学（21）→ K8s 生产架构（22）→ 真实业务场景（23）的路线图。</p>
+<p>接下来真正要做的事情，不在文章里，在你公司里。</p>
+<p>参考资料</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://modelcontextprotocol.io/">Model Context Protocol 规范</a> - Anthropic 开放协议</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/BerriAI/litellm">LiteLLM</a> - 开源 LLM Gateway</li>
+<li><a target="_blank" rel="noopener" href="https://continue.dev/">Continue.dev</a> - 开源 VS Code AI 助手参考实现</li>
+<li><a target="_blank" rel="noopener" href="https://qdrant.tech/">Qdrant</a> / <a target="_blank" rel="noopener" href="https://milvus.io/">Milvus</a> - 开源向量数据库</li>
+<li><a target="_blank" rel="noopener" href="https://huggingface.co/BAAI/bge-m3">bge-m3</a> - 中文优秀的 embedding 模型</li>
+<li><a target="_blank" rel="noopener" href="https://nats.io/">NATS</a> - 轻量级消息总线，多 agent 通信首选</li>
+<li><a target="_blank" rel="noopener" href="https://langchain-ai.github.io/langgraph/">LangGraph</a> - 多 agent 编排框架参考</li>
+</ul>
+</blockquote>
+</div>
+    <aside class="post-rail">
+      <span class="post-rail__line"></span>
+      <span>LESLIE / WRITING</span>
+    </aside>
+  </div>
+
+  <footer class="post-footer shell">
+    <div><h2>如果这篇文章帮到了你，<br>也许下一篇会更有意思。</h2></div>
+    <a class="button button--primary" href="/writing/">继续阅读 →</a>
+  </footer>
+</article>
+</main>
+    <footer class="site-footer">
+  <div class="footer-grid">
+    <div>
+      <p class="footer-kicker">Leslie Zhang</p>
+      <p class="footer-statement">把真实世界的问题，<br>变成可以运行的智能系统。</p>
+    </div>
+    <div class="footer-links">
+      <a href="https://github.com/leslieAIbin" target="_blank" rel="noreferrer">GitHub ↗</a>
+      <a href="mailto:aibinzhangleslie@gmail.com">Email ↗</a>
+      <a href="/atom.xml">RSS ↗</a>
+    </div>
+    <div class="footer-meta">
+      <span>© 2026 Leslie Zhang</span>
+      <span>Writing, research and working systems.</span>
+    </div>
+  </div>
+</footer>
+
+    <dialog class="ask-dialog" id="ask-leslie" aria-labelledby="ask-title">
+  <div class="ask-dialog__shell">
+    <div class="ask-dialog__topbar">
+      <div>
+        <h2 id="ask-title">Ask Leslie</h2>
+      </div>
+      <button class="icon-button" type="button" data-ask-close aria-label="关闭">×</button>
+    </div>
+    <p class="ask-dialog__intro">从本站公开文章中寻找答案。当前版本在浏览器本地检索，不上传问题，也不会编造不存在的经历。</p>
+    <form class="ask-form" data-ask-form>
+      <label class="sr-only" for="ask-query">输入问题</label>
+      <textarea id="ask-query" rows="2" placeholder="例如：Agent Runtime 应该怎么设计？" data-ask-input></textarea>
+      <button type="submit">检索知识库 <span aria-hidden="true">↗</span></button>
+    </form>
+    <div class="ask-suggestions" aria-label="推荐问题">
+      
+        <button type="button" data-ask-suggestion="Agent Runtime 应该怎么设计？">Agent Runtime 应该怎么设计？</button>
+      
+        <button type="button" data-ask-suggestion="如何让 AI 操控真实世界设备？">如何让 AI 操控真实世界设备？</button>
+      
+        <button type="button" data-ask-suggestion="Leslie 最近在研究什么？">Leslie 最近在研究什么？</button>
+      
+    </div>
+    <div class="ask-results" data-ask-results aria-live="polite">
+      <div class="ask-empty">
+        <p>输入一个问题，我会把你带到 Leslie 写过的相关内容。</p>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+    <script>window.ORBITAL_ROOT = '/';</script>
+    <script src="/js/orbital.js" defer></script>
+  </body>
+</html>

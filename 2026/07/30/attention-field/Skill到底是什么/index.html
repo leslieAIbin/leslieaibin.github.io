@@ -1,0 +1,456 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+  <head>
+
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#050b18">
+<meta name="color-scheme" content="dark light">
+<title>Skill 到底是什么？它不是 API，也不是 MCP | Leslie Zhang</title>
+<meta name="description" content="Skill 不是 API、MCP 或 Tool 的另一种名称，而是一套可按需加载、可复用、可验证的 Agent 做事方法。本文从规范、运行机制、概念边界、工程设计与安全风险五个方面系统拆解 Skill。">
+<meta name="author" content="Leslie Zhang">
+<link rel="canonical" href="https://leslieaibin.github.io/2026/07/30/attention-field/Skill%E5%88%B0%E5%BA%95%E6%98%AF%E4%BB%80%E4%B9%88/">
+<link rel="icon" href="/imgs/01.jpg">
+<link rel="alternate" type="application/atom+xml" title="Leslie Zhang" href="/atom.xml">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Skill 到底是什么？它不是 API，也不是 MCP | Leslie Zhang">
+<meta property="og:description" content="Skill 不是 API、MCP 或 Tool 的另一种名称，而是一套可按需加载、可复用、可验证的 Agent 做事方法。本文从规范、运行机制、概念边界、工程设计与安全风险五个方面系统拆解 Skill。">
+<meta property="og:url" content="https://leslieaibin.github.io/2026/07/30/attention-field/Skill%E5%88%B0%E5%BA%95%E6%98%AF%E4%BB%80%E4%B9%88/">
+<meta property="og:image" content="https://leslieaibin.github.io/2026/07/30/attention-field/Skill%E5%88%B0%E5%BA%95%E6%98%AF%E4%BB%80%E4%B9%88/imgs/cover.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Skill 到底是什么？它不是 API，也不是 MCP | Leslie Zhang">
+<meta name="twitter:description" content="Skill 不是 API、MCP 或 Tool 的另一种名称，而是一套可按需加载、可复用、可验证的 Agent 做事方法。本文从规范、运行机制、概念边界、工程设计与安全风险五个方面系统拆解 Skill。">
+<meta name="twitter:image" content="https://leslieaibin.github.io/2026/07/30/attention-field/Skill%E5%88%B0%E5%BA%95%E6%98%AF%E4%BB%80%E4%B9%88/imgs/cover.jpg">
+<script>
+  (function () {
+    var saved = localStorage.getItem('orbital-theme');
+    var theme = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    document.documentElement.dataset.theme = theme;
+  })();
+</script>
+<link rel="stylesheet" href="/css/orbital.css">
+<meta name="generator" content="Hexo 5.2.0"></head>
+  <body class="page-post">
+    <a class="skip-link" href="#main-content">跳到主要内容</a>
+    <div class="reading-progress" data-reading-progress></div>
+    <header class="site-header" data-header>
+  <div class="nav-shell">
+    <a class="brand" href="/" aria-label="返回首页">
+      <span class="brand-mark" aria-hidden="true"><img src="/images/brand/leslie-mythos-avatar.webp" alt="" width="512" height="512"></span>
+      <span class="brand-copy">
+        <strong>LESLIE</strong>
+        <small>REAL-WORLD AGENTS</small>
+      </span>
+    </a>
+
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav" data-nav-toggle>
+      <span></span><span></span>
+      <span class="sr-only">打开导航</span>
+    </button>
+
+    <nav class="main-nav" id="main-nav" aria-label="主导航" data-nav>
+      
+        <a href="/" class="">首页</a>
+      
+        <a href="/writing/" class="">写作</a>
+      
+        <a href="/projects/" class="">项目</a>
+      
+        <a href="/about/" class="">关于</a>
+      
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换明暗主题">
+        <span class="theme-toggle__sun" aria-hidden="true">☼</span>
+        <span class="theme-toggle__moon" aria-hidden="true">◐</span>
+      </button>
+      <button class="ask-nav" type="button" data-ask-open>ASK LESLIE</button>
+    </nav>
+  </div>
+</header>
+
+    <main id="main-content"><article class="post-shell">
+  <header class="post-hero shell">
+    <a class="post-back" href="/writing/">← 返回写作</a>
+    <div class="post-hero__meta">
+      <time datetime="2026-07-30">2026 年 07 月 30 日</time>
+      <span>17 分钟阅读</span>
+    </div>
+    <h1>Skill 到底是什么？它不是 API，也不是 MCP</h1>
+    <p class="post-hero__summary">Skill 不是 API、MCP 或 Tool 的另一种名称，而是一套可按需加载、可复用、可验证的 Agent 做事方法。本文从规范、运行机制、概念边界、工程设计与安全风险五个方面系统拆解 Skill。</p>
+    <div class="chip-row"><a href="/tags/AI-Agent/">AI Agent</a><a href="/tags/MCP/">MCP</a><a href="/tags/Agent-Skills/">Agent Skills</a><a href="/tags/SKILL-md/">SKILL.md</a><a href="/tags/Tool-Calling/">Tool Calling</a><a href="/tags/Agent-Engineering/">Agent Engineering</a></div>
+  </header>
+
+  <div class="post-cover shell"><img src="/2026/07/30/attention-field/Skill%E5%88%B0%E5%BA%95%E6%98%AF%E4%BB%80%E4%B9%88/imgs/cover.jpg" alt="Skill 到底是什么？它不是 API，也不是 MCP"></div>
+
+  <div class="post-layout shell">
+    <aside class="post-toc" aria-label="文章目录">
+      <span class="aside-title">目录</span>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%88%E7%94%A8%E4%B8%80%E5%BC%A0%E8%A1%A8%EF%BC%8C%E6%8A%8A%E4%BA%94%E4%B8%AA%E6%A6%82%E5%BF%B5%E5%88%86%E5%BC%80"><span class="toc-text">先用一张表，把五个概念分开</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Skill-%E7%9A%84%E6%AD%A3%E5%BC%8F%E5%BD%A2%E6%80%81%EF%BC%8C%E5%B7%B2%E7%BB%8F%E4%B8%8D%E5%8F%AA%E6%98%AF%E4%B8%80%E4%B8%AA%E6%B3%9B%E7%A7%B0"><span class="toc-text">Skill 的正式形态，已经不只是一个泛称</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%83%E4%B8%8D%E6%98%AF%E6%9B%B4%E9%95%BF%E7%9A%84-Prompt%EF%BC%8C%E5%85%B3%E9%94%AE%E5%9C%A8%E3%80%8C%E6%8C%89%E9%9C%80%E5%8A%A0%E8%BD%BD%E3%80%8D"><span class="toc-text">它不是更长的 Prompt，关键在「按需加载」</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Skill-%E7%9C%9F%E6%AD%A3%E8%BF%90%E8%A1%8C%E6%97%B6%EF%BC%8C%E5%88%B0%E5%BA%95%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88"><span class="toc-text">Skill 真正运行时，到底发生了什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Skill%E3%80%81Tool%E3%80%81MCP%EF%BC%8C%E6%9C%80%E5%AE%B9%E6%98%93%E6%B7%B7%E5%9C%A8%E5%93%AA"><span class="toc-text">Skill、Tool、MCP，最容易混在哪</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Tool%EF%BC%9A%E4%B8%80%E6%AC%A1%E5%8F%AF%E6%89%A7%E8%A1%8C%E5%8A%A8%E4%BD%9C"><span class="toc-text">Tool：一次可执行动作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#MCP%EF%BC%9A%E8%AE%A9%E5%A4%96%E9%83%A8%E8%83%BD%E5%8A%9B%E7%94%A8%E7%BB%9F%E4%B8%80%E5%8D%8F%E8%AE%AE%E6%8E%A5%E8%BF%9B%E6%9D%A5"><span class="toc-text">MCP：让外部能力用统一协议接进来</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Skill%EF%BC%9A%E6%8A%8A%E5%A4%9A%E4%B8%AA%E8%83%BD%E5%8A%9B%E7%BB%84%E7%BB%87%E6%88%90%E5%81%9A%E4%BA%8B%E6%96%B9%E6%B3%95"><span class="toc-text">Skill：把多个能力组织成做事方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Agent-%E5%92%8C-Sub-agent%EF%BC%8C%E5%8F%88%E6%94%BE%E5%9C%A8%E5%93%AA%E9%87%8C"><span class="toc-text">Agent 和 Sub-agent，又放在哪里</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A3%85%E4%BA%86-Skill%EF%BC%8C%E4%B8%8D%E4%BB%A3%E8%A1%A8-Agent-%E7%AA%81%E7%84%B6%E5%8F%98%E8%81%AA%E6%98%8E"><span class="toc-text">装了 Skill，不代表 Agent 突然变聪明</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A5%BD-Skill-%E7%9A%84%E9%9A%BE%E7%82%B9%EF%BC%8C%E4%B8%8D%E6%98%AF%E5%86%99%E5%87%BA-SKILL-md"><span class="toc-text">好 Skill 的难点，不是写出 SKILL.md</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%BB%E5%8A%A1%E8%BE%B9%E7%95%8C%E5%A4%9F%E4%B8%8D%E5%A4%9F%E7%AA%84"><span class="toc-text">任务边界够不够窄</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Description-%E8%83%BD%E4%B8%8D%E8%83%BD%E6%89%BF%E6%8B%85%E8%B7%AF%E7%94%B1"><span class="toc-text">Description 能不能承担路由</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A4%E6%96%AD%E4%BA%A4%E7%BB%99%E6%A8%A1%E5%9E%8B%EF%BC%8C%E7%A1%AE%E5%AE%9A%E6%80%A7%E5%B7%A5%E4%BD%9C%E4%BA%A4%E7%BB%99%E8%84%9A%E6%9C%AC"><span class="toc-text">判断交给模型，确定性工作交给脚本</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%B1%E8%B4%A5%E5%BF%85%E9%A1%BB%E6%88%90%E4%B8%BA%E6%AD%A3%E5%BC%8F%E8%B7%AF%E5%BE%84"><span class="toc-text">失败必须成为正式路径</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99%E8%A6%81%E6%8C%89%E9%9C%80%E6%8B%86%E5%BC%80"><span class="toc-text">参考资料要按需拆开</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%8C%E6%88%90%E8%A6%81%E6%9C%89%E8%AF%81%E6%8D%AE"><span class="toc-text">完成要有证据</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E6%96%B9-Skill%EF%BC%8C%E5%BA%94%E8%AF%A5%E6%8C%89%E8%BD%AF%E4%BB%B6%E4%BE%9D%E8%B5%96%E6%9D%A5%E5%AE%A1"><span class="toc-text">第三方 Skill，应该按软件依赖来审</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%B0%E5%BA%95%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E8%AF%A5%E7%94%A8-Skill%EF%BC%8C%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E8%AF%A5%E7%94%A8-MCP"><span class="toc-text">到底什么时候该用 Skill，什么时候该用 MCP</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%99%E5%9C%A8%E6%9C%80%E5%90%8E"><span class="toc-text">写在最后</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="toc-text">参考资料</span></a></li></ol>
+    </aside>
+    <div class="article-content"><h1 id="Skill-到底是什么？它不是-API，也不是-MCP"><a href="#Skill-到底是什么？它不是-API，也不是-MCP" class="headerlink" title="Skill 到底是什么？它不是 API，也不是 MCP"></a>Skill 到底是什么？它不是 API，也不是 MCP</h1><p>一个 Agent 能调用工具，不等于它能稳定完成任务。</p>
+<p>当任务跨越多个文件、外部系统和审批环节时，模型不仅要知道「可以调用什么」，还要知道调用顺序、输入要求、验收标准、失败处理和停止条件。缺少这些程序性知识，工具数量越多，执行过程反而越容易失控。</p>
+<p>Skill 正是模型能力与工程交付之间的方法层。</p>
+<p>它不替代模型，也不直接提供外部服务。它把一类任务中可复用的步骤、规则、脚本、参考资料和质量标准组织起来，让 Agent 在需要时加载，并按照相对稳定的方式完成工作。</p>
+<p>随着 Claude、Codex、ChatGPT、VS Code 和各类 Coding Agent 开始支持 <code>SKILL.md</code>，Skill、Tool、Plugin、MCP、API、Agent 与 Sub-agent 也越来越容易被混为一谈。这些概念常被统一描述成 AI 的「手脚」，但在真实系统中，它们分别属于方法、动作、连接、服务和执行主体等不同层次。</p>
+<p>本文从 Agent Skills 规范出发，依次拆解 Skill 的目录结构、加载机制、执行链路、概念边界、设计原则与安全风险。</p>
+<p><img src="imgs/cover.jpg" alt="Skill 到底是什么：它不是 API，也不是 MCP"></p>
+<h2 id="先用一张表，把五个概念分开"><a href="#先用一张表，把五个概念分开" class="headerlink" title="先用一张表，把五个概念分开"></a>先用一张表，把五个概念分开</h2><p>理解这几个概念，可以从「把一篇文章发布到公众号」这项完整任务开始。</p>
+<table>
+<thead>
+<tr>
+<th>概念</th>
+<th>它回答的问题</th>
+<th>在发布任务里的角色</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Model</td>
+<td>现在应该怎么判断</td>
+<td>理解要求、选择下一步、解释错误</td>
+</tr>
+<tr>
+<td>Agent</td>
+<td>谁驱动任务一直往前走</td>
+<td>管理模型调用、工具结果、重试、审批和停止</td>
+</tr>
+<tr>
+<td>Skill</td>
+<td>这类任务通常应该怎么做</td>
+<td>规定发布步骤、输入输出、检查项和异常处理</td>
+</tr>
+<tr>
+<td>Tool</td>
+<td>当前允许执行什么动作</td>
+<td>读文件、运行脚本、请求用户确认</td>
+</tr>
+<tr>
+<td>MCP</td>
+<td>外部能力怎样用统一方式接进来</td>
+<td>让客户端发现并调用远程工具、资源和提示模板</td>
+</tr>
+<tr>
+<td>API</td>
+<td>目标系统接受什么请求</td>
+<td>微信上传图片、创建草稿等 HTTP 接口</td>
+</tr>
+</tbody></table>
+<p>这几个东西不是互相替代的产品。</p>
+<p>它们处在不同层。</p>
+<p>Model 负责生成判断，Agent 负责驱动闭环，Skill 保存做事方法，Tool 提供动作入口，MCP 解决连接标准，API 则是外部系统原本就存在的服务契约。</p>
+<p><img src="imgs/01-five-layers.jpg" alt="Skill、Tool、MCP、Agent 与 API 的五层关系"></p>
+<p>最容易混淆的是 Skill 和 Tool。</p>
+<p>一个天气 Tool 的定义可能只有几十行：名字叫 <code>get_weather</code>，输入是城市，输出是温度和天气状态。它解决的是「如何执行一次查询」。</p>
+<p>一个旅行规划 Skill 却可能要求 Agent 先确认日期和预算，再查询天气、搜索航班、筛选酒店、检查签证信息，最后按固定模板生成行程。它解决的是「如何把一组动作组织成一次可靠交付」。</p>
+<p>Tool 像按钮。</p>
+<p>Skill 像操作规程。</p>
+<p>按钮能让机器动起来，操作规程决定什么时候按、按哪个、按完以后检查什么。</p>
+<p>理解这条边界后，其他概念的关系会清晰很多。</p>
+<h2 id="Skill-的正式形态，已经不只是一个泛称"><a href="#Skill-的正式形态，已经不只是一个泛称" class="headerlink" title="Skill 的正式形态，已经不只是一个泛称"></a>Skill 的正式形态，已经不只是一个泛称</h2><p>在早期产品中，插件、函数调用、工作流和 API 封装都可能被称为 Skill，这个词更接近一种产品命名。</p>
+<p>讨论今天的 Agent Skill 时，则需要先判断它是否指向 Agent Skills 开放规范。该规范最初由 Anthropic 推动，后来被更多 Agent 产品采用。OpenAI 也明确表示，ChatGPT Skills 遵循 Agent Skills 开放标准。</p>
+<p>按规范，一个最小 Skill 不是「API + OpenAPI」。</p>
+<p>它是一个目录，里面至少有一份 <code>SKILL.md</code>：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">wechat-publisher/</span><br><span class="line">├── SKILL.md</span><br><span class="line">├── scripts/</span><br><span class="line">│   └── publish.ts</span><br><span class="line">├── references/</span><br><span class="line">│   └── api-errors.md</span><br><span class="line">└── assets/</span><br><span class="line">    └── article-template.html</span><br></pre></td></tr></table></figure>
+
+<p><code>SKILL.md</code> 由两部分组成。</p>
+<p>上面是 YAML frontmatter，最少需要 <code>name</code> 和 <code>description</code>。下面是 Markdown 正文，写具体工作流、输入输出、边界、例子和完成检查。</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">---</span><br><span class="line">name: wechat-publisher</span><br><span class="line">description: 将 Markdown 长文发布到微信公众号草稿箱。</span><br><span class="line">  当用户提到公众号发布、微信文章或草稿箱时使用。</span><br><span class="line">---</span><br><span class="line"></span><br><span class="line"><span class="section"># 发布流程</span></span><br><span class="line"></span><br><span class="line"><span class="bullet">1.</span> 读取文章 frontmatter 和发布偏好。</span><br><span class="line"><span class="bullet">2.</span> 验证标题、摘要、作者和封面。</span><br><span class="line"><span class="bullet">3.</span> 转换 Markdown，上传正文图片。</span><br><span class="line"><span class="bullet">4.</span> 创建草稿并检查 API 返回值。</span><br><span class="line"><span class="bullet">5.</span> 遇到 40164 时提取出口 IP，等待用户配置后重试。</span><br></pre></td></tr></table></figure>
+
+<p>简单 Skill 到这里就可以结束。</p>
+<p>它可以只有几段文字，不带脚本，不调用 API，更不需要 OpenAPI 文档。</p>
+<p>例如，一份代码审查 Skill 可以规定同时从「代码标准」和「需求符合度」两条轴检查改动；一份品牌写作 Skill 可以带上用词规范、案例和模板；一份事故复盘 Skill 可以要求先建立时间线，再区分触发原因、放大因素和恢复动作。</p>
+<p>这些 Skill 都在传递程序性知识。</p>
+<p>程序性知识不是「世界上有什么」，而是「碰到这类任务时应该怎么做」。</p>
+<p>脚本、参考资料和模板只是可选的增强。</p>
+<p>需要确定性处理，就把代码放进 <code>scripts/</code>。</p>
+<p>需要大量背景资料，就放进 <code>references/</code>。</p>
+<p>需要文档模板、设计资产或 Schema，就放进 <code>assets/</code>。</p>
+<p>所以更准确的定义是：</p>
+<p><strong>Skill 是一份可按需加载、可复用、可版本化的 Agent 做事方法。</strong></p>
+<p>有些方法会调用 API。</p>
+<p>但 API 不是 Skill 的必要条件。</p>
+<p><img src="imgs/02-skill-anatomy.jpg" alt="一个 Agent Skill 目录的组成：SKILL.md、脚本、参考资料与资产"></p>
+<h2 id="它不是更长的-Prompt，关键在「按需加载」"><a href="#它不是更长的-Prompt，关键在「按需加载」" class="headerlink" title="它不是更长的 Prompt，关键在「按需加载」"></a>它不是更长的 Prompt，关键在「按需加载」</h2><p>看到 <code>SKILL.md</code> 采用 Markdown 格式，一个常见疑问是：它与保存在文件中的长 Prompt 有什么区别？</p>
+<p>如果只看文件格式，确实很像。</p>
+<p>差别出在加载方式。</p>
+<p>普通 Prompt 往往在对话开始时就被塞进上下文。不管当前任务用不用得上，它都在那里占位置。规则一多，系统提示就会变成长墙，模型每一轮都要背着它走。</p>
+<p>Skill 采用的是渐进式披露。</p>
+<p>Agent Skills 规范把过程拆成三层。</p>
+<p>第一层是发现。Agent 启动时只读取所有 Skill 的 <code>name</code> 和 <code>description</code>，知道手边大概有哪些方法。</p>
+<p>第二层是激活。当任务和某个描述匹配时，才把完整 <code>SKILL.md</code> 读进上下文。</p>
+<p>第三层是执行。只有工作真的需要，Agent 才继续打开某份参考资料、运行脚本或读取模板。</p>
+<p>可以把这种机制理解成一家工作室的资料柜。</p>
+<p>门口只放目录卡片。</p>
+<p>接到公众号任务，编辑才抽出「公众号发布」操作手册；走到图片上传，才翻对应的接口错误表；需要排版时，再拿出 HTML 模板。</p>
+<p>不是把整间资料室一次性倒在桌上。</p>
+<p>这种设计解决了一个很现实的问题：可复用流程越来越多，但上下文窗口和注意力仍然有限。</p>
+<p>官方规范建议主 <code>SKILL.md</code> 控制在 500 行以内，完整指令最好少于 5000 tokens。更长的材料拆到引用文件里，需要时再读。</p>
+<p>这也说明了 <code>description</code> 为什么重要。</p>
+<p>它不只是给人看的简介。</p>
+<p>它还是路由入口。</p>
+<p>「帮助处理文档」这样的描述几乎没有选择价值。「读取、创建和修订 Word 文档；当用户提到 <code>.docx</code>、批注、红线或 Word 排版时使用」就清楚得多。</p>
+<p>不过，描述写得清楚也不代表 100% 命中。</p>
+<p>自动触发仍然是模型和宿主共同完成的决策。模型可能漏选，多个 Skill 可能互相竞争，宿主也可能要求用户显式点选。OpenAI 和 Anthropic 的 Tool API 都提供了 <code>auto</code>、<code>required</code> 或允许列表一类控制手段，正是因为「让模型自己判断」和「工程上必须发生」不是同一件事。</p>
+<p>Skill 让路由更轻。</p>
+<p>它没有让概率消失。</p>
+<h2 id="Skill-真正运行时，到底发生了什么"><a href="#Skill-真正运行时，到底发生了什么" class="headerlink" title="Skill 真正运行时，到底发生了什么"></a>Skill 真正运行时，到底发生了什么</h2><p>以公众号发布 Skill 为例。</p>
+<p>Agent 命中 Skill 后，<code>SKILL.md</code> 并不会自行执行。</p>
+<p>Markdown 不会调用网络。</p>
+<p>说明书也不会上传图片。</p>
+<p>真正的链路大致是这样：</p>
+<ol>
+<li>Agent 读取 Skill，获得发布步骤和边界；</li>
+<li>Agent 通过文件 Tool 读取文章和配置；</li>
+<li>Agent 通过 Shell Tool 启动 <code>publish.ts</code>；</li>
+<li>脚本把 Markdown 转成 HTML，并压缩、上传图片；</li>
+<li>脚本调用微信 API；</li>
+<li>API 返回成功结果或错误；</li>
+<li>Tool 把结果送回 Agent；</li>
+<li>Agent 根据 Skill 里的规则决定继续、重试、等待人工处理或结束。</li>
+</ol>
+<p>这里有一个经常被忽略的事实。</p>
+<p><strong>模型通常不直接执行 Tool。</strong></p>
+<p>它生成一个结构化调用请求。客户端代码、Agent 运行时或平台服务器收到请求后，才真正运行函数、Shell、浏览器或远程服务，再把结果放回对话。</p>
+<p>Anthropic 的官方文档把它称为 Tool use contract：应用提供可用操作和输入输出形状，模型决定何时、如何调用；代码由应用或平台执行。</p>
+<p>OpenAI Agents SDK 也是同样的分层。函数的名称、描述和参数会被整理成 Tool Schema，模型产生调用参数，运行时再调用真实函数。</p>
+<p>所以一个 Skill 能不能完成任务，至少受三件事限制。</p>
+<p>它写得对不对。</p>
+<p>运行时有没有对应 Tool。</p>
+<p>权限和环境是否允许 Tool 执行。</p>
+<p>即使存在一份非常完整的「发送邮件 Skill」，如果 Agent 没有邮件 Tool，它最多只能生成正文；如果邮件 Tool 的权限仅允许创建草稿，Agent 就不能越权直接发送；如果网络被沙箱拦截，再完善的流程也无法到达邮箱服务器。</p>
+<p>Skill 教会的是方法。</p>
+<p>能力边界仍然由 Harness 和 Tool 决定。</p>
+<p><img src="imgs/03-wechat-chain.jpg" alt="公众号发布案例中的 Skill、Agent、Tool、脚本与 API 调用链"></p>
+<h2 id="Skill、Tool、MCP，最容易混在哪"><a href="#Skill、Tool、MCP，最容易混在哪" class="headerlink" title="Skill、Tool、MCP，最容易混在哪"></a>Skill、Tool、MCP，最容易混在哪</h2><p>这三个词经常一起出现，是因为一项任务确实会同时用到它们。</p>
+<p>但它们解决的不是一个问题。</p>
+<h3 id="Tool：一次可执行动作"><a href="#Tool：一次可执行动作" class="headerlink" title="Tool：一次可执行动作"></a>Tool：一次可执行动作</h3><p>Tool 是模型可请求调用的动作接口。</p>
+<p>一个典型 Tool 有名字、描述、输入 Schema，可能还有输出 Schema。天气查询、数据库检索、文件写入、执行 Shell、发送邮件，都可以包装成 Tool。</p>
+<p>它关注的是一次调用：</p>
+<p>输入是否合法？</p>
+<p>在哪里执行？</p>
+<p>返回什么？</p>
+<p>失败怎样表示？</p>
+<p>Tool 可以直接包装本地函数，也可以在内部调用远程 API。OpenAPI 能帮助系统把一组 HTTP 接口转成 Tool 定义，但那只是构建 Tool 的一种方式。</p>
+<h3 id="MCP：让外部能力用统一协议接进来"><a href="#MCP：让外部能力用统一协议接进来" class="headerlink" title="MCP：让外部能力用统一协议接进来"></a>MCP：让外部能力用统一协议接进来</h3><p>MCP 的定位更像连接层。</p>
+<p>一个 MCP Server 可以向客户端暴露三类基本能力：</p>
+<ul>
+<li>Tools：让模型执行动作；</li>
+<li>Resources：让应用读取文件、数据库内容等上下文；</li>
+<li>Prompts：让用户显式选择可复用模板。</li>
+</ul>
+<p>客户端通过 <code>tools/list</code> 发现工具，通过 <code>tools/call</code> 执行工具。不同服务只要遵守同一套协议，Claude、ChatGPT、IDE 或自研 Agent 就不必为每个连接重写一套接入方式。</p>
+<p>因此，MCP 不是「更高级的 Skill」。</p>
+<p>它更接近 AI 应用的 USB-C。</p>
+<p>接口统一了，插进来的设备仍然各做各的事。</p>
+<h3 id="Skill：把多个能力组织成做事方法"><a href="#Skill：把多个能力组织成做事方法" class="headerlink" title="Skill：把多个能力组织成做事方法"></a>Skill：把多个能力组织成做事方法</h3><p>Skill 可以指挥 Agent 使用原生 Tool，也可以使用 MCP 提供的 Tool，还可以直接运行 Skill 自带的脚本。</p>
+<p>例如「销售周报 Skill」可能要求：</p>
+<p>从 Salesforce MCP 读取商机。</p>
+<p>从 Gmail Tool 查关键往来。</p>
+<p>用本地 Python 脚本计算转化率。</p>
+<p>按照公司模板生成 Word。</p>
+<p>最后让负责人确认后发送。</p>
+<p>MCP 解决 Salesforce 和 Gmail 怎样接进来。</p>
+<p>Tool 解决每一步怎样调用。</p>
+<p>Skill 解决这些动作怎样组成一份合格周报。</p>
+<p>三者的关系可以概括为：</p>
+<p><strong>MCP 管连接，Tool 管动作，Skill 管方法。</strong></p>
+<p><img src="imgs/04-boundaries.jpg" alt="Prompt、Skill、Tool、MCP 和 Agent 的边界对照"></p>
+<h2 id="Agent-和-Sub-agent，又放在哪里"><a href="#Agent-和-Sub-agent，又放在哪里" class="headerlink" title="Agent 和 Sub-agent，又放在哪里"></a>Agent 和 Sub-agent，又放在哪里</h2><p>Agent 不是 Skill 的同义词。</p>
+<p>Agent 是执行主体。</p>
+<p>它至少包含一次模型决策，以及把 Tool 结果送回模型继续判断的运行循环。复杂 Agent 还会带状态、记忆、预算、审批、重试上限和停止条件。</p>
+<p>Skill 不负责成为主体。</p>
+<p>它被主体读取。</p>
+<p>这就像团队中的工程师既可以按照「代码审查 Skill」工作，也可以按照「故障诊断 Skill」工作。操作手册发生变化，执行主体仍然是同一个。</p>
+<p>Sub-agent 则是另一个带独立上下文和决策循环的执行者。</p>
+<p>什么时候要用 Sub-agent？</p>
+<p>当任务需要独立判断、隔离上下文、并行推进或不同专业角色时。例如研究一篇长文，可以让三个 Sub-agent 分别查规范、找案例和做事实核查，再由主 Agent 汇总。</p>
+<p>什么时候只需要 Skill？</p>
+<p>当任务动作已经明确，只需要提高过程的稳定性、复用性和完整性时，代码 Review、文档排版、公众号发布、事故复盘都很适合先做成 Skill。</p>
+<p>原始资料里把 Skill 比作线性流水线，把 Sub-agent 比作会自动纠错的真人厨师，这个区分太绝对。</p>
+<p>Skill 完全可以写循环、分支和人工审批。</p>
+<p>Sub-agent 也可能因为工具不足、目标模糊或停止条件缺失而原地打转。</p>
+<p>真正的区别不在「死」和「活」。</p>
+<p>在于有没有独立的决策循环。</p>
+<p>Skill 是方法包。</p>
+<p>Sub-agent 是执行单元。</p>
+<p>方法包可以交给一个执行单元，也可以被多个 Agent 组合使用。</p>
+<h2 id="装了-Skill，不代表-Agent-突然变聪明"><a href="#装了-Skill，不代表-Agent-突然变聪明" class="headerlink" title="装了 Skill，不代表 Agent 突然变聪明"></a>装了 Skill，不代表 Agent 突然变聪明</h2><p>Skill 最容易制造的错觉，是能力凭空增长。</p>
+<p>安装一份 Excel Skill，Agent 好像突然会做复杂表格了。</p>
+<p>安装一份 PDF Skill，它又会填表、合并和渲染了。</p>
+<p>这里确实发生了提升，但提升来自三个地方。</p>
+<p>一是流程被写清楚了。模型不用每次重新规划。</p>
+<p>二是确定性脚本被复用了。复杂格式、解析和转换不再全靠模型临场生成代码。</p>
+<p>三是参考资料和模板被放到了手边。Agent 知道什么结果才算合格。</p>
+<p>模型参数并没有因为安装 Skill 而改变。</p>
+<p>同样，Skill 也不是零 Token。</p>
+<p>启动时加载的名称和描述会占上下文。激活后的 <code>SKILL.md</code> 会占上下文。模型理解步骤、选择工具、处理结果，同样需要推理 Token。OpenAI 和 Anthropic 的文档都明确提到 Skill 会带来一定上下文与启动成本。</p>
+<p>有些方案说「Agent 自己分析，所以不消耗 Token」，通常真正想表达的是：不用再配置第二个 LLM API。</p>
+<p>这可以减少额外账单。</p>
+<p>却不等于计算免费。</p>
+<p>外部 Agent 仍然在推理。</p>
+<p>把这一点说清楚很重要，因为团队会据此决定装多少 Skill、加载多少参考资料，以及要不要为一个简单任务启动整套流程。</p>
+<p>Skill 不是越多越好。</p>
+<p>元数据虽然轻，但几百个相似描述依旧会增加选择噪声；带脚本的 Skill 还会增加依赖、沙箱启动和安全审查成本。Anthropic 的托管 Agent 文档也建议，只挂载当前任务真正需要的 Skills。</p>
+<p>工具箱塞满整个仓库，不叫能力建设。</p>
+<p>很多时候只是把选择成本从人转给了模型。</p>
+<h2 id="好-Skill-的难点，不是写出-SKILL-md"><a href="#好-Skill-的难点，不是写出-SKILL-md" class="headerlink" title="好 Skill 的难点，不是写出 SKILL.md"></a>好 Skill 的难点，不是写出 SKILL.md</h2><p>创建一个目录，再写两段 Markdown，十分钟就够。</p>
+<p>让它在不同任务里稳定触发、正确执行，并在失败后安全退出，才是真正的工程工作。一个可靠 Skill 可以从六个方面判断。</p>
+<h3 id="任务边界够不够窄"><a href="#任务边界够不够窄" class="headerlink" title="任务边界够不够窄"></a>任务边界够不够窄</h3><p>「帮助完成软件开发」不是一个好 Skill。</p>
+<p>它大得没有触发边界，也没有清晰完成状态。</p>
+<p>「诊断难复现的性能回退，并在找到证据前不修改实现」就具体得多。输入是故障现象和代码库，输出是证据链与原因判断，停止条件也清楚。</p>
+<p>好的 Skill 更像团队里的一个成熟动作。</p>
+<p>不是整个部门。</p>
+<h3 id="Description-能不能承担路由"><a href="#Description-能不能承担路由" class="headerlink" title="Description 能不能承担路由"></a>Description 能不能承担路由</h3><p>描述要同时写清「做什么」和「什么时候用」。</p>
+<p>不要只堆能力名，也不要夸大范围。关键词应该来自用户真实会说的话、文件类型和典型任务。</p>
+<p>描述太宽，会到处误触发。</p>
+<p>描述太窄，用户换个说法就找不到。</p>
+<p>写 Description 的过程，其实是在给 Agent 划分工作边界。</p>
+<h3 id="判断交给模型，确定性工作交给脚本"><a href="#判断交给模型，确定性工作交给脚本" class="headerlink" title="判断交给模型，确定性工作交给脚本"></a>判断交给模型，确定性工作交给脚本</h3><p>模型适合判断文章结构、识别风险、比较方案和处理非结构化材料。</p>
+<p>脚本适合压缩图片、验证 Schema、转换文件、检查链接、调用 API 和计算指标。</p>
+<p>把所有东西都写成自然语言，结果容易漂。</p>
+<p>把所有东西都焊死在脚本里，又失去 Agent 处理变化的价值。</p>
+<p>好的 Skill 会在两者之间切一条清楚的缝。</p>
+<h3 id="失败必须成为正式路径"><a href="#失败必须成为正式路径" class="headerlink" title="失败必须成为正式路径"></a>失败必须成为正式路径</h3><p>输入缺失怎么办？</p>
+<p>脚本不存在怎么办？</p>
+<p>网络失败能不能重试？</p>
+<p>遇到权限或付款、删除、发布操作，什么时候停下来找人？</p>
+<p>一次成熟流程，至少有成功、受控失败和人工升级三种出口。</p>
+<p>公众号发布 Skill 能处理 40164，不是因为模型知道所有微信错误，而是流程明确告诉它：提取 IP，等待白名单配置，不要无限重试。</p>
+<h3 id="参考资料要按需拆开"><a href="#参考资料要按需拆开" class="headerlink" title="参考资料要按需拆开"></a>参考资料要按需拆开</h3><p>不要把几十页 API 文档全部塞进 <code>SKILL.md</code>。</p>
+<p>主文件只留路由、步骤和关键边界。服务商差异、错误码、模板细节拆进单独文件，并在主流程里写清什么情况下读取。</p>
+<p>这就是渐进式披露真正落到目录设计上的样子。</p>
+<h3 id="完成要有证据"><a href="#完成要有证据" class="headerlink" title="完成要有证据"></a>完成要有证据</h3><p>「已经处理好了」不算验收。</p>
+<p>生成 Word，要渲染并检查分页。</p>
+<p>修改代码，要跑测试并查看 Diff。</p>
+<p>发布公众号，要拿到 <code>media_id</code>。</p>
+<p>发送邮件，要记录目标地址、消息 ID 和审批状态。</p>
+<p>Skill 最有价值的部分，往往不是步骤列表。</p>
+<p>是它把团队脑子里的「怎样才算完成」写了下来。</p>
+<p><img src="imgs/05-good-skill.jpg" alt="一个可靠 Skill 的六个设计要点"></p>
+<h2 id="第三方-Skill，应该按软件依赖来审"><a href="#第三方-Skill，应该按软件依赖来审" class="headerlink" title="第三方 Skill，应该按软件依赖来审"></a>第三方 Skill，应该按软件依赖来审</h2><p><code>SKILL.md</code> 看起来只是文本，所以很多人安装时会放松警惕。</p>
+<p>这恰好是风险所在。</p>
+<p>一份恶意 Skill 不必自己携带病毒。它可以直接指示 Agent 读取 SSH Key、扫描环境变量，再通过网络 Tool 把内容发出去；也可以引用一个远程脚本，让 Agent 下载后执行；还可以要求调用某个权限很宽的 MCP Server。</p>
+<p>Anthropic 的企业安全指南说得非常直接：不要在没有完整审计的情况下部署不可信 Skill。恶意 Skill 可以引导 Agent 执行任意代码、访问敏感文件或向外传输数据。</p>
+<p>第三方 Skill 的审查通常分成四层。</p>
+<p><strong>看说明。</strong> <code>description</code> 和实际流程是否一致？有没有要求隐藏动作、忽略安全规则或绕过用户确认？</p>
+<p><strong>看代码。</strong> 检查所有 <code>.py</code>、<code>.sh</code>、<code>.js</code>，特别关注 <code>curl</code>、<code>fetch</code>、<code>requests</code>、<code>subprocess</code>、广泛文件路径和动态下载。</p>
+<p><strong>看权限组合。</strong> 单独的读文件不一定危险，单独的网络访问也未必危险；能读敏感文件又能联网，风险会突然放大。</p>
+<p><strong>看运行环境。</strong> 是否在沙箱中执行？挂载了哪些目录？有没有宿主机密钥？网络是否有域名白名单？高风险动作是否需要审批？</p>
+<p>Docker 和沙箱很重要。</p>
+<p>但它们不是免死金牌。</p>
+<p>把宿主目录挂进容器、开放 Docker Socket、使用特权模式、注入长期密钥，仍然可能让容器影响宿主和外部系统。真正安全的是沙箱、最小权限、网络控制、密钥隔离和人工审批一起工作。</p>
+<p>还有一个容易忽略的供应链问题。</p>
+<p>Skill 是可版本化的。</p>
+<p>今天审过的 1.0，不代表自动更新后的 1.1 仍然安全。企业环境应该固定版本、保留来源和审计记录，再通过小范围评测决定是否升级。</p>
+<p>安装 Skill 的正确心态，不是收藏 Prompt。</p>
+<p>是引入依赖。</p>
+<p><img src="imgs/06-skill-security.jpg" alt="第三方 Skill 的代码、权限、网络与供应链风险"></p>
+<h2 id="到底什么时候该用-Skill，什么时候该用-MCP"><a href="#到底什么时候该用-Skill，什么时候该用-MCP" class="headerlink" title="到底什么时候该用 Skill，什么时候该用 MCP"></a>到底什么时候该用 Skill，什么时候该用 MCP</h2><p>在工程选型中，可以使用下面这套判断路径。</p>
+<p>如果系统缺少查天气、创建订单或写入数据库这样的明确动作，应先提供 Tool。</p>
+<p>如果多个客户端都要连接同一批外部系统，并希望统一发现、鉴权和调用方式，应考虑 MCP。</p>
+<p>如果动作已经存在，但团队每次都要重新解释步骤、格式、边界和验收标准，把方法写成 Skill。</p>
+<p>如果任务需要自己拆解目标、根据反馈不断调整、管理状态和停止条件，那需要 Agent runtime。</p>
+<p>如果任务还需要独立上下文、专业角色或并行判断，再考虑 Sub-agent。</p>
+<p>现实项目通常不是五选一。</p>
+<p>一个研究 Agent 可以加载「事实核查 Skill」，通过 MCP 连接文档库，调用 Web Search Tool 找一手来源，再让一个独立 Reviewer Sub-agent 复核引用。</p>
+<p>每一层都能出现。</p>
+<p>关键是不要用一个概念解释所有层次的问题。</p>
+<p>如果 Agent 不知道标准流程，修 Skill。</p>
+<p>如果它知道流程却没有动作入口，补 Tool。</p>
+<p>如果每个客户端都在重复接第三方服务，考虑 MCP。</p>
+<p>如果工具结果回来了，系统却不知道继续还是停止，修 Agent Loop。</p>
+<p>把故障分到正确层，工程才有抓手。</p>
+<h2 id="写在最后"><a href="#写在最后" class="headerlink" title="写在最后"></a>写在最后</h2><p>Skill 的价值不能脱离整个 Agent 系统单独判断。</p>
+<p>只有 API，系统能够接收请求，却不会自动形成完整任务流程。</p>
+<p>只有 Tool，Agent 能够发起动作，却未必知道动作之间的顺序、验收标准与失败策略。</p>
+<p>只有 Skill，没有 Shell、网络、凭据和其他执行能力，再完整的方法也无法落地。</p>
+<p>稳定交付来自不同层次的协同：</p>
+<p>Agent 负责推进任务并管理决策循环。</p>
+<p>Skill 保存可复用的方法与质量标准。</p>
+<p>Tool 执行具体动作。</p>
+<p>MCP 统一外部能力的连接方式。</p>
+<p>API 提供目标系统的服务契约。</p>
+<p>模型负责理解上下文并做出判断，但不必在每次任务中重新发明工作方式。Skill 将个人或团队反复验证过的程序性知识沉淀下来，使 Agent 能在需要时找到方法、按步骤执行，并在异常出现时进入受控的失败路径。</p>
+<p>API、模型和平台都会持续变化。</p>
+<p>可复用的方法、清晰的边界和可验证的完成标准，才是 Agent 工程中更稳定的资产。</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ol>
+<li>Agent Skills, <a target="_blank" rel="noopener" href="https://agentskills.io/home">Agent Skills Overview</a></li>
+<li>Agent Skills, <a target="_blank" rel="noopener" href="https://agentskills.io/specification">Specification</a></li>
+<li>OpenAI Academy, <a target="_blank" rel="noopener" href="https://openai.com/academy/skills/">Using skills</a></li>
+<li>OpenAI Help Center, <a target="_blank" rel="noopener" href="https://help.openai.com/en/articles/20001066">Skills in ChatGPT</a></li>
+<li>OpenAI, <a target="_blank" rel="noopener" href="https://openai.com/index/equip-responses-api-computer-environment/">From model to agent: Equipping the Responses API with a computer environment</a></li>
+<li>Anthropic, <a target="_blank" rel="noopener" href="https://support.claude.com/en/articles/12512176-what-are-skills">What are skills?</a></li>
+<li>Anthropic, <a target="_blank" rel="noopener" href="https://platform.claude.com/docs/en/managed-agents/skills">Skills in Managed Agents</a></li>
+<li>Anthropic, <a target="_blank" rel="noopener" href="https://platform.claude.com/docs/en/agents-and-tools/agent-skills/enterprise">Skills for enterprise</a></li>
+<li>Anthropic, <a target="_blank" rel="noopener" href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/how-tool-use-works">How tool use works</a></li>
+<li>Model Context Protocol, <a target="_blank" rel="noopener" href="https://modelcontextprotocol.io/docs/getting-started/intro">What is MCP?</a></li>
+<li>Model Context Protocol, <a target="_blank" rel="noopener" href="https://modelcontextprotocol.io/specification/2025-06-18/server/tools">Tools specification</a></li>
+<li>Model Context Protocol, <a target="_blank" rel="noopener" href="https://modelcontextprotocol.io/docs/learn/server-concepts">Understanding MCP servers</a></li>
+<li>OpenAI Agents SDK, <a target="_blank" rel="noopener" href="https://openai.github.io/openai-agents-python/tools/">Tools</a></li>
+</ol>
+</div>
+    <aside class="post-rail">
+      <span class="post-rail__line"></span>
+      <span>LESLIE / WRITING</span>
+    </aside>
+  </div>
+
+  <footer class="post-footer shell">
+    <div><h2>如果这篇文章帮到了你，<br>也许下一篇会更有意思。</h2></div>
+    <a class="button button--primary" href="/writing/">继续阅读 →</a>
+  </footer>
+</article>
+</main>
+    <footer class="site-footer">
+  <div class="footer-grid">
+    <div>
+      <p class="footer-kicker">Leslie Zhang</p>
+      <p class="footer-statement">把真实世界的问题，<br>变成可以运行的智能系统。</p>
+    </div>
+    <div class="footer-links">
+      <a href="https://github.com/leslieAIbin" target="_blank" rel="noreferrer">GitHub ↗</a>
+      <a href="mailto:aibinzhangleslie@gmail.com">Email ↗</a>
+      <a href="/atom.xml">RSS ↗</a>
+    </div>
+    <div class="footer-meta">
+      <span>© 2026 Leslie Zhang</span>
+      <span>Writing, research and working systems.</span>
+    </div>
+  </div>
+</footer>
+
+    <dialog class="ask-dialog" id="ask-leslie" aria-labelledby="ask-title">
+  <div class="ask-dialog__shell">
+    <div class="ask-dialog__topbar">
+      <div>
+        <h2 id="ask-title">Ask Leslie</h2>
+      </div>
+      <button class="icon-button" type="button" data-ask-close aria-label="关闭">×</button>
+    </div>
+    <p class="ask-dialog__intro">从本站公开文章中寻找答案。当前版本在浏览器本地检索，不上传问题，也不会编造不存在的经历。</p>
+    <form class="ask-form" data-ask-form>
+      <label class="sr-only" for="ask-query">输入问题</label>
+      <textarea id="ask-query" rows="2" placeholder="例如：Agent Runtime 应该怎么设计？" data-ask-input></textarea>
+      <button type="submit">检索知识库 <span aria-hidden="true">↗</span></button>
+    </form>
+    <div class="ask-suggestions" aria-label="推荐问题">
+      
+        <button type="button" data-ask-suggestion="Agent Runtime 应该怎么设计？">Agent Runtime 应该怎么设计？</button>
+      
+        <button type="button" data-ask-suggestion="如何让 AI 操控真实世界设备？">如何让 AI 操控真实世界设备？</button>
+      
+        <button type="button" data-ask-suggestion="Leslie 最近在研究什么？">Leslie 最近在研究什么？</button>
+      
+    </div>
+    <div class="ask-results" data-ask-results aria-live="polite">
+      <div class="ask-empty">
+        <p>输入一个问题，我会把你带到 Leslie 写过的相关内容。</p>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+    <script>window.ORBITAL_ROOT = '/';</script>
+    <script src="/js/orbital.js" defer></script>
+  </body>
+</html>

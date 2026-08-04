@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+  <head>
+
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#050b18">
+<meta name="color-scheme" content="dark light">
+<title>长上下文到底贵在哪里？KV Cache 压缩、淘汰和 Offload 全景拆解 | Leslie Zhang</title>
+<meta name="description" content="构建能够感知、规划、行动与反馈的智能体系统，长期关注 Agent Runtime、多模态与真实世界自动化。">
+<meta name="author" content="Leslie Zhang">
+<link rel="canonical" href="https://leslieaibin.github.io/2026/06/23/attention-field/%E9%95%BF%E4%B8%8A%E4%B8%8B%E6%96%87%E5%88%B0%E5%BA%95%E8%B4%B5%E5%9C%A8%E5%93%AA%E9%87%8C/">
+<link rel="icon" href="/imgs/01.jpg">
+<link rel="alternate" type="application/atom+xml" title="Leslie Zhang" href="/atom.xml">
+<meta property="og:type" content="article">
+<meta property="og:title" content="长上下文到底贵在哪里？KV Cache 压缩、淘汰和 Offload 全景拆解 | Leslie Zhang">
+<meta property="og:description" content="构建能够感知、规划、行动与反馈的智能体系统，长期关注 Agent Runtime、多模态与真实世界自动化。">
+<meta property="og:url" content="https://leslieaibin.github.io/2026/06/23/attention-field/%E9%95%BF%E4%B8%8A%E4%B8%8B%E6%96%87%E5%88%B0%E5%BA%95%E8%B4%B5%E5%9C%A8%E5%93%AA%E9%87%8C/">
+<meta property="og:image" content="https://leslieaibin.github.io/2026/06/23/attention-field/%E9%95%BF%E4%B8%8A%E4%B8%8B%E6%96%87%E5%88%B0%E5%BA%95%E8%B4%B5%E5%9C%A8%E5%93%AA%E9%87%8C/imgs/cover.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="长上下文到底贵在哪里？KV Cache 压缩、淘汰和 Offload 全景拆解 | Leslie Zhang">
+<meta name="twitter:description" content="构建能够感知、规划、行动与反馈的智能体系统，长期关注 Agent Runtime、多模态与真实世界自动化。">
+<meta name="twitter:image" content="https://leslieaibin.github.io/2026/06/23/attention-field/%E9%95%BF%E4%B8%8A%E4%B8%8B%E6%96%87%E5%88%B0%E5%BA%95%E8%B4%B5%E5%9C%A8%E5%93%AA%E9%87%8C/imgs/cover.jpg">
+<script>
+  (function () {
+    var saved = localStorage.getItem('orbital-theme');
+    var theme = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    document.documentElement.dataset.theme = theme;
+  })();
+</script>
+<link rel="stylesheet" href="/css/orbital.css">
+<meta name="generator" content="Hexo 5.2.0"></head>
+  <body class="page-post">
+    <a class="skip-link" href="#main-content">跳到主要内容</a>
+    <div class="reading-progress" data-reading-progress></div>
+    <header class="site-header" data-header>
+  <div class="nav-shell">
+    <a class="brand" href="/" aria-label="返回首页">
+      <span class="brand-mark" aria-hidden="true"><img src="/images/brand/leslie-mythos-avatar.webp" alt="" width="512" height="512"></span>
+      <span class="brand-copy">
+        <strong>LESLIE</strong>
+        <small>REAL-WORLD AGENTS</small>
+      </span>
+    </a>
+
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav" data-nav-toggle>
+      <span></span><span></span>
+      <span class="sr-only">打开导航</span>
+    </button>
+
+    <nav class="main-nav" id="main-nav" aria-label="主导航" data-nav>
+      
+        <a href="/" class="">首页</a>
+      
+        <a href="/writing/" class="">写作</a>
+      
+        <a href="/projects/" class="">项目</a>
+      
+        <a href="/about/" class="">关于</a>
+      
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换明暗主题">
+        <span class="theme-toggle__sun" aria-hidden="true">☼</span>
+        <span class="theme-toggle__moon" aria-hidden="true">◐</span>
+      </button>
+      <button class="ask-nav" type="button" data-ask-open>ASK LESLIE</button>
+    </nav>
+  </div>
+</header>
+
+    <main id="main-content"><article class="post-shell">
+  <header class="post-hero shell">
+    <a class="post-back" href="/writing/">← 返回写作</a>
+    <div class="post-hero__meta">
+      <time datetime="2026-06-23">2026 年 06 月 23 日</time>
+      <span>11 分钟阅读</span>
+    </div>
+    <h1>长上下文到底贵在哪里？KV Cache 压缩、淘汰和 Offload 全景拆解</h1>
+    
+    <div class="chip-row"><a href="/tags/LLM/">LLM</a><a href="/tags/Inference/">Inference</a><a href="/tags/KV-Cache/">KV-Cache</a><a href="/tags/Long-Context/">Long-Context</a><a href="/tags/Offload/">Offload</a><a href="/tags/Compression/">Compression</a><a href="/tags/Eviction/">Eviction</a></div>
+  </header>
+
+  <div class="post-cover shell"><img src="/2026/06/23/attention-field/%E9%95%BF%E4%B8%8A%E4%B8%8B%E6%96%87%E5%88%B0%E5%BA%95%E8%B4%B5%E5%9C%A8%E5%93%AA%E9%87%8C/imgs/cover.jpg" alt="长上下文到底贵在哪里？KV Cache 压缩、淘汰和 Offload 全景拆解"></div>
+
+  <div class="post-layout shell">
+    <aside class="post-toc" aria-label="文章目录">
+      <span class="aside-title">目录</span>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%8A%E4%B8%8B%E6%96%87%E5%8F%98%E9%95%BF%E4%BB%A5%E5%90%8E%EF%BC%8C%E8%B4%B5%E7%9A%84%E4%B8%8D%E6%98%AF%E8%BE%93%E5%85%A5%EF%BC%8C%E6%98%AF%E5%90%8E%E9%81%97%E7%97%87"><span class="toc-text">上下文变长以后，贵的不是输入，是后遗症</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#KV-Cache-%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BC%9A%E6%8A%8A%E4%BA%BA%E9%80%BC%E5%88%B0%E6%98%BE%E5%AD%98%E5%A2%99%E8%A7%92"><span class="toc-text">KV Cache 为什么会把人逼到显存墙角</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8E%8B%E7%BC%A9%EF%BC%8C%E4%B8%8D%E6%98%AF%E6%8A%8A%E4%B8%9C%E8%A5%BF%E5%8F%98%E5%B0%91%EF%BC%8C%E6%98%AF%E6%8A%8A%E2%80%9C%E5%80%BC%E9%92%B1%E7%9A%84%E9%83%A8%E5%88%86%E2%80%9D%E7%95%99%E4%B8%8B"><span class="toc-text">压缩，不是把东西变少，是把“值钱的部分”留下</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B7%98%E6%B1%B0%EF%BC%8C%E4%B8%8D%E6%98%AF%E5%88%A0%E5%8E%86%E5%8F%B2%EF%BC%8C%E6%98%AF%E7%BB%99%E5%8E%86%E5%8F%B2%E5%88%86%E7%BA%A7"><span class="toc-text">淘汰，不是删历史，是给历史分级</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Offload%EF%BC%8C%E6%98%BE%E5%AD%98%E4%B8%8D%E5%A4%9F%E5%B0%B1%E6%8A%8A%E4%B8%80%E9%83%A8%E5%88%86%E6%90%AC%E5%87%BA%E5%8E%BB"><span class="toc-text">Offload，显存不够就把一部分搬出去</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E5%89%8D%E7%BC%80%E7%BC%93%E5%AD%98%E8%B6%8A%E6%9D%A5%E8%B6%8A%E9%87%8D%E8%A6%81"><span class="toc-text">为什么前缀缓存越来越重要</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%A0%E4%BB%A5%E4%B8%BA%E6%98%AF%E9%95%BF%E4%B8%8A%E4%B8%8B%E6%96%87%EF%BC%8C%E5%85%B6%E5%AE%9E%E6%98%AF%E5%A4%8D%E7%94%A8%E7%8E%87%E7%9A%84%E9%97%AE%E9%A2%98"><span class="toc-text">你以为是长上下文，其实是复用率的问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%81%9A%E5%BA%94%E7%94%A8%E7%9A%84%E4%BA%BA%E8%AF%A5%E6%80%8E%E4%B9%88%E6%83%B3"><span class="toc-text">做应用的人该怎么想</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%99%E5%9C%A8%E6%9C%80%E5%90%8E"><span class="toc-text">写在最后</span></a></li></ol>
+    </aside>
+    <div class="article-content"><h1 id="长上下文到底贵在哪里？KV-Cache-压缩、淘汰和-Offload-全景拆解"><a href="#长上下文到底贵在哪里？KV-Cache-压缩、淘汰和-Offload-全景拆解" class="headerlink" title="长上下文到底贵在哪里？KV Cache 压缩、淘汰和 Offload 全景拆解"></a>长上下文到底贵在哪里？KV Cache 压缩、淘汰和 Offload 全景拆解</h1><p>这两年大模型最容易把人带偏的一件事，就是上下文窗口越报越大，大家就越容易产生一种错觉，<strong>上下文好像是免费的。</strong></p>
+<p>128K。<br>200K。<br>1M。</p>
+<p>这些数字看上去都很爽，像是模型终于学会记东西了。你把资料全塞进去，它就能一口气读完、分析完、回答完。</p>
+<p>但只要你自己真去做长上下文应用，很快就会撞上一堵墙。</p>
+<p>不是模型看不懂。</p>
+<p>是它太贵了。</p>
+<p>贵的不是那个 token 数字本身，贵的是每个 token 背后都要付出的 KV Cache、显存带宽、批处理容量、缓存命中率，还有被你浪费掉的那些前缀复用机会。</p>
+<p>说得再直白一点，长上下文真正卖命的地方，不是模型能不能读进去，而是<strong>你能不能把读进去的东西留住、压缩掉、复用起来，或者在不出错的前提下，干脆把它放到别的地方去。</strong></p>
+<p>这个问题，才是长上下文时代真正的钱包杀手。</p>
+<p><img src="imgs/cover.jpg" alt="一条不断延长的上下文账单链条，GPU 显存像仓库一样被 KV Cache 逐层填满，暖色纸艺风"></p>
+<h2 id="上下文变长以后，贵的不是输入，是后遗症"><a href="#上下文变长以后，贵的不是输入，是后遗症" class="headerlink" title="上下文变长以后，贵的不是输入，是后遗症"></a>上下文变长以后，贵的不是输入，是后遗症</h2><p>我第一次对这个问题有体感，是在一个多轮 Agent 里。</p>
+<p>前面几轮还挺正常，到了第六轮、第七轮，用户开始贴文档，贴代码，贴表格，贴一大堆历史对话。你原来觉得挺聪明的模型，突然变得越来越慢，越来越贵，最后甚至开始胡说八道。</p>
+<p>你以为它是状态变差了。</p>
+<p>其实很多时候不是。</p>
+<p>它只是被你撑爆了。</p>
+<p>长上下文的成本，通常不是一个线性小账，而是三个一起爆。</p>
+<p>第一笔，<strong>Prefill 成本</strong>。</p>
+<p>上下文越长，模型在开始输出前要读的 token 就越多。Prefill 阶段所有输入 token 都要过一遍模型，这部分直接拉高 TTFT。</p>
+<p>第二笔，<strong>Decode 成本</strong>。</p>
+<p>上下文越长，后续每生成一个 token，都要回看更长的历史 KV Cache。Decode 阶段不只是算，还要读显存。上下文一长，这笔带宽税就开始变得很疼。</p>
+<p>第三笔，<strong>系统成本</strong>。</p>
+<p>缓存越长，占的显存越多，单卡并发就越低。并发一低，调度器就更难把 GPU 喂饱。GPU 一旦喂不满，你的单次请求成本就开始抬头。</p>
+<p>所以长上下文不是一个单点问题。</p>
+<p>它是一个连锁反应。</p>
+<p>输入更长，缓存更大，读写更慢，并发更低，成本更高。</p>
+<p>很像一座房子越盖越大，最后发现最大的花销不是建材，是物业和水电。</p>
+<p><img src="imgs/01-long-context-cost-chain.jpg" alt="长上下文成本链路，Prefill、Decode、KV Cache、并发、带宽五个节点连成一条上升的成本曲线"></p>
+<h2 id="KV-Cache-为什么会把人逼到显存墙角"><a href="#KV-Cache-为什么会把人逼到显存墙角" class="headerlink" title="KV Cache 为什么会把人逼到显存墙角"></a>KV Cache 为什么会把人逼到显存墙角</h2><p>长上下文贵，核心还是 KV Cache。</p>
+<p>Transformer 在推理时，每一层都会把每个 token 的 Key 和 Value 存下来。因为后续生成的时候，这些历史 token 不需要重新算一遍，直接拿来做 attention 就行。</p>
+<p>这个设计本来是省算力的。</p>
+<p>问题是，它把成本挪到了显存。</p>
+<p>而且是线性挪。</p>
+<p>上下文长度翻倍，KV Cache 也差不多翻倍。层数越深，头数越多，维度越大，显存压力越明显。你把上下文从 8K 拉到 128K，缓存不是“稍微大一点”，而是直接变成另一种量级。</p>
+<p>这就是为什么很多服务在短上下文时看起来很稳，一旦用户开始塞长文档、长聊天记录、长代码仓库，系统就开始抖。</p>
+<p>因为你不是在多读一点上下文。</p>
+<p>你是在同时给显存、带宽、调度、并发四个地方一起加负担。</p>
+<p>KV Cache 的问题也很残酷。它不是存一次就完事，它是“活的内存”。</p>
+<p>用户每生成一个 token，缓存就要跟着增长。长对话、长文档、长链路推理，都会让它一路膨胀。你只要不做管理，它就会把你的 GPU 吃干净。</p>
+<p>这也是为什么大模型长上下文优化，最后绕不开三个词。</p>
+<p>压缩。</p>
+<p>淘汰。</p>
+<p>Offload。</p>
+<p><img src="imgs/02-compression-stack.jpg" alt="压缩栈把 KV Cache 的值钱部分留下，量化、训练前置压缩、结构化压缩、训练无关压缩四种方法并列展示"></p>
+<h2 id="压缩，不是把东西变少，是把“值钱的部分”留下"><a href="#压缩，不是把东西变少，是把“值钱的部分”留下" class="headerlink" title="压缩，不是把东西变少，是把“值钱的部分”留下"></a>压缩，不是把东西变少，是把“值钱的部分”留下</h2><p>最直觉的办法当然是压缩 KV Cache。</p>
+<p>可问题来了，KV 不是 JPEG。</p>
+<p>你不能简单地把它糊一糊，因为它不是图像，而是模型内部用于注意力计算的中间表示。压缩太狠，回答质量就掉，轻一点，显存又省不出多少。</p>
+<p>现在主流的思路，大致有四类。</p>
+<p>第一类是<strong>量化</strong>。</p>
+<p>把 KV 从高精度压到低精度，比如 8bit、4bit、2bit。KIVI 就是很典型的工作，它分析了 K 和 V 的分布不同，提出 K 用 per-channel、V 用 per-token 的非对称 2bit 量化。它的结果很直接，能把峰值显存压下来，同时保持相当不错的质量。FastKV 后面又把这个方向往更偏速度的地方推了一步，强调 Token-Selective Propagation 和 GQA-aware 的压缩，让 TTFT 和吞吐都能受益。</p>
+<p>第二类是<strong>训练前置压缩</strong>。</p>
+<p>不是等模型训完再硬压，而是训练的时候就把表示学得更可压一点。2026 年的 KV-CAT 就是这个方向，核心思路很朴素，既然你知道后面要压缩，那训练时就让模型自己长出更容易压的表示。</p>
+<p>第三类是<strong>结构化压缩</strong>。</p>
+<p>DeepSeek 的 MLA 其实也是这个方向的一种代表，它不是把 KV 事后压成更低 bit，而是直接把“要缓存的表示”换成更小的潜变量。它压的不是字节，是结构。这个思路更像重设计表示空间，而不是把现有表示拿去打补丁。</p>
+<p>第四类是<strong>训练无关压缩</strong>的新路线。</p>
+<p>比如 Google 最近的 TurboQuant，直接把 KV cache 压到更低 bit，而且强调不需要训练或微调。它的价值不只是省内存，而是省掉了工程团队最讨厌的那部分迁移成本。</p>
+<p>这些方法里，最容易被误解的一点是，压缩的目标不是“越小越好”。</p>
+<p>真正的目标是，<strong>在可接受的质量损失下，把长上下文从显存税，变成可计算的税。</strong></p>
+<p>也就是说，先让它别把你卡死。</p>
+<p>然后再谈别的。</p>
+<h2 id="淘汰，不是删历史，是给历史分级"><a href="#淘汰，不是删历史，是给历史分级" class="headerlink" title="淘汰，不是删历史，是给历史分级"></a>淘汰，不是删历史，是给历史分级</h2><p>压缩只是第一步。</p>
+<p>因为不是所有 token 都值得一直留着。</p>
+<p>你认真想一下，一个长对话里，真正反复被用到的东西，往往不是每一句闲聊，而是那些高价值片段。</p>
+<p>系统提示词。</p>
+<p>工具定义。</p>
+<p>任务目标。</p>
+<p>关键文档。</p>
+<p>某些刚刚生成过的回答。</p>
+<p>而一些中间废话，重复寒暄，已经被总结过的边角信息，其实价值很低。</p>
+<p>所以第二个大方向，是<strong>淘汰</strong>。</p>
+<p>这不是随便丢，而是根据 reuse probability、语义价值、位置、任务类型来决定哪些块可以先退场。</p>
+<p>2026 年的 SAECache 就很典型，它直接指出，不是所有 token 都值得缓存，不同 token 类型的复用率可以差到几个数量级。它用语义感知的多队列和在线学习去做 eviction，目标就是让缓存更像“聪明的仓库”，而不是“什么都往里塞的垃圾桶”。</p>
+<p>SparseX 也是同一类思路，只不过它更进一步，关注的不只是前缀重复，而是段级别、交错式、跨请求的共享。也就是说，真实应用里，重复内容不一定只出现在最开头，很多时候它藏在文档片段、历史引用和多轮对话的中间。SparseX 试图把这些也吃进复用范围里。</p>
+<p>这类方法的本质都差不多。</p>
+<p>把缓存从“按顺序记忆”，变成“按价值保留”。</p>
+<p>你不能让 GPU 显存像一个没有边界的回收站。</p>
+<p>它必须有优先级。</p>
+<p>必须能告诉自己，哪些 token 真值得活下来。</p>
+<p><img src="imgs/03-eviction-queue.jpg" alt="缓存队列按价值分层，系统提示词、工具定义、文档片段、闲聊片段被分到不同优先级箱子里"></p>
+<h2 id="Offload，显存不够就把一部分搬出去"><a href="#Offload，显存不够就把一部分搬出去" class="headerlink" title="Offload，显存不够就把一部分搬出去"></a>Offload，显存不够就把一部分搬出去</h2><p>如果压缩和淘汰都不够，那就只能考虑 Offload。</p>
+<p>简单说，就是把一部分 KV Cache 从 GPU 显存搬到 CPU，甚至更远的存储上。等真的要用，再搬回来。</p>
+<p>这件事一听就很像“把东西塞阁楼”。</p>
+<p>短期看，空间腾出来了。</p>
+<p>长期看，搬上搬下很麻烦。</p>
+<p>所以 Offload 的核心矛盾就一个，<strong>用延迟换容量。</strong></p>
+<p>它有用，但不优雅。</p>
+<p><img src="imgs/04-offload-path.jpg" alt="显存不够时把部分 KV Cache 搬到 CPU，GPU 和 CPU 之间通过搬运带宽做容量接力"></p>
+<p>而且在长上下文场景下，Offload 通常不是独立解决方案，而是和压缩、淘汰一起配合。</p>
+<p>比如先把最不值钱的缓存踢出去。</p>
+<p>再把剩下的部分压缩。</p>
+<p>实在放不下的，才考虑放到 CPU。</p>
+<p>这就是为什么长上下文系统经常看起来像一个层层加保险的仓库。</p>
+<p>GPU 里放最热的。</p>
+<p>CPU 里放次热的。</p>
+<p>更冷的先去掉。</p>
+<p>再不行就再压一点。</p>
+<p>近两年的研究也在往这个方向加码。KIVI 证明了低 bit 量化能显著降低峰值内存。FastKV 证明了压缩还能带来 TTFT 和 throughput 的实际收益。TurboQuant 则把“能不能不训练直接压”这个问题往前推了一大步。它们拼在一起，说明长上下文优化的目标已经不再是单纯省内存，而是把“省内存”翻译成“能跑更多请求，能更快出第一个字，能让系统别炸”。</p>
+<h2 id="为什么前缀缓存越来越重要"><a href="#为什么前缀缓存越来越重要" class="headerlink" title="为什么前缀缓存越来越重要"></a>为什么前缀缓存越来越重要</h2><p>长上下文的另一个现实问题，是很多请求其实不是完全新的。</p>
+<p>尤其是 Agent、RAG、代码助手、文档问答这些场景。</p>
+<p>系统提示词重复。</p>
+<p>工具定义重复。</p>
+<p>知识库片段重复。</p>
+<p>甚至用户每次问的问题，背后共享的背景也常常差不多。</p>
+<p>这时候，前缀缓存的价值就变得很高。</p>
+<p>vLLM 的 PagedAttention 先解决的是物理内存管理问题，但它很自然地支持了前缀复用；SGLang 的 RadixAttention 则直接把多次生成调用之间的 KV reuse 做成了系统级优化。SGLang 的论文把这件事讲得很明确，复杂语言模型程序的高效执行，离不开 KV cache reuse 和结构化输出优化。</p>
+<p>更有意思的是，2026 年的几篇工作已经开始绕开“必须是前缀一致”这个限制了。MiniPIC、PrefillShare、SparseX 都在尝试更灵活的共享方式，说明真实生产里，重复内容根本不会老老实实排在开头。它可能是一个长文档的一段，可能是多 Agent 共享的一段上下文，也可能是某个工具输出的一段结构化块。</p>
+<p>这其实意味着一件事。</p>
+<p>未来的缓存系统，不会只问“是不是同一个前缀”。</p>
+<p>它会问“是不是同一段有价值的信息”。</p>
+<p>这个判断，比前缀一致性更接近真实工作负载。</p>
+<p><img src="imgs/05-prefix-reuse.jpg" alt="两个请求共享长前缀，后面分叉成不同问题，前缀块被重复复用，段级共享和前缀共享同时存在"></p>
+<h2 id="你以为是长上下文，其实是复用率的问题"><a href="#你以为是长上下文，其实是复用率的问题" class="headerlink" title="你以为是长上下文，其实是复用率的问题"></a>你以为是长上下文，其实是复用率的问题</h2><p>如果把长上下文成本再往下拆，会发现一个很反直觉的现象。</p>
+<p>真正把系统拖垮的，很多时候不是上下文窗口大，而是<strong>复用率低。</strong></p>
+<p>同样 128K token，有的场景几乎全是一次性内容，读完就扔，缓存命中很差。</p>
+<p>有的场景则高度重复，系统提示词、工具 schema、文档片段、历史回答都在反复复用。</p>
+<p>前者就是显存黑洞。</p>
+<p>后者则是可以被精细优化的高价值工作负载。</p>
+<p>所以长上下文系统设计最重要的一件事，不是盲目追求更大窗口，而是问自己，<br>这堆 token 里，哪些真的会被再次使用？</p>
+<p>哪些只会被读一次？</p>
+<p>哪些值得压缩？</p>
+<p>哪些该淘汰？</p>
+<p>哪些应该 offload？</p>
+<p>哪些应该前缀缓存？</p>
+<p>这几个问题，决定你是在做长上下文应用，还是在把显存当垃圾桶烧。</p>
+<h2 id="做应用的人该怎么想"><a href="#做应用的人该怎么想" class="headerlink" title="做应用的人该怎么想"></a>做应用的人该怎么想</h2><p>如果你是应用开发者，不是做底层引擎的人，这些技术听起来可能离你很远。</p>
+<p>其实不远。</p>
+<p>因为你每天写的 Prompt，就在决定缓存效率。</p>
+<p>你每次加的 System Prompt，都在决定前缀复用率。</p>
+<p>你每次往上下文里塞的文档，都在决定 Prefill 的成本。</p>
+<p>你每次把几百行无关历史一起丢进去，都在决定后面的 TTFT 和 TPOT。</p>
+<p>所以几个很朴素的建议，往往比你想象中更值钱。</p>
+<p>第一，固定前缀要稳定。</p>
+<p>别一会儿加时间戳，一会儿加随机字段，一会儿把工具列表重排。</p>
+<p>你这么一改，前缀缓存就碎了。</p>
+<p>第二，动态内容往后放。</p>
+<p>把可复用的系统层内容放前面，用户当次输入和检索结果放后面。这样缓存命中率才高。</p>
+<p>第三，尽量把长上下文变成可切块的结构。</p>
+<p>别把所有东西都揉成一锅粥。</p>
+<p>文档、表格、代码、工具输出，尽量保留边界。这样未来不管是做段级缓存、语义缓存，还是更激进的共享机制，才有空间。</p>
+<p>第四，别迷信“更大窗口”这件事。</p>
+<p>更大窗口是能力，不是免费午餐。</p>
+<p>你得付 KV Cache 的账。</p>
+<p>你得付带宽的账。</p>
+<p>你得付并发的账。</p>
+<p>而且这些账，有时候比 token 本身更贵。</p>
+<h2 id="写在最后"><a href="#写在最后" class="headerlink" title="写在最后"></a>写在最后</h2><p>长上下文真正教会我的一件事是，<strong>模型记得住，不代表系统扛得住。</strong></p>
+<p>窗口越大，工程越不该天真。</p>
+<p>你不能只问它能不能读 128K，你还得问它怎么存、怎么复用、怎么压、怎么丢、怎么搬。</p>
+<p>只要你做的是 Agent、RAG、文档问答、代码助手、多轮分析，这些问题都绕不开。</p>
+<p>未来长上下文会越来越常见。</p>
+<p>但真正把它做成产品的人，不是最会喊窗口大的人，而是最会算 KV Cache 账的人。</p>
+<p>上层看起来只是“塞进去更多上下文”。</p>
+<p>底层其实是在做一整套缓存金融学。</p>
+<p>把每个 token 当资产。</p>
+<p>把每次 Prefill 当成本。</p>
+<p>把每个缓存块当仓位。</p>
+<p>把复用率当收益率。</p>
+<p>这套账，最后还是要有人来算。</p>
+<p>以上，既然看到这里了，如果觉得不错，随手点个赞、在看、转发三连吧，如果想第一时间收到推送，也可以给我个星标⭐~<br>谢谢你看我的文章，我们，下次再见。</p>
+<blockquote>
+<p>/ 参考资料<br>KIVI: A Tuning-Free Asymmetric 2bit Quantization for KV Cache, 2024<br>FastKV: KV Cache Compression for Fast Long-Context Processing with Token-Selective Propagation, 2025<br>DeltaKV: Residual-Based KV Cache Compression via Long-Range Similarity, 2026<br>Training Transformers for KV Cache Compressibility, 2026<br>TurboQuant 相关公开材料, 2026<br>PagedAttention: Efficient Memory Management for Large Language Model Serving, 2023<br>SAECache: Not All Tokens Are Worth Caching, 2026<br>SparseX: Efficient Segment-Level KV Cache Sharing for Interleaved LLM Serving, 2026<br>MiniPIC: Flexible Position-Independent Caching in &lt;100LOC, 2026</p>
+</blockquote>
+</div>
+    <aside class="post-rail">
+      <span class="post-rail__line"></span>
+      <span>LESLIE / WRITING</span>
+    </aside>
+  </div>
+
+  <footer class="post-footer shell">
+    <div><h2>如果这篇文章帮到了你，<br>也许下一篇会更有意思。</h2></div>
+    <a class="button button--primary" href="/writing/">继续阅读 →</a>
+  </footer>
+</article>
+</main>
+    <footer class="site-footer">
+  <div class="footer-grid">
+    <div>
+      <p class="footer-kicker">Leslie Zhang</p>
+      <p class="footer-statement">把真实世界的问题，<br>变成可以运行的智能系统。</p>
+    </div>
+    <div class="footer-links">
+      <a href="https://github.com/leslieAIbin" target="_blank" rel="noreferrer">GitHub ↗</a>
+      <a href="mailto:aibinzhangleslie@gmail.com">Email ↗</a>
+      <a href="/atom.xml">RSS ↗</a>
+    </div>
+    <div class="footer-meta">
+      <span>© 2026 Leslie Zhang</span>
+      <span>Writing, research and working systems.</span>
+    </div>
+  </div>
+</footer>
+
+    <dialog class="ask-dialog" id="ask-leslie" aria-labelledby="ask-title">
+  <div class="ask-dialog__shell">
+    <div class="ask-dialog__topbar">
+      <div>
+        <h2 id="ask-title">Ask Leslie</h2>
+      </div>
+      <button class="icon-button" type="button" data-ask-close aria-label="关闭">×</button>
+    </div>
+    <p class="ask-dialog__intro">从本站公开文章中寻找答案。当前版本在浏览器本地检索，不上传问题，也不会编造不存在的经历。</p>
+    <form class="ask-form" data-ask-form>
+      <label class="sr-only" for="ask-query">输入问题</label>
+      <textarea id="ask-query" rows="2" placeholder="例如：Agent Runtime 应该怎么设计？" data-ask-input></textarea>
+      <button type="submit">检索知识库 <span aria-hidden="true">↗</span></button>
+    </form>
+    <div class="ask-suggestions" aria-label="推荐问题">
+      
+        <button type="button" data-ask-suggestion="Agent Runtime 应该怎么设计？">Agent Runtime 应该怎么设计？</button>
+      
+        <button type="button" data-ask-suggestion="如何让 AI 操控真实世界设备？">如何让 AI 操控真实世界设备？</button>
+      
+        <button type="button" data-ask-suggestion="Leslie 最近在研究什么？">Leslie 最近在研究什么？</button>
+      
+    </div>
+    <div class="ask-results" data-ask-results aria-live="polite">
+      <div class="ask-empty">
+        <p>输入一个问题，我会把你带到 Leslie 写过的相关内容。</p>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+    <script>window.ORBITAL_ROOT = '/';</script>
+    <script src="/js/orbital.js" defer></script>
+  </body>
+</html>

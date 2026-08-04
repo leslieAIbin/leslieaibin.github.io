@@ -1,279 +1,307 @@
-<!DOCTYPE html><html lang="zh-Hans" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Mr.Ai - 春暖花开去见你</title><meta name="author" content="Leslie"><meta name="copyright" content="Leslie"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><meta property="og:type" content="website">
-<meta property="og:title" content="Mr.Ai">
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+  <head>
+
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#050b18">
+<meta name="color-scheme" content="dark light">
+<title>Leslie Zhang | AI Agent &amp; Agent Infra Engineer</title>
+<meta name="description" content="构建能够感知、规划、行动与反馈的智能体系统，长期关注 Agent Runtime、多模态与真实世界自动化。">
+<meta name="author" content="Leslie Zhang">
+<link rel="canonical" href="https://leslieaibin.github.io/page/12/index.html">
+<link rel="icon" href="/imgs/01.jpg">
+<link rel="alternate" type="application/atom+xml" title="Leslie Zhang" href="/atom.xml">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Leslie Zhang | AI Agent &amp; Agent Infra Engineer">
+<meta property="og:description" content="构建能够感知、规划、行动与反馈的智能体系统，长期关注 Agent Runtime、多模态与真实世界自动化。">
 <meta property="og:url" content="https://leslieaibin.github.io/page/12/index.html">
-<meta property="og:site_name" content="Mr.Ai">
-<meta property="og:locale">
-<meta property="og:image" content="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/01.jpg?raw=true">
-<meta property="article:author" content="Leslie">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/01.jpg?raw=true"><link rel="shortcut icon" href="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/01.jpg?raw=true"><link rel="canonical" href="https://leslieaibin.github.io/page/12/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css"><script>var GLOBAL_CONFIG = { 
-  root: '/',
-  algolia: undefined,
-  localSearch: undefined,
-  translate: undefined,
-  noticeOutdate: undefined,
-  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":false},
-  copy: {
-    success: 'Copy successfully',
-    error: 'Copy error',
-    noSupport: 'The browser does not support'
-  },
-  relativeDate: {
-    homepage: false,
-    post: false
-  },
-  runtime: '',
-  date_suffix: {
-    just: 'Just',
-    min: 'minutes ago',
-    hour: 'hours ago',
-    day: 'days ago',
-    month: 'months ago'
-  },
-  copyright: undefined,
-  ClickShowText: undefined,
-  lightbox: 'fancybox',
-  Snackbar: undefined,
-  justifiedGallery: {
-    js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
-    css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
-  },
-  isPhotoFigcaption: false,
-  islazyload: false,
-  isanchor: false
-};
+<meta property="og:image" content="https://leslieaibin.github.io/og-blue.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Leslie Zhang | AI Agent &amp; Agent Infra Engineer">
+<meta name="twitter:description" content="构建能够感知、规划、行动与反馈的智能体系统，长期关注 Agent Runtime、多模态与真实世界自动化。">
+<meta name="twitter:image" content="https://leslieaibin.github.io/og-blue.png">
+<script>
+  (function () {
+    var saved = localStorage.getItem('orbital-theme');
+    var theme = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    document.documentElement.dataset.theme = theme;
+  })();
+</script>
+<link rel="stylesheet" href="/css/orbital.css">
+<meta name="generator" content="Hexo 5.2.0"></head>
+  <body class="page-index">
+    <a class="skip-link" href="#main-content">跳到主要内容</a>
+    <div class="reading-progress" data-reading-progress></div>
+    <header class="site-header" data-header>
+  <div class="nav-shell">
+    <a class="brand" href="/" aria-label="返回首页">
+      <span class="brand-mark" aria-hidden="true"><img src="/images/brand/leslie-mythos-avatar.webp" alt="" width="512" height="512"></span>
+      <span class="brand-copy">
+        <strong>LESLIE</strong>
+        <small>REAL-WORLD AGENTS</small>
+      </span>
+    </a>
 
-var saveToLocal = {
-  set: function setWithExpiry(key, value, ttl) {
-    const now = new Date()
-    const expiryDay = ttl * 86400000
-    const item = {
-      value: value,
-      expiry: now.getTime() + expiryDay,
-    }
-    localStorage.setItem(key, JSON.stringify(item))
-  },
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav" data-nav-toggle>
+      <span></span><span></span>
+      <span class="sr-only">打开导航</span>
+    </button>
 
-  get: function getWithExpiry(key) {
-    const itemStr = localStorage.getItem(key)
+    <nav class="main-nav" id="main-nav" aria-label="主导航" data-nav>
+      
+        <a href="/" class="">首页</a>
+      
+        <a href="/writing/" class="">写作</a>
+      
+        <a href="/projects/" class="">项目</a>
+      
+        <a href="/about/" class="">关于</a>
+      
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换明暗主题">
+        <span class="theme-toggle__sun" aria-hidden="true">☼</span>
+        <span class="theme-toggle__moon" aria-hidden="true">◐</span>
+      </button>
+      <button class="ask-nav" type="button" data-ask-open>ASK LESLIE</button>
+    </nav>
+  </div>
+</header>
 
-    if (!itemStr) {
-      return undefined
-    }
-    const item = JSON.parse(itemStr)
-    const now = new Date()
+    <main id="main-content">
+<section class="hero">
+  <div class="hero__ambient" aria-hidden="true"></div>
+  <div class="hero__words" aria-hidden="true">
+    <span>BUILD</span><span>THINK</span><span>WRITE</span><span>AGENT</span><span>REAL WORLD</span><span>CREATE</span>
+  </div>
+  <div class="hero__grid shell">
+    <div class="hero__copy reveal">
+      <p class="hero__intro">Hi, I'm Leslie Zhang</p>
+      <h1>让智能体，<br><em>真正进入现实世界。</em></h1>
+      <p>构建能够感知、规划、行动与反馈的智能体系统，长期关注 Agent Runtime、多模态与真实世界自动化。</p>
+      <div class="hero__actions">
+        <a class="button button--primary" href="/projects/">探索项目 <span>↗</span></a>
+        <a class="button button--ghost" href="/writing/">阅读文章 <span>→</span></a>
+      </div>
+    </div>
 
-    if (now.getTime() > item.expiry) {
-      localStorage.removeItem(key)
-      return undefined
-    }
-    return item.value
-  }
-}</script><script id="config_change">var GLOBAL_CONFIG_SITE = { 
-  isPost: false,
-  isHome: true,
-  isHighlightShrink: false,
-  isToc: false,
-  postUpdate: '2026-04-12 18:23:09'
-}</script><noscript><style type="text/css">
-  #nav {
-    opacity: 1
-  }
-  .justified-gallery img {
-    opacity: 1
-  }
+    <div class="hero-figure reveal" data-delay="1" data-hero-parallax aria-label="Leslie 的 AI Agent 工程师形象">
+      <div class="hero-figure__halo" aria-hidden="true"></div>
+      <img class="hero-figure__person" src="/images/hero/leslie-agent.webp" alt="一位悬浮在空中使用电脑的 AI Agent 工程师" width="640" height="960" fetchpriority="high">
 
-  #recent-posts time,
-  #post-meta time {
-    display: inline !important
-  }
-</style></noscript><script>(function () {  window.activateDarkMode = function () {
-    document.documentElement.setAttribute('data-theme', 'dark')
-    if (document.querySelector('meta[name="theme-color"]') !== null) {
-      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
-    }
-  }
-  window.activateLightMode = function () {
-    document.documentElement.setAttribute('data-theme', 'light')
-   if (document.querySelector('meta[name="theme-color"]') !== null) {
-      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
-    }
-  }
-  const autoChangeMode = 'false'
-  const t = saveToLocal.get('theme')
-  if (autoChangeMode === '1') {
-    const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
-    const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
-    const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
-    const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
-    if (t === undefined) {
-      if (isLightMode) activateLightMode()
-      else if (isDarkMode) activateDarkMode()
-      else if (isNotSpecified || hasNoSupport) {
-        const now = new Date()
-        const hour = now.getHours()
-        const isNight = hour <= 6 || hour >= 18
-        isNight ? activateDarkMode() : activateLightMode()
-      }
-      window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
-        if (saveToLocal.get('theme') === undefined) {
-          e.matches ? activateDarkMode() : activateLightMode()
-        }
-      })
-    } else if (t === 'light') activateLightMode()
-    else activateDarkMode()
-  } else if (autoChangeMode === '2') {
-    const now = new Date()
-    const hour = now.getHours()
-    const isNight = hour <= 6 || hour >= 18
-    if (t === undefined) isNight ? activateDarkMode() : activateLightMode()
-    else if (t === 'light') activateLightMode()
-    else activateDarkMode()
-  } else {
-    if (t === 'dark') activateDarkMode()
-    else if (t === 'light') activateLightMode()
-  }const asideStatus = saveToLocal.get('aside-status')
-if (asideStatus !== undefined) {
-   if (asideStatus === 'hide') {
-     document.documentElement.classList.add('hide-aside')
-   } else {
-     document.documentElement.classList.remove('hide-aside')
-   }
-}})()</script><meta name="generator" content="Hexo 5.2.0"><link rel="alternate" href="/atom.xml" title="Mr.Ai" type="application/atom+xml">
-</head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="author-avatar"><img class="avatar-img" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/01.jpg?raw=true" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">135</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">Tags</div><div class="length-num">51</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">Categories</div><div class="length-num">17</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/projects/"><i class="fa-fw fas fa-rocket"></i><span> 项目</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/artitalk/"><i class="fa-fw fas fa-pen"></i><span> 自言自语</span></a></div></div></div></div><div id="body-wrap"><header class="full_page" id="page-header" style="background-image: url(https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/02.jpg?raw=true)"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Mr.Ai</a></span><span id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/projects/"><i class="fa-fw fas fa-rocket"></i><span> 项目</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/artitalk/"><i class="fa-fw fas fa-pen"></i><span> 自言自语</span></a></div></div><span class="close" id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></span></span></nav><div id="site-info"><h1 id="site-title">Mr.Ai</h1><div id="site-subtitle"><span id="subtitle"></span></div><div id="site_social_icons"><a class="social-icon" href="https://github.com/leslieAIbin" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="https://www.instagram.com/leslieaibin/" target="_blank" title="Ins"><i class="fab fa-instagram"></i></a><a class="social-icon" href="mailto:aibinzhangleslie@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a><a class="social-icon" href="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/image-20201122143121657.png" target="_blank" title="weixin"><i class="fab fa-weixin"></i></a></div></div><div id="scroll-down"><i class="fas fa-angle-down scroll-down-effects"></i></div></header><main class="layout" id="content-inner"><div class="recent-posts" id="recent-posts"><div class="recent-post-item"><div class="post_cover left_radius"><a href="/2021/05/04/Thread/7.%E7%BA%BF%E7%A8%8B%E4%B8%8A%E4%B8%8B%E6%96%87%E5%88%87%E6%8D%A2%E4%B8%8E%E9%98%BB%E5%A1%9E%E9%98%9F%E5%88%97/" title="7.线程上下文切换与阻塞队列">     <img class="post_bg" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/32.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="7.线程上下文切换与阻塞队列"></a></div><div class="recent-post-info"><a class="article-title" href="/2021/05/04/Thread/7.%E7%BA%BF%E7%A8%8B%E4%B8%8A%E4%B8%8B%E6%96%87%E5%88%87%E6%8D%A2%E4%B8%8E%E9%98%BB%E5%A1%9E%E9%98%9F%E5%88%97/" title="7.线程上下文切换与阻塞队列">7.线程上下文切换与阻塞队列</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">Created</span><time datetime="2021-05-03T16:15:42.000Z" title="Created 2021-05-04 00:15:42">2021-05-04</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox article-meta__icon"></i><a class="article-meta__categories" href="/categories/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E4%B8%8E%E5%B9%B6%E5%8F%91/">多线程与并发</a></span></div><div class="content">线程上下文切换CPU利用时间片轮询来为每个任务都服务一定的时间，然后把当前任务的状态保存下来，继续服务下一个任务。任务的状态保存及再加载交做线程的上下文切换。
+      <div class="orbit-item orbit-item--agent" data-parallax-depth="1.3">
+        <span class="orbit-item__icon">◈</span><small>AGENT</small>
+      </div>
+      <div class="orbit-item orbit-item--code" data-parallax-depth="1.7">
+        <span class="orbit-item__icon">&lt;/&gt;</span><small>CODE</small>
+      </div>
+      <div class="orbit-item orbit-item--vision" data-parallax-depth="1.1">
+        <span class="orbit-item__icon">◎</span><small>VISION</small>
+      </div>
+      <div class="orbit-item orbit-item--world" data-parallax-depth="1.5">
+        <span class="orbit-item__icon">✦</span><small>REAL WORLD</small>
+      </div>
+    </div>
+  </div>
 
-进程：指一个运行中的程序的示例。在一个进程内部可以有多个线程在同时运行，并与创建它的进程共享同一个地址空间（一段内存区域）和其他资源。
-上下文：指线程切换时CPU寄存器和程序计数器所保存的当前线程信息。
-寄存器：指CPU内部容量较小但速度很快的内存区域（与之对应的是CPU外部相对较慢的RAM主内存）。寄存器通过对常用值（同创是运算的中间值）快速访问来加快计算机程序运行的速度。
-程序计数器： 是一个专用的寄存器，用于表明指令序列中CPU正在执行的位置，存储的值为正在执行的指令的位置或者下一个将被执行的指令的位置，这依赖于特定的系统。
+</section>
 
-上下文切换上下文切换指的是内核（操作系统的核心）在CPU上对进程或者线程进行切换。上下文切换过程中的信息被保存在进程控制块（PCB-Process Control Block）中。PCB又被称作切换桢（SwitchFrame）。上下文切换的信息会一直被保存在CPU的内存中，直到被再次使用。上下文的 ...</div></div></div><div class="recent-post-item"><div class="post_cover right_radius"><a href="/2021/05/03/Thread/6.java%E4%B8%AD%E7%9A%84%E9%94%81/" title="6.java中的锁">     <img class="post_bg" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/31.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="6.java中的锁"></a></div><div class="recent-post-info"><a class="article-title" href="/2021/05/03/Thread/6.java%E4%B8%AD%E7%9A%84%E9%94%81/" title="6.java中的锁">6.java中的锁</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">Created</span><time datetime="2021-05-03T02:15:42.000Z" title="Created 2021-05-03 10:15:42">2021-05-03</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox article-meta__icon"></i><a class="article-meta__categories" href="/categories/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E4%B8%8E%E5%B9%B6%E5%8F%91/">多线程与并发</a></span></div><div class="content">Java中的锁java中的锁主要用于保障多并发线程情况下数据的一致性，在多线程编程中为了保障数据的一致性，我们通常需要在使用对象或者方法之前加锁，这是如果有其他线程也需要使用该对象或者该方法，则首先要获得锁，如果某个线程发现锁正在被其他线程使用就会进入阻塞队列，等待锁的释放，知道其他线程执行完成并释放锁，该线程才有机会再次获取锁进行操作。这样就保障了在同一时刻只有一个线程持有该对象的锁并修改对象，从而保障数据的安全。
+<section class="impact-strip shell reveal" aria-label="工作成果概览">
+    <div><strong>&lt;200<small>ms</small></strong><span>远程控制端到端延迟</span></div>
+    <div><strong>40<small>%+</small></strong><span>AI 能力场景使用率</span></div>
+    <div><strong>200<small>+</small></strong><span>内部技术分享覆盖</span></div>
+    <div><strong>176</strong><span>公开技术文章</span></div>
+</section>
 
-乐观锁与悲观锁乐观锁乐观锁采用乐观的思想处理数据，在每次读取数据时都认为别热不会修改该数据，所以不会上锁，但更新时会判断此期间别人有没有更新该数据，通常在写时先对出当前版本号然后加锁的方法。具体过程为：比较当前版本号与上一次的版本号，如果版本号一致，则更新，如果版本号不一致，则重复进行读、比较、写操作。
-java中的乐观锁大部分是通过CAS（Compar And Swap, 比较和交换）操作实现的，CAS是一种原子更新操作，在对数据操作之前首先会比较当前值传入的值是否一样，如果一样则更新，否则不执行更新操作，直接返回失败状态。
-悲观锁悲观锁采用悲观思想处理数据，在每次读 ...</div></div></div><div class="recent-post-item"><div class="post_cover left_radius"><a href="/2021/04/29/Thread/5.%E7%BA%BF%E7%A8%8B%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E5%92%8C%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95/" title="5.线程的生命周期和常用方法">     <img class="post_bg" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/30.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="5.线程的生命周期和常用方法"></a></div><div class="recent-post-info"><a class="article-title" href="/2021/04/29/Thread/5.%E7%BA%BF%E7%A8%8B%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E5%92%8C%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95/" title="5.线程的生命周期和常用方法">5.线程的生命周期和常用方法</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">Created</span><time datetime="2021-04-29T02:15:42.000Z" title="Created 2021-04-29 10:15:42">2021-04-29</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox article-meta__icon"></i><a class="article-meta__categories" href="/categories/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E4%B8%8E%E5%B9%B6%E5%8F%91/">多线程与并发</a></span></div><div class="content">线程的生命周期当线程被创建并启动以后，它既不是一启动就进入了执行状态，也不是一直处于执行状态。在线程的生命周期中，它要经过 新建（New）、就绪（Runnable）、运行（Running）、阻塞（Blocked）和死亡（Dead）5种状态。尤其是当线程启动以后，它不可能一直”霸占”着CPU独自运行，所以CPU需要在多条线程之间切换，于是 线程状态也会多次在运行、阻塞之间切换。
-12345678public enum State &#123;    NEW,                // 新创建的线程，未调用 start() 方法    RUNNABLE,           // 线程正在运行中：可能是在 JVM 中运行，也可能在等待 CPU 时间片    BLOCKED,            // 阻塞状态： 正等待锁的释放以进入同步区    WAITING,            // 等待状态： 需要被其他线程唤醒才能重新进入 RUNNABLE 状态    TIMED_WAITING,      // 超时等待状态： 等待一个具体的时间段，到期会被自动唤醒    TERM ...</div></div></div><div class="recent-post-item"><div class="post_cover right_radius"><a href="/2021/04/29/Thread/4.%E5%B8%B8%E7%94%A8%E7%BA%BF%E7%A8%8B%E6%B1%A0/" title="4.常用的线程池">     <img class="post_bg" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/29.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="4.常用的线程池"></a></div><div class="recent-post-info"><a class="article-title" href="/2021/04/29/Thread/4.%E5%B8%B8%E7%94%A8%E7%BA%BF%E7%A8%8B%E6%B1%A0/" title="4.常用的线程池">4.常用的线程池</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">Created</span><time datetime="2021-04-28T22:15:42.000Z" title="Created 2021-04-29 06:15:42">2021-04-29</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox article-meta__icon"></i><a class="article-meta__categories" href="/categories/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E4%B8%8E%E5%B9%B6%E5%8F%91/">多线程与并发</a></span></div><div class="content">常用的线程池Java定义了Executor接口并在该接口中定义了execute()用于执行一个线程任务，然后通过ExecutorService实现Executor接口并指向具体线程操作。ExecutorService接口有多个实现类可用于创建不同的线程池。
+<section class="section shell" id="focus">
+  <div class="section-heading section-heading--stacked reveal">
+    <h2>工程，不止发生在屏幕里</h2>
+    <p>我关注 Agent 如何穿过模型、工具与基础设施，最终在真实世界里完成可靠行动。</p>
+  </div>
+  <div class="focus-grid">
+    <article class="focus-card focus-card--wide reveal">
+      <span class="focus-card__label">Agent systems</span>
+      <h3>Agent Systems</h3>
+      <p>从意图理解、任务规划到工具编排与异常恢复，构建可观察、可评估、可持续演进的 Agent Runtime。</p>
+      <div class="chip-row"><span>Runtime</span><span>MCP</span><span>Evaluation</span></div>
+    </article>
+    <article class="focus-card reveal" data-delay="1">
+      <span class="focus-card__label">Multimodal</span>
+      <h3>Multimodal AI</h3>
+      <p>让语言、视觉和实时视频共同理解现场，并转化为可执行决策。</p>
+      <div class="chip-row"><span>VLM</span><span>Detection</span></div>
+    </article>
+    <article class="focus-card reveal" data-delay="2">
+      <span class="focus-card__label">Infrastructure</span>
+      <h3>Agent Infra</h3>
+      <p>模型网关、Prompt 管理、链路追踪和安全边界，让 AI 能力真正进入生产。</p>
+      <div class="chip-row"><span>Gateway</span><span>Observability</span></div>
+    </article>
+  </div>
+</section>
 
+<section class="section section--project shell">
+  <div class="section-heading reveal">
+    <h2>把自然语言变成真实行动</h2>
+    <a class="text-link" href="/projects/">查看全部项目 →</a>
+  </div>
+  <a class="project-feature reveal" href="/projects/">
+    <div class="project-feature__visual">
+      <img src="/projects/thumbnails/copilot-agent.jpg" alt="DJI FlightHub 2 Copilot 操控 Agent 项目画面" loading="lazy">
+    </div>
+    <div class="project-feature__copy">
+      <span class="project-kicker">代表项目</span>
+      <h3>Copilot 操控 Agent</h3>
+      <p>通过自然语言向无人机下达任务，连接意图解析、多步骤规划、VLM 搜索、飞行控制和安全确认。</p>
+      <div class="project-feature__points"><span>多模态意图理解</span><span>真实世界工具编排</span><span>人在回路的安全机制</span></div>
+      <span class="project-feature__cta">打开项目档案 ↗</span>
+    </div>
+  </a>
+</section>
 
+<section class="section shell">
+  <div class="section-heading reveal">
+    <h2>最近在思考什么</h2>
+    <a class="text-link" href="/writing/">浏览 176 篇文章 →</a>
+  </div>
+  <div class="latest-grid">
+    
+      <article class="post-card reveal post-card--featured" data-search-card data-title="App 没有死：Agent 只是把软件入口改成了自然语言" data-tags="AI Agent Agent App">
+        
+          <a class="post-card__cover" href="/2026/08/03/attention-field/AgentApp%E7%A1%AE%E5%AE%9A%E6%80%A7%E5%9B%9E%E5%BD%92/"><img src="/2026/08/03/attention-field/AgentApp%E7%A1%AE%E5%AE%9A%E6%80%A7%E5%9B%9E%E5%BD%92/imgs/cover.png" alt="《App 没有死：Agent 只是把软件入口改成了自然语言》文章封面" loading="lazy"></a>
+        
+        <div class="post-card__body">
+          <div class="post-card__meta"><time datetime="2026-08-03">2026.08.03</time><span>16 MIN</span></div>
+          <h3><a href="/2026/08/03/attention-field/AgentApp%E7%A1%AE%E5%AE%9A%E6%80%A7%E5%9B%9E%E5%BD%92/">App 没有死：Agent 只是把软件入口改成了自然语言</a></h3>
+          <p>通用 Agent 没有失败，传统 App 也不会消失。真正可靠的 AI 应用，正在把自然语言交给模型，把事实、状态、权限和执行留给确定性系统，再用 GUI 完成展示与确认。</p>
+          <div class="post-card__footer"><div class="chip-row"><span>AI Agent</span><span>Agent App</span></div><span aria-hidden="true">↗</span></div>
+        </div>
+      </article>
+    
+      <article class="post-card reveal " data-search-card data-title="架构和参数量没变，Agent 为什么还能变强？拆解 DeepSeek V4-Flash-0731 的后训练逻辑" data-tags="AI Agent DeepSeek">
+        
+        <div class="post-card__body">
+          <div class="post-card__meta"><time datetime="2026-08-02">2026.08.02</time><span>13 MIN</span></div>
+          <h3><a href="/2026/08/02/attention-field/DeepSeek%E5%90%8E%E8%AE%AD%E7%BB%83%E4%B8%BA%E4%BB%80%E4%B9%88%E8%83%BD%E5%A2%9E%E5%BC%BAAgent/">架构和参数量没变，Agent 为什么还能变强？拆解 DeepSeek V4-Flash-0731 的后训练逻辑</a></h3>
+          <p>DeepSeek-V4-Flash-0731 没有扩大架构和参数规模，却交出更高的 Agent 测试成绩。关键不是参数“没变”，而是参数量没变、权重经过了新的后训练。本文拆解后训练如何重塑长链路决策，…</p>
+          <div class="post-card__footer"><div class="chip-row"><span>AI Agent</span><span>DeepSeek</span></div><span aria-hidden="true">↗</span></div>
+        </div>
+      </article>
+    
+      <article class="post-card reveal " data-search-card data-title="GPT 降价 80%，GLM Coding Plan 却涨了？AI Coding 的真实成本，不能只看 Token" data-tags="Agent GPT-5.6">
+        
+        <div class="post-card__body">
+          <div class="post-card__meta"><time datetime="2026-07-31">2026.07.31</time><span>17 MIN</span></div>
+          <h3><a href="/2026/07/31/attention-field/AICoding%E4%BB%B7%E6%A0%BC%E4%B8%8D%E8%83%BD%E5%8F%AA%E7%9C%8BToken/">GPT 降价 80%，GLM Coding Plan 却涨了？AI Coding 的真实成本，不能只看 Token</a></h3>
+          <p>GPT-5.6 Luna 降价 80%，GLM Coding Plan 却提高月付门槛。两家公司其实都在使用 API 与订阅双轨、模型分级、缓存折算和时间窗口。本文从两套计费体系出发，拆解 AI Co…</p>
+          <div class="post-card__footer"><div class="chip-row"><span>Agent</span><span>GPT-5.6</span></div><span aria-hidden="true">↗</span></div>
+        </div>
+      </article>
+    
+      <article class="post-card reveal " data-search-card data-title="Skill 到底是什么？它不是 API，也不是 MCP" data-tags="AI Agent MCP">
+        
+        <div class="post-card__body">
+          <div class="post-card__meta"><time datetime="2026-07-30">2026.07.30</time><span>17 MIN</span></div>
+          <h3><a href="/2026/07/30/attention-field/Skill%E5%88%B0%E5%BA%95%E6%98%AF%E4%BB%80%E4%B9%88/">Skill 到底是什么？它不是 API，也不是 MCP</a></h3>
+          <p>Skill 不是 API、MCP 或 Tool 的另一种名称，而是一套可按需加载、可复用、可验证的 Agent 做事方法。本文从规范、运行机制、概念边界、工程设计与安全风险五个方面系统拆解 Skill…</p>
+          <div class="post-card__footer"><div class="chip-row"><span>AI Agent</span><span>MCP</span></div><span aria-hidden="true">↗</span></div>
+        </div>
+      </article>
+    
+      <article class="post-card reveal " data-search-card data-title="Agent Harness、Loop、Graph：别再把三种 Agent 工程混成一件事" data-tags="Harness Engineering AI Agent">
+        
+        <div class="post-card__body">
+          <div class="post-card__meta"><time datetime="2026-07-28">2026.07.28</time><span>18 MIN</span></div>
+          <h3><a href="/2026/07/28/attention-field/AgentHarness%E5%BE%AA%E7%8E%AF%E5%B7%A5%E7%A8%8B%E5%9B%BE%E5%B7%A5%E7%A8%8B/">Agent Harness、Loop、Graph：别再把三种 Agent 工程混成一件事</a></h3>
+          <p>写这篇文章时，我刚好用两次真实返工把三个概念分开：Harness 管工作条件，Loop 管证据与返工，Graph 管执行拓扑。它们不是三代技术，而是同一套 Agent 系统的三个工程抓手。</p>
+          <div class="post-card__footer"><div class="chip-row"><span>Harness Engineering</span><span>AI Agent</span></div><span aria-hidden="true">↗</span></div>
+        </div>
+      </article>
+    
+      <article class="post-card reveal " data-search-card data-title="为什么 Matt Pocock 的 Skills，可以替代 Superpowers 的一部分" data-tags="Agent Claude Code">
+        
+        <div class="post-card__body">
+          <div class="post-card__meta"><time datetime="2026-07-05">2026.07.05</time><span>12 MIN</span></div>
+          <h3><a href="/2026/07/05/attention-field/MattPocockSkills%E6%9B%BF%E4%BB%A3Superpowers/">为什么 Matt Pocock 的 Skills，可以替代 Superpowers 的一部分</a></h3>
+          <p>Superpowers 解决的是“Agent 要不要先找流程”的纪律问题，Matt Pocock 这套 Skills 解决的是“流程本身是不是工程化”的问题。它不是全量替代，而是替代那层最常用的流程纪…</p>
+          <div class="post-card__footer"><div class="chip-row"><span>Agent</span><span>Claude Code</span></div><span aria-hidden="true">↗</span></div>
+        </div>
+      </article>
+    
+      <article class="post-card reveal " data-search-card data-title="十几个微服务，怎么让 AI Agent 真正参与系统设计和编码？" data-tags="Context Engineering AI Agent">
+        
+        <div class="post-card__body">
+          <div class="post-card__meta"><time datetime="2026-07-01">2026.07.01</time><span>12 MIN</span></div>
+          <h3><a href="/2026/07/01/attention-field/AIAgent%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%8D%8F%E4%BD%9C%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/">十几个微服务，怎么让 AI Agent 真正参与系统设计和编码？</a></h3>
+          <p>把十几个微服务放进同一个 workspace，只是 Agent 工程的第一步。真正让它可靠起来的，是高质量上下文、服务边界地图、协议活文档，以及一套能让 Agent 自己跑起来的验证闭环。</p>
+          <div class="post-card__footer"><div class="chip-row"><span>Context Engineering</span><span>AI Agent</span></div><span aria-hidden="true">↗</span></div>
+        </div>
+      </article>
+    
+  </div>
+</section>
 
-名称
-说明
+<section class="ask-section shell reveal">
+  <div>
+    <h2>不知道从哪里开始？<br>直接问我的知识库。</h2>
+    <p>从 176 篇公开文章里，找到 Agent、AI 工程和后端系统相关的答案与原文。</p>
+  </div>
+  <button class="ask-section__button" type="button" data-ask-open>
+    <span>Ask Leslie anything...</span><b>⌘ K</b><i>↗</i>
+  </button>
+</section>
+</main>
+    <footer class="site-footer">
+  <div class="footer-grid">
+    <div>
+      <p class="footer-kicker">Leslie Zhang</p>
+      <p class="footer-statement">把真实世界的问题，<br>变成可以运行的智能系统。</p>
+    </div>
+    <div class="footer-links">
+      <a href="https://github.com/leslieAIbin" target="_blank" rel="noreferrer">GitHub ↗</a>
+      <a href="mailto:aibinzhangleslie@gmail.com">Email ↗</a>
+      <a href="/atom.xml">RSS ↗</a>
+    </div>
+    <div class="footer-meta">
+      <span>© 2026 Leslie Zhang</span>
+      <span>Writing, research and working systems.</span>
+    </div>
+  </div>
+</footer>
 
+    <dialog class="ask-dialog" id="ask-leslie" aria-labelledby="ask-title">
+  <div class="ask-dialog__shell">
+    <div class="ask-dialog__topbar">
+      <div>
+        <h2 id="ask-title">Ask Leslie</h2>
+      </div>
+      <button class="icon-button" type="button" data-ask-close aria-label="关闭">×</button>
+    </div>
+    <p class="ask-dialog__intro">从本站公开文章中寻找答案。当前版本在浏览器本地检索，不上传问题，也不会编造不存在的经历。</p>
+    <form class="ask-form" data-ask-form>
+      <label class="sr-only" for="ask-query">输入问题</label>
+      <textarea id="ask-query" rows="2" placeholder="例如：Agent Runtime 应该怎么设计？" data-ask-input></textarea>
+      <button type="submit">检索知识库 <span aria-hidden="true">↗</span></button>
+    </form>
+    <div class="ask-suggestions" aria-label="推荐问题">
+      
+        <button type="button" data-ask-suggestion="Agent Runtime 应该怎么设计？">Agent Runtime 应该怎么设计？</button>
+      
+        <button type="button" data-ask-suggestion="如何让 AI 操控真实世界设备？">如何让 AI 操控真实世界设备？</button>
+      
+        <button type="button" data-ask-suggestion="Leslie 最近在研究什么？">Leslie 最近在研究什么？</button>
+      
+    </div>
+    <div class="ask-results" data-ask-results aria-live="polite">
+      <div class="ask-empty">
+        <p>输入一个问题，我会把你带到 Leslie 写过的相关内容。</p>
+      </div>
+    </div>
+  </div>
+</dialog>
 
-
-newWorkStealingPool
-可缓存的线程池
-
-
-newFixedThreadPool
-固定大小的线程池
-
-
-newScheduledThreadPool
-可做任务调度的线程池
-
-
-newSingleThreadExecutor
-单个线程的线程池
-
-
-newWorkStealingPool
-足够大小的线程池，JDK1.8新增
-
-
-newWorkStealingPool12345public static ExecutorService newCachedThreadPool() &#123;    return new ThreadPoolExecutor(0, Integer.MAX_VALUE,                                  60L, TimeUnit.SEC ...</div></div></div><div class="recent-post-item"><div class="post_cover left_radius"><a href="/2021/04/28/Thread/3.%E7%BA%BF%E7%A8%8B%E6%B1%A0%E7%9A%84%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/" title="3.线程池的工作原理">     <img class="post_bg" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/28.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="3.线程池的工作原理"></a></div><div class="recent-post-info"><a class="article-title" href="/2021/04/28/Thread/3.%E7%BA%BF%E7%A8%8B%E6%B1%A0%E7%9A%84%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/" title="3.线程池的工作原理">3.线程池的工作原理</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">Created</span><time datetime="2021-04-27T16:15:42.000Z" title="Created 2021-04-28 00:15:42">2021-04-28</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox article-meta__icon"></i><a class="article-meta__categories" href="/categories/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E4%B8%8E%E5%B9%B6%E5%8F%91/">多线程与并发</a></span></div><div class="content">线程池的工作原理Java线程池主要用于主要用于管理线程组及其运行状态，以便java虚拟机更好地利用CPU资源。Java线程池的工作原理为：JVM先根据用户的参数创建一定数量的可运行的线程任务，并将其放入队列中，在线程创建这些任务，如果正在运行的线程数量，超过了最大线程数量（用户设置的线程池大小），则超出数量的线程派对等候，在任务执行完毕后，线程池调度器会发现有可用的线程，进而再次从队列中取出任务并执行。
-线程池相关概念
-核心线程CorePool：当有新任务提交时，如果核心线程都在工作，并且数量已经达到最大核心线程数，则不会新建核心线程，而是把任务放入等待队列。
-阻塞队列 workQueue: 等待队列是一个线程安全的阻塞队列。当线程都在忙时，阻塞队列用于存放新增的任务。核心线程完成当前任务回去等待队列中拉取新出的任务。
-非核心线程: 当等待队列满时，若当前总线程线程数没有查过最大线程数，则会创建新的非核心线程。
-核心线程与非核心线程没有区别，只会在比较线程池中线程数目时，区分核心线程与非核心线程。
-
-
-线程活动保持时间keepAliveTime:  当一个线程空闲下来之后，其保持继续存 ...</div></div></div><div class="recent-post-item"><div class="post_cover right_radius"><a href="/2021/04/24/Thread/2.java%E4%B8%AD%E5%A4%9A%E7%BA%BF%E7%A8%8B%E7%9A%84%E5%AE%9E%E7%8E%B0/" title="2.java中多线程的实现">     <img class="post_bg" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/27.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="2.java中多线程的实现"></a></div><div class="recent-post-info"><a class="article-title" href="/2021/04/24/Thread/2.java%E4%B8%AD%E5%A4%9A%E7%BA%BF%E7%A8%8B%E7%9A%84%E5%AE%9E%E7%8E%B0/" title="2.java中多线程的实现">2.java中多线程的实现</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">Created</span><time datetime="2021-04-23T16:15:42.000Z" title="Created 2021-04-24 00:15:42">2021-04-24</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox article-meta__icon"></i><a class="article-meta__categories" href="/categories/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E4%B8%8E%E5%B9%B6%E5%8F%91/">多线程与并发</a></span></div><div class="content">Java多线程编程java给多线程编程提供了内置的支持。一个线程指的是进程中一个单一顺序的控制流，一个进程中可以并发多个线程 ，每条线程并行执行不同的任务。
-一个进程包括由操作系统分配的内存空间，包括一个或多个线程。一个线程不能独立的存在，他必须是进程的一部分。一个进程一直运行，直到所有的非收回线程都结束运行后才能结束。
-一个线程的生命周期线程是一个动态执行的过程，它也有一个从产生到死亡的过程。
-
-
-新建状态
-使用new关键字和Thread类或器子类建立一个线程对象后，该线程对象就处于新建状态。它保持这个状态直到程序start()线程。
-
-就绪状态
-当线程对象调用了start()方法之后，该线程就进入了就绪状态。就绪状态的线程处于就绪队列中，要等待JVM里线程调度器的调度。
-
-运行状态
-如果就绪状态的线程以获取CPU资源，就可以执行run()，此时线程便处于运行状态。处于运行状态的线程最为复杂，他可以变为阻塞状态，就绪状态和死亡状态。
-
-阻塞状态
-如果一个线程执行了sleep（睡眠）、suspend（挂起）等方法，失去所占用资源之后，该线程就从运行状态进入阻塞状态。在睡眠时间已到或获得 ...</div></div></div><div class="recent-post-item"><div class="post_cover left_radius"><a href="/2021/03/26/Collection/1.Java%E9%9B%86%E5%90%88-%E6%A1%86%E6%9E%B6/" title="1.Java集合-框架">     <img class="post_bg" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/26.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="1.Java集合-框架"></a></div><div class="recent-post-info"><a class="article-title" href="/2021/03/26/Collection/1.Java%E9%9B%86%E5%90%88-%E6%A1%86%E6%9E%B6/" title="1.Java集合-框架">1.Java集合-框架</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">Created</span><time datetime="2021-03-25T16:15:42.000Z" title="Created 2021-03-26 00:15:42">2021-03-26</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox article-meta__icon"></i><a class="article-meta__categories" href="/categories/Collection/">Collection</a></span></div><div class="content">Java集合[1]–java集合分类之前大概分为三种，Set，List，Map三种，JDK5之后，增加Queue.主要由Collection和Map两个接口衍生出来,同时Collection接口继承Iterable接口，所以我们也可以说java里面的集合类主要是由Iterable和Map两个接口以及他们的子接口或者其实现类组成。我们可以认为Collection接口定义了单列集合的规范，每次只能存储一个元素，而Map接口定义了双列集合的规范，每次能存储一对元素。
-Iterable接口:主要是实现遍历功能
-
-Collection接口: 允许重复
-Set接口：无序，元素不可重复,访问元素只能通过元素本身来访问。
-List接口：有序且可重复，可以根据元素的索引来访问集合中的元素。
-Queue接口：队列集合
-
-
-
-Map接口：映射关系，简单理解为键值对&lt;Key，Value&gt;，Key不可重复，与Collection接口关系不大，只是个别函数使用到。
-整个接口框架关系
-
-Iterable接口12345678910// 返回一个内部元素为T类型的迭代器（JDK1.5只有这个接口）Itera ...</div></div></div><div class="recent-post-item"><div class="post_cover right_radius"><a href="/2021/01/09/%E5%B7%A5%E5%85%B7/win10%E8%BF%9E%E6%8E%A5linux%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E5%B7%A5%E5%85%B7/" title="win10连接linux服务器的工具">     <img class="post_bg" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/11.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="win10连接linux服务器的工具"></a></div><div class="recent-post-info"><a class="article-title" href="/2021/01/09/%E5%B7%A5%E5%85%B7/win10%E8%BF%9E%E6%8E%A5linux%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E5%B7%A5%E5%85%B7/" title="win10连接linux服务器的工具">win10连接linux服务器的工具</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">Created</span><time datetime="2021-01-09T01:15:42.000Z" title="Created 2021-01-09 09:15:42">2021-01-09</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox article-meta__icon"></i><a class="article-meta__categories" href="/categories/ssh/">ssh</a></span></div><div class="content">常用的远程连接Linux工具常用的远程连接Linux工具有：Vscode、XShell、FinallShell等。下面重点介绍该三种工具：
-1 VsCode的Remote插件Vscode是一款开源的跨平台编辑器。默认情况下，vscode使用的语言为英文(us)
-1.1 下载安装官方下载地址：https://code.visualstudio.com/#alt-downloads
-选择自己的系统版本，安装时一直下一步即可，安装完成后直接运行code.exe
-1.2 修改vscode为中文环境
-使用快捷键【Ctrl+Shift+X】，在搜索框中输入“chinese”，选择安装   中文（简体） install；
-
- 再次使用快捷键【Ctrl+Shift+P】，在搜索框中输入“configure display language”，选择 zh-CN ，确认重启即可。
-
-
-1.3 修改主题颜色使用快捷键【Ctrl+K 】【Ctrl+T 】弹出选择框，选择自己喜欢的主题
-1.4 安装Remote-SSH直接打开vscode中的插件搜索SSH找到Remote-SSH直接安装即可。
-
-1.5 配置R ...</div></div></div><div class="recent-post-item"><div class="post_cover left_radius"><a href="/2020/12/06/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95/%E5%8D%81%E5%A4%A7%E7%BB%8F%E5%85%B8%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95%EF%BC%88Java%E5%AE%9E%E7%8E%B0%EF%BC%89/" title="十大经典排序算法（Java实现）">     <img class="post_bg" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/26.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="十大经典排序算法（Java实现）"></a></div><div class="recent-post-info"><a class="article-title" href="/2020/12/06/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95/%E5%8D%81%E5%A4%A7%E7%BB%8F%E5%85%B8%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95%EF%BC%88Java%E5%AE%9E%E7%8E%B0%EF%BC%89/" title="十大经典排序算法（Java实现）">十大经典排序算法（Java实现）</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">Created</span><time datetime="2020-12-05T16:15:42.000Z" title="Created 2020-12-06 00:15:42">2020-12-06</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox article-meta__icon"></i><a class="article-meta__categories" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a><i class="fas fa-angle-right"></i><a class="article-meta__categories" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%8E%92%E5%BA%8F/">排序</a></span></div><div class="content">排序算法概述定义将杂乱无章的数据元素，通过一定的方法按关键字顺序排列的过程叫做排序。
-分类十种常见排序算法可以分为两大类：
-
-非线性时间比较类排序：通过比较来决定元素间的相对次序，由于其时间复杂度不能突破O(nlogn)，因此称为非线性时间比较类排序。
-线性时间非比较类排序：不通过比较来决定元素间的相对次序，它可以突破基于比较排序的时间下界，以线性时间运行，因此称为线性时间非比较类排序。
-
-
-比较
-相关概念
-稳定：如果a原本在b前面且a=b，排序之后a仍然在b的前面。
-不稳定：如果a原本在b的前面且a=b，排序之后 a 可能会出现在 b 的后面。
-时间复杂度：对排序数据的总的操作次数。反映当n变化时，操作次数呈现什么规律。
-空间复杂度：是指算法在计算机内执行时所需存储空间的度量，它也是数据规模n的函数。
-内部排序：所有排序操作都在内存中完成。本文主要介绍的是内部排序。
-外部排序：待排序记录的数量很大，以致于内存不能一次容纳全部记录，所以在排序过程中需要对外存进行访问的排序过程。
-
-各算法原理及实现下面我们来逐一分析十大经典排序算法，主要围绕下列问题展开： 1、算法的基本思想是什么？ 2 ...</div></div></div><div class="recent-post-item"><div class="post_cover right_radius"><a href="/2020/11/30/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/2.%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F-%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/" title="2.操作系统-进程管理">     <img class="post_bg" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/25.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="2.操作系统-进程管理"></a></div><div class="recent-post-info"><a class="article-title" href="/2020/11/30/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/2.%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F-%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/" title="2.操作系统-进程管理">2.操作系统-进程管理</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">Created</span><time datetime="2020-11-29T16:15:42.000Z" title="Created 2020-11-30 00:15:42">2020-11-30</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox article-meta__icon"></i><a class="article-meta__categories" href="/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">操作系统</a></span></div><div class="content">进程与线程进程程序与进程进程是计算机中处于运行中程序的实体。程序本身只是指令、数据及其组织形式的描述，进程才是程序（指令和数据）的真正运行实例。
-进程结构一般由3部分组成：代码段、数据段和堆栈段。代码段用于存放程序代码数据，数个进程可以共享同一个代码段。数据段存放程序的全局变量、常量和静态变量。堆栈段中栈用于函数调用，它存放着函数的参数，它存放着函数的参数，函数内部定义的局部变量。堆栈段还包括了进程控制块（Process Control Block， PCB）。PCB处于进程核心堆栈的底部，不需要额外分配空间。PCB时进程存在的唯一标识，系统通过PCB的存在而感知进程的存在。
-
-进程是程序的一次执行
-进程是一个程序及数据在处理机执行时所发生的活动
-进程时系统进行资源分配和调度的独立单位。进程的独立运行由进程控制块PCB控制和管理。进程映像时静态的进程。程序段、相关数据、PCB三部分构成了进程映像。
-进程具有动态性（创建、活动、暂停、和终止、具有生命周期），并发性（多个进程在一段时间内同时运行），独立性（进程是一个独立运行、获得资源和接受调度的基本单位）、异步性（进程按照独自不可预知的速 ...</div></div></div><nav id="pagination"><div class="pagination"><a class="extend prev" rel="prev" href="/page/11/"><i class="fas fa-chevron-left fa-fw"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><span class="page-number current">12</span><a class="page-number" href="/page/13/">13</a><a class="page-number" href="/page/14/">14</a><a class="extend next" rel="next" href="/page/13/"><i class="fas fa-chevron-right fa-fw"></i></a></div></nav></div><div class="aside_content" id="aside_content"><div class="card-widget card-info"><div class="card-content"><div class="card-info-avatar is-center"><img class="avatar-img" src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/01.jpg?raw=true" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/><div class="author-info__name">Leslie</div><div class="author-info__description"></div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">135</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">Tags</div><div class="length-num">51</div></a></div><div class="card-info-data-item is-center"><a href="/categories/"><div class="headline">Categories</div><div class="length-num">17</div></a></div></div><a class="button--animated" id="card-info-btn"><i class="fas fa-heart"></i><span>瓶中的水 青天的云</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/leslieAIbin" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="https://www.instagram.com/leslieaibin/" target="_blank" title="Ins"><i class="fab fa-instagram"></i></a><a class="social-icon" href="mailto:aibinzhangleslie@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a><a class="social-icon" href="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/image-20201122143121657.png" target="_blank" title="weixin"><i class="fab fa-weixin"></i></a></div></div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="card-content"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/04/12/Hermes-Agent-%E4%B8%8D%E5%AE%8C%E5%85%A8%E6%8C%87%E5%8D%97%EF%BC%8C%E4%B8%80%E4%B8%AA%E4%BC%9A%E8%87%AA%E5%B7%B1%E9%95%BF%E8%84%91%E5%AD%90%E7%9A%84-AI-Agent/" title="Hermes Agent 不完全指南，一个会自己长脑子的 AI Agent"><img src="/2026/04/12/Hermes-Agent-%E4%B8%8D%E5%AE%8C%E5%85%A8%E6%8C%87%E5%8D%97%EF%BC%8C%E4%B8%80%E4%B8%AA%E4%BC%9A%E8%87%AA%E5%B7%B1%E9%95%BF%E8%84%91%E5%AD%90%E7%9A%84-AI-Agent/cover.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Hermes Agent 不完全指南，一个会自己长脑子的 AI Agent"/></a><div class="content"><a class="title" href="/2026/04/12/Hermes-Agent-%E4%B8%8D%E5%AE%8C%E5%85%A8%E6%8C%87%E5%8D%97%EF%BC%8C%E4%B8%80%E4%B8%AA%E4%BC%9A%E8%87%AA%E5%B7%B1%E9%95%BF%E8%84%91%E5%AD%90%E7%9A%84-AI-Agent/" title="Hermes Agent 不完全指南，一个会自己长脑子的 AI Agent">Hermes Agent 不完全指南，一个会自己长脑子的 AI Agent</a><time datetime="2026-04-11T16:00:00.000Z" title="Created 2026-04-12 00:00:00">2026-04-12</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/08/Anthropic-%E5%8F%91%E5%B8%83%E6%9C%80%E5%BC%BA%E6%A8%A1%E5%9E%8B-Claude-Mythos%EF%BC%8C%E4%BD%86%E4%B8%8D%E8%AE%A9%E4%BD%A0%E7%94%A8/" title="Anthropic 发布最强模型 Claude Mythos，但不让你用"><img src="/2026/04/08/Anthropic-%E5%8F%91%E5%B8%83%E6%9C%80%E5%BC%BA%E6%A8%A1%E5%9E%8B-Claude-Mythos%EF%BC%8C%E4%BD%86%E4%B8%8D%E8%AE%A9%E4%BD%A0%E7%94%A8/01-vulnerability-scan.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Anthropic 发布最强模型 Claude Mythos，但不让你用"/></a><div class="content"><a class="title" href="/2026/04/08/Anthropic-%E5%8F%91%E5%B8%83%E6%9C%80%E5%BC%BA%E6%A8%A1%E5%9E%8B-Claude-Mythos%EF%BC%8C%E4%BD%86%E4%B8%8D%E8%AE%A9%E4%BD%A0%E7%94%A8/" title="Anthropic 发布最强模型 Claude Mythos，但不让你用">Anthropic 发布最强模型 Claude Mythos，但不让你用</a><time datetime="2026-04-07T16:00:00.000Z" title="Created 2026-04-08 00:00:00">2026-04-08</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/08/YC-%E7%9A%84-CEO-%E5%85%BC%E8%81%8C-60-%E5%A4%A9%E5%86%99%E4%BA%86-60-%E4%B8%87%E8%A1%8C%E4%BB%A3%E7%A0%81%EF%BC%8C%E4%BB%96%E6%8A%8A%E6%96%B9%E6%B3%95%E5%BC%80%E6%BA%90%E4%BA%86/" title="YC 的 CEO 兼职 60 天写了 60 万行代码，他把方法开源了"><img src="/2026/04/08/YC-%E7%9A%84-CEO-%E5%85%BC%E8%81%8C-60-%E5%A4%A9%E5%86%99%E4%BA%86-60-%E4%B8%87%E8%A1%8C%E4%BB%A3%E7%A0%81%EF%BC%8C%E4%BB%96%E6%8A%8A%E6%96%B9%E6%B3%95%E5%BC%80%E6%BA%90%E4%BA%86/01-infographic-sprint-workflow.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="YC 的 CEO 兼职 60 天写了 60 万行代码，他把方法开源了"/></a><div class="content"><a class="title" href="/2026/04/08/YC-%E7%9A%84-CEO-%E5%85%BC%E8%81%8C-60-%E5%A4%A9%E5%86%99%E4%BA%86-60-%E4%B8%87%E8%A1%8C%E4%BB%A3%E7%A0%81%EF%BC%8C%E4%BB%96%E6%8A%8A%E6%96%B9%E6%B3%95%E5%BC%80%E6%BA%90%E4%BA%86/" title="YC 的 CEO 兼职 60 天写了 60 万行代码，他把方法开源了">YC 的 CEO 兼职 60 天写了 60 万行代码，他把方法开源了</a><time datetime="2026-04-07T16:00:00.000Z" title="Created 2026-04-08 00:00:00">2026-04-08</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/08/%E6%88%91%E6%96%87%E7%AB%A0%E9%87%8C%E9%82%A3%E4%BA%9B%E5%A5%BD%E7%9C%8B%E7%9A%84%E4%BF%A1%E6%81%AF%E5%9B%BE%EF%BC%8C%E9%83%BD%E6%98%AF%E8%BF%99%E4%B8%80%E4%B8%AA%E5%85%8D%E8%B4%B9%E5%B7%A5%E5%85%B7%E7%94%BB%E7%9A%84/" title="我文章里那些好看的信息图，都是这一个免费工具画的"><img src="/2026/04/08/%E6%88%91%E6%96%87%E7%AB%A0%E9%87%8C%E9%82%A3%E4%BA%9B%E5%A5%BD%E7%9C%8B%E7%9A%84%E4%BF%A1%E6%81%AF%E5%9B%BE%EF%BC%8C%E9%83%BD%E6%98%AF%E8%BF%99%E4%B8%80%E4%B8%AA%E5%85%8D%E8%B4%B9%E5%B7%A5%E5%85%B7%E7%94%BB%E7%9A%84/01-infographic-9-providers.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="我文章里那些好看的信息图，都是这一个免费工具画的"/></a><div class="content"><a class="title" href="/2026/04/08/%E6%88%91%E6%96%87%E7%AB%A0%E9%87%8C%E9%82%A3%E4%BA%9B%E5%A5%BD%E7%9C%8B%E7%9A%84%E4%BF%A1%E6%81%AF%E5%9B%BE%EF%BC%8C%E9%83%BD%E6%98%AF%E8%BF%99%E4%B8%80%E4%B8%AA%E5%85%8D%E8%B4%B9%E5%B7%A5%E5%85%B7%E7%94%BB%E7%9A%84/" title="我文章里那些好看的信息图，都是这一个免费工具画的">我文章里那些好看的信息图，都是这一个免费工具画的</a><time datetime="2026-04-07T16:00:00.000Z" title="Created 2026-04-08 00:00:00">2026-04-08</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/06/%E5%BD%93-AI-%E5%BC%80%E5%A7%8B%E6%89%AE%E6%BC%94%E4%BD%A0%E7%9A%84%E5%90%8C%E4%BA%8B%E3%80%81%E5%89%8D%E4%BB%BB%E5%92%8C%E8%80%81%E6%9D%BF/" title="当 AI 开始扮演你的同事、前任和老板"><img src="/2026/04/06/%E5%BD%93-AI-%E5%BC%80%E5%A7%8B%E6%89%AE%E6%BC%94%E4%BD%A0%E7%9A%84%E5%90%8C%E4%BA%8B%E3%80%81%E5%89%8D%E4%BB%BB%E5%92%8C%E8%80%81%E6%9D%BF/01-infographic-relationship-skills-spectrum.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="当 AI 开始扮演你的同事、前任和老板"/></a><div class="content"><a class="title" href="/2026/04/06/%E5%BD%93-AI-%E5%BC%80%E5%A7%8B%E6%89%AE%E6%BC%94%E4%BD%A0%E7%9A%84%E5%90%8C%E4%BA%8B%E3%80%81%E5%89%8D%E4%BB%BB%E5%92%8C%E8%80%81%E6%9D%BF/" title="当 AI 开始扮演你的同事、前任和老板">当 AI 开始扮演你的同事、前任和老板</a><time datetime="2026-04-05T16:00:00.000Z" title="Created 2026-04-06 00:00:00">2026-04-06</time></div></div></div></div></div><div class="card-widget card-categories"><div class="card-content"><div class="item-headline"><i class="fas fa-folder-open"></i><span>Categories</span></div><ul class="card-category-list" id="aside-cat-list">
-            <li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Collection/"><span class="card-category-list-name">Collection</span><span class="card-category-list-count">6</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/JVM/"><span class="card-category-list-name">JVM</span><span class="card-category-list-count">21</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/MySQL/"><span class="card-category-list-name">MySQL</span><span class="card-category-list-count">11</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Netty/"><span class="card-category-list-name">Netty</span><span class="card-category-list-count">5</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Redis/"><span class="card-category-list-name">Redis</span><span class="card-category-list-count">8</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/RocketMQ/"><span class="card-category-list-name">RocketMQ</span><span class="card-category-list-count">2</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Spring/"><span class="card-category-list-name">Spring</span><span class="card-category-list-count">6</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Video-Analysis/"><span class="card-category-list-name">Video Analysis</span><span class="card-category-list-count">1</span></a></li>
-            <li class="card-category-list-item more is-center"><a class="card-category-list-link-more" href="/categories/">
-                <span>More</span><i class="fas fa-angle-right"></i></a></li>
-            </ul></div></div><div class="card-widget card-tags"><div class="card-content"><div class="item-headline"><i class="fas fa-tags"></i><span>Tags</span></div><div class="card-tag-cloud"><a href="/tags/AI/" style="font-size: 1.19em; color: #999da1">AI</a> <a href="/tags/AI-Agent/" style="font-size: 1.1em; color: #999">AI Agent</a> <a href="/tags/AI-%E5%B7%A5%E7%A8%8B/" style="font-size: 1.1em; color: #999">AI 工程</a> <a href="/tags/AI-%E7%A4%BE%E4%BA%A4/" style="font-size: 1.1em; color: #999">AI 社交</a> <a href="/tags/AI%E7%94%BB%E5%9B%BE/" style="font-size: 1.1em; color: #999">AI画图</a> <a href="/tags/AI%E8%87%AA%E5%8A%A8%E5%8C%96/" style="font-size: 1.1em; color: #999">AI自动化</a> <a href="/tags/Agent/" style="font-size: 1.28em; color: #99a0aa">Agent</a> <a href="/tags/Anthropic/" style="font-size: 1.1em; color: #999">Anthropic</a> <a href="/tags/Architecture/" style="font-size: 1.1em; color: #999">Architecture</a> <a href="/tags/BFS/" style="font-size: 1.1em; color: #999">BFS</a> <a href="/tags/CLI/" style="font-size: 1.1em; color: #999">CLI</a> <a href="/tags/Claude/" style="font-size: 1.14em; color: #999b9d">Claude</a> <a href="/tags/Claude-Code/" style="font-size: 1.28em; color: #99a0aa">Claude Code</a> <a href="/tags/Collection/" style="font-size: 1.28em; color: #99a0aa">Collection</a> <a href="/tags/Context-Engineering/" style="font-size: 1.1em; color: #999">Context Engineering</a> <a href="/tags/DFS/" style="font-size: 1.1em; color: #999">DFS</a> <a href="/tags/ElasticSearch/" style="font-size: 1.1em; color: #999">ElasticSearch</a> <a href="/tags/HTTP/" style="font-size: 1.32em; color: #99a2ae">HTTP</a> <a href="/tags/Harness-Engineering/" style="font-size: 1.1em; color: #999">Harness Engineering</a> <a href="/tags/Hermes/" style="font-size: 1.1em; color: #999">Hermes</a> <a href="/tags/JVM/" style="font-size: 1.5em; color: #99a9bf">JVM</a> <a href="/tags/Java/" style="font-size: 1.37em; color: #99a4b2">Java</a> <a href="/tags/LLM/" style="font-size: 1.1em; color: #999">LLM</a> <a href="/tags/MCP/" style="font-size: 1.1em; color: #999">MCP</a> <a href="/tags/MySQL/" style="font-size: 1.41em; color: #99a5b7">MySQL</a> <a href="/tags/Netty/" style="font-size: 1.23em; color: #999ea6">Netty</a> <a href="/tags/Nous-Research/" style="font-size: 1.1em; color: #999">Nous Research</a> <a href="/tags/OpenClaw/" style="font-size: 1.14em; color: #999b9d">OpenClaw</a> <a href="/tags/Prompt-Engineering/" style="font-size: 1.1em; color: #999">Prompt Engineering</a> <a href="/tags/Qwen/" style="font-size: 1.1em; color: #999">Qwen</a> <a href="/tags/RL/" style="font-size: 1.1em; color: #999">RL</a> <a href="/tags/Reasoning/" style="font-size: 1.1em; color: #999">Reasoning</a> <a href="/tags/Redis/" style="font-size: 1.32em; color: #99a2ae">Redis</a> <a href="/tags/RocketMQ/" style="font-size: 1.14em; color: #999b9d">RocketMQ</a> <a href="/tags/Skills/" style="font-size: 1.28em; color: #99a0aa">Skills</a> <a href="/tags/Spring/" style="font-size: 1.28em; color: #99a0aa">Spring</a> <a href="/tags/TCP-IP/" style="font-size: 1.46em; color: #99a7bb">TCP/IP</a> <a href="/tags/Video-Analysis/" style="font-size: 1.1em; color: #999">Video Analysis</a> <a href="/tags/gstack/" style="font-size: 1.1em; color: #999">gstack</a> <a href="/tags/ssh/" style="font-size: 1.1em; color: #999">ssh</a></div></div></div><div class="card-widget card-archives"><div class="card-content"><div class="item-headline"><i class="fas fa-archive"></i><span>Archives</span></div><ul class="card-archive-list"><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2026/04/"><span class="card-archive-list-date">April 2026</span><span class="card-archive-list-count">6</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2026/03/"><span class="card-archive-list-date">March 2026</span><span class="card-archive-list-count">4</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2022/07/"><span class="card-archive-list-date">July 2022</span><span class="card-archive-list-count">4</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2022/06/"><span class="card-archive-list-date">June 2022</span><span class="card-archive-list-count">3</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2022/05/"><span class="card-archive-list-date">May 2022</span><span class="card-archive-list-count">5</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2022/03/"><span class="card-archive-list-date">March 2022</span><span class="card-archive-list-count">4</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2022/02/"><span class="card-archive-list-date">February 2022</span><span class="card-archive-list-count">1</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2021/12/"><span class="card-archive-list-date">December 2021</span><span class="card-archive-list-count">9</span></a></li><li class="card-archive-list-item more is-center"><a class="card-archive-list-link-more" href="/archives/">
-              <span>More</span><i class="fas fa-angle-right"  ></i></a></li></ul></div></div><div class="card-widget card-webinfo"><div class="card-content"><div class="item-headline"><i class="fas fa-chart-line"></i><span>Info</span></div><div class="webinfo"><div class="webinfo-item"><div class="item-name">Article :</div><div class="item-count">135</div></div><div class="webinfo-item"><div class="item-name">UV :</div><div class="item-count" id="busuanzi_value_site_uv"></div></div><div class="webinfo-item"><div class="item-name">PV :</div><div class="item-count" id="busuanzi_value_site_pv"></div></div><div class="webinfo-item"><div class="item-name">Last Push :</div><div class="item-count" id="last-push-date" data-lastPushDate="2026-04-12T10:23:09.001Z"></div></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/02.jpg?raw=true)"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2026 By Leslie</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog"></i></button><button id="go-up" type="button" title="Back To Top"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><div class="js-pjax"><script>function subtitleType () {
-  if (false) { 
-    var typed = new Typed("#subtitle", {
-      strings: "天下熙熙，皆为利来；天下攘攘，皆为利往".split(","),
-      startDelay: 300,
-      typeSpeed: 150,
-      loop: true,
-      backSpeed: 50
-    })
-  } else {
-    document.getElementById("subtitle").innerHTML = '天下熙熙，皆为利来；天下攘攘，皆为利往'
-  }
-}
-
-if (false) {
-  if (typeof Typed === 'function') subtitleType()
-  else $.getScript('https://cdn.jsdelivr.net/npm/typed.js/lib/typed.min.js', subtitleType)
-} else {
-  subtitleType()
-}</script><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></div></body></html>
+    <script>window.ORBITAL_ROOT = '/';</script>
+    <script src="/js/orbital.js" defer></script>
+  </body>
+</html>

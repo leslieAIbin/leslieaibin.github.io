@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+  <head>
+
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#050b18">
+<meta name="color-scheme" content="dark light">
+<title>一篇讲透，如何写出工业级 Skill | Leslie Zhang</title>
+<meta name="description" content="构建能够感知、规划、行动与反馈的智能体系统，长期关注 Agent Runtime、多模态与真实世界自动化。">
+<meta name="author" content="Leslie Zhang">
+<link rel="canonical" href="https://leslieaibin.github.io/2026/05/05/attention-field/%E5%A6%82%E4%BD%95%E5%86%99%E5%87%BA%E5%B7%A5%E4%B8%9A%E7%BA%A7Skill/">
+<link rel="icon" href="/imgs/01.jpg">
+<link rel="alternate" type="application/atom+xml" title="Leslie Zhang" href="/atom.xml">
+<meta property="og:type" content="article">
+<meta property="og:title" content="一篇讲透，如何写出工业级 Skill | Leslie Zhang">
+<meta property="og:description" content="构建能够感知、规划、行动与反馈的智能体系统，长期关注 Agent Runtime、多模态与真实世界自动化。">
+<meta property="og:url" content="https://leslieaibin.github.io/2026/05/05/attention-field/%E5%A6%82%E4%BD%95%E5%86%99%E5%87%BA%E5%B7%A5%E4%B8%9A%E7%BA%A7Skill/">
+<meta property="og:image" content="https://leslieaibin.github.io/2026/05/05/attention-field/%E5%A6%82%E4%BD%95%E5%86%99%E5%87%BA%E5%B7%A5%E4%B8%9A%E7%BA%A7Skill/imgs/cover.webp">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="一篇讲透，如何写出工业级 Skill | Leslie Zhang">
+<meta name="twitter:description" content="构建能够感知、规划、行动与反馈的智能体系统，长期关注 Agent Runtime、多模态与真实世界自动化。">
+<meta name="twitter:image" content="https://leslieaibin.github.io/2026/05/05/attention-field/%E5%A6%82%E4%BD%95%E5%86%99%E5%87%BA%E5%B7%A5%E4%B8%9A%E7%BA%A7Skill/imgs/cover.webp">
+<script>
+  (function () {
+    var saved = localStorage.getItem('orbital-theme');
+    var theme = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    document.documentElement.dataset.theme = theme;
+  })();
+</script>
+<link rel="stylesheet" href="/css/orbital.css">
+<meta name="generator" content="Hexo 5.2.0"></head>
+  <body class="page-post">
+    <a class="skip-link" href="#main-content">跳到主要内容</a>
+    <div class="reading-progress" data-reading-progress></div>
+    <header class="site-header" data-header>
+  <div class="nav-shell">
+    <a class="brand" href="/" aria-label="返回首页">
+      <span class="brand-mark" aria-hidden="true"><img src="/images/brand/leslie-mythos-avatar.webp" alt="" width="512" height="512"></span>
+      <span class="brand-copy">
+        <strong>LESLIE</strong>
+        <small>REAL-WORLD AGENTS</small>
+      </span>
+    </a>
+
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav" data-nav-toggle>
+      <span></span><span></span>
+      <span class="sr-only">打开导航</span>
+    </button>
+
+    <nav class="main-nav" id="main-nav" aria-label="主导航" data-nav>
+      
+        <a href="/" class="">首页</a>
+      
+        <a href="/writing/" class="">写作</a>
+      
+        <a href="/projects/" class="">项目</a>
+      
+        <a href="/about/" class="">关于</a>
+      
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换明暗主题">
+        <span class="theme-toggle__sun" aria-hidden="true">☼</span>
+        <span class="theme-toggle__moon" aria-hidden="true">◐</span>
+      </button>
+      <button class="ask-nav" type="button" data-ask-open>ASK LESLIE</button>
+    </nav>
+  </div>
+</header>
+
+    <main id="main-content"><article class="post-shell">
+  <header class="post-hero shell">
+    <a class="post-back" href="/writing/">← 返回写作</a>
+    <div class="post-hero__meta">
+      <time datetime="2026-05-05">2026 年 05 月 05 日</time>
+      <span>13 分钟阅读</span>
+    </div>
+    <h1>一篇讲透，如何写出工业级 Skill</h1>
+    
+    <div class="chip-row"><a href="/tags/Agent/">Agent</a><a href="/tags/Claude-Code/">Claude Code</a><a href="/tags/Prompt-Engineering/">Prompt Engineering</a><a href="/tags/%E5%B7%A5%E4%BD%9C%E6%B5%81/">工作流</a><a href="/tags/Skill/">Skill</a></div>
+  </header>
+
+  <div class="post-cover shell"><img src="/2026/05/05/attention-field/%E5%A6%82%E4%BD%95%E5%86%99%E5%87%BA%E5%B7%A5%E4%B8%9A%E7%BA%A7Skill/imgs/cover.webp" alt="一篇讲透，如何写出工业级 Skill"></div>
+
+  <div class="post-layout shell">
+    <aside class="post-toc" aria-label="文章目录">
+      <span class="aside-title">目录</span>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81Skill-%E4%B8%8D%E6%98%AF%E5%B8%B8%E9%A9%BB%E6%8F%90%E7%A4%BA%E8%AF%8D%EF%BC%8C%E5%AE%83%E6%9C%80%E5%80%BC%E9%92%B1%E7%9A%84%E6%98%AF%E8%A7%A6%E5%8F%91%E5%85%A5%E5%8F%A3"><span class="toc-text">一、Skill 不是常驻提示词，它最值钱的是触发入口</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E8%AF%A5%E8%87%AA%E5%8A%A8%E5%87%BA%E7%8E%B0%E7%9A%84%E8%87%AA%E5%8A%A8%E5%87%BA%E7%8E%B0%EF%BC%8C%E4%B8%8D%E8%AF%A5%E5%B8%B8%E9%A9%BB%E7%9A%84%E5%B0%B1%E9%99%8D%E7%BA%A7%E6%88%90%E5%91%BD%E4%BB%A4"><span class="toc-text">二、该自动出现的自动出现，不该常驻的就降级成命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E5%B7%A5%E5%85%B7%E6%9D%83%E9%99%90%E8%A6%81%E6%83%B3%E6%B8%85%E6%A5%9A%EF%BC%8C%E5%88%AB%E8%AE%A9%E6%AF%8F%E4%B8%AA-Skill-%E9%83%BD%E6%8B%BF%E4%B8%87%E8%83%BD%E9%92%A5%E5%8C%99"><span class="toc-text">三、工具权限要想清楚，别让每个 Skill 都拿万能钥匙</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E6%A8%A1%E5%9E%8B%E9%80%89%E6%8B%A9%E4%B8%8D%E6%98%AF%E7%8E%84%E5%AD%A6%EF%BC%8C%E6%98%AF%E6%88%90%E6%9C%AC%E5%92%8C%E5%8F%AF%E9%9D%A0%E6%80%A7%E7%9A%84%E5%B9%B3%E8%A1%A1"><span class="toc-text">四、模型选择不是玄学，是成本和可靠性的平衡</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94%E3%80%81SKILL-md-%E5%BA%94%E8%AF%A5%E5%83%8F%E5%85%A5%E5%8F%A3%E6%96%87%E4%BB%B6%EF%BC%8C%E4%B8%8D%E8%AF%A5%E5%83%8F%E8%B5%84%E6%96%99%E4%BB%93%E5%BA%93"><span class="toc-text">五、SKILL.md 应该像入口文件，不该像资料仓库</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD%E3%80%81%E5%86%99%E5%AE%8C%E4%B8%8D%E7%AE%97%E5%AE%8C%E6%88%90%EF%BC%8C%E8%B7%91%E8%BF%87-eval-%E6%89%8D%E7%9F%A5%E9%81%93%E5%AE%83%E6%9C%89%E6%B2%A1%E6%9C%89%E7%94%A8"><span class="toc-text">六、写完不算完成，跑过 eval 才知道它有没有用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%83%E3%80%81%E5%A4%B1%E8%B4%A5%E8%AE%B0%E5%BD%95%E6%AF%94%E6%88%90%E5%8A%9F%E6%A1%88%E4%BE%8B%E6%9B%B4%E5%80%BC%E9%92%B1"><span class="toc-text">七、失败记录比成功案例更值钱</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%99%E5%9C%A8%E6%9C%80%E5%90%8E"><span class="toc-text">写在最后</span></a></li></ol>
+    </aside>
+    <div class="article-content"><h1 id="一篇讲透，如何写出工业级-Skill"><a href="#一篇讲透，如何写出工业级-Skill" class="headerlink" title="一篇讲透，如何写出工业级 Skill"></a>一篇讲透，如何写出工业级 Skill</h1><p>这两天看到一篇讲 Skill 的长文，我读完之后，脑子里一直冒出一个很朴素的判断。</p>
+<p>很多人其实不是在写 Skill。</p>
+<p>是在写一份更长的 Prompt。</p>
+<p>这件事挺微妙的。因为从表面看，它们确实很像。都是一个 Markdown 文件，里面写背景、规则、步骤、注意事项、示例输出。你把东西塞得越满，看起来就越专业，越像是把经验沉淀下来了。</p>
+<p>但真的用起来，很快就会发现不对。</p>
+<p>一个臃肿的 Prompt，解决的是这一次对话里怎么让模型听话。</p>
+<p>一个好的 Skill，解决的是以后每次遇到类似任务时，Agent 能不能自己识别场景，自己加载流程，自己调用合适的工具，最终稳定地把事情做完。</p>
+<p>这里面差别很大。</p>
+<p>大到它决定了你是在给 AI 写说明书，还是在给 AI 搭工作流。</p>
+<p>我以前也会犯这个问题。看到一个任务经常重复，就很自然地想，把所有经验全写进去吧。什么背景信息、失败案例、风格偏好、命名规则、目录结构、输出模板，一股脑全塞进 <code>SKILL.md</code>。</p>
+<p>写完还挺有成就感。</p>
+<p>像修了一本厚厚的操作手册。</p>
+<p>但后来用多了才发现，厚不等于稳。很多时候，Skill 越写越长，不是因为它更专业，而是因为边界没想清楚。</p>
+<p>真正工业级的 Skill，第一件事不是内容多。</p>
+<p>是触发准。</p>
+<h2 id="一、Skill-不是常驻提示词，它最值钱的是触发入口"><a href="#一、Skill-不是常驻提示词，它最值钱的是触发入口" class="headerlink" title="一、Skill 不是常驻提示词，它最值钱的是触发入口"></a>一、Skill 不是常驻提示词，它最值钱的是触发入口</h2><p>Skill 和 <code>CLAUDE.md</code> 不是一类东西。</p>
+<p><code>CLAUDE.md</code> 更像项目里的常驻上下文。你只要在这个项目里工作，它就一直在那里，持续影响模型怎么理解代码库、怎么写代码、怎么遵守项目习惯。</p>
+<p>slash command 又是另一类东西。它更像手动按钮。用户必须明确输入某个命令，Agent 才知道接下来要走那条流程。</p>
+<p>Skill 夹在中间。</p>
+<p>它不是一直完整塞进上下文里，也不是完全靠用户手动点名。它更像一个按需出现的工作流。平时安静地待在那里，等用户的需求和它的 <code>description</code> 匹配上，再把完整内容加载进来。</p>
+<p>这个设计其实非常关键。</p>
+<p>因为 Skill 的正文不是常驻的，但 <code>description</code> 会长期参与匹配。</p>
+<p>所以，一个 Skill 能不能被正确调用，很多时候不是正文写得够不够长，而是 <code>description</code> 写得够不够像真实用户会说的话。</p>
+<p>你做一个封面图 Skill，如果 <code>description</code> 只写一句 <code>Create an image</code>，看起来简洁，但很可能不好用。</p>
+<p>因为用户不会这么说。</p>
+<p>用户会说，帮我做一张封面图，给这篇文章配个图，按这个标题做一张科技感海报，做一张适合小红书的封面，给 X 长文生成一张头图。</p>
+<p>这些话才是入口。</p>
+<p>再比如写 X 长文的 Skill，用户也未必会说，请调用 article skill。真实表达更可能是，把这个想法展开成一篇长推，帮我写一条长内容，按我的语气扩写一下，给我一个开头更抓人的版本。</p>
+<p>你想想看，如果这些真实表达没有进入 <code>description</code> 或触发示例，Skill 明明存在，但 Agent 可能根本不会想起它。</p>
+<p>这就是很多 Skill 不好用的第一层原因。</p>
+<p>不是流程不行。</p>
+<p>是门没开对。</p>
+<p>所以写 Skill 时，第一个问题不该是，我要告诉模型什么。</p>
+<p>而是，用户说出哪些话时，这个 Skill 应该出现。</p>
+<p>这个问题一变，整个写法都会变。你会开始收集真实表达，而不是只写抽象能力。你会开始描述边界，而不是只堆功能。你会开始考虑误触发，而不是默认越宽越好。</p>
+<p>说真的，一个成熟的 Skill，应该很像一个训练过的前台。</p>
+<p>该接的人要接进来，不该接的人要礼貌放过。</p>
+<p>如果什么需求都想接，最终就会变成谁也服务不好。</p>
+<p><img src="imgs/01-infographic-trigger.webp" alt="Skill 最值钱的是触发入口"></p>
+<h2 id="二、该自动出现的自动出现，不该常驻的就降级成命令"><a href="#二、该自动出现的自动出现，不该常驻的就降级成命令" class="headerlink" title="二、该自动出现的自动出现，不该常驻的就降级成命令"></a>二、该自动出现的自动出现，不该常驻的就降级成命令</h2><p>很多人一装 Skill，就希望它自动触发。</p>
+<p>这很正常。自动触发听起来很爽，好像只要把 Skill 放在那里，以后所有类似任务都会自己变好。</p>
+<p>但这里有个很现实的成本。</p>
+<p>自动触发类 Skill，至少要让 <code>description</code> 长期参与匹配。Skill 越多，描述越长，常驻的匹配成本就越高。单个 Skill 看起来没什么，几十个、上百个叠在一起，就会开始吃上下文，吃注意力，也增加误触发概率。</p>
+<p>所以不是所有 Skill 都应该自动出现。</p>
+<p>有些 Skill 高频、短小、边界清晰，非常适合自动触发。比如代码审查、文章翻译、图片压缩、Markdown 格式化。这些需求的用户表达相对稳定，出现频率也高，自动加载收益很明显。</p>
+<p>但有些 Skill 很专业，很长，一年用不了几次。</p>
+<p>年终总结 Skill。</p>
+<p>简历重写 Skill。</p>
+<p>课程讲义整理 Skill。</p>
+<p>某个特定平台的发布 Skill。</p>
+<p>这类东西就未必要一直占用自动匹配资源。更合理的做法，是把它降级成手动命令，需要时再叫出来。</p>
+<p>这不丢人。</p>
+<p>相反，这是一种系统设计意识。</p>
+<p>工具不一定越主动越好。有些工具就应该放在抽屉里，用的时候拿出来。你不会把扳手一直握在手上吃饭，也不会让电钻每天在桌面上待命。</p>
+<p>回到 Skill 也是一样。</p>
+<p>自动触发的优点，是省心，像一个会自己站出来的助手。缺点，是会消耗匹配成本，也可能在模糊场景里抢活。</p>
+<p>手动调用的优点，是省上下文，边界干净，误触发少。缺点，是用户必须记得它的存在。</p>
+<p>怎么选，取决于使用频率、触发表达是否稳定、正文是否很长、误触发成本是否高。</p>
+<p>这几个问题想清楚了，你的 Skill 系统才不会越装越乱。</p>
+<h2 id="三、工具权限要想清楚，别让每个-Skill-都拿万能钥匙"><a href="#三、工具权限要想清楚，别让每个-Skill-都拿万能钥匙" class="headerlink" title="三、工具权限要想清楚，别让每个 Skill 都拿万能钥匙"></a>三、工具权限要想清楚，别让每个 Skill 都拿万能钥匙</h2><p>我特别喜欢原文里提到的一个点，Skill 需要认真处理工具边界。</p>
+<p>这个点很容易被忽略。</p>
+<p>很多人写 Skill，只关心模型该怎么想，不关心它能干什么。结果就是一个只负责分析建议的 Skill，也默认能改文件。一个只需要读材料的 Skill，也能执行命令。一个生成标题的 Skill，顺手拿到了写入权限。</p>
+<p>这听起来好像问题不大，反正模型会听话。</p>
+<p>但说真的，工程里不能靠听话做安全边界。</p>
+<p>这里要稍微讲细一点。</p>
+<p>在 Claude Code 里，<code>allowed-tools</code> 更准确地说是预批准工具。它让某个 Skill 激活时，可以不再反复询问你，直接使用这些工具。它不是硬性的禁止列表，不代表其他工具完全不能被调用。</p>
+<p>真正要禁止某些工具，还要配合权限规则里的 deny。</p>
+<p>但这不影响这个原则。</p>
+<p>Skill 的工具配置，应该按最小可用思路来设计。</p>
+<p>只是读材料，那就给读权限。</p>
+<p>需要整理文档，那就给读写权限。</p>
+<p>需要批量处理文件，再考虑编辑和命令执行。</p>
+<p>需要生成图片，就给读参考资料、写 prompt、调用图片工具的能力。</p>
+<p>别一上来就把所有工具都预批准给它。</p>
+<p>工具越多，不一定越强，很多时候只是风险越大。</p>
+<p>尤其是 Claude Code 这种能直接读写文件、运行命令、提交修改的环境，工具权限不是装饰项。它决定了这个 Skill 在执行时有多顺滑，也决定了它出错时可能造成多大影响。</p>
+<p>我自己的感受是，写 Skill 时可以把它当成一个新人同事来配权限。</p>
+<p>你不会因为一个同事要帮你改一段文案，就给他生产数据库权限。你也不会因为他要整理资料，就默认允许他跑任意脚本。</p>
+<p>Agent 也一样。</p>
+<p>它越能干，越要有边界。</p>
+<p>这不是不信任模型，而是尊重系统。</p>
+<p><img src="imgs/02-infographic-tool-boundary.webp" alt="工具边界与最小可用权限"></p>
+<h2 id="四、模型选择不是玄学，是成本和可靠性的平衡"><a href="#四、模型选择不是玄学，是成本和可靠性的平衡" class="headerlink" title="四、模型选择不是玄学，是成本和可靠性的平衡"></a>四、模型选择不是玄学，是成本和可靠性的平衡</h2><p>还有一个经常被忽略的地方，Skill 也可以指定模型。</p>
+<p>很多人的默认做法是，所有 Skill 都用当前会话的模型。强模型也好，便宜模型也好，反正统一继承。</p>
+<p>这当然省事。</p>
+<p>但不一定合理。</p>
+<p>不同 Skill 对模型能力的要求差别非常大。写长文、做视觉设计、整理笔记、跑数据分析、爬取网页、格式化 Markdown、改简历，这些任务其实不该默认用同一个模型。</p>
+<p>有些任务需要强表达。比如长文写作，它考验结构、节奏、语气、判断力，还要能在材料里挑出真正重要的东西。这种任务，用写作能力更强的模型是值得的。</p>
+<p>有些任务需要视觉理解。比如封面图、插图、设计稿分析，它需要多模态能力和审美判断。</p>
+<p>有些任务只是稳定抽取。比如从网页里提取标题、作者、发布时间、正文摘要，未必需要最贵的模型。便宜快的模型，配上明确模板，可能反而更合适。</p>
+<p>还有些任务是确定性操作。比如检查图片尺寸、批量改文件名、导出多平台版本，这种东西让脚本做，比让强模型现场发挥稳定得多。</p>
+<p>这背后的原则很简单。</p>
+<p>不是所有任务都值得调用最强模型，也不是所有任务都能交给便宜模型。</p>
+<p>工业级 Skill 系统要做的，是把不同任务放到合适的执行层上。该用强模型时别省，该用脚本时别装，该用便宜模型时也别浪费。</p>
+<p>这就像团队分工。</p>
+<p>你不会让架构师每天手动改一百个文件名，也不会让实习生独立决定公司核心产品方向。</p>
+<p>Skill 里的模型选择，本质就是这种分工。</p>
+<h2 id="五、SKILL-md-应该像入口文件，不该像资料仓库"><a href="#五、SKILL-md-应该像入口文件，不该像资料仓库" class="headerlink" title="五、SKILL.md 应该像入口文件，不该像资料仓库"></a>五、<code>SKILL.md</code> 应该像入口文件，不该像资料仓库</h2><p>如果一个 Skill 的正文越来越长，长到你自己都不想读，大概率说明它开始变形了。</p>
+<p>很多人会把所有东西塞进 <code>SKILL.md</code>。</p>
+<p>触发说明放里面。</p>
+<p>执行步骤放里面。</p>
+<p>参考资料放里面。</p>
+<p>几十个案例放里面。</p>
+<p>脚本片段放里面。</p>
+<p>输出模板也放里面。</p>
+<p>看起来很完整，但代价是非常直接的。Skill 一旦被触发，整坨内容都进上下文。模型要读更久，响应变慢，注意力被稀释，复杂任务里还可能更早触发压缩，前面重要信息被挤掉。</p>
+<p>这就是为什么我越来越觉得，<code>SKILL.md</code> 不应该是仓库。</p>
+<p>它应该是入口文件。</p>
+<p>里面只放几类东西就够了，什么时候触发，做事原则，执行步骤，需要哪些工具，详细资料在哪里，收尾怎么验证。</p>
+<p>长参考资料放到 <code>references/</code>。</p>
+<p>稳定脚本放到 <code>scripts/</code>。</p>
+<p>模板、schema、示例文件放到 <code>assets/</code>。</p>
+<p>这样 Agent 每次只先读入口。真需要平台尺寸，再去读平台尺寸文档。真需要批量导出，再去跑脚本。真需要输出模板，再打开对应资产。</p>
+<p>这就是渐进式披露。</p>
+<p>按需读，按需用。</p>
+<p>不要一上来把全部家当倒在模型面前。</p>
+<p>我觉得这个设计非常像软件工程里的模块化。你写一个程序，也不会把所有函数、配置、测试数据、图片资源都塞进一个文件里。你会拆目录，会定义入口，会把确定性操作做成脚本，会把大型参考材料放到单独文件。</p>
+<p>Skill 也是软件。</p>
+<p>只是它运行在 Agent 的注意力里。</p>
+<p>所以 <code>SKILL.md</code> 太长时，别急着继续压缩措辞。先问自己，哪些内容其实应该被拆出去。</p>
+<p>长说明移到 <code>references/</code>。</p>
+<p>稳定操作写成 <code>scripts/</code>。</p>
+<p>模板样例放到 <code>assets/</code>。</p>
+<p>主文件只保留路线图。</p>
+<p>这一步做完，Skill 往往会立刻变清爽。</p>
+<p><img src="imgs/03-infographic-progressive-disclosure.webp" alt="SKILL.md 是入口，不是仓库"></p>
+<h2 id="六、写完不算完成，跑过-eval-才知道它有没有用"><a href="#六、写完不算完成，跑过-eval-才知道它有没有用" class="headerlink" title="六、写完不算完成，跑过 eval 才知道它有没有用"></a>六、写完不算完成，跑过 eval 才知道它有没有用</h2><p>这可能是最容易被跳过的一步。</p>
+<p>很多 Skill 写完之后，会给人一种已经完成的错觉。文件在了，规则有了，示例也写了，好像它就可以交付了。</p>
+<p>但 Skill 真正的问题不是写没写完。</p>
+<p>是它在真实任务里有没有变好。</p>
+<p>我觉得至少要测三层。</p>
+<p>第一层，能不能跑。</p>
+<p>路径对不对，引用文件能不能读到，脚本能不能执行，工具权限够不够，输出格式是不是符合预期，关键步骤有没有漏。</p>
+<p>这层很朴素，但很重要。一个 Skill 如果连真实任务都跑不通，后面讨论触发和质量都是空的。</p>
+<p>第二层，能不能正确触发。</p>
+<p>这一步不能只测用户说，请运行某某 Skill。</p>
+<p>真实用户不会这么说。</p>
+<p>你要准备一组真实表达。比如写长文 Skill，就测，把这个想法展开成一篇长推，按我的语气扩写一下，给我写一篇 X 长文，帮我把这个观点改成更抓人的版本。</p>
+<p>如果该触发的不触发，说明 <code>description</code> 太窄。</p>
+<p>如果不该触发的触发了，说明边界太宽。</p>
+<p>这一步测的是入口。</p>
+<p>入口不准，正文再漂亮也没用。</p>
+<p>第三层，结果有没有变好。</p>
+<p>这才是最关键的。</p>
+<p>同一个任务，不用 Skill 跑一遍，用 Skill 跑一遍，然后打分。不是凭感觉说不错，而是看它有没有减少错误，有没有更符合用户预期，有没有让输出下限更稳。</p>
+<p>可以很简单，0 到 10 分。</p>
+<p>0 到 2 分，方向错了。</p>
+<p>3 到 4 分，勉强相关，但漏掉关键要求。</p>
+<p>5 到 6 分，基本可用，但问题明显。</p>
+<p>7 到 8 分，质量稳定，细节可改。</p>
+<p>9 到 10 分，可以当示范。</p>
+<p>不用把 eval 搞得像科研论文那么复杂，但一定要有样本，有标准，有失败记录。</p>
+<p>比如封面图 Skill，就准备几个不同类型的标题、内容摘要、平台尺寸、参考风格，看看它能不能稳定生成合适 prompt。</p>
+<p>比如文章写作 Skill，就准备几条原始想法、目标读者、理想语气，看看它能不能写出接近你风格的成稿。</p>
+<p>比如简历改写 Skill，就准备不同岗位 JD、原始简历、修改目标，看看它是不是只会堆关键词，还是能真的做取舍。</p>
+<p>最有价值的是 baseline 对比。</p>
+<p>同一个任务，不启用 Skill 是 4 分，启用 Skill 是 8 分，这才说明 Skill 把经验固化进去了。</p>
+<p>如果不用 Skill 是 7 分，用了还是 7 分，那它可能只是一个看起来很漂亮的提示词仓库。</p>
+<p>没有带来增益。</p>
+<p>这句话有点残酷，但很必要。</p>
+<p>Skill 不是写给作者自我感动的。它要在任务里证明自己。</p>
+<p><img src="imgs/04-infographic-eval-loop.webp" alt="Skill Eval 闭环"></p>
+<h2 id="七、失败记录比成功案例更值钱"><a href="#七、失败记录比成功案例更值钱" class="headerlink" title="七、失败记录比成功案例更值钱"></a>七、失败记录比成功案例更值钱</h2><p>写 Skill 最容易写成功路径。</p>
+<p>用户提出需求，Agent 加载 Skill，按步骤执行，产出结果，完美收工。</p>
+<p>但真实世界不是这样。</p>
+<p>真实世界里，用户表达会很含糊，文件路径会不对，工具权限会缺，脚本会失败，参考资料会过期，模型会误解任务，输出格式会飘。</p>
+<p>所以一个好 Skill，不只要写怎么成功，还要写失败时怎么自救。</p>
+<p>触发失败，就补真实表达。</p>
+<p>误触发，就收窄边界。</p>
+<p>步骤漏掉，就改主流程。</p>
+<p>输出格式飘，就把样例放进 <code>assets/</code>。</p>
+<p>确定性检查不稳，就写脚本。</p>
+<p>参考资料太长，就拆到 <code>references/</code>。</p>
+<p>权限不够，就补工具。</p>
+<p>权限太大，就收紧。</p>
+<p>模型能力不够，就换模型。</p>
+<p>然后再跑一轮。</p>
+<p>这个闭环才是工业级 Skill 的核心。</p>
+<p>写 Skill，准备测试样本，运行 eval，逐项打分，定位失败原因，修改 Skill，再跑 eval。直到主要场景都过线，或者至少知道它的边界在哪里。</p>
+<p>我现在越来越觉得，Skill 的失败案例比成功案例更重要。</p>
+<p>成功案例很容易让人兴奋，但失败案例才会让系统变稳。每记录一个失败点，你就知道下一次该把经验固化在哪里。</p>
+<p>这和写软件其实没什么区别。</p>
+<p>没有测试的代码，你不敢随便改。</p>
+<p>没有 eval 的 Skill，你也不知道它什么时候会坏。</p>
+<h2 id="写在最后"><a href="#写在最后" class="headerlink" title="写在最后"></a>写在最后</h2><p>所以回到最开始那个问题。</p>
+<p>一个好 Skill 到底应该是什么样？</p>
+<p>我觉得不用讲得太玄。</p>
+<p>它能被正确触发。</p>
+<p>不该触发时保持安静。</p>
+<p>工具权限足够，但不过度。</p>
+<p>模型选择符合任务难度和成本。</p>
+<p><code>SKILL.md</code> 足够短，细节按需展开。</p>
+<p>重要场景有测试样本，有 eval，有失败记录，有迭代闭环。</p>
+<p>这些东西听起来都不性感。</p>
+<p>但工业级这个词，本来就不是性感。</p>
+<p>工业级不是写一段很聪明的 Prompt，让模型这一次表现惊艳。工业级是你把一套经验拆成入口、流程、工具、模型、资料、脚本、验证和迭代，让它以后反复遇到类似任务时，仍然能稳定工作。</p>
+<p>这才是 Skill 和 Prompt 最大的区别。</p>
+<p>Prompt 更像一句嘱咐。</p>
+<p>Skill 更像一条生产线。</p>
+<p>你不是在告诉模型，请你这次表现好一点。</p>
+<p>你是在搭一个系统，让它以后没那么容易表现差。</p>
+<p>这件事说起来不浪漫。</p>
+<p>但真的有用。</p>
+</div>
+    <aside class="post-rail">
+      <span class="post-rail__line"></span>
+      <span>LESLIE / WRITING</span>
+    </aside>
+  </div>
+
+  <footer class="post-footer shell">
+    <div><h2>如果这篇文章帮到了你，<br>也许下一篇会更有意思。</h2></div>
+    <a class="button button--primary" href="/writing/">继续阅读 →</a>
+  </footer>
+</article>
+</main>
+    <footer class="site-footer">
+  <div class="footer-grid">
+    <div>
+      <p class="footer-kicker">Leslie Zhang</p>
+      <p class="footer-statement">把真实世界的问题，<br>变成可以运行的智能系统。</p>
+    </div>
+    <div class="footer-links">
+      <a href="https://github.com/leslieAIbin" target="_blank" rel="noreferrer">GitHub ↗</a>
+      <a href="mailto:aibinzhangleslie@gmail.com">Email ↗</a>
+      <a href="/atom.xml">RSS ↗</a>
+    </div>
+    <div class="footer-meta">
+      <span>© 2026 Leslie Zhang</span>
+      <span>Writing, research and working systems.</span>
+    </div>
+  </div>
+</footer>
+
+    <dialog class="ask-dialog" id="ask-leslie" aria-labelledby="ask-title">
+  <div class="ask-dialog__shell">
+    <div class="ask-dialog__topbar">
+      <div>
+        <h2 id="ask-title">Ask Leslie</h2>
+      </div>
+      <button class="icon-button" type="button" data-ask-close aria-label="关闭">×</button>
+    </div>
+    <p class="ask-dialog__intro">从本站公开文章中寻找答案。当前版本在浏览器本地检索，不上传问题，也不会编造不存在的经历。</p>
+    <form class="ask-form" data-ask-form>
+      <label class="sr-only" for="ask-query">输入问题</label>
+      <textarea id="ask-query" rows="2" placeholder="例如：Agent Runtime 应该怎么设计？" data-ask-input></textarea>
+      <button type="submit">检索知识库 <span aria-hidden="true">↗</span></button>
+    </form>
+    <div class="ask-suggestions" aria-label="推荐问题">
+      
+        <button type="button" data-ask-suggestion="Agent Runtime 应该怎么设计？">Agent Runtime 应该怎么设计？</button>
+      
+        <button type="button" data-ask-suggestion="如何让 AI 操控真实世界设备？">如何让 AI 操控真实世界设备？</button>
+      
+        <button type="button" data-ask-suggestion="Leslie 最近在研究什么？">Leslie 最近在研究什么？</button>
+      
+    </div>
+    <div class="ask-results" data-ask-results aria-live="polite">
+      <div class="ask-empty">
+        <p>输入一个问题，我会把你带到 Leslie 写过的相关内容。</p>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+    <script>window.ORBITAL_ROOT = '/';</script>
+    <script src="/js/orbital.js" defer></script>
+  </body>
+</html>

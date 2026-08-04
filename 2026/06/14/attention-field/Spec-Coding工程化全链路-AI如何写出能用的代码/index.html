@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+  <head>
+
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#050b18">
+<meta name="color-scheme" content="dark light">
+<title>AI Coding到底是怎么写出能用的代码的？——Spec Coding工程化全链路 | Leslie Zhang</title>
+<meta name="description" content="构建能够感知、规划、行动与反馈的智能体系统，长期关注 Agent Runtime、多模态与真实世界自动化。">
+<meta name="author" content="Leslie Zhang">
+<link rel="canonical" href="https://leslieaibin.github.io/2026/06/14/attention-field/Spec-Coding%E5%B7%A5%E7%A8%8B%E5%8C%96%E5%85%A8%E9%93%BE%E8%B7%AF-AI%E5%A6%82%E4%BD%95%E5%86%99%E5%87%BA%E8%83%BD%E7%94%A8%E7%9A%84%E4%BB%A3%E7%A0%81/">
+<link rel="icon" href="/imgs/01.jpg">
+<link rel="alternate" type="application/atom+xml" title="Leslie Zhang" href="/atom.xml">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AI Coding到底是怎么写出能用的代码的？——Spec Coding工程化全链路 | Leslie Zhang">
+<meta property="og:description" content="构建能够感知、规划、行动与反馈的智能体系统，长期关注 Agent Runtime、多模态与真实世界自动化。">
+<meta property="og:url" content="https://leslieaibin.github.io/2026/06/14/attention-field/Spec-Coding%E5%B7%A5%E7%A8%8B%E5%8C%96%E5%85%A8%E9%93%BE%E8%B7%AF-AI%E5%A6%82%E4%BD%95%E5%86%99%E5%87%BA%E8%83%BD%E7%94%A8%E7%9A%84%E4%BB%A3%E7%A0%81/">
+<meta property="og:image" content="https://leslieaibin.github.io/2026/06/14/attention-field/Spec-Coding%E5%B7%A5%E7%A8%8B%E5%8C%96%E5%85%A8%E9%93%BE%E8%B7%AF-AI%E5%A6%82%E4%BD%95%E5%86%99%E5%87%BA%E8%83%BD%E7%94%A8%E7%9A%84%E4%BB%A3%E7%A0%81/imgs/cover.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="AI Coding到底是怎么写出能用的代码的？——Spec Coding工程化全链路 | Leslie Zhang">
+<meta name="twitter:description" content="构建能够感知、规划、行动与反馈的智能体系统，长期关注 Agent Runtime、多模态与真实世界自动化。">
+<meta name="twitter:image" content="https://leslieaibin.github.io/2026/06/14/attention-field/Spec-Coding%E5%B7%A5%E7%A8%8B%E5%8C%96%E5%85%A8%E9%93%BE%E8%B7%AF-AI%E5%A6%82%E4%BD%95%E5%86%99%E5%87%BA%E8%83%BD%E7%94%A8%E7%9A%84%E4%BB%A3%E7%A0%81/imgs/cover.png">
+<script>
+  (function () {
+    var saved = localStorage.getItem('orbital-theme');
+    var theme = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    document.documentElement.dataset.theme = theme;
+  })();
+</script>
+<link rel="stylesheet" href="/css/orbital.css">
+<meta name="generator" content="Hexo 5.2.0"></head>
+  <body class="page-post">
+    <a class="skip-link" href="#main-content">跳到主要内容</a>
+    <div class="reading-progress" data-reading-progress></div>
+    <header class="site-header" data-header>
+  <div class="nav-shell">
+    <a class="brand" href="/" aria-label="返回首页">
+      <span class="brand-mark" aria-hidden="true"><img src="/images/brand/leslie-mythos-avatar.webp" alt="" width="512" height="512"></span>
+      <span class="brand-copy">
+        <strong>LESLIE</strong>
+        <small>REAL-WORLD AGENTS</small>
+      </span>
+    </a>
+
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav" data-nav-toggle>
+      <span></span><span></span>
+      <span class="sr-only">打开导航</span>
+    </button>
+
+    <nav class="main-nav" id="main-nav" aria-label="主导航" data-nav>
+      
+        <a href="/" class="">首页</a>
+      
+        <a href="/writing/" class="">写作</a>
+      
+        <a href="/projects/" class="">项目</a>
+      
+        <a href="/about/" class="">关于</a>
+      
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换明暗主题">
+        <span class="theme-toggle__sun" aria-hidden="true">☼</span>
+        <span class="theme-toggle__moon" aria-hidden="true">◐</span>
+      </button>
+      <button class="ask-nav" type="button" data-ask-open>ASK LESLIE</button>
+    </nav>
+  </div>
+</header>
+
+    <main id="main-content"><article class="post-shell">
+  <header class="post-hero shell">
+    <a class="post-back" href="/writing/">← 返回写作</a>
+    <div class="post-hero__meta">
+      <time datetime="2026-06-14">2026 年 06 月 14 日</time>
+      <span>10 分钟阅读</span>
+    </div>
+    <h1>AI Coding到底是怎么写出能用的代码的？——Spec Coding工程化全链路</h1>
+    
+    <div class="chip-row"><a href="/tags/Agent/">Agent</a><a href="/tags/LLM/">LLM</a><a href="/tags/AI-Coding/">AI-Coding</a><a href="/tags/Spec-Coding/">Spec-Coding</a><a href="/tags/%E4%BB%A3%E7%A0%81%E7%94%9F%E6%88%90/">代码生成</a></div>
+  </header>
+
+  <div class="post-cover shell"><img src="/2026/06/14/attention-field/Spec-Coding%E5%B7%A5%E7%A8%8B%E5%8C%96%E5%85%A8%E9%93%BE%E8%B7%AF-AI%E5%A6%82%E4%BD%95%E5%86%99%E5%87%BA%E8%83%BD%E7%94%A8%E7%9A%84%E4%BB%A3%E7%A0%81/imgs/cover.png" alt="AI Coding到底是怎么写出能用的代码的？——Spec Coding工程化全链路"></div>
+
+  <div class="post-layout shell">
+    <aside class="post-toc" aria-label="文章目录">
+      <span class="aside-title">目录</span>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%8E%E2%80%9D%E4%B8%80%E5%8F%A5%E8%AF%9D%E9%9C%80%E6%B1%82%E2%80%9D%E5%88%B0%E2%80%9D%E8%83%BD%E7%94%A8%E7%9A%84%E4%BB%A3%E7%A0%81%E2%80%9D%EF%BC%8C%E5%B7%AE%E4%BA%86%E5%A4%9A%E5%B0%91%E6%AD%A5"><span class="toc-text">从”一句话需求”到”能用的代码”，差了多少步</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Spec-%E6%80%8E%E4%B9%88%E5%86%99%EF%BC%9A%E4%BB%8E%E8%87%AA%E7%84%B6%E8%AF%AD%E8%A8%80%E5%88%B0%E7%BB%93%E6%9E%84%E5%8C%96%E8%A7%84%E6%A0%BC"><span class="toc-text">Spec 怎么写：从自然语言到结构化规格</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%8E-Spec-%E5%88%B0%E4%BB%A3%E7%A0%81%EF%BC%9APlan-%E2%86%92-Generate-%E2%86%92-Verify"><span class="toc-text">从 Spec 到代码：Plan → Generate → Verify</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Plan%EF%BC%9A%E6%8A%8A-Spec-%E6%8B%86%E6%88%90%E6%89%A7%E8%A1%8C%E6%AD%A5%E9%AA%A4"><span class="toc-text">Plan：把 Spec 拆成执行步骤</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Generate%EF%BC%9A%E4%BB%A3%E7%A0%81%E7%94%9F%E6%88%90%E7%9A%84%E6%A0%B8%E5%BF%83"><span class="toc-text">Generate：代码生成的核心</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Verify%EF%BC%9A%E4%BA%BA%E7%B1%BB%E5%9C%A8%E7%8E%AF%E7%9A%84%E6%9C%80%E5%90%8E%E4%B8%80%E5%85%B3"><span class="toc-text">Verify：人类在环的最后一关</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BD%B1%E5%93%8D%E5%9F%9F%E5%88%A4%E6%96%AD%EF%BC%9A%E6%94%B9-A-%E8%BF%98%E6%98%AF%E6%94%B9-A-B%EF%BC%9F"><span class="toc-text">影响域判断：改 A 还是改 A+B？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Code-Review-%E8%B0%81%E6%9D%A5%E5%B9%B2%EF%BC%9A%E5%BD%93%E4%BD%9C%E8%80%85%E6%98%AF-AI"><span class="toc-text">Code Review 谁来干：当作者是 AI</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#AI-Coding-%E7%9A%84-ROI%EF%BC%9A%E5%88%B0%E5%BA%95%E7%9C%81%E4%BA%86%E5%A4%9A%E5%B0%91%E6%97%B6%E9%97%B4"><span class="toc-text">AI Coding 的 ROI：到底省了多少时间</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%99%E5%9C%A8%E6%9C%80%E5%90%8E"><span class="toc-text">写在最后</span></a></li></ol>
+    </aside>
+    <div class="article-content"><h1 id="AI-Coding到底是怎么写出能用的代码的？——Spec-Coding工程化全链路"><a href="#AI-Coding到底是怎么写出能用的代码的？——Spec-Coding工程化全链路" class="headerlink" title="AI Coding到底是怎么写出能用的代码的？——Spec Coding工程化全链路"></a>AI Coding到底是怎么写出能用的代码的？——Spec Coding工程化全链路</h1><p>如果你用过 Cursor 或 Claude Code 写代码，你一定体验过这种感觉：</p>
+<p>给它一句”帮我加一个用户登录功能”，它刷刷刷生成几百行代码，看着像模像样。但你细看——密码没加密，session 没过期时间，SQL 查询有注入风险，错误处理全是一个 <code>print(e)</code>。能用吗？能用。敢用吗？不敢。</p>
+<p>这就是 AI Coding 的核心难题：<strong>能写代码 ≠ 能写能用的代码</strong>。</p>
+<p>从”能写”到”能用的”之间，差了一套工程化体系。这套体系在业界有个名字——<strong>Spec Coding</strong>（规格驱动编码）。这篇文章把它从头拆一遍：Spec 怎么写、代码怎么生成、质量怎么保证、影响域怎么判断、迭代怎么闭环。</p>
+<p><img src="imgs/cover.png" alt="Cover"></p>
+<h2 id="从”一句话需求”到”能用的代码”，差了多少步"><a href="#从”一句话需求”到”能用的代码”，差了多少步" class="headerlink" title="从”一句话需求”到”能用的代码”，差了多少步"></a>从”一句话需求”到”能用的代码”，差了多少步</h2><p>先看一个典型场景。</p>
+<p>你给 AI 一个需求：”在这个订单系统里加一个取消订单的功能”。</p>
+<p>AI 可能会直接写一个 <code>cancelOrder()</code> 函数。但一个真正能用的取消订单功能，需要回答至少以下问题：</p>
+<ul>
+<li>什么状态的订单可以取消？（已支付？已发货？已签收？）</li>
+<li>取消后钱怎么退？（原路退回？退到余额？要扣手续费吗？）</li>
+<li>库存要不要恢复？（取消的订单的库存要加回去吗？）</li>
+<li>正在处理的优惠券怎么处理？（已使用的优惠券要退回吗？）</li>
+<li>并发取消怎么办？（用户连点两次取消按钮？）</li>
+<li>取消操作的权限怎么控制？（买家取消 vs 商家取消 vs 客服取消？）</li>
+<li>取消后的通知怎么发？（短信？App推送？邮件？）</li>
+<li>取消操作的日志怎么记？（审计合规要求？）</li>
+</ul>
+<p>这些问题，一个初级工程师也需要和产品经理反复确认。AI 当然更不会自动知道答案。</p>
+<p>所以 AI Coding 的第一步，不是写代码，而是<strong>把需求变成规格</strong>。</p>
+<p><img src="imgs/01-pipeline.png" alt="Spec Coding全链路"></p>
+<h2 id="Spec-怎么写：从自然语言到结构化规格"><a href="#Spec-怎么写：从自然语言到结构化规格" class="headerlink" title="Spec 怎么写：从自然语言到结构化规格"></a>Spec 怎么写：从自然语言到结构化规格</h2><p>Spec（规格说明书）是连接”人类意图”和”机器代码”的桥梁。它要回答三个问题：</p>
+<ol>
+<li><strong>做什么</strong>（功能描述）</li>
+<li><strong>怎么做</strong>（实现方案）</li>
+<li><strong>边界在哪</strong>（约束条件）</li>
+</ol>
+<p>一个好的 Spec 不是越长越好，而是<strong>越精确越好</strong>。举例：</p>
+<p><strong>差的 Spec</strong>（太模糊）：</p>
+<blockquote>
+<p>加一个取消订单功能。</p>
+</blockquote>
+<p><strong>好的 Spec</strong>（精确且带约束）：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">功能：取消订单</span><br><span class="line">触发条件：订单状态为&quot;已支付&quot;或&quot;待处理&quot;</span><br><span class="line">前置校验：</span><br><span class="line">  - 当前用户是订单的买家 OR 有客服权限</span><br><span class="line">  - 订单创建时间 &lt; 24小时（超时需人工审核）</span><br><span class="line">  - 订单未关联进行中的退款流程</span><br><span class="line">执行动作：</span><br><span class="line">  1. 订单状态更新为&quot;已取消&quot;</span><br><span class="line">  2. 支付金额原路退回（调用 PaymentService.refund）</span><br><span class="line">  3. 库存恢复（调用 InventoryService.restore，需幂等检查）</span><br><span class="line">  4. 已使用优惠券退回用户账户</span><br><span class="line">  5. 记录审计日志（order_cancel 事件）</span><br><span class="line">失败处理：</span><br><span class="line">  - 退款失败 → 订单状态回滚，记录异常，通知人工介入</span><br><span class="line">  - 库存恢复失败 → 重试3次，仍失败则转人工</span><br><span class="line">  - 优惠券退回失败 → 不影响主流程，异步补偿</span><br><span class="line">并发控制：通过订单ID + 状态乐观锁，禁止重复取消</span><br></pre></td></tr></table></figure>
+
+<p>看到差别了吗？好的 Spec 不告诉你”应该有个取消功能”，而是告诉你<strong>每一个分支怎么走、每一个异常怎么兜底</strong>。</p>
+<p>这在工程上对应一个概念：<strong>Spec 的粒度</strong>。太粗的 Spec 等于没写，太细的 Spec 等于直接写代码。找到合适的粒度，是 Spec Coding 的第一个核心能力。</p>
+<p>业界目前的实践是：Spec 控制在”函数级”或”模块级”。一个 Spec 对应 1-3 个文件、50-300 行代码。超过这个范围，AI 的理解准确率会显著下降。</p>
+<p><img src="imgs/02-spec-granularity.png" alt="Spec粒度"></p>
+<h2 id="从-Spec-到代码：Plan-→-Generate-→-Verify"><a href="#从-Spec-到代码：Plan-→-Generate-→-Verify" class="headerlink" title="从 Spec 到代码：Plan → Generate → Verify"></a>从 Spec 到代码：Plan → Generate → Verify</h2><p>有了 Spec，接下来是三个阶段的流水线：Plan（规划）、Generate（生成）、Verify（验证）。</p>
+<h3 id="Plan：把-Spec-拆成执行步骤"><a href="#Plan：把-Spec-拆成执行步骤" class="headerlink" title="Plan：把 Spec 拆成执行步骤"></a>Plan：把 Spec 拆成执行步骤</h3><p>Plan 阶段的输入是 Spec，输出是一个<strong>有序的执行计划</strong>——先改哪个文件、再加哪个函数、最后改什么配置。</p>
+<p>这看起来简单，但有两个坑：</p>
+<ol>
+<li><p><strong>依赖顺序</strong>：改 A 文件可能依赖 B 文件的类型定义。如果先生成 B 再生成 A，A 里可以直接 import B 的类型。顺序反了，生成的代码就会出现”先用到后定义”的尴尬。</p>
+</li>
+<li><p><strong>改造范围</strong>：一个需求的 Spec 可能涉及 3 个文件的修改，但也可能因为现有架构的限制，需要改 5 个文件。Plan 阶段需要<strong>先读取现有的代码结构</strong>，判断实际影响范围。</p>
+</li>
+</ol>
+<p>好的 Plan 不仅是”步骤列表”，还包含每一步的<strong>验收标准</strong>：改了 user.go 之后，应该能通过哪几个已有测试；新增了 cancel_order.go 之后，应该新增哪几个测试。</p>
+<h3 id="Generate：代码生成的核心"><a href="#Generate：代码生成的核心" class="headerlink" title="Generate：代码生成的核心"></a>Generate：代码生成的核心</h3><p>Generate 阶段看起来最”AI”——把 Spec + Plan + 现有代码喂给 LLM，生成代码。</p>
+<p>但这里的工程细节最多：</p>
+<p><strong>上下文窗口管理</strong>：一个中等规模的代码仓库，轻松几十万行。LLM 的上下文窗口装不下整个仓库。所以需要<strong>选择性注入</strong>——只把相关文件、相关类型定义、相关接口签名注入到 Prompt 里。这就是为什么 Plan 阶段要先定”改造范围”。</p>
+<p><strong>工具调用和代码执行</strong>：AI 生成了代码之后，不是直接写入文件。而是：</p>
+<ol>
+<li>生成代码 → 写入临时文件</li>
+<li>运行 linter（自动格式化 + 静态检查）</li>
+<li>运行已有的相关测试（回归检查）</li>
+<li>如果有失败 → 把失败信息喂回 AI → 修复 → 再跑测试</li>
+<li>循环直到全部通过</li>
+</ol>
+<p>这个循环在 Claude Code 的 Agent 模式里已经实现了。Claude Code 会自己跑测试、看报错、修改代码、再跑测试。但这个能力不是免费的——每次循环都消耗 token，一个复杂功能可能需要 5-10 次循环。</p>
+<p><strong>Code Style 一致性</strong>：AI 生成的代码风格可能和现有代码不一致（缩进、命名规范、错误处理模式）。解决方案是在 System Prompt 里注入项目的代码规范，或者用 linter 的 auto-fix 做后处理。</p>
+<h3 id="Verify：人类在环的最后一关"><a href="#Verify：人类在环的最后一关" class="headerlink" title="Verify：人类在环的最后一关"></a>Verify：人类在环的最后一关</h3><p>代码生成完毕、测试全部通过之后，谁来最终拍板”这代码可以合并”？</p>
+<p>答案是：<strong>人</strong>。至少在目前阶段，AI Coding 的最终守门员还是人类开发者。</p>
+<p>但这不意味着人要把生成的代码一行行读完。更高效的做法是：</p>
+<ol>
+<li><p><strong>看 diff 摘要</strong>：AI 改了哪些文件、增删了多少行、改了什么函数签名。如果 diff 范围超出 Spec 的预期范围（比如 Spec 说只改 2 个文件，实际改了 5 个），这就是红旗。</p>
+</li>
+<li><p><strong>看测试覆盖</strong>：新增的测试是否覆盖了 Spec 里描述的所有分支？正常路径、异常路径、边界条件都有吗？如果 AI 只生成了 happy path 的测试，缺失异常测试，需要打回。</p>
+</li>
+<li><p><strong>点检关键逻辑</strong>：不用全读。挑 3-5 个最关键的逻辑点（比如退款调用、库存恢复、并发控制），深读代码。如果这 3-5 个点都对，其余大概率也对。</p>
+</li>
+</ol>
+<p><img src="imgs/03-plan-generate-verify.png" alt="Plan-Generate-Verify"></p>
+<h2 id="影响域判断：改-A-还是改-A-B？"><a href="#影响域判断：改-A-还是改-A-B？" class="headerlink" title="影响域判断：改 A 还是改 A+B？"></a>影响域判断：改 A 还是改 A+B？</h2><p>这是 Spec Coding 里最难的问题之一，也是面试中技术 Leader 最喜欢追问的点。</p>
+<p>需求是”给订单表加一个取消原因字段”。你觉得只改 order.go 就够了。但实际改完后发现，前端展示订单详情的接口也引用了订单结构体，API 文档要更新，数据迁移脚本要写，BI 报表那边也要加这个字段。</p>
+<p>这就是<strong>影响域判断</strong>——一个看似局部的修改，实际会产生多大的涟漪效应。</p>
+<p>目前业界的做法分为三个层次：</p>
+<p><strong>第一层：静态分析（AST/调用图）</strong>。用编译器的语法树分析，找出所有引用了被修改符号的位置。比如你改了 <code>Order</code> 结构体，IDE 的”查找所有引用”就能告诉你哪些文件 import 了这个类型。这是最基础的，准确率接近 100%，但只能覆盖<strong>语法层面的依赖</strong>。</p>
+<p><strong>第二层：运行时追踪</strong>。有些依赖是静态分析发现不了的——比如通过反射调用的方法、通过配置动态加载的模块、通过消息队列解耦的生产者-消费者。这些需要从线上流量日志、链路追踪系统中提取。准确率 70-90%，但数据采集成本高。</p>
+<p><strong>第三层：LLM Judge</strong>。把”我要改 A 文件里的 X 函数”和”这个仓库的文件列表+简介”一起喂给 LLM，让它判断还有哪些文件可能受牵连。LLM 不像静态分析那样精确，但它能发现<strong>语义层面的耦合</strong>——比如”这个函数改了订单状态机，我记得 payment.go 里有个 switch 语句也 switch 了订单状态”。准召率大约 70-80%，但随着模型能力提升在持续改善。</p>
+<p>实际工程中，这三层是<strong>组合使用</strong>的：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1. 静态分析 → 找出确定的硬依赖（100% 准确）</span><br><span class="line">2. LLM Judge → 补充语义层面的软依赖（70-80% 准确）</span><br><span class="line">3. 运行时追踪 → 验证线上实际调用关系（70-90% 准确）</span><br><span class="line">4. 三层取并集 → 最终影响域</span><br></pre></td></tr></table></figure>
+
+<p>影响域判断的结果直接决定了 Plan 的范围。如果判断失误（应该改 A+B 但只改了 A），后续的测试阶段会捕获这个遗漏——但修复成本已经产生了。</p>
+<p><img src="imgs/04-impact-analysis.png" alt="影响域判断"></p>
+<h2 id="Code-Review-谁来干：当作者是-AI"><a href="#Code-Review-谁来干：当作者是-AI" class="headerlink" title="Code Review 谁来干：当作者是 AI"></a>Code Review 谁来干：当作者是 AI</h2><p>传统开发流程里，写代码的人和 Review 代码的人是不同的，形成制衡。但当 AI 写了代码之后，谁来 Review？</p>
+<p>这个问题比看起来更复杂。因为如果人类来 Review AI 写的代码，效率极低——人读 AI 生成的几百行代码，找出那个隐藏的 bug，比人 Review 人写的代码难得多。AI 的代码往往”形态正确”但”语义可疑”——变量名都对、缩进都对、类型都对，但逻辑上有一个微妙的漏洞。</p>
+<p>目前业界的实践是<strong>分层 Review</strong>：</p>
+<p><strong>第一层：机器 Review（必过）</strong></p>
+<ul>
+<li>Linter（格式化、静态规则）</li>
+<li>已有测试回归（确保不改坏旧功能）</li>
+<li>新增测试的覆盖率检查（分支覆盖率 &gt; 80%）</li>
+<li>安全扫描（SQL注入、XSS、敏感信息硬编码）</li>
+</ul>
+<p><strong>第二层：AI 自 Review（自检）</strong></p>
+<ul>
+<li>把生成的代码 + Spec 再喂给同一个（或另一个更强的）LLM</li>
+<li>让它逐条对照 Spec 检查代码是否实现了所有需求</li>
+<li>让它检查 Spec 中标注的约束条件是否都满足了（并发控制、异常处理、权限校验）</li>
+<li>如果有遗漏 → 自动修复或标记出来</li>
+</ul>
+<p><strong>第三层：人类 Review（终审）</strong></p>
+<ul>
+<li>人类只看 3 样东西：diff 摘要、Review 报告（AI 自检的输出）、新增测试用例列表</li>
+<li>如果这三样都干净——diff 范围合理、AI 自检无遗漏、测试覆盖充分——人类可以在 5-10 分钟内完成 Review</li>
+<li>只有在 AI 自检发现异常、或者代码涉及核心安全逻辑时，人类才需要深读代码</li>
+</ul>
+<p>这三层 Review 如果能跑通，AI Coding 的代码合并速度可以从”几天一 PR”变成”一天几个 PR”。但前提是：<strong>Spec 写得足够好</strong>、<strong>测试用例足够全面</strong>、<strong>AI 自检足够可靠</strong>。</p>
+<p><img src="imgs/05-code-review.png" alt="Code Review分层"></p>
+<h2 id="AI-Coding-的-ROI：到底省了多少时间"><a href="#AI-Coding-的-ROI：到底省了多少时间" class="headerlink" title="AI Coding 的 ROI：到底省了多少时间"></a>AI Coding 的 ROI：到底省了多少时间</h2><p>最后聊一个现实问题：引入 Spec Coding 真的省时间吗？写一个详细的 Spec 本身就要花不少时间，加上 Review、测试、修复的循环，最终到底是省了还是亏了？</p>
+<p>这取决于<strong>任务的复杂度</strong>和<strong>迭代次数</strong>。</p>
+<p><strong>简单任务（1-2 个文件，明确的 CRUD）</strong>：</p>
+<ul>
+<li>手写代码：30 分钟</li>
+<li>Spec Coding：写 Spec 10 分钟 + AI 生成+修复 5 分钟 + Review 5 分钟 = 20 分钟</li>
+<li><strong>省 33%</strong></li>
+</ul>
+<p><strong>中等任务（3-5 个文件，有业务逻辑）</strong>：</p>
+<ul>
+<li>手写代码：4 小时</li>
+<li>Spec Coding：写 Spec 30 分钟 + AI 生成+修复循环 20 分钟 + Review 20 分钟 = 70 分钟</li>
+<li><strong>省 70%</strong></li>
+</ul>
+<p><strong>复杂任务（跨模块，有状态机/并发/事务）</strong>：</p>
+<ul>
+<li>手写代码：2-3 天</li>
+<li>Spec Coding：写 Spec 1 小时 + AI 生成+多轮修复 1-2 小时 + Review 30 分钟 = 3-4 小时</li>
+<li><strong>省 80%+</strong></li>
+</ul>
+<p>但这里有一个反直觉的规律：<strong>收益最大的不是代码生成阶段，而是 Spec 书写阶段</strong>。</p>
+<p>为什么？因为写 Spec 的过程，本质上是把模糊需求变成精确约束的过程。这个过程就算不交给 AI 写代码，自己做也是要做的——和产品经理对齐、画流程图、考虑边界条件。Spec Coding 只是把这个过程的产出<strong>结构化、可复用</strong>了。</p>
+<p>而且 Spec 写好之后，后续的迭代成本极低。需求变更时，只需要改 Spec 的对应对应部分，重新跑一次 Plan → Generate → Verify，代码就更新了。不用像手写代码那样，在几个文件之间反复梳理”这个改动影响哪些地方”。</p>
+<p>这也是为什么很多团队引入 AI Coding 之后，<strong>前两周效率反而下降</strong>（因为要学习写 Spec），但一个月后效率开始显著提升。Spec 写得越多，积累的可复用 Spec 模板越多，效率曲线就越陡。</p>
+<h2 id="写在最后"><a href="#写在最后" class="headerlink" title="写在最后"></a>写在最后</h2><p>AI Coding 的终局不是”AI 替代程序员”，而是**”程序员 + AI”替代”程序员自己”**。</p>
+<p>这里的核心技能转移非常明确：以前程序员的稀缺价值是”我会写代码”，以后的稀缺价值是”我会写 Spec”——能把业务需求翻译成精确的、可验证的、机器可执行的规格说明。</p>
+<p>这个变化正在发生。Cursor 的 Agent 模式、Claude Code 的 Subagent 机制、Devin 的端到端自动化，本质上都在做同一件事：**从”人写代码、AI 辅助”变成”人写 Spec、AI 写代码、人 Review”**。</p>
+<p>下次你打开 AI Coding 工具，别只想”让它帮我写这段代码”。改成想”让我帮它写一份好 Spec，让它帮我搞定剩下的”。</p>
+<p>以上，既然看到这里了，如果觉得不错，随手点个赞、在看、转发三连吧，如果想第一时间收到推送，也可以给我个星标⭐~<br>谢谢你看我的文章，我们，下次再见。</p>
+<blockquote>
+<p>/ 参考资料<br>Claude Code Agent Architecture (Anthropic, 2025)<br>Superpower: A Spec-Driven Development Framework for AI Coding<br>Codex: Observable AI Code Generation System<br>Unit Test Generation with Large Language Models (Chen et al., 2024)<br>SWE-bench: Can Language Models Resolve Real-World GitHub Issues? (Jimenez et al., 2024)<br>Lost in the Middle: How Language Models Use Long Contexts (Liu et al., 2023)</p>
+</blockquote>
+</div>
+    <aside class="post-rail">
+      <span class="post-rail__line"></span>
+      <span>LESLIE / WRITING</span>
+    </aside>
+  </div>
+
+  <footer class="post-footer shell">
+    <div><h2>如果这篇文章帮到了你，<br>也许下一篇会更有意思。</h2></div>
+    <a class="button button--primary" href="/writing/">继续阅读 →</a>
+  </footer>
+</article>
+</main>
+    <footer class="site-footer">
+  <div class="footer-grid">
+    <div>
+      <p class="footer-kicker">Leslie Zhang</p>
+      <p class="footer-statement">把真实世界的问题，<br>变成可以运行的智能系统。</p>
+    </div>
+    <div class="footer-links">
+      <a href="https://github.com/leslieAIbin" target="_blank" rel="noreferrer">GitHub ↗</a>
+      <a href="mailto:aibinzhangleslie@gmail.com">Email ↗</a>
+      <a href="/atom.xml">RSS ↗</a>
+    </div>
+    <div class="footer-meta">
+      <span>© 2026 Leslie Zhang</span>
+      <span>Writing, research and working systems.</span>
+    </div>
+  </div>
+</footer>
+
+    <dialog class="ask-dialog" id="ask-leslie" aria-labelledby="ask-title">
+  <div class="ask-dialog__shell">
+    <div class="ask-dialog__topbar">
+      <div>
+        <h2 id="ask-title">Ask Leslie</h2>
+      </div>
+      <button class="icon-button" type="button" data-ask-close aria-label="关闭">×</button>
+    </div>
+    <p class="ask-dialog__intro">从本站公开文章中寻找答案。当前版本在浏览器本地检索，不上传问题，也不会编造不存在的经历。</p>
+    <form class="ask-form" data-ask-form>
+      <label class="sr-only" for="ask-query">输入问题</label>
+      <textarea id="ask-query" rows="2" placeholder="例如：Agent Runtime 应该怎么设计？" data-ask-input></textarea>
+      <button type="submit">检索知识库 <span aria-hidden="true">↗</span></button>
+    </form>
+    <div class="ask-suggestions" aria-label="推荐问题">
+      
+        <button type="button" data-ask-suggestion="Agent Runtime 应该怎么设计？">Agent Runtime 应该怎么设计？</button>
+      
+        <button type="button" data-ask-suggestion="如何让 AI 操控真实世界设备？">如何让 AI 操控真实世界设备？</button>
+      
+        <button type="button" data-ask-suggestion="Leslie 最近在研究什么？">Leslie 最近在研究什么？</button>
+      
+    </div>
+    <div class="ask-results" data-ask-results aria-live="polite">
+      <div class="ask-empty">
+        <p>输入一个问题，我会把你带到 Leslie 写过的相关内容。</p>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+    <script>window.ORBITAL_ROOT = '/';</script>
+    <script src="/js/orbital.js" defer></script>
+  </body>
+</html>

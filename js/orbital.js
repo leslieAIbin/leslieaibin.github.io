@@ -478,8 +478,25 @@
     });
   }
 
+  function setupWechat() {
+    var dialog = document.getElementById('wechat-leslie');
+    if (!dialog) return;
+
+    function open() { if (!dialog.open) dialog.showModal(); }
+    function close() { if (dialog.open) dialog.close(); }
+
+    document.querySelectorAll('[data-wechat-open]').forEach(function (button) {
+      button.addEventListener('click', open);
+    });
+    dialog.querySelector('[data-wechat-close]').addEventListener('click', close);
+    dialog.addEventListener('click', function (event) {
+      if (event.target === dialog) close();
+    });
+  }
+
   setupWritingSearch();
   setupAccountCopy();
+  setupWechat();
   setupCodeCopy();
   setupAsk();
   setupHeroParallax();

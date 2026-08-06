@@ -9,19 +9,19 @@
 <meta name="theme-color" content="#050b18">
 <meta name="color-scheme" content="dark light">
 <title>Leslie Zhang | AI Agent &amp; Agent Infra Engineer</title>
-<meta name="description" content="构建能够感知、规划、行动与反馈的智能体系统，长期关注 Agent Runtime、多模态与真实世界自动化。">
+<meta name="description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
 <meta name="author" content="Leslie Zhang">
 <link rel="canonical" href="https://leslieaibin.github.io/archives/page/7/index.html">
 <link rel="icon" href="/imgs/01.jpg">
 <link rel="alternate" type="application/atom+xml" title="Leslie Zhang" href="/atom.xml">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Leslie Zhang | AI Agent &amp; Agent Infra Engineer">
-<meta property="og:description" content="构建能够感知、规划、行动与反馈的智能体系统，长期关注 Agent Runtime、多模态与真实世界自动化。">
+<meta property="og:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
 <meta property="og:url" content="https://leslieaibin.github.io/archives/page/7/index.html">
 <meta property="og:image" content="https://leslieaibin.github.io/og-blue.png">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Leslie Zhang | AI Agent &amp; Agent Infra Engineer">
-<meta name="twitter:description" content="构建能够感知、规划、行动与反馈的智能体系统，长期关注 Agent Runtime、多模态与真实世界自动化。">
+<meta name="twitter:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
 <meta name="twitter:image" content="https://leslieaibin.github.io/og-blue.png">
 <script>
   (function () {
@@ -72,9 +72,19 @@
     <main id="main-content"><section class="page-hero shell">
   <p class="page-kicker">Writing archive</p>
   <h1>全部归档</h1>
-  <p>按时间回看一路留下的工程笔记。</p>
+  <p>按时间回看，理解是怎样一层层长出来的。</p>
 </section>
 <section class="section shell"><div class="writing-list" data-writing-list>
+  
+    <article class="writing-row reveal" data-writing-item data-search="04.编写netty应用程序 netty 编写netty应用程序 从 工程下抄了一份 echoserver 过来，并删减了部分代码，归纳出来一份编写 netty 服务端程序的模板，我把它称为 “netty 编码十步曲”。 1. 声明线程池（必须） 一般来说，我们会声明两个 group，一个是 bossgroup，用于处理 accept 事件，一个是 workergroup，用于处理消息的读写事件。其中，bossgroup 一般声明为一个线程。当然，如果声明一个 group 也是可以的，只是不建议。 这就像是大型餐厅一…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2022-05-17">2022.05.17</time><span>5 MIN</span></div>
+        <h2><a href="/2022/05/17/Netty/04.%E7%BC%96%E5%86%99Netty%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F/">04.编写Netty应用程序</a></h2>
+        <p>编写Netty应用程序 从 工程下抄了一份 EchoServer 过来，并删减了部分代码，归纳出来一份编写 Netty 服务端程序的模板，我把它称为 “Netty 编码十步曲”。 1. 声明线程池（必须） 一般来说，我们会声明两个 Group，一个是 bossGroup，用于处理 Accept 事件…</p>
+        <div class="chip-row"><span>Netty</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2022/05/17/Netty/04.%E7%BC%96%E5%86%99Netty%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F/" aria-label="阅读《04.编写Netty应用程序》">↗</a>
+    </article>
   
     <article class="writing-row reveal" data-writing-item data-search="03.java nio的核心组件 netty 03.java nio的核心组件 channel 什么是 channel 呢？ 让我们来看看 jdk 怎么说： // java.nio.channels.channel a nexus for i/o operations. a channel represents an open connection to an entity such as a hardware device, a file, a network socket, or a program componen…">
       <div class="writing-row__main">
@@ -146,16 +156,6 @@
       <a class="writing-row__arrow" href="/2022/03/08/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/11.Ping%E7%9A%84%E5%8E%9F%E7%90%86/" aria-label="阅读《Ping的原理》">↗</a>
     </article>
   
-    <article class="writing-row reveal" data-writing-item data-search="  (129条消息) 深入理解 mysql ….md 数据库优化和查询优化方案 数据库优化方案 优化索引，sql语句，分析慢查询 设计表的时候严格按照数据库设计规范来设计数据库 使用缓存，把经常访问并且不需要经常变化的数据放在缓存中，能够节约磁盘io 优化硬件，采用ssd，使用磁盘队列技术（raid0， raid1，raid5） 采用mysql自带的表分区技术，把数据分析分成不同文件，能够磁盘的读写效率 垂直分表，把一些不经常读的数据放在一张表当中，节约磁盘io 主从分离读写，采…">
-      <div class="writing-row__main">
-        <div class="post-card__meta"><time datetime="2022-02-13">2022.02.13</time><span>8 MIN</span></div>
-        <h2><a href="/2022/02/13/MySQL/11.%E6%95%B0%E6%8D%AE%E5%BA%93%E4%BC%98%E5%8C%96/"></a></h2>
-        <p>(129条消息) 深入理解 MySQL ….md 数据库优化和查询优化方案 数据库优化方案 优化索引，sql语句，分析慢查询 设计表的时候严格按照数据库设计规范来设计数据库 使用缓存，把经常访问并且不需要经常变化的数据放在缓存中，能够节约磁盘IO 优化硬件，采用ssd，使用磁盘队列技术（RAID0，…</p>
-        <div class="chip-row"></div>
-      </div>
-      <a class="writing-row__arrow" href="/2022/02/13/MySQL/11.%E6%95%B0%E6%8D%AE%E5%BA%93%E4%BC%98%E5%8C%96/" aria-label="阅读《》">↗</a>
-    </article>
-  
     <article class="writing-row reveal" data-writing-item data-search="策略模式 java 策略模式 策略模式定义了算法族，分别封装起来，让它们之间可以互相替换，此模式让算法的变化独立于使用算法的客户。 意图：定义一系列的算法,把它们一个个封装起来, 并且使它们可相互替换。 主要解决：在有多种算法相似的情况下，使用 if…else 所带来的复杂和难以维护。 何时使用：一个系统有许多许多类，而区分它们的只是他们直接的行为。 如何解决：将这些算法封装成一个一个的类，任意地替换。 关键代码：实现同一个接口。 应用实例： 诸葛亮的锦囊妙计，每一个锦囊就是一个策略。 旅行的出…">
       <div class="writing-row__main">
         <div class="post-card__meta"><time datetime="2021-12-23">2021.12.23</time><span>5 MIN</span></div>
@@ -183,10 +183,12 @@
   <div class="footer-grid">
     <div>
       <p class="footer-kicker">Leslie Zhang</p>
-      <p class="footer-statement">把真实世界的问题，<br>变成可以运行的智能系统。</p>
+      <p class="footer-statement">流水不争先，<br>争的是滔滔不绝。</p>
     </div>
     <div class="footer-links">
       <a href="https://github.com/leslieAIbin" target="_blank" rel="noreferrer">GitHub ↗</a>
+      <a href="https://www.instagram.com/leslieaibin/" target="_blank" rel="noreferrer">Instagram ↗</a>
+      <button type="button" data-wechat-open>微信 / WeChat</button>
       <a href="mailto:aibinzhangleslie@gmail.com">Email ↗</a>
       <a href="/atom.xml">RSS ↗</a>
     </div>
@@ -225,6 +227,20 @@
         <p>输入一个问题，我会把你带到 Leslie 写过的相关内容。</p>
       </div>
     </div>
+  </div>
+</dialog>
+
+    <dialog class="wechat-dialog" id="wechat-leslie" aria-labelledby="wechat-title">
+  <div class="wechat-dialog__shell">
+    <header>
+      <div>
+        <p class="section-label">WeChat</p>
+        <h2 id="wechat-title">微信联系</h2>
+      </div>
+      <button class="icon-button" type="button" data-wechat-close aria-label="关闭微信二维码">×</button>
+    </header>
+    <img src="/images/contact/wechat-leslie.png" alt="Leslie Zhang 的微信二维码" loading="lazy">
+    <p>扫码添加 Leslie，建议备注你的名字与来意。</p>
   </div>
 </dialog>
 

@@ -9,19 +9,19 @@
 <meta name="theme-color" content="#050b18">
 <meta name="color-scheme" content="dark light">
 <title>Leslie Zhang | AI Agent &amp; Agent Infra Engineer</title>
-<meta name="description" content="构建能够感知、规划、行动与反馈的智能体系统，长期关注 Agent Runtime、多模态与真实世界自动化。">
+<meta name="description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
 <meta name="author" content="Leslie Zhang">
 <link rel="canonical" href="https://leslieaibin.github.io/tags/MySQL/index.html">
 <link rel="icon" href="/imgs/01.jpg">
 <link rel="alternate" type="application/atom+xml" title="Leslie Zhang" href="/atom.xml">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Leslie Zhang | AI Agent &amp; Agent Infra Engineer">
-<meta property="og:description" content="构建能够感知、规划、行动与反馈的智能体系统，长期关注 Agent Runtime、多模态与真实世界自动化。">
+<meta property="og:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
 <meta property="og:url" content="https://leslieaibin.github.io/tags/MySQL/index.html">
 <meta property="og:image" content="https://leslieaibin.github.io/og-blue.png">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Leslie Zhang | AI Agent &amp; Agent Infra Engineer">
-<meta name="twitter:description" content="构建能够感知、规划、行动与反馈的智能体系统，长期关注 Agent Runtime、多模态与真实世界自动化。">
+<meta name="twitter:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
 <meta name="twitter:image" content="https://leslieaibin.github.io/og-blue.png">
 <script>
   (function () {
@@ -69,7 +69,7 @@
   </div>
 </header>
 
-    <main id="main-content"><section class="page-hero shell"><p class="page-kicker">Writing topic</p><h1># MySQL</h1><p>围绕这个关键词继续探索。</p></section>
+    <main id="main-content"><section class="page-hero shell"><p class="page-kicker">Writing topic</p><h1># MySQL</h1><p>沿着这个关键词，继续往里看。</p></section>
 <section class="section shell"><div class="writing-list" data-writing-list>
   
     <article class="writing-row reveal" data-writing-item data-search="12.mysql事务 mysql 什么是事务？ 事务（ ），一般是指要做的或所做的事情。在计算机术语中是指访问并可能更新数据库中各种数据项的一个程序执行单元。事务通常由高 级数 据库操作语言或编程语言（如 sql，c++ 或 java）书写的用户程序的执行所引起，并用形如 和 语句（或函数调用）来界定。事务由事务开始（ ）和事务结束（ ）之间执行的全部操作组成。 对于 mysql 数据库来说，事务是指以执行 命令开始，到执行 或者 命令结束之间的全部 sql 操作，如果这些 sql 操作全部执行成功，则执行…">
@@ -92,14 +92,14 @@
       <a class="writing-row__arrow" href="/2021/10/25/MySQL/10.%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8/" aria-label="阅读《10.分库分表》">↗</a>
     </article>
   
-    <article class="writing-row reveal" data-writing-item data-search="07.innodb引擎特性和日志 mysql innodb引擎的4大特性 插入缓存（insert buffer/change buffer) 插入缓存之前版本叫insert buffer，现版本change buffer，主要提升插入性能，change buffer 是insert buffer的加强，insert buffer 只针对insert有效，change buffering 对insert、delete、update（delete + insert）、purge都有效 对于非聚聚索引来说，比如存在用户购买金额…">
+    <article class="writing-row reveal" data-writing-item data-search="09.一条update执行的过程 mysql 语句的执行过程如下： 客户端（通常是你的服务）发出更新语句” update t set b = 200 where id = 2 “ 并向mysql服务端建立连接； mysql连接器负责和客户端建立连接，获取权限，维持和管理连接； mysql拿到一个查询请求后，会先到查询缓存看看（mysql8.x已经废弃了查询缓存），看之前是否已经执行过，如果执行过，执行语句及结果会以key-value形式存储到内存中，如果命中缓存会返回结果。如果没命中缓存，就开始真正执行语句。分析器会先做…">
       <div class="writing-row__main">
-        <div class="post-card__meta"><time datetime="2021-09-25">2021.09.25</time><span>16 MIN</span></div>
-        <h2><a href="/2021/09/25/MySQL/07.Innodb%E5%BC%95%E6%93%8E%E7%9A%844%E5%A4%A7%E7%89%B9%E6%80%A7%E4%B8%8E%E6%97%A5%E5%BF%97/">07.Innodb引擎特性和日志</a></h2>
-        <p>Innodb引擎的4大特性 插入缓存（Insert Buffer/Change Buffer) 插入缓存之前版本叫insert buffer，现版本Change Buffer，主要提升插入性能，change buffer 是insert buffer的加强，insert buffer 只针对inse…</p>
+        <div class="post-card__meta"><time datetime="2021-09-25">2021.09.25</time><span>7 MIN</span></div>
+        <h2><a href="/2021/09/25/MySQL/09.%E4%B8%80%E6%9D%A1update%E6%89%A7%E8%A1%8C%E7%9A%84%E8%BF%87%E7%A8%8B/">09.一条update执行的过程</a></h2>
+        <p>语句的执行过程如下： 客户端（通常是你的服务）发出更新语句” update t set b = 200 where id = 2 “ 并向MySQL服务端建立连接； MySQL连接器负责和客户端建立连接，获取权限，维持和管理连接； MySQL拿到一个查询请求后，会先到查询缓存看看（MySQL8.x已…</p>
         <div class="chip-row"><span>MySQL</span></div>
       </div>
-      <a class="writing-row__arrow" href="/2021/09/25/MySQL/07.Innodb%E5%BC%95%E6%93%8E%E7%9A%844%E5%A4%A7%E7%89%B9%E6%80%A7%E4%B8%8E%E6%97%A5%E5%BF%97/" aria-label="阅读《07.Innodb引擎特性和日志》">↗</a>
+      <a class="writing-row__arrow" href="/2021/09/25/MySQL/09.%E4%B8%80%E6%9D%A1update%E6%89%A7%E8%A1%8C%E7%9A%84%E8%BF%87%E7%A8%8B/" aria-label="阅读《09.一条update执行的过程》">↗</a>
     </article>
   
     <article class="writing-row reveal" data-writing-item data-search="08.abc联合索引生效问题 mysql abc联合索引生效问题 对于复合索引：mysql从左到右的使用索引中的字段，一个查询可以只使用索引中的一部份，但只能是最左侧部分。例如索引是key index （a,b,c）。 可以支持 a | a,b| a,b,c 3种组合进行查找，但不支持 b,c进行查找 .当最左侧字段是常量引用时，索引就十分有效。 以下是一些 例子： **abc顺序** where里面的条件顺序在查询之前会被mysql自动优化，**效果跟上一句一样** b范围值，断点，阻塞了c的索引a用到了，b也用到…">
@@ -112,14 +112,14 @@
       <a class="writing-row__arrow" href="/2021/09/25/MySQL/08.%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E7%94%9F%E6%95%88%E9%97%AE%E9%A2%98/" aria-label="阅读《08.ABC联合索引生效问题》">↗</a>
     </article>
   
-    <article class="writing-row reveal" data-writing-item data-search="09.一条update执行的过程 mysql 语句的执行过程如下： 客户端（通常是你的服务）发出更新语句” update t set b = 200 where id = 2 “ 并向mysql服务端建立连接； mysql连接器负责和客户端建立连接，获取权限，维持和管理连接； mysql拿到一个查询请求后，会先到查询缓存看看（mysql8.x已经废弃了查询缓存），看之前是否已经执行过，如果执行过，执行语句及结果会以key-value形式存储到内存中，如果命中缓存会返回结果。如果没命中缓存，就开始真正执行语句。分析器会先做…">
+    <article class="writing-row reveal" data-writing-item data-search="07.innodb引擎特性和日志 mysql innodb引擎的4大特性 插入缓存（insert buffer/change buffer) 插入缓存之前版本叫insert buffer，现版本change buffer，主要提升插入性能，change buffer 是insert buffer的加强，insert buffer 只针对insert有效，change buffering 对insert、delete、update（delete + insert）、purge都有效 对于非聚聚索引来说，比如存在用户购买金额…">
       <div class="writing-row__main">
-        <div class="post-card__meta"><time datetime="2021-09-25">2021.09.25</time><span>7 MIN</span></div>
-        <h2><a href="/2021/09/25/MySQL/09.%E4%B8%80%E6%9D%A1update%E6%89%A7%E8%A1%8C%E7%9A%84%E8%BF%87%E7%A8%8B/">09.一条update执行的过程</a></h2>
-        <p>语句的执行过程如下： 客户端（通常是你的服务）发出更新语句” update t set b = 200 where id = 2 “ 并向MySQL服务端建立连接； MySQL连接器负责和客户端建立连接，获取权限，维持和管理连接； MySQL拿到一个查询请求后，会先到查询缓存看看（MySQL8.x已…</p>
+        <div class="post-card__meta"><time datetime="2021-09-25">2021.09.25</time><span>16 MIN</span></div>
+        <h2><a href="/2021/09/25/MySQL/07.Innodb%E5%BC%95%E6%93%8E%E7%9A%844%E5%A4%A7%E7%89%B9%E6%80%A7%E4%B8%8E%E6%97%A5%E5%BF%97/">07.Innodb引擎特性和日志</a></h2>
+        <p>Innodb引擎的4大特性 插入缓存（Insert Buffer/Change Buffer) 插入缓存之前版本叫insert buffer，现版本Change Buffer，主要提升插入性能，change buffer 是insert buffer的加强，insert buffer 只针对inse…</p>
         <div class="chip-row"><span>MySQL</span></div>
       </div>
-      <a class="writing-row__arrow" href="/2021/09/25/MySQL/09.%E4%B8%80%E6%9D%A1update%E6%89%A7%E8%A1%8C%E7%9A%84%E8%BF%87%E7%A8%8B/" aria-label="阅读《09.一条update执行的过程》">↗</a>
+      <a class="writing-row__arrow" href="/2021/09/25/MySQL/07.Innodb%E5%BC%95%E6%93%8E%E7%9A%844%E5%A4%A7%E7%89%B9%E6%80%A7%E4%B8%8E%E6%97%A5%E5%BF%97/" aria-label="阅读《07.Innodb引擎特性和日志》">↗</a>
     </article>
   
     <article class="writing-row reveal" data-writing-item data-search="06.mysql的主从复制 mysql mysql binlog mysql 的 binlog 日志是一种二进制格式的日志，binlog记录所有的ddl和dml语句（除了数据查询语句select， show 等），以event的形式记录，同时记录语句执行时间。 binlog的 主要作用有两种： 数据恢复： 因为binlog详细记录所有修改数据的sql，当某一个时刻的数据误操作而导致出问题，或者数据库当局数据丢失，那么可以根据binlog回放历史数据 主从复制 想做多级备份的业务，可以去监听当前写库的binlog日志…">
@@ -179,10 +179,12 @@
   <div class="footer-grid">
     <div>
       <p class="footer-kicker">Leslie Zhang</p>
-      <p class="footer-statement">把真实世界的问题，<br>变成可以运行的智能系统。</p>
+      <p class="footer-statement">流水不争先，<br>争的是滔滔不绝。</p>
     </div>
     <div class="footer-links">
       <a href="https://github.com/leslieAIbin" target="_blank" rel="noreferrer">GitHub ↗</a>
+      <a href="https://www.instagram.com/leslieaibin/" target="_blank" rel="noreferrer">Instagram ↗</a>
+      <button type="button" data-wechat-open>微信 / WeChat</button>
       <a href="mailto:aibinzhangleslie@gmail.com">Email ↗</a>
       <a href="/atom.xml">RSS ↗</a>
     </div>
@@ -221,6 +223,20 @@
         <p>输入一个问题，我会把你带到 Leslie 写过的相关内容。</p>
       </div>
     </div>
+  </div>
+</dialog>
+
+    <dialog class="wechat-dialog" id="wechat-leslie" aria-labelledby="wechat-title">
+  <div class="wechat-dialog__shell">
+    <header>
+      <div>
+        <p class="section-label">WeChat</p>
+        <h2 id="wechat-title">微信联系</h2>
+      </div>
+      <button class="icon-button" type="button" data-wechat-close aria-label="关闭微信二维码">×</button>
+    </header>
+    <img src="/images/contact/wechat-leslie.png" alt="Leslie Zhang 的微信二维码" loading="lazy">
+    <p>扫码添加 Leslie，建议备注你的名字与来意。</p>
   </div>
 </dialog>
 

@@ -102,24 +102,14 @@
       <a class="writing-row__arrow" href="/2026/06/14/attention-field/Spec-Coding%E5%B7%A5%E7%A8%8B%E5%8C%96%E5%85%A8%E9%93%BE%E8%B7%AF-AI%E5%A6%82%E4%BD%95%E5%86%99%E5%87%BA%E8%83%BD%E7%94%A8%E7%9A%84%E4%BB%A3%E7%A0%81/" aria-label="阅读《AI Coding到底是怎么写出能用的代码的？——Spec Coding工程化全链路》">↗</a>
     </article>
   
-    <article class="writing-row reveal" data-writing-item data-search="agent沙箱token安全：怎么让工具可用但密钥不可见 agent 安全 沙箱 token管理 oauth2.0 agent沙箱token安全：怎么让工具可用但密钥不可见 很多人觉得沙箱就是安全边界。把agent放在docker容器里跑，隔离开文件系统和网络，便认为安全问题已解决。 但问题是： agent需要调用外部api——github、飞书、数据库、llm。这些调用需要token。token放在哪里？ 放环境变量里？放配置文件里？不管放哪里，只要在沙箱内部，agent（也就是llm）就能读到——而llm生成的代码可能会把你的token发到任何地方。 这不是假设。已有研究表明，通过间接…">
+    <article class="writing-row reveal" data-writing-item data-search="agent沙箱token安全：怎么让工具可用但密钥不可见 安全 agent 沙箱 token管理 oauth2.0 agent沙箱token安全：怎么让工具可用但密钥不可见 很多人觉得沙箱就是安全边界。把agent放在docker容器里跑，隔离开文件系统和网络，便认为安全问题已解决。 但问题是： agent需要调用外部api——github、飞书、数据库、llm。这些调用需要token。token放在哪里？ 放环境变量里？放配置文件里？不管放哪里，只要在沙箱内部，agent（也就是llm）就能读到——而llm生成的代码可能会把你的token发到任何地方。 这不是假设。已有研究表明，通过间接…">
       <div class="writing-row__main">
         <div class="post-card__meta"><time datetime="2026-06-07">2026.06.07</time><span>6 MIN</span></div>
         <h2><a href="/2026/06/07/attention-field/Agent%E6%B2%99%E7%AE%B1Token%E5%AE%89%E5%85%A8/">Agent沙箱Token安全：怎么让工具可用但密钥不可见</a></h2>
         <p>Agent沙箱Token安全：怎么让工具可用但密钥不可见 很多人觉得沙箱就是安全边界。把Agent放在Docker容器里跑，隔离开文件系统和网络，便认为安全问题已解决。 但问题是： Agent需要调用外部API——GitHub、飞书、数据库、LLM。这些调用需要Token。Token放在哪里？ 放环…</p>
-        <div class="chip-row"><span>Agent</span><span>安全</span><span>沙箱</span></div>
+        <div class="chip-row"><span>安全</span><span>Agent</span><span>沙箱</span></div>
       </div>
       <a class="writing-row__arrow" href="/2026/06/07/attention-field/Agent%E6%B2%99%E7%AE%B1Token%E5%AE%89%E5%85%A8/" aria-label="阅读《Agent沙箱Token安全：怎么让工具可用但密钥不可见》">↗</a>
-    </article>
-  
-    <article class="writing-row reveal" data-writing-item data-search="claude managed agents到底在做什么 agent anthropic claude 产品分析 claude managed agents到底在做什么 初次接触 claude managed agents 时，容易将其理解为 claude code 的 api 版本——通过 api 创建 agent，在沙箱中执行代码并返回结果。 但查阅官方文档后会发现，它不是一个产品，而是一套 agent基础设施 。它定义了agent怎么跑、怎么授权、怎么和外部世界交互。这更像是aws lambda给serverless的定义——不是又一个计算服务，而是对”函数即服务”这个范式的基础设…">
-      <div class="writing-row__main">
-        <div class="post-card__meta"><time datetime="2026-06-07">2026.06.07</time><span>5 MIN</span></div>
-        <h2><a href="/2026/06/07/attention-field/Claude-Managed-Agents/">Claude Managed Agents到底在做什么</a></h2>
-        <p>Claude Managed Agents到底在做什么 初次接触 Claude Managed Agents 时，容易将其理解为 Claude Code 的 API 版本——通过 API 创建 Agent，在沙箱中执行代码并返回结果。 但查阅官方文档后会发现，它不是一个产品，而是一套 Agent基础…</p>
-        <div class="chip-row"><span>Agent</span><span>Anthropic</span><span>Claude</span></div>
-      </div>
-      <a class="writing-row__arrow" href="/2026/06/07/attention-field/Claude-Managed-Agents/" aria-label="阅读《Claude Managed Agents到底在做什么》">↗</a>
     </article>
   
     <article class="writing-row reveal" data-writing-item data-search="agent评测：从golden set到业务指标 agent llm 评测 质量保障 agent评测：从golden set到业务指标 很多人觉得agent评测就是”写几个测试用例，跑一下看结果对不对”。和单元测试有些相似，但本质不同。 但agent的行为是 非确定性 的——同样的输入，今天能过明天可能就不过了。你改了一个prompt的措辞，或者llm provider悄悄更新了模型，agent的行为就可能漂移。 你需要的不是”通过/不通过”的二值判断，而是一套 能持续度量质量、定位退化、驱动迭代的评测体系 。 为什么agent评测难 原因有三，且个个棘手。…">
@@ -132,6 +122,16 @@
       <a class="writing-row__arrow" href="/2026/06/07/attention-field/Agent%E8%AF%84%E6%B5%8B/" aria-label="阅读《Agent评测：从Golden Set到业务指标》">↗</a>
     </article>
   
+    <article class="writing-row reveal" data-writing-item data-search="claude managed agents到底在做什么 anthropic claude agent 产品分析 claude managed agents到底在做什么 初次接触 claude managed agents 时，容易将其理解为 claude code 的 api 版本——通过 api 创建 agent，在沙箱中执行代码并返回结果。 但查阅官方文档后会发现，它不是一个产品，而是一套 agent基础设施 。它定义了agent怎么跑、怎么授权、怎么和外部世界交互。这更像是aws lambda给serverless的定义——不是又一个计算服务，而是对”函数即服务”这个范式的基础设…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2026-06-07">2026.06.07</time><span>5 MIN</span></div>
+        <h2><a href="/2026/06/07/attention-field/Claude-Managed-Agents/">Claude Managed Agents到底在做什么</a></h2>
+        <p>Claude Managed Agents到底在做什么 初次接触 Claude Managed Agents 时，容易将其理解为 Claude Code 的 API 版本——通过 API 创建 Agent，在沙箱中执行代码并返回结果。 但查阅官方文档后会发现，它不是一个产品，而是一套 Agent基础…</p>
+        <div class="chip-row"><span>Anthropic</span><span>Claude</span><span>Agent</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2026/06/07/attention-field/Claude-Managed-Agents/" aria-label="阅读《Claude Managed Agents到底在做什么》">↗</a>
+    </article>
+  
     <article class="writing-row reveal" data-writing-item data-search="大规模agent系统设计：从个人助手到十亿用户服务 agent 系统设计 分布式系统 llm应用 大规模agent系统设计：从个人助手到十亿用户服务 很多人第一次搭agent系统，觉得就是”套个llm api + 加几个工具调用”。跑通了一个demo，问它”今天天气怎么样”能正确调用天气api，就以为agent系统的复杂度仅此而已。 但实际情况是： 你的系统能服务1个用户、10个用户、10万个用户，架构完全不同。 这不是夸张。一个能正确调用工具的agent，和一个能稳定服务百万用户的agent系统，中间隔着的东西，和你写一个hello world到构建一个淘宝的距离差不多…">
       <div class="writing-row__main">
         <div class="post-card__meta"><time datetime="2026-06-07">2026.06.07</time><span>6 MIN</span></div>
@@ -142,12 +142,12 @@
       <a class="writing-row__arrow" href="/2026/06/07/attention-field/%E5%A4%A7%E8%A7%84%E6%A8%A1Agent%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/" aria-label="阅读《大规模Agent系统设计：从个人助手到十亿用户服务》">↗</a>
     </article>
   
-    <article class="writing-row reveal" data-writing-item data-search="姚顺雨首秀腾讯：混元3没什么秘密，但有一个比算法更重要的东西 agent ai 腾讯 大模型 行业观察 姚顺雨提出&#34;ai下半场&#34;一年后，首次在腾讯公开解读。从方法论成熟到&#34;寻找好问题&#34;，从混元3的苦活到coding agent的图灵完备性——腾讯凭什么说下半场才刚开始？">
+    <article class="writing-row reveal" data-writing-item data-search="姚顺雨首秀腾讯：混元3没什么秘密，但有一个比算法更重要的东西 ai agent 腾讯 大模型 行业观察 姚顺雨提出&#34;ai下半场&#34;一年后，首次在腾讯公开解读。从方法论成熟到&#34;寻找好问题&#34;，从混元3的苦活到coding agent的图灵完备性——腾讯凭什么说下半场才刚开始？">
       <div class="writing-row__main">
         <div class="post-card__meta"><time datetime="2026-06-07">2026.06.07</time><span>10 MIN</span></div>
         <h2><a href="/2026/06/07/attention-field/%E5%A7%9A%E9%A1%BA%E9%9B%A8%E7%9A%84AI%E4%B8%8B%E5%8D%8A%E5%9C%BA/">姚顺雨首秀腾讯：混元3没什么秘密，但有一个比算法更重要的东西</a></h2>
         <p>姚顺雨提出&#34;AI下半场&#34;一年后，首次在腾讯公开解读。从方法论成熟到&#34;寻找好问题&#34;，从混元3的苦活到coding agent的图灵完备性——腾讯凭什么说下半场才刚开始？</p>
-        <div class="chip-row"><span>Agent</span><span>AI</span><span>腾讯</span></div>
+        <div class="chip-row"><span>AI</span><span>Agent</span><span>腾讯</span></div>
       </div>
       <a class="writing-row__arrow" href="/2026/06/07/attention-field/%E5%A7%9A%E9%A1%BA%E9%9B%A8%E7%9A%84AI%E4%B8%8B%E5%8D%8A%E5%9C%BA/" aria-label="阅读《姚顺雨首秀腾讯：混元3没什么秘密，但有一个比算法更重要的东西》">↗</a>
     </article>

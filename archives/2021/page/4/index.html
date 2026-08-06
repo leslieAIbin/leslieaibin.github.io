@@ -76,14 +76,14 @@
 </section>
 <section class="section shell"><div class="writing-list" data-writing-list>
   
-    <article class="writing-row reveal" data-writing-item data-search="07.innodb引擎特性和日志 mysql innodb引擎的4大特性 插入缓存（insert buffer/change buffer) 插入缓存之前版本叫insert buffer，现版本change buffer，主要提升插入性能，change buffer 是insert buffer的加强，insert buffer 只针对insert有效，change buffering 对insert、delete、update（delete + insert）、purge都有效 对于非聚聚索引来说，比如存在用户购买金额…">
+    <article class="writing-row reveal" data-writing-item data-search="09.一条update执行的过程 mysql 语句的执行过程如下： 客户端（通常是你的服务）发出更新语句” update t set b = 200 where id = 2 “ 并向mysql服务端建立连接； mysql连接器负责和客户端建立连接，获取权限，维持和管理连接； mysql拿到一个查询请求后，会先到查询缓存看看（mysql8.x已经废弃了查询缓存），看之前是否已经执行过，如果执行过，执行语句及结果会以key-value形式存储到内存中，如果命中缓存会返回结果。如果没命中缓存，就开始真正执行语句。分析器会先做…">
       <div class="writing-row__main">
-        <div class="post-card__meta"><time datetime="2021-09-25">2021.09.25</time><span>16 MIN</span></div>
-        <h2><a href="/2021/09/25/MySQL/07.Innodb%E5%BC%95%E6%93%8E%E7%9A%844%E5%A4%A7%E7%89%B9%E6%80%A7%E4%B8%8E%E6%97%A5%E5%BF%97/">07.Innodb引擎特性和日志</a></h2>
-        <p>Innodb引擎的4大特性 插入缓存（Insert Buffer/Change Buffer) 插入缓存之前版本叫insert buffer，现版本Change Buffer，主要提升插入性能，change buffer 是insert buffer的加强，insert buffer 只针对inse…</p>
+        <div class="post-card__meta"><time datetime="2021-09-25">2021.09.25</time><span>7 MIN</span></div>
+        <h2><a href="/2021/09/25/MySQL/09.%E4%B8%80%E6%9D%A1update%E6%89%A7%E8%A1%8C%E7%9A%84%E8%BF%87%E7%A8%8B/">09.一条update执行的过程</a></h2>
+        <p>语句的执行过程如下： 客户端（通常是你的服务）发出更新语句” update t set b = 200 where id = 2 “ 并向MySQL服务端建立连接； MySQL连接器负责和客户端建立连接，获取权限，维持和管理连接； MySQL拿到一个查询请求后，会先到查询缓存看看（MySQL8.x已…</p>
         <div class="chip-row"><span>MySQL</span></div>
       </div>
-      <a class="writing-row__arrow" href="/2021/09/25/MySQL/07.Innodb%E5%BC%95%E6%93%8E%E7%9A%844%E5%A4%A7%E7%89%B9%E6%80%A7%E4%B8%8E%E6%97%A5%E5%BF%97/" aria-label="阅读《07.Innodb引擎特性和日志》">↗</a>
+      <a class="writing-row__arrow" href="/2021/09/25/MySQL/09.%E4%B8%80%E6%9D%A1update%E6%89%A7%E8%A1%8C%E7%9A%84%E8%BF%87%E7%A8%8B/" aria-label="阅读《09.一条update执行的过程》">↗</a>
     </article>
   
     <article class="writing-row reveal" data-writing-item data-search="6.循环队列 collection 循环队列 一、普通队列的弊端 队列：是一种可以分别在两端进行增删的特殊线性表。既然是线性表，那么可以使用顺序存储和链式存储来实现，如果是链式存储的话，那么增删的复杂度都是o(1)，这一点很好理解，应该只要修改一下指针就好了，如果是顺序存储的话，在队尾增加的时间复杂度是o(1)，但是在队头进行删除的时候，会涉及到迁移操作，这时候的时候复杂度就是o(n)，所以一般来讲不会直接使用顺序存储的方式来实现普通队列。 二、循环队列的原理概述 较之普通队列用顺序存储来实现存在删除带来的时间…">

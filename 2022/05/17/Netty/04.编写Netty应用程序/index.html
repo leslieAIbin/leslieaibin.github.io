@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+  <head>
+
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#050b18">
+<meta name="color-scheme" content="dark light">
+<title>04.编写Netty应用程序 | Leslie Zhang</title>
+<meta name="description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta name="author" content="Leslie Zhang">
+<link rel="canonical" href="https://leslieaibin.github.io/2022/05/17/Netty/04.%E7%BC%96%E5%86%99Netty%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F/">
+<link rel="icon" href="/imgs/01.jpg">
+<link rel="alternate" type="application/atom+xml" title="Leslie Zhang" href="/atom.xml">
+<meta property="og:type" content="article">
+<meta property="og:title" content="04.编写Netty应用程序 | Leslie Zhang">
+<meta property="og:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta property="og:url" content="https://leslieaibin.github.io/2022/05/17/Netty/04.%E7%BC%96%E5%86%99Netty%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F/">
+<meta property="og:image" content="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/50.jpg?raw=true">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="04.编写Netty应用程序 | Leslie Zhang">
+<meta name="twitter:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta name="twitter:image" content="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/50.jpg?raw=true">
+<script>
+  (function () {
+    var saved = localStorage.getItem('orbital-theme');
+    var theme = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    document.documentElement.dataset.theme = theme;
+  })();
+</script>
+<link rel="stylesheet" href="/css/orbital.css">
+<meta name="generator" content="Hexo 5.2.0"></head>
+  <body class="page-post">
+    <a class="skip-link" href="#main-content">跳到主要内容</a>
+    <div class="reading-progress" data-reading-progress></div>
+    <header class="site-header" data-header>
+  <div class="nav-shell">
+    <a class="brand" href="/" aria-label="返回首页">
+      <span class="brand-mark" aria-hidden="true"><img src="/images/brand/leslie-mythos-avatar.webp" alt="" width="512" height="512"></span>
+      <span class="brand-copy">
+        <strong>LESLIE</strong>
+        <small>REAL-WORLD AGENTS</small>
+      </span>
+    </a>
+
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav" data-nav-toggle>
+      <span></span><span></span>
+      <span class="sr-only">打开导航</span>
+    </button>
+
+    <nav class="main-nav" id="main-nav" aria-label="主导航" data-nav>
+      
+        <a href="/" class="">首页</a>
+      
+        <a href="/writing/" class="">写作</a>
+      
+        <a href="/projects/" class="">项目</a>
+      
+        <a href="/about/" class="">关于</a>
+      
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换明暗主题">
+        <span class="theme-toggle__sun" aria-hidden="true">☼</span>
+        <span class="theme-toggle__moon" aria-hidden="true">◐</span>
+      </button>
+      <button class="ask-nav" type="button" data-ask-open>ASK LESLIE</button>
+    </nav>
+  </div>
+</header>
+
+    <main id="main-content"><article class="post-shell">
+  <header class="post-hero shell">
+    <a class="post-back" href="/writing/">← 返回写作</a>
+    <div class="post-hero__meta">
+      <time datetime="2022-05-17">2022 年 05 月 17 日</time>
+      <span>5 分钟阅读</span>
+    </div>
+    <h1>04.编写Netty应用程序</h1>
+    
+    <div class="chip-row"><a href="/tags/Netty/">Netty</a></div>
+  </header>
+
+  <div class="post-cover shell"><img src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/50.jpg?raw=true" alt="04.编写Netty应用程序"></div>
+
+  <div class="post-layout shell">
+    <aside class="post-toc" aria-label="文章目录">
+      <span class="aside-title">目录</span>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%A3%B0%E6%98%8E%E7%BA%BF%E7%A8%8B%E6%B1%A0%EF%BC%88%E5%BF%85%E9%A1%BB%EF%BC%89"><span class="toc-text">1. 声明线程池（必须）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%88%9B%E5%BB%BA%E6%9C%8D%E5%8A%A1%E7%AB%AF%E5%BC%95%E5%AF%BC%E7%B1%BB%EF%BC%88%E5%BF%85%E9%A1%BB%EF%BC%89"><span class="toc-text">2. 创建服务端引导类（必须）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E8%AE%BE%E7%BD%AE%E7%BA%BF%E7%A8%8B%E6%B1%A0%EF%BC%88%E5%BF%85%E9%A1%BB%EF%BC%89"><span class="toc-text">3. 设置线程池（必须）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E8%AE%BE%E7%BD%AE-ServerSocketChannel-%E7%B1%BB%E5%9E%8B%EF%BC%88%E5%BF%85%E9%A1%BB%EF%BC%89"><span class="toc-text">4. 设置 ServerSocketChannel 类型（必须）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E8%AE%BE%E7%BD%AE%E5%8F%82%E6%95%B0%EF%BC%88%E5%8F%AF%E9%80%89%EF%BC%89"><span class="toc-text">5. 设置参数（可选）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E8%AE%BE%E7%BD%AE-Handler%EF%BC%88%E5%8F%AF%E9%80%89%EF%BC%89"><span class="toc-text">6. 设置 Handler（可选）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-%E7%BC%96%E5%86%99%E5%B9%B6%E8%AE%BE%E7%BD%AE%E5%AD%90-Handler%EF%BC%88%E5%BF%85%E9%A1%BB%EF%BC%89"><span class="toc-text">7. 编写并设置子 Handler（必须）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-%E7%BB%91%E5%AE%9A%E7%AB%AF%E5%8F%A3%EF%BC%88%E5%BF%85%E9%A1%BB%EF%BC%89"><span class="toc-text">8. 绑定端口（必须）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#9-%E7%AD%89%E5%BE%85%E6%9C%8D%E5%8A%A1%E7%AB%AF%E7%AB%AF%E5%8F%A3%E5%85%B3%E9%97%AD%EF%BC%88%E5%BF%85%E9%A1%BB%EF%BC%89"><span class="toc-text">9. 等待服务端端口关闭（必须）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#10-%E4%BC%98%E9%9B%85%E5%9C%B0%E5%85%B3%E9%97%AD%E7%BA%BF%E7%A8%8B%E6%B1%A0%EF%BC%88%E5%BB%BA%E8%AE%AE%EF%BC%89"><span class="toc-text">10. 优雅地关闭线程池（建议）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E8%B0%83%E8%AF%95"><span class="toc-text">如何调试</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%8E%E8%AE%B0"><span class="toc-text">后记</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%9D%E7%BB%B4%E5%AF%BC%E5%9B%BE"><span class="toc-text">思维导图</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%99%84%E5%BD%95-%E2%80%94%E2%80%94-%E4%BD%BF%E7%94%A8-Netty-%E5%AE%9E%E7%8E%B0%E7%AE%80%E5%8D%95%E7%BE%A4%E8%81%8A%E7%B3%BB%E7%BB%9F"><span class="toc-text">附录 —— 使用 Netty 实现简单群聊系统</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81"><span class="toc-text">代码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A8%A1%E6%8B%9F%E7%BE%A4%E8%81%8A"><span class="toc-text">模拟群聊</span></a></li></ol>
+    </aside>
+    <div class="article-content"><h1 id="编写Netty应用程序"><a href="#编写Netty应用程序" class="headerlink" title="编写Netty应用程序"></a>编写Netty应用程序</h1><p>从 <code>netty-example</code> 工程下抄了一份 EchoServer 过来，并删减了部分代码，归纳出来一份编写 Netty 服务端程序的模板，我把它称为 “Netty 编码十步曲”。</p>
+<h2 id="1-声明线程池（必须）"><a href="#1-声明线程池（必须）" class="headerlink" title="1. 声明线程池（必须）"></a>1. 声明线程池（必须）</h2><p>一般来说，我们会声明两个 Group，一个是 bossGroup，用于处理 Accept 事件，一个是 workerGroup，用于处理消息的读写事件。其中，bossGroup 一般声明为一个线程。当然，如果声明一个 Group 也是可以的，只是不建议。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">EventLoopGroup bossGroup = <span class="keyword">new</span> NioEventLoopGroup(<span class="number">1</span>);</span><br><span class="line">EventLoopGroup workerGroup = <span class="keyword">new</span> NioEventLoopGroup();</span><br></pre></td></tr></table></figure>
+
+
+<p>这就像是大型餐厅一般有接待生和服务员两种职位一样，接待生一般形象良好，专门负责接待客人，服务员形象稍差，专门负责上菜收碟，你要说不区分两种职位，混用行不行呢，当然也可以，只是不建议，专人干专事。</p>
+<h2 id="2-创建服务端引导类（必须）"><a href="#2-创建服务端引导类（必须）" class="headerlink" title="2. 创建服务端引导类（必须）"></a>2. 创建服务端引导类（必须）</h2><p>引导类，是用来集成所有配置，引导程序加载的，分成两种，一种是客户端引导类 Bootstrap（个人觉得叫 ClientBootstrap 可能更贴切），另一种是服务端引导类 ServerBootstrap，我们这里编写的是服务端程序，创建的当然是服务端引导类。<br>注意，Bootstrap 和 ServerBootstrap 之间并不是继承关系，他们是平等的，都继承了 AbstractBootstrap 抽象类。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ServerBootstrap serverBootstrap = <span class="keyword">new</span> ServerBootstrap();</span><br></pre></td></tr></table></figure>
+
+
+<p>Bootstrap/ServerBootstrap 就像是店长，它负责统筹整个 Netty 程序的正常运行。</p>
+<h2 id="3-设置线程池（必须）"><a href="#3-设置线程池（必须）" class="headerlink" title="3. 设置线程池（必须）"></a>3. 设置线程池（必须）</h2><p>把第一步声明的线程池设置到 ServerBootstrap 中，它说明了 Netty 应用程序以什么样的线程模型运行，正如前面所说 bossGroup 负责接受（Accept）连接，workerGroup 负责读写数据。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">serverBootstrap.group(bossGroup, workerGroup);</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="4-设置-ServerSocketChannel-类型（必须）"><a href="#4-设置-ServerSocketChannel-类型（必须）" class="headerlink" title="4. 设置 ServerSocketChannel 类型（必须）"></a>4. 设置 ServerSocketChannel 类型（必须）</h2><p>设置 Netty 程序以什么样的 IO 模型运行，我们这里介绍的是 NIO 编程，选择的当然是 NioServerSocketChannel。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">serverBootstrap.channel(NioServerSocketChannel.class);</span><br></pre></td></tr></table></figure>
+
+
+<p>如果您需要使用阻塞型 IO 模型，直接把 Nio 改成 Oio 就可以了，即 OioServerSocketChannel，不过它已经废弃了，所以不建议。</p>
+<p>另外，如果您的程序运行在 Linux 系统上，还可以使用一种更高效的方式，即 EpollServerSocketChannel，它使用的是 Linux 系统上的 epoll 模型，比 select 模型更高效，可见 Netty 把性能优化做到了极致。</p>
+<h2 id="5-设置参数（可选）"><a href="#5-设置参数（可选）" class="headerlink" title="5. 设置参数（可选）"></a>5. 设置参数（可选）</h2><p>设置 Netty 中可以使用的任何参数，这些参数都在 ChannelOption 及其子类中，后面我们会详细介绍各个参数的含义，不过，很遗憾地告诉你，大多数情况下并不需要修改 Netty 的默认参数，这就是 Netty 比较牛的地方。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">serverBootstrap.option(ChannelOption.SO_BACKLOG, <span class="number">100</span>);</span><br></pre></td></tr></table></figure>
+
+
+<p>我们这里设置了一个 SO_BACKLOG 系统参数，它表示的是最大等待连接数量。</p>
+<h2 id="6-设置-Handler（可选）"><a href="#6-设置-Handler（可选）" class="headerlink" title="6. 设置 Handler（可选）"></a>6. 设置 Handler（可选）</h2><p>设置 ServerSocketChannel 对应的 Handler，注意只能设置一个，它会在 SocketChannel 建立起来之前执行，等我们看源码的时候会详细介绍它的执行时机。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">serverBootstrap.handler(<span class="keyword">new</span> LoggingHandler(LogLevel.INFO))</span><br></pre></td></tr></table></figure>
+
+
+<p>我们这里简单地设置一个打印日志的 Handler。</p>
+<h2 id="7-编写并设置子-Handler（必须）"><a href="#7-编写并设置子-Handler（必须）" class="headerlink" title="7. 编写并设置子 Handler（必须）"></a>7. 编写并设置子 Handler（必须）</h2><p>Netty 中的 Handler 分成两种，一种叫做 Inbound，一种叫做 Outbound。我们这里简单地写一个 Inbound 类型的 Handler，它接收到数据后立即写回客户端。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">EchoServerHandler</span> <span class="keyword">extends</span> <span class="title">ChannelInboundHandlerAdapter</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">channelRead</span><span class="params">(ChannelHandlerContext ctx, Object msg)</span> </span>&#123;</span><br><span class="line">		<span class="comment">// 读取数据后写回客户端</span></span><br><span class="line">		ctx.write(msg);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">channelReadComplete</span><span class="params">(ChannelHandlerContext ctx)</span> </span>&#123;</span><br><span class="line">		ctx.flush();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">exceptionCaught</span><span class="params">(ChannelHandlerContext ctx, Throwable cause)</span> </span>&#123;</span><br><span class="line">		cause.printStackTrace();</span><br><span class="line">		ctx.close();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<p>设置子 Handler 设置的是 SocketChannel 对应的 Handler，注意也是只能设置一个，它用于处理 SocketChannel 的事件。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">serverBootstrap.childHandler(<span class="keyword">new</span> ChannelInitializer&lt;SocketChannel&gt;() &#123;</span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">initChannel</span><span class="params">(SocketChannel ch)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		ChannelPipeline p = ch.pipeline();</span><br><span class="line">		<span class="comment">// 可以添加多个子Handler</span></span><br><span class="line">		p.addLast(<span class="keyword">new</span> LoggingHandler(LogLevel.INFO));</span><br><span class="line">		p.addLast(<span class="keyword">new</span> EchoServerHandler());</span><br><span class="line">	&#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+
+<p>虽然只能设置一个，但是 Netty 的提供了一种可以设置多个 Handler 的途径，即使用 ChannelInitializer 方式，当然，第六步的设置 Handler 也可以使用这种方式设置多个 Handler。</p>
+<p>这里，我们设置了一个打印的 Handler 和一个自定义的 EchoServerHandler。</p>
+<h2 id="8-绑定端口（必须）"><a href="#8-绑定端口（必须）" class="headerlink" title="8. 绑定端口（必须）"></a>8. 绑定端口（必须）</h2><p>绑定端口，并启动服务端程序，sync () 会阻塞直到启动完成才执行后面的代码。</p>
+<pre><code>ChannelFuture f = serverBootstrap.bind(PORT).sync();</code></pre>
+<h2 id="9-等待服务端端口关闭（必须）"><a href="#9-等待服务端端口关闭（必须）" class="headerlink" title="9. 等待服务端端口关闭（必须）"></a>9. 等待服务端端口关闭（必须）</h2><p>等待服务端监听端口关闭，sync () 会阻塞主线程，内部调用的是 Object 的 wait () 方法。</p>
+<pre><code>f.channel().closeFuture().sync();</code></pre>
+<h2 id="10-优雅地关闭线程池（建议）"><a href="#10-优雅地关闭线程池（建议）" class="headerlink" title="10. 优雅地关闭线程池（建议）"></a>10. 优雅地关闭线程池（建议）</h2><p>最后，是在 finally 中调用 shutdownGracefully () 方法优雅地关闭线程池，优雅停机。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">bossGroup.shutdownGracefully();</span><br><span class="line">workerGroup.shutdownGracefully();</span><br></pre></td></tr></table></figure>
+
+<p><strong>为什么需要设置 ServerSocketChannel 的类型，而不需要设置 SocketChannel 的类型呢？</strong></p>
+<p>那是因为 SocketChannel 是 ServerSocketChannel 在接受连接之后创建出来的，所以，并不需要单独再设置它的类型，比如，NioServerSocketChannel 创建出来的肯定是 NioSocketChannel，而 EpollServerSocketChannel 创建出来的肯定是 EpollSocketChannel。</p>
+<h2 id="如何调试"><a href="#如何调试" class="headerlink" title="如何调试"></a>如何调试</h2><p>其实学 Netty 的 99% 都是服务端的同学，所以，我们的课程并不会刻意介绍如何编写客户端的 Netty 程序，但是我们怎么调试呢？</p>
+<p>这里，我教给大家一个技巧，通过 XSHELL 这个工具调试，这个工具几乎是后端同学必备的一个工具，所以调试起来也是比较容易的。</p>
+<p>比如，我上面启动了一个 Netty 服务端，它的端口是 8007，只要打开 Terminal，不要连接任何服务器，输入以下代码即可连接到我们的 Netty 服务端：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">telnet localhost 8007</span><br></pre></td></tr></table></figure>
+
+
+<p>然后，输入任何你想输入的内容，它都会照样返回，比如下面这样：</p>
+<p><img src="https://test-1874253.oss-cn-beijing.aliyuncs.com/img/image-20220517144316303.png" alt="image-20220517144316303"></p>
+<h2 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h2><p>本节，我们学习了 Netty 编码的十步曲，其中，有些步骤是必须的，有些步骤可选的，有些步骤是建议保留的，相信通过本节的学习，你一定可以写出十分健壮且优雅的 Netty 服务端程序了。</p>
+<p>别急哦，本节还没有结束，在附录部分有一份简单的群聊系统，您也可以尝试按照本节介绍的十步曲自己尝试写一个简单的示例练练手。</p>
+<h2 id="思维导图"><a href="#思维导图" class="headerlink" title="思维导图"></a>思维导图</h2><p><img src="https://cubox.pro/c/filters:no_upscale()?imageUrl=https://img1.sycdn.imooc.com/5f0d610d0001afcc10830670.png"></p>
+<h2 id="附录-——-使用-Netty-实现简单群聊系统"><a href="#附录-——-使用-Netty-实现简单群聊系统" class="headerlink" title="附录 —— 使用 Netty 实现简单群聊系统"></a>附录 —— 使用 Netty 实现简单群聊系统</h2><h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">NettyChatServer</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> PORT = Integer.parseInt(System.getProperty(<span class="string">&quot;port&quot;</span>, <span class="string">&quot;8007&quot;</span>));</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		<span class="comment">// 1. 声明线程池</span></span><br><span class="line">		EventLoopGroup bossGroup = <span class="keyword">new</span> NioEventLoopGroup(<span class="number">1</span>);</span><br><span class="line">		EventLoopGroup workerGroup = <span class="keyword">new</span> NioEventLoopGroup();</span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line">			<span class="comment">// 2. 服务端引导器</span></span><br><span class="line">			ServerBootstrap serverBootstrap = <span class="keyword">new</span> ServerBootstrap();</span><br><span class="line">			<span class="comment">// 3. 设置线程池</span></span><br><span class="line">			serverBootstrap.group(bossGroup, workerGroup)</span><br><span class="line">					<span class="comment">// 4. 设置ServerSocketChannel的类型</span></span><br><span class="line">					.channel(NioServerSocketChannel.class)</span><br><span class="line">					<span class="comment">// 5. 设置参数</span></span><br><span class="line">					.option(ChannelOption.SO_BACKLOG, <span class="number">100</span>)</span><br><span class="line">					<span class="comment">// 6. 设置ServerSocketChannel对应的Handler，只能设置一个</span></span><br><span class="line">					.handler(<span class="keyword">new</span> LoggingHandler(LogLevel.INFO))</span><br><span class="line">					<span class="comment">// 7. 设置SocketChannel对应的Handler</span></span><br><span class="line">					.childHandler(<span class="keyword">new</span> ChannelInitializer&lt;SocketChannel&gt;() &#123;</span><br><span class="line">						<span class="meta">@Override</span></span><br><span class="line">						<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">initChannel</span><span class="params">(SocketChannel ch)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">							ChannelPipeline p = ch.pipeline();</span><br><span class="line">							<span class="comment">// 可以添加多个子Handler</span></span><br><span class="line">							p.addLast(<span class="keyword">new</span> LoggingHandler(LogLevel.INFO));</span><br><span class="line">							<span class="comment">// 只需要改这一个地方就可以了</span></span><br><span class="line">							p.addLast(<span class="keyword">new</span> ChatNettyHandler());</span><br><span class="line">						&#125;</span><br><span class="line">					&#125;);</span><br><span class="line"></span><br><span class="line">			<span class="comment">// 8. 绑定端口</span></span><br><span class="line">			ChannelFuture f = serverBootstrap.bind(PORT).sync();</span><br><span class="line">			<span class="comment">// 9. 等待服务端监听端口关闭，这里会阻塞主线程</span></span><br><span class="line">			f.channel().closeFuture().sync();</span><br><span class="line">		&#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">			<span class="comment">// 10. 优雅地关闭两个线程池</span></span><br><span class="line">			bossGroup.shutdownGracefully();</span><br><span class="line">			workerGroup.shutdownGracefully();</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">ChatNettyHandler</span> <span class="keyword">extends</span> <span class="title">SimpleChannelInboundHandler</span>&lt;<span class="title">ByteBuf</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">		<span class="meta">@Override</span></span><br><span class="line">		<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">channelActive</span><span class="params">(ChannelHandlerContext ctx)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">			System.out.println(<span class="string">&quot;one conn active: &quot;</span> + ctx.channel());</span><br><span class="line">			<span class="comment">// channel是在ServerBootstrapAcceptor中放到EventLoopGroup中的</span></span><br><span class="line">			ChatHolder.join((SocketChannel) ctx.channel());</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="meta">@Override</span></span><br><span class="line">		<span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">channelRead0</span><span class="params">(ChannelHandlerContext ctx, ByteBuf byteBuf)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">			<span class="keyword">byte</span>[] bytes = <span class="keyword">new</span> <span class="keyword">byte</span>[byteBuf.readableBytes()];</span><br><span class="line">			byteBuf.readBytes(bytes);</span><br><span class="line">			String content = <span class="keyword">new</span> String(bytes, StandardCharsets.UTF_8);</span><br><span class="line">			System.out.println(content);</span><br><span class="line"></span><br><span class="line">			<span class="keyword">if</span> (content.equals(<span class="string">&quot;quit\r\n&quot;</span>)) &#123;</span><br><span class="line">				ctx.channel().close();</span><br><span class="line">			&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">				ChatHolder.propagate((SocketChannel) ctx.channel(), content);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="meta">@Override</span></span><br><span class="line">		<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">channelInactive</span><span class="params">(ChannelHandlerContext ctx)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">			System.out.println(<span class="string">&quot;one conn inactive: &quot;</span> + ctx.channel());</span><br><span class="line">			ChatHolder.quit((SocketChannel) ctx.channel());</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">ChatHolder</span> </span>&#123;</span><br><span class="line">		<span class="keyword">static</span> <span class="keyword">final</span> Map&lt;SocketChannel, String&gt; USER_MAP = <span class="keyword">new</span> ConcurrentHashMap&lt;&gt;();</span><br><span class="line"></span><br><span class="line">		<span class="comment">/**</span></span><br><span class="line"><span class="comment">		 * 加入群聊</span></span><br><span class="line"><span class="comment">		 * </span></span><br><span class="line"><span class="comment">		 * <span class="doctag">@param</span> socketChannel</span></span><br><span class="line"><span class="comment">		 */</span></span><br><span class="line">		<span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">join</span><span class="params">(SocketChannel socketChannel)</span> </span>&#123;</span><br><span class="line">			<span class="comment">// 有人加入就给他分配一个id</span></span><br><span class="line">			String userId = <span class="string">&quot;用户&quot;</span> + ThreadLocalRandom.current().nextInt(Integer.MAX_VALUE);</span><br><span class="line">			send(socketChannel, <span class="string">&quot;您的id为：&quot;</span> + userId + <span class="string">&quot;\n\r&quot;</span>);</span><br><span class="line"></span><br><span class="line">			<span class="keyword">for</span> (SocketChannel channel : USER_MAP.keySet()) &#123;</span><br><span class="line">				send(channel, userId + <span class="string">&quot; 加入了群聊&quot;</span> + <span class="string">&quot;\n\r&quot;</span>);</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			<span class="comment">// 将当前用户加入到map中</span></span><br><span class="line">			USER_MAP.put(socketChannel, userId);</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="comment">/**</span></span><br><span class="line"><span class="comment">		 * 退出群聊</span></span><br><span class="line"><span class="comment">		 * </span></span><br><span class="line"><span class="comment">		 * <span class="doctag">@param</span> socketChannel</span></span><br><span class="line"><span class="comment">		 */</span></span><br><span class="line">		<span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">quit</span><span class="params">(SocketChannel socketChannel)</span> </span>&#123;</span><br><span class="line">			String userId = USER_MAP.get(socketChannel);</span><br><span class="line">			send(socketChannel, <span class="string">&quot;您退出了群聊&quot;</span> + <span class="string">&quot;\n\r&quot;</span>);</span><br><span class="line">			USER_MAP.remove(socketChannel);</span><br><span class="line"></span><br><span class="line">			<span class="keyword">for</span> (SocketChannel channel : USER_MAP.keySet()) &#123;</span><br><span class="line">				<span class="keyword">if</span> (channel != socketChannel) &#123;</span><br><span class="line">					send(channel, userId + <span class="string">&quot; 退出了群聊&quot;</span> + <span class="string">&quot;\n\r&quot;</span>);</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="comment">/**</span></span><br><span class="line"><span class="comment">		 * 扩散说话的内容</span></span><br><span class="line"><span class="comment">		 * </span></span><br><span class="line"><span class="comment">		 * <span class="doctag">@param</span> socketChannel</span></span><br><span class="line"><span class="comment">		 * <span class="doctag">@param</span> content</span></span><br><span class="line"><span class="comment">		 */</span></span><br><span class="line">		<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">propagate</span><span class="params">(SocketChannel socketChannel, String content)</span> </span>&#123;</span><br><span class="line">			String userId = USER_MAP.get(socketChannel);</span><br><span class="line">			<span class="keyword">for</span> (SocketChannel channel : USER_MAP.keySet()) &#123;</span><br><span class="line">				<span class="keyword">if</span> (channel != socketChannel) &#123;</span><br><span class="line">					send(channel, userId + <span class="string">&quot;: &quot;</span> + content);</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="comment">/**</span></span><br><span class="line"><span class="comment">		 * 发送消息</span></span><br><span class="line"><span class="comment">		 * </span></span><br><span class="line"><span class="comment">		 * <span class="doctag">@param</span> socketChannel</span></span><br><span class="line"><span class="comment">		 * <span class="doctag">@param</span> msg</span></span><br><span class="line"><span class="comment">		 */</span></span><br><span class="line">		<span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">send</span><span class="params">(SocketChannel socketChannel, String msg)</span> </span>&#123;</span><br><span class="line">			<span class="keyword">try</span> &#123;</span><br><span class="line">				ByteBufAllocator allocator = ByteBufAllocator.DEFAULT;</span><br><span class="line">				ByteBuf writeBuffer = allocator.buffer(msg.getBytes().length);</span><br><span class="line">				writeBuffer.writeCharSequence(msg, Charset.defaultCharset());</span><br><span class="line">				socketChannel.writeAndFlush(writeBuffer);</span><br><span class="line">			&#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">				e.printStackTrace();</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<p>可以发现，只需要改动设置子 Handler 里面的那一个地方就可以了，其它地方完全不需要修改，非常便捷。</p>
+<h2 id="模拟群聊"><a href="#模拟群聊" class="headerlink" title="模拟群聊"></a>模拟群聊</h2><p><img src="https://test-1874253.oss-cn-beijing.aliyuncs.com/img/image-20220517145013600.png" alt="image-20220517145013600"></p>
+</div>
+    <aside class="post-rail">
+      <span class="post-rail__line"></span>
+      <span>LESLIE / WRITING</span>
+    </aside>
+  </div>
+
+  <footer class="post-footer shell">
+    <div><h2>如果这篇文章帮到了你，<br>也许下一篇会更有意思。</h2></div>
+    <a class="button button--primary" href="/writing/">继续阅读 →</a>
+  </footer>
+</article>
+</main>
+    <footer class="site-footer">
+  <div class="footer-grid">
+    <div>
+      <p class="footer-kicker">Leslie Zhang</p>
+      <p class="footer-statement">流水不争先，<br>争的是滔滔不绝。</p>
+    </div>
+    <div class="footer-links">
+      <a href="https://github.com/leslieAIbin" target="_blank" rel="noreferrer">GitHub ↗</a>
+      <a href="https://www.instagram.com/leslieaibin/" target="_blank" rel="noreferrer">Instagram ↗</a>
+      <button type="button" data-wechat-open>微信 / WeChat</button>
+      <a href="mailto:aibinzhangleslie@gmail.com">Email ↗</a>
+      <a href="/atom.xml">RSS ↗</a>
+    </div>
+    <div class="footer-meta">
+      <span>© 2026 Leslie Zhang</span>
+      <span>Writing, research and working systems.</span>
+    </div>
+  </div>
+</footer>
+
+    <dialog class="ask-dialog" id="ask-leslie" aria-labelledby="ask-title">
+  <div class="ask-dialog__shell">
+    <div class="ask-dialog__topbar">
+      <div>
+        <h2 id="ask-title">Ask Leslie</h2>
+      </div>
+      <button class="icon-button" type="button" data-ask-close aria-label="关闭">×</button>
+    </div>
+    <p class="ask-dialog__intro">从本站公开文章中寻找答案。当前版本在浏览器本地检索，不上传问题，也不会编造不存在的经历。</p>
+    <form class="ask-form" data-ask-form>
+      <label class="sr-only" for="ask-query">输入问题</label>
+      <textarea id="ask-query" rows="2" placeholder="例如：Agent Runtime 应该怎么设计？" data-ask-input></textarea>
+      <button type="submit">检索知识库 <span aria-hidden="true">↗</span></button>
+    </form>
+    <div class="ask-suggestions" aria-label="推荐问题">
+      
+        <button type="button" data-ask-suggestion="Agent Runtime 应该怎么设计？">Agent Runtime 应该怎么设计？</button>
+      
+        <button type="button" data-ask-suggestion="如何让 AI 操控真实世界设备？">如何让 AI 操控真实世界设备？</button>
+      
+        <button type="button" data-ask-suggestion="Leslie 最近在研究什么？">Leslie 最近在研究什么？</button>
+      
+    </div>
+    <div class="ask-results" data-ask-results aria-live="polite">
+      <div class="ask-empty">
+        <p>输入一个问题，我会把你带到 Leslie 写过的相关内容。</p>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+    <dialog class="wechat-dialog" id="wechat-leslie" aria-labelledby="wechat-title">
+  <div class="wechat-dialog__shell">
+    <header>
+      <div>
+        <p class="section-label">WeChat</p>
+        <h2 id="wechat-title">微信联系</h2>
+      </div>
+      <button class="icon-button" type="button" data-wechat-close aria-label="关闭微信二维码">×</button>
+    </header>
+    <img src="/images/contact/wechat-leslie.png" alt="Leslie Zhang 的微信二维码" loading="lazy">
+    <p>扫码添加 Leslie，建议备注你的名字与来意。</p>
+  </div>
+</dialog>
+
+    <script>window.ORBITAL_ROOT = '/';</script>
+    <script src="/js/orbital.js" defer></script>
+  </body>
+</html>

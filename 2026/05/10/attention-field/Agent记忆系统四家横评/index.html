@@ -1,0 +1,495 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+  <head>
+
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#050b18">
+<meta name="color-scheme" content="dark light">
+<title>Agent 记忆系统四家横评：从便利贴到图书馆，再到什么？ | Leslie Zhang</title>
+<meta name="description" content="之前拆过 Hermes 和 OpenClaw 的记忆系统，这次把 Claude Code 和 Codex 也拆了。四个系统的记忆哲学完全不同——Hermes 靠便利贴，OpenClaw 靠图书馆，Claude Code 靠层级文件，Codex 靠图数据库。放在一起看，你会发现一个更有意思的问题：AI 的记忆到底应该像人，还是像数据库？">
+<meta name="author" content="Leslie Zhang">
+<link rel="canonical" href="https://leslieaibin.github.io/2026/05/10/attention-field/Agent%E8%AE%B0%E5%BF%86%E7%B3%BB%E7%BB%9F%E5%9B%9B%E5%AE%B6%E6%A8%AA%E8%AF%84/">
+<link rel="icon" href="/imgs/01.jpg">
+<link rel="alternate" type="application/atom+xml" title="Leslie Zhang" href="/atom.xml">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Agent 记忆系统四家横评：从便利贴到图书馆，再到什么？ | Leslie Zhang">
+<meta property="og:description" content="之前拆过 Hermes 和 OpenClaw 的记忆系统，这次把 Claude Code 和 Codex 也拆了。四个系统的记忆哲学完全不同——Hermes 靠便利贴，OpenClaw 靠图书馆，Claude Code 靠层级文件，Codex 靠图数据库。放在一起看，你会发现一个更有意思的问题：AI 的记忆到底应该像人，还是像数据库？">
+<meta property="og:url" content="https://leslieaibin.github.io/2026/05/10/attention-field/Agent%E8%AE%B0%E5%BF%86%E7%B3%BB%E7%BB%9F%E5%9B%9B%E5%AE%B6%E6%A8%AA%E8%AF%84/">
+<meta property="og:image" content="https://leslieaibin.github.io/og-blue.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Agent 记忆系统四家横评：从便利贴到图书馆，再到什么？ | Leslie Zhang">
+<meta name="twitter:description" content="之前拆过 Hermes 和 OpenClaw 的记忆系统，这次把 Claude Code 和 Codex 也拆了。四个系统的记忆哲学完全不同——Hermes 靠便利贴，OpenClaw 靠图书馆，Claude Code 靠层级文件，Codex 靠图数据库。放在一起看，你会发现一个更有意思的问题：AI 的记忆到底应该像人，还是像数据库？">
+<meta name="twitter:image" content="https://leslieaibin.github.io/og-blue.png">
+<script>
+  (function () {
+    var saved = localStorage.getItem('orbital-theme');
+    var theme = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    document.documentElement.dataset.theme = theme;
+  })();
+</script>
+<link rel="stylesheet" href="/css/orbital.css">
+<meta name="generator" content="Hexo 5.2.0"></head>
+  <body class="page-post">
+    <a class="skip-link" href="#main-content">跳到主要内容</a>
+    <div class="reading-progress" data-reading-progress></div>
+    <header class="site-header" data-header>
+  <div class="nav-shell">
+    <a class="brand" href="/" aria-label="返回首页">
+      <span class="brand-mark" aria-hidden="true"><img src="/images/brand/leslie-mythos-avatar.webp" alt="" width="512" height="512"></span>
+      <span class="brand-copy">
+        <strong>LESLIE</strong>
+        <small>REAL-WORLD AGENTS</small>
+      </span>
+    </a>
+
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav" data-nav-toggle>
+      <span></span><span></span>
+      <span class="sr-only">打开导航</span>
+    </button>
+
+    <nav class="main-nav" id="main-nav" aria-label="主导航" data-nav>
+      
+        <a href="/" class="">首页</a>
+      
+        <a href="/writing/" class="">写作</a>
+      
+        <a href="/projects/" class="">项目</a>
+      
+        <a href="/about/" class="">关于</a>
+      
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换明暗主题">
+        <span class="theme-toggle__sun" aria-hidden="true">☼</span>
+        <span class="theme-toggle__moon" aria-hidden="true">◐</span>
+      </button>
+      <button class="ask-nav" type="button" data-ask-open>ASK LESLIE</button>
+    </nav>
+  </div>
+</header>
+
+    <main id="main-content"><article class="post-shell">
+  <header class="post-hero shell">
+    <a class="post-back" href="/writing/">← 返回写作</a>
+    <div class="post-hero__meta">
+      <time datetime="2026-05-10">2026 年 05 月 10 日</time>
+      <span>20 分钟阅读</span>
+    </div>
+    <h1>Agent 记忆系统四家横评：从便利贴到图书馆，再到什么？</h1>
+    <p class="post-hero__summary">之前拆过 Hermes 和 OpenClaw 的记忆系统，这次把 Claude Code 和 Codex 也拆了。四个系统的记忆哲学完全不同——Hermes 靠便利贴，OpenClaw 靠图书馆，Claude Code 靠层级文件，Codex 靠图数据库。放在一起看，你会发现一个更有意思的问题：AI 的记忆到底应该像人，还是像数据库？</p>
+    <div class="chip-row"><a href="/tags/Agent/">Agent</a><a href="/tags/Claude-Code/">Claude Code</a><a href="/tags/Hermes/">Hermes</a><a href="/tags/OpenClaw/">OpenClaw</a><a href="/tags/Codex/">Codex</a><a href="/tags/%E8%AE%B0%E5%BF%86%E7%B3%BB%E7%BB%9F/">记忆系统</a><a href="/tags/AI%E6%9E%B6%E6%9E%84/">AI架构</a></div>
+  </header>
+
+  
+
+  <div class="post-layout shell">
+    <aside class="post-toc" aria-label="文章目录">
+      <span class="aside-title">目录</span>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Claude-Code%EF%BC%9A%E6%8A%8A%E8%AE%B0%E5%BF%86%E8%97%8F%E8%BF%9B%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%9A%84%E6%AF%8F%E4%B8%80%E5%B1%82"><span class="toc-text">Claude Code：把记忆藏进文件系统的每一层</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#CLAUDE-md-%E5%B1%82%E7%BA%A7%E6%B3%A8%E5%85%A5"><span class="toc-text">CLAUDE.md 层级注入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Auto-Memory%EF%BC%9A%E5%90%8E%E6%9D%A5%E5%8A%A0%E7%9A%84%E9%82%A3%E5%9D%97%E6%8B%BC%E5%9B%BE"><span class="toc-text">Auto Memory：后来加的那块拼图</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Context-Compaction%EF%BC%9A%E8%A2%AB%E5%8E%8B%E7%BC%A9%E7%9A%84%E4%B8%8D%E4%BB%85%E4%BB%85%E6%98%AF%E8%AE%B0%E5%BF%86"><span class="toc-text">Context Compaction：被压缩的不仅仅是记忆</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Subagent-%E7%9A%84%E8%AE%B0%E5%BF%86%E9%9A%94%E7%A6%BB"><span class="toc-text">Subagent 的记忆隔离</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Session-%E6%8C%81%E4%B9%85%E5%8C%96"><span class="toc-text">Session 持久化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Cron-%E4%BB%BB%E5%8A%A1%E7%9A%84%E8%AE%B0%E5%BF%86"><span class="toc-text">Cron 任务的记忆</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B0%8F%E7%BB%93%EF%BC%9AClaude-Code-%E7%9A%84%E8%AE%B0%E5%BF%86%E5%93%B2%E5%AD%A6"><span class="toc-text">小结：Claude Code 的记忆哲学</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Codex%EF%BC%9A%E6%8A%8A%E8%AE%B0%E5%BF%86%E5%81%9A%E8%BF%9B%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E9%87%8D%E9%87%8F%E7%BA%A7%E9%80%89%E6%89%8B"><span class="toc-text">Codex：把记忆做进数据库的重量级选手</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Thread%EF%BC%9A%E4%B8%80%E5%88%87%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%8D%95%E5%85%83"><span class="toc-text">Thread：一切的基本单元</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%A4%E5%A5%97-SQLite-%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="toc-text">两套 SQLite 数据库</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Agent-Graph-Store%EF%BC%9AThread-%E4%B9%8B%E9%97%B4%E7%9A%84%E5%85%B3%E7%B3%BB%E5%9B%BE"><span class="toc-text">Agent Graph Store：Thread 之间的关系图</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Context-Compaction%EF%BC%9A%E8%B7%9F-Claude-Code-%E7%B1%BB%E4%BC%BC%E4%BD%86%E6%9B%B4%E7%B2%97%E7%B3%99"><span class="toc-text">Context Compaction：跟 Claude Code 类似但更粗糙</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%88%B6%E5%AD%90-Thread-%E7%9A%84%E4%B8%8A%E4%B8%8B%E6%96%87%E4%BC%A0%E9%80%92"><span class="toc-text">父子 Thread 的上下文传递</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Agent-Identity%EF%BC%9A%E6%AF%8F%E4%B8%AA-Thread-%E4%B8%80%E6%8A%8A%E7%A7%81%E9%92%A5"><span class="toc-text">Agent Identity：每个 Thread 一把私钥</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Cross-Session-Resume"><span class="toc-text">Cross-Session Resume</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B0%8F%E7%BB%93%EF%BC%9ACodex-%E7%9A%84%E8%AE%B0%E5%BF%86%E5%93%B2%E5%AD%A6"><span class="toc-text">小结：Codex 的记忆哲学</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E5%AE%B6%E6%A8%AA%E8%AF%84%EF%BC%9A%E5%9B%9B%E7%A7%8D%E8%AE%B0%E5%BF%86%E5%93%B2%E5%AD%A6"><span class="toc-text">四家横评：四种记忆哲学</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9E%B6%E6%9E%84%E6%80%BB%E8%A7%88"><span class="toc-text">架构总览</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%B0%E5%BF%86%E6%B3%A8%E5%85%A5%EF%BC%9A%E5%9B%9B%E7%A7%8D%E5%AE%8C%E5%85%A8%E4%B8%8D%E5%90%8C%E7%9A%84%E7%AD%96%E7%95%A5"><span class="toc-text">记忆注入：四种完全不同的策略</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8E%8B%E7%BC%A9%E7%AD%96%E7%95%A5%EF%BC%9A%E5%9B%9B%E7%A7%8D%E5%AF%B9%E6%8A%97%E9%81%97%E5%BF%98%E7%9A%84%E6%96%B9%E5%BC%8F"><span class="toc-text">压缩策略：四种对抗遗忘的方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Multi-Agent-%E8%AE%B0%E5%BF%86%EF%BC%9A%E4%B8%A4%E7%A7%8D%E9%9A%94%E7%A6%BB%E5%93%B2%E5%AD%A6"><span class="toc-text">Multi-Agent 记忆：两种隔离哲学</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%B0%E5%BF%86%E7%9A%84%E8%87%AA%E4%BF%AE%E6%94%B9%E8%83%BD%E5%8A%9B"><span class="toc-text">记忆的自修改能力</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%93%AA%E4%B8%AA%E9%80%82%E5%90%88%E4%BD%A0%EF%BC%9F"><span class="toc-text">哪个适合你？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%99%E5%9C%A8%E6%9C%80%E5%90%8E%EF%BC%9AAI-%E7%9A%84%E8%AE%B0%E5%BF%86%E5%88%B0%E5%BA%95%E5%BA%94%E8%AF%A5%E5%83%8F%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-text">写在最后：AI 的记忆到底应该像什么？</span></a></li></ol>
+    </aside>
+    <div class="article-content"><h1 id="Agent-记忆系统四家横评：从便利贴到图书馆，再到什么？"><a href="#Agent-记忆系统四家横评：从便利贴到图书馆，再到什么？" class="headerlink" title="Agent 记忆系统四家横评：从便利贴到图书馆，再到什么？"></a>Agent 记忆系统四家横评：从便利贴到图书馆，再到什么？</h1><p>之前写了两篇文章，分别拆了 Hermes Agent 和 OpenClaw 的记忆系统。</p>
+<p>发出去之后，有人问我，那 Claude Code 和 Codex 呢？</p>
+<p>我当时觉得这两个不是同一个赛道的东西。Hermes 和 OpenClaw 是第三方 Agent 框架，记忆系统是核心卖点。Claude Code 和 Codex 是官方 CLI 工具，记忆只是它们众多能力之一。</p>
+<p>但后来我仔细想了想，不对。</p>
+<p>恰恰因为它们不是「记忆专用」的系统，它们处理记忆的方式反而更有意思。它们没有像 Hermes 那样把记忆做成一个独立工具，也没有像 OpenClaw 那样给记忆加一套睡眠机制。它们把记忆藏在了更底层的地方——文件系统、会话管理、上下文压缩。</p>
+<p>这种「不刻意」的设计，反而更接近软件工程的真实常态。</p>
+<p>所以今天把四个系统放在一起聊。前半部分拆 Claude Code 和 Codex 的记忆机制，后半部分做四家横评。</p>
+<h2 id="Claude-Code：把记忆藏进文件系统的每一层"><a href="#Claude-Code：把记忆藏进文件系统的每一层" class="headerlink" title="Claude Code：把记忆藏进文件系统的每一层"></a>Claude Code：把记忆藏进文件系统的每一层</h2><p>先说一个我一开始没意识到的事。</p>
+<p>Claude Code 没有一个叫「memory」的工具。</p>
+<p>准确地说，它后来加了一个，叫 auto memory。但在很长一段时间里，Claude Code 的记忆系统就是——文件。</p>
+<p>你打开 Claude Code 开始一个新会话，它做的第一件事不是等你说话，而是<strong>读文件</strong>。读哪些文件？按照一套非常精巧的层级从上往下扫。</p>
+<h3 id="CLAUDE-md-层级注入"><a href="#CLAUDE-md-层级注入" class="headerlink" title="CLAUDE.md 层级注入"></a>CLAUDE.md 层级注入</h3><p>这是 Claude Code 记忆系统的地基。</p>
+<p>你可以在很多地方放一个叫 <code>CLAUDE.md</code> 的文件，Claude Code 启动时会按固定顺序把它们全读进来：</p>
+<ol>
+<li><strong>企业策略文件</strong>（macOS 在 <code>/Library/Application Support/ClaudeCode/</code>，Linux 在 <code>/etc/claude-code/</code>）—— 这个是 IT 管的，你改不了</li>
+<li><strong>从文件系统根目录往当前目录走</strong>，经过的每一层目录如果有一个 <code>CLAUDE.md</code>，都会被加载</li>
+<li>每一层的 <code>CLAUDE.local.md</code> —— 个人版本，自动被 gitignore，不会推到远程</li>
+<li><strong>全局用户文件</strong> <code>~/.claude/CLAUDE.md</code> —— 适用于你所有项目的个人偏好</li>
+<li><strong>项目规则</strong> <code>.claude/rules/*.md</code> —— 项目级别的行为约束</li>
+</ol>
+<p>所有文件<strong>拼接，不覆盖</strong>。越靠近当前目录的内容越后读，实际优先级越高。</p>
+<p>你品品这个设计。</p>
+<p>它不是给 AI 一个统一的「记忆仓库」，而是把记忆<strong>嵌入到文件系统本身</strong>。项目根目录的 CLAUDE.md 是团队共享的「我们这个项目怎么做事情」，<code>.claude/rules/</code> 里面按主题分文件，「测试规范」「API 设计原则」「Git 提交风格」，每个文件还可以设定只对特定路径生效。<code>CLAUDE.local.md</code> 是你自己的私货，「我喜欢简洁输出，不要废话」，不会污染团队 repo。</p>
+<p>这跟 Hermes 的设计哲学完全不同。</p>
+<p>Hermes 的记忆是「一个人的便利贴墙」，所有信息贴在同一个地方。Claude Code 的记忆是「一个组织的文档体系」，不同层级、不同角色、不同作用域，各管各的。</p>
+<p>而且有一个细节很讲究：CLAUDE.md 里的 HTML 注释会在注入前被<strong>自动剥离</strong>，帮你省 token。但代码块里的注释保留。这种对 token 开销的精打细算，贯穿了整个 Claude Code 的设计。</p>
+<h3 id="Auto-Memory：后来加的那块拼图"><a href="#Auto-Memory：后来加的那块拼图" class="headerlink" title="Auto Memory：后来加的那块拼图"></a>Auto Memory：后来加的那块拼图</h3><p>很长一段时间，Claude Code 的「记忆」就是 CLAUDE.md。你手动写，它读。跟它聊了三天，换了什么偏好、踩了什么坑，它不会自己记。你得自己打开 CLAUDE.md 加一行。</p>
+<p>后来它加了 auto memory。</p>
+<p>机制是这样的：Claude Code 在跟你的交互过程中，如果判断某个信息「未来可能有用」，会自动把它写进 <code>~/.claude/projects/&lt;project&gt;/memory/</code> 目录。这个目录底下有一个 <code>MEMORY.md</code> 当索引，还有按主题分的文件，比如 <code>debugging.md</code>、<code>api-conventions.md</code>。</p>
+<p>每次新会话启动，它会把 <code>MEMORY.md</code> 的<strong>前 200 行或 25KB</strong>（以先到的为准）加载进来。超过的部分不会被加载——需要的时候通过文件工具按需读取。</p>
+<p>这个设计让我想到一个比喻。</p>
+<p>CLAUDE.md 像是你贴在冰箱上的家庭公约——谁都能看到，内容稳定。Auto memory 像是你床头的日记本——只有你自己看，每天更新，但翻不翻由你。</p>
+<p>有一个我特别喜欢的细节：topic 文件不会在启动时加载。只有当 Claude Code 在工作过程中需要某块知识时，才会主动去读。这意味着<strong>记忆的加载是按需的</strong>，不浪费 context 窗口。</p>
+<p>Hermes 是全量装载——会话开始时把 MEMORY.md 整个塞进 prompt。Claude Code 是分层装载——索引开头部分常驻，详细内容按需拉取。后者更省 token，但多了一轮文件读取的开销。</p>
+<h3 id="Context-Compaction：被压缩的不仅仅是记忆"><a href="#Context-Compaction：被压缩的不仅仅是记忆" class="headerlink" title="Context Compaction：被压缩的不仅仅是记忆"></a>Context Compaction：被压缩的不仅仅是记忆</h3><p>这才是 Claude Code 记忆系统里最硬核的部分。</p>
+<p>每个会话有 200K token 的上下文窗口。听起来很多，但真跑起复杂任务来——读几十个文件、调一堆工具、每个工具返回大段数据——消耗飞快。</p>
+<p>Claude Code 的策略是：<strong>当 context 用到大约 95% 的时候，自动触发压缩（compaction）</strong>。</p>
+<p>压缩不是简单的「把前面的删掉」。它做了一件很暴力但也很有道理的事：</p>
+<ol>
+<li>把整个对话历史喂给另一个模型调用</li>
+<li>让模型生成一份结构化摘要</li>
+<li>用这份摘要替换掉原始对话历史</li>
+</ol>
+<p>也就是说，你之前跟它聊的所有细节——你问了什么、它答了什么、中间调了哪些工具、文件改了什么——全部被压缩成一段话。<strong>零原始消息保留，全部变成摘要。</strong></p>
+<p>这种做法的好处是简单粗暴、节省 token。代价也很明显——正在处理中的数据可能被不可逆地丢失。社区里有不少人在 GitHub Issues 里吐槽过这件事。</p>
+<p>但 Claude Code 做了一个很聪明的设计来弥补：<strong>压缩之后，它会从磁盘重新注入关键内容</strong>。</p>
+<p>具体来说，压缩后能活下来的东西：</p>
+<table>
+<thead>
+<tr>
+<th>内容</th>
+<th>压缩后</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>System prompt 和 output style</td>
+<td>原封不动，本来就不在消息历史里</td>
+</tr>
+<tr>
+<td>项目根目录的 CLAUDE.md</td>
+<td>从磁盘重新注入</td>
+</tr>
+<tr>
+<td>Auto memory（MEMORY.md）</td>
+<td>从磁盘重新注入</td>
+</tr>
+<tr>
+<td>没有路径限制的 rules</td>
+<td>从磁盘重新注入</td>
+</tr>
+<tr>
+<td>有路径限制的 rules</td>
+<td><strong>丢了</strong>，直到再次读匹配路径的文件</td>
+</tr>
+<tr>
+<td>子目录的 CLAUDE.md</td>
+<td><strong>丢了</strong>，直到再次读该子目录的文件</td>
+</tr>
+<tr>
+<td>已调用的 skill</td>
+<td>重新注入，但每个 skill 上限 5000 token，总共上限 25000 token</td>
+</tr>
+</tbody></table>
+<p>你看，CLAUDE.md 和 auto memory 之所以重要，不只是因为它们是「记忆」，更是因为它们是<strong>压缩后唯一能被重新注入的东西</strong>。它们是 Claude Code 的「种子文件」——压缩把整棵树砍了，但种子还在，能重新长出来。</p>
+<p>这也是为什么 Anthropic 官方建议 CLAUDE.md 每个文件控制在 200 行以内。太长了，每次注入都浪费 token；太短了，压缩后恢复不了足够的上下文。</p>
+<h3 id="Subagent-的记忆隔离"><a href="#Subagent-的记忆隔离" class="headerlink" title="Subagent 的记忆隔离"></a>Subagent 的记忆隔离</h3><p>Claude Code 有一个 Agent 工具，可以派一个 subagent 去干活。</p>
+<p>Subagent 的记忆是<strong>完全隔离</strong>的。</p>
+<p>它看不到主 agent 的对话历史。它看不到其他 subagent 在干什么。它只有一个独立的 200K context 窗口，加上你给它的那段任务描述。</p>
+<p>干完活之后，只有<strong>最终文本结果</strong>返回给主 agent。中间所有的文件读取、工具调用、推理过程，全部留在 subagent 的 context 里，不污染主 agent。</p>
+<p>这个设计让我想到一个类比。主 agent 是项目经理，subagent 是外包。你给外包一份需求文档，外包干完给你交一份交付物。外包的中间过程——查了什么资料、试了几种方案、踩了哪些坑——你不需要知道，你也管不了。你只要结果。</p>
+<p>但 subagent 有一个很特别的地方：它可以有自己的 auto memory。存在 <code>.claude/agent-memory/&lt;name&gt;/</code> 下面。这意味着同一个 subagent 被多次调用时，它可以积累自己的经验。</p>
+<h3 id="Session-持久化"><a href="#Session-持久化" class="headerlink" title="Session 持久化"></a>Session 持久化</h3><p>Claude Code 的每一次会话都被完整保存为 JSONL 文件，存在 <code>~/.claude/projects/&lt;project&gt;/&lt;session-id&gt;.jsonl</code>。每一行是一个 JSON 对象，代表一条消息、一个工具调用或一段元数据。</p>
+<p>你可以用 <code>claude --continue</code> 恢复最近的会话，用 <code>claude --resume</code> 打开会话选择器。</p>
+<p>但有一个很关键的局限：<strong>压缩后丢失的上下文不会因为 resume 而回来</strong>。JSONL 里存的是完整的原始对话，但 resume 时 Claude Code 读取的是已经被压缩过的上下文。原始数据在磁盘上，但模型看不到。</p>
+<p>就好像你的日记本还在，但你只能看到最后一页的摘要。</p>
+<h3 id="Cron-任务的记忆"><a href="#Cron-任务的记忆" class="headerlink" title="Cron 任务的记忆"></a>Cron 任务的记忆</h3><p>Claude Code 有一个 CronCreate 工具，可以定时触发任务。</p>
+<p>Durable 类型的 cron 会持久化到 <code>.claude/scheduled_tasks.json</code>，重启后自动恢复。但每次触发都是<strong>全新的 context</strong>——之前的运行状态不会自动传过来。如果需要跨次运行保持状态，只能把信息写到文件里。</p>
+<p>这跟 Hermes 的 cron 不同。Hermes 的 cron 任务可以读自己的持久记忆，知道自己上次干了什么。Claude Code 的 cron 每次都是一张白纸，只能靠 CLAUDE.md 和 auto memory 来恢复上下文。</p>
+<h3 id="小结：Claude-Code-的记忆哲学"><a href="#小结：Claude-Code-的记忆哲学" class="headerlink" title="小结：Claude Code 的记忆哲学"></a>小结：Claude Code 的记忆哲学</h3><p>Claude Code 的记忆不是一套独立的「记忆系统」。它是一套<strong>基于文件系统的记忆约定</strong>。</p>
+<p>没有专门的记忆数据库，没有向量检索，没有语义搜索。所有的记忆都是 markdown 文件，存储在文件系统的不同层级，按需加载，压缩后重新注入。</p>
+<p>这种设计的好处是<strong>透明</strong>。每一条记忆你都能打开看到、手动编辑、用 git 管理。坏处是<strong>粗糙</strong>。没有语义检索，没有自动遗忘机制，没有记忆巩固。200 行 MEMORY.md 加载进来就是全量塞进去，用不用得上都占 token。</p>
+<p>Anthropic 的工程师显然做了一个取舍：宁可让记忆系统简单透明，也不要做一个复杂但黑盒的记忆引擎。</p>
+<p>这种取舍是有道理的。Claude Code 的定位是程序员的本地 CLI 助手，不是长期陪伴的 AI。程序员自己会用 git、会写文档、会做知识管理。Claude Code 只需要帮他们把手头的活干好，不需要帮他们「记住一切」。</p>
+<hr>
+<h2 id="Codex：把记忆做进数据库的重量级选手"><a href="#Codex：把记忆做进数据库的重量级选手" class="headerlink" title="Codex：把记忆做进数据库的重量级选手"></a>Codex：把记忆做进数据库的重量级选手</h2><p>OpenAI 的 Codex 走了一条完全不同的路。</p>
+<p>如果说 Claude Code 的记忆是「藏在文件系统里的暗线」，那 Codex 的记忆就是「明面上的基础设施」。它有一个专门的数据库、专门的 schema、专门的持久化层，甚至专门的身份认证系统。</p>
+<p>从源码的体量就能看出来。Claude Code 的记忆系统大概就是几个文件目录加一套加载约定。Codex 光是 thread-store + agent-graph-store + agent-identity 就有十几个 crate。</p>
+<h3 id="Thread：一切的基本单元"><a href="#Thread：一切的基本单元" class="headerlink" title="Thread：一切的基本单元"></a>Thread：一切的基本单元</h3><p>在 Codex 里，<strong>Thread = 一个 AI 会话</strong>。但它比「会话」这个词承载的东西多得多。</p>
+<p>每个 Thread 有：</p>
+<ul>
+<li>独立的 <code>thread_id</code></li>
+<li>独立的 model 和 reasoning_effort</li>
+<li>独立的 cwd（工作目录）和 sandbox 策略</li>
+<li>独立的 ed25519 密钥对（后面细说）</li>
+<li>独立的 JSONL rollout 文件（完整的对话历史）</li>
+<li>独立的 SQLite 行（<code>threads</code> 表里的一行）</li>
+</ul>
+<p>Thread 由 <code>ThreadManager</code> 管理。配置里有几个关键参数：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">agents.max_threads: 6        &#x2F;&#x2F; 同时存活的 thread 上限</span><br><span class="line">agents.max_depth: 1          &#x2F;&#x2F; 子 thread spawn 子 thread 的最大深度</span><br><span class="line">agents.job_max_runtime_seconds: ...  &#x2F;&#x2F; 单个 thread 最大运行时间</span><br></pre></td></tr></table></figure>
+
+<p>默认最多 6 个 thread 同时跑，层级最多 1 层（主 thread 可以 spawn 子 thread，子 thread 不能再 spawn 孙 thread）。</p>
+<h3 id="两套-SQLite-数据库"><a href="#两套-SQLite-数据库" class="headerlink" title="两套 SQLite 数据库"></a>两套 SQLite 数据库</h3><p>Codex 用了<strong>两个独立的 SQLite 数据库</strong>来减少锁竞争：</p>
+<ul>
+<li><code>~/.codex/state_5.sqlite</code> —— 主数据库，存 threads、agent graph、goals、memories</li>
+<li><code>~/.codex/logs_1.sqlite</code> —— 日志数据库</li>
+</ul>
+<p>两个库都开了 WAL 模式（Write-Ahead Logging），busy timeout 5 秒，连接池最大 5 个连接。</p>
+<p>为什么要两个库？因为 Codex 设计为可以多终端同时跑——你在 VS Code 里跑一个 Codex，终端里跑另一个，它们共享同一个 <code>state_5.sqlite</code>。高并发写入下，单库的锁竞争会非常严重。</p>
+<p><code>threads</code> 表的 schema 比较复杂，有二十多个字段。除了常规的 id、创建时间、更新时间，还有一些很有意思的字段：</p>
+<ul>
+<li><code>rollout_path</code> —— 指向 JSONL 文件，存完整对话历史</li>
+<li><code>agent_nickname</code> / <code>agent_role</code> —— agent 的角色标识</li>
+<li><code>agent_path</code> —— 用于查找子 agent 的规范路径</li>
+<li><code>memory_mode</code> —— 记忆模式状态（默认 <code>&quot;enabled&quot;</code>）</li>
+<li><code>git_sha</code> / <code>git_branch</code> / <code>git_origin_url</code> —— 创建时的 git 状态</li>
+<li><code>sandbox_policy</code> / <code>approval_mode</code> —— 沙箱和审批策略</li>
+<li><code>tokens_used</code> —— token 用量计数</li>
+<li><code>archived</code> / <code>archived_at</code> —— 归档状态</li>
+</ul>
+<p>这些字段组合在一起，构成了一个 Thread 的<strong>完整画像</strong>。你可以把它理解成一张超详细的「病历卡」——不只是「这个病人是谁」，还有「他来的时候是什么状态」「用什么方案治的」「治了多久」「花了多少钱」。</p>
+<h3 id="Agent-Graph-Store：Thread-之间的关系图"><a href="#Agent-Graph-Store：Thread-之间的关系图" class="headerlink" title="Agent Graph Store：Thread 之间的关系图"></a>Agent Graph Store：Thread 之间的关系图</h3><p>这是 Codex 记忆系统最有想象力的设计。</p>
+<p>每次主 thread spawn 一个子 thread，Codex 在 <code>thread_spawn_edges</code> 表里记一条边：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> thread_spawn_edges (</span><br><span class="line">    parent_thread_id   <span class="built_in">TEXT</span> <span class="keyword">NOT</span> <span class="literal">NULL</span>,</span><br><span class="line">    child_thread_id    <span class="built_in">TEXT</span> <span class="keyword">NOT</span> <span class="literal">NULL</span> PRIMARY <span class="keyword">KEY</span>,</span><br><span class="line">    <span class="keyword">status</span>             <span class="built_in">TEXT</span> <span class="keyword">NOT</span> <span class="literal">NULL</span>  <span class="comment">-- &quot;Open&quot; / &quot;Closed&quot;</span></span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<p>这张表虽然只有三个字段，但它做的事情非常关键——它记录了<strong>整个 agent 拓扑图</strong>。</p>
+<p>哪个 agent spawn 了哪些子 agent？哪些边还是 Open（活跃）的？哪些已经 Closed？全在这张表里。</p>
+<p>而且它支持 BFS 遍历。通过递归 CTE（Common Table Expression），你可以从一个根 thread 出发，找到它所有的后代——子、孙、曾孙——一层一层展开。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 递归 CTE，BFS 遍历所有后代</span></span><br><span class="line"><span class="keyword">WITH</span> <span class="keyword">RECURSIVE</span> descendants <span class="keyword">AS</span> (</span><br><span class="line">    <span class="keyword">SELECT</span> child_thread_id, <span class="number">1</span> <span class="keyword">AS</span> <span class="keyword">depth</span></span><br><span class="line">    <span class="keyword">FROM</span> thread_spawn_edges</span><br><span class="line">    <span class="keyword">WHERE</span> parent_thread_id = ?</span><br><span class="line">    <span class="keyword">UNION</span> <span class="keyword">ALL</span></span><br><span class="line">    <span class="keyword">SELECT</span> e.child_thread_id, d.depth + <span class="number">1</span></span><br><span class="line">    <span class="keyword">FROM</span> thread_spawn_edges e</span><br><span class="line">    <span class="keyword">JOIN</span> descendants d <span class="keyword">ON</span> e.parent_thread_id = d.child_thread_id</span><br><span class="line">)</span><br><span class="line"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> descendants <span class="keyword">ORDER</span> <span class="keyword">BY</span> <span class="keyword">depth</span>, child_thread_id;</span><br></pre></td></tr></table></figure>
+
+<p>这意味着 Codex 知道你的整个 multi-agent 关系网络。不只是「谁干了什么」，而是「谁派了谁、谁还在跑、谁已经收了」。</p>
+<p>Claude Code 没有这个。Claude Code 的 subagent 是一次性的——干完活就消失，不留痕迹。Codex 的 thread 是<strong>持久化的、可遍历的、可恢复的</strong>。</p>
+<p>你关掉一个子 thread，它不会消失，只是 status 变成 Closed。下次你可以 resume 它，继续之前的对话。</p>
+<h3 id="Context-Compaction：跟-Claude-Code-类似但更粗糙"><a href="#Context-Compaction：跟-Claude-Code-类似但更粗糙" class="headerlink" title="Context Compaction：跟 Claude Code 类似但更粗糙"></a>Context Compaction：跟 Claude Code 类似但更粗糙</h3><p>Codex 也有 context compaction。配置里有 <code>model_auto_compact_token_limit</code>，超过阈值就触发压缩。</p>
+<p>基本逻辑跟 Claude Code 一样：把对话历史喂给模型做摘要，用摘要替换原始历史。</p>
+<p>但从社区反馈来看，Codex 的压缩做得不如 Claude Code 成熟。有人报告压缩后 Codex 会回复之前的请求（好像压缩把最近的对话搞丢了），有人报告压缩任务永远跑不完，有人报告它根本不触发压缩、直接报错「context window 满了」。</p>
+<p>Claude Code 至少有一套精心设计的「压缩后重新注入」机制。Codex 目前看来还没有这么完善。</p>
+<h3 id="父子-Thread-的上下文传递"><a href="#父子-Thread-的上下文传递" class="headerlink" title="父子 Thread 的上下文传递"></a>父子 Thread 的上下文传递</h3><p>这是理解 Codex 记忆系统的关键。</p>
+<p>父子 thread 各有独立的对话历史，<strong>不共享 context 窗口</strong>。那上下文怎么传？</p>
+<p>两条通道。</p>
+<p><strong>通道一：显式消息。</strong> 父 thread 调 <code>AgentControl.interact</code> 时，在它自己的 history 里就是一个普通的工具调用——发出 tool_call，拿回 tool_result。那段 tool_result 就是子 thread 这一轮的最终回复文本。子 thread 那一堆中间步骤——WebSearch、文件读取、代码分析——完全不进父的 context。</p>
+<p><strong>通道二：隐式文件系统。</strong> 子 thread 默认继承父的 cwd 和 sandbox。子 thread 写的文件，父 thread 能直接读。这是一条「宽通道」——一份 5000 字的调研报告塞进消息文本会污染父 context，写到文件里然后只回一句「已写到 xxx，核心结论是 yyy」则不会。</p>
+<p>两条通道的分工很明确：消息走摘要和决策，文件系统走详细内容。</p>
+<h3 id="Agent-Identity：每个-Thread-一把私钥"><a href="#Agent-Identity：每个-Thread-一把私钥" class="headerlink" title="Agent Identity：每个 Thread 一把私钥"></a>Agent Identity：每个 Thread 一把私钥</h3><p>这是 Codex 最「重」的设计。</p>
+<p>每个 thread 有一把独立的 ed25519 私钥。调用后端 API 时，thread 用自己的私钥签一段 assertion（<code>agent_runtime_id:task_id:timestamp</code>），服务端验证签名 + JWT 鉴权。</p>
+<p>Claude Code 不需要这个——所有 subagent 都在同一个本地进程里，互信。但 Codex 设计为可以跑在云上、跨进程、跨 K8s pod。当你的 multi-agent 分布在不同机器上时，一个 agent 被攻破不能伪装成另一个 agent，就需要独立的身份认证。</p>
+<p>这是 Codex 把「同进程 multi-agent」和「分布式 multi-agent」用同一套抽象实现的代价。即使你的 agent 都在同一个进程里，也得走签名流程。</p>
+<h3 id="Cross-Session-Resume"><a href="#Cross-Session-Resume" class="headerlink" title="Cross-Session Resume"></a>Cross-Session Resume</h3><p>Codex 可以跨 session 恢复 thread。</p>
+<p>恢复时，它从 SQLite 读 thread 行，从 JSONL rollout 文件重放对话历史，从 <code>thread_spawn_edges</code> 表恢复父子关系。整个 agent 拓扑图可以被完整重建。</p>
+<p>这是 Codex 跟 Claude Code 的一个根本差异。Claude Code 的会话虽然也有 JSONL 转写，但 resume 时读到的是压缩后的上下文。Codex 的 JSONL rollout 是<strong>完整的原始记录</strong>，resume 后模型能看到所有历史细节——只要你还没压缩过。</p>
+<h3 id="小结：Codex-的记忆哲学"><a href="#小结：Codex-的记忆哲学" class="headerlink" title="小结：Codex 的记忆哲学"></a>小结：Codex 的记忆哲学</h3><p>Codex 的记忆是<strong>数据库驱动的、图结构的、有身份认证的</strong>。</p>
+<p>它不是一个简单的文件目录。它是一个完整的状态管理系统——SQLite 做持久化、JSONL 做审计、agent graph 做关系追踪、ed25519 做身份验证。</p>
+<p>这种设计的好处是<strong>健壮</strong>。你知道每个 agent 在哪、在干什么、跟谁有关系。你可以恢复、可以审计、可以分布式部署。坏处是<strong>重</strong>。90+ crates 的体量，两个 SQLite 库，一套签名鉴权流程，即使你只是一个人在本地跑一个简单任务，这些基础设施也都在。</p>
+<p>OpenAI 的定位很清楚：Codex 不只是 CLI 工具，是<strong>AI agent runtime</strong>。它要能跑在企业的 K8s 集群里给 300 个工程师服务，要能跨 pod 部署，要能审计每一个 agent 的每一步操作。</p>
+<p>记忆系统为这个定位服务。不是一个 AI 助手在「记住你」，而是一个企业级平台在「管理状态」。</p>
+<hr>
+<h2 id="四家横评：四种记忆哲学"><a href="#四家横评：四种记忆哲学" class="headerlink" title="四家横评：四种记忆哲学"></a>四家横评：四种记忆哲学</h2><p>现在把 Hermes、OpenClaw、Claude Code、Codex 放在一起看。</p>
+<p>先上一张大表。</p>
+<h3 id="架构总览"><a href="#架构总览" class="headerlink" title="架构总览"></a>架构总览</h3><table>
+<thead>
+<tr>
+<th>维度</th>
+<th>Hermes</th>
+<th>OpenClaw</th>
+<th>Claude Code</th>
+<th>Codex</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>核心哲学</strong></td>
+<td>便利贴墙</td>
+<td>图书馆</td>
+<td>层级文件体系</td>
+<td>图数据库</td>
+</tr>
+<tr>
+<td><strong>存储介质</strong></td>
+<td>Markdown 文件</td>
+<td>Markdown + SQLite 影子索引</td>
+<td>Markdown 文件 + JSONL 转写</td>
+<td>SQLite + JSONL rollout</td>
+</tr>
+<tr>
+<td><strong>记忆分层</strong></td>
+<td>4 层：上下文 / 持久 / 技能 / 会话搜索</td>
+<td>3 阶段睡眠 + 短期/工作/长期</td>
+<td>CLAUDE.md 层级 + auto memory + session JSONL</td>
+<td>Thread + agent graph + rollout</td>
+</tr>
+<tr>
+<td><strong>注入方式</strong></td>
+<td>全量装载（会话开始时塞 prompt）</td>
+<td>按需检索（搜索工具）</td>
+<td>分层装载（索引常驻 + 按需加载）</td>
+<td>Thread 独立 context + 父子消息传递</td>
+</tr>
+<tr>
+<td><strong>检索能力</strong></td>
+<td>FTS5 全文检索</td>
+<td>Hybrid（向量 + BM25 + MMR + 时间衰减）</td>
+<td>无内置检索，靠文件工具按需读取</td>
+<td>无内置语义检索，靠 JSONL 重放</td>
+</tr>
+<tr>
+<td><strong>压缩策略</strong></td>
+<td>50% 触发，4 阶段压缩，压缩前 memory flush</td>
+<td>压缩前强制 flush + dreaming 整理</td>
+<td>~95% 触发，全量摘要 + 磁盘重新注入</td>
+<td>配置化阈值，摘要替换</td>
+</tr>
+<tr>
+<td><strong>压缩后恢复</strong></td>
+<td>摘要 + 持久记忆（便利贴）</td>
+<td>摘要 + dreaming 晋升的记忆</td>
+<td>CLAUDE.md + auto memory 从磁盘重新注入</td>
+<td>JSONL rollout 完整重放（如果未压缩）</td>
+</tr>
+<tr>
+<td><strong>跨会话</strong></td>
+<td>持久记忆 + 技能 + 会话搜索</td>
+<td>持久记忆 + dreaming + 笔记</td>
+<td>auto memory + CLAUDE.md + session resume</td>
+<td>Thread 持久化 + agent graph + resume</td>
+</tr>
+<tr>
+<td><strong>Multi-Agent</strong></td>
+<td>单 agent</td>
+<td>多 agent 独立 workspace</td>
+<td>Subagent 隔离 + Team 共享 TaskList</td>
+<td>Thread graph + spawn 边 + 身份认证</td>
+</tr>
+<tr>
+<td><strong>记忆自修改</strong></td>
+<td>Agent 可主动改 skill 文件</td>
+<td>Dreaming 自动晋升记忆到 MEMORY.md</td>
+<td>Auto memory 自主决定存什么</td>
+<td>memories 子系统（feature flag 控制）</td>
+</tr>
+<tr>
+<td><strong>透明度</strong></td>
+<td>高，所有记忆是 markdown</td>
+<td>高，markdown + SQLite 可重建</td>
+<td>极高，所有文件可 git 管理</td>
+<td>中，SQLite 需要专门工具查看</td>
+</tr>
+<tr>
+<td><strong>复杂度</strong></td>
+<td>低</td>
+<td>高</td>
+<td>中</td>
+<td>极高</td>
+</tr>
+<tr>
+<td><strong>定位</strong></td>
+<td>个人 AI 助手</td>
+<td>长期陪伴 AI 系统</td>
+<td>程序员本地 CLI</td>
+<td>企业级 AI agent runtime</td>
+</tr>
+</tbody></table>
+<h3 id="记忆注入：四种完全不同的策略"><a href="#记忆注入：四种完全不同的策略" class="headerlink" title="记忆注入：四种完全不同的策略"></a>记忆注入：四种完全不同的策略</h3><p>记忆怎么「装进」AI 脑子里？这四个系统的做法差异巨大。</p>
+<p><strong>Hermes 是「全量装载」。</strong> 会话开始时把 MEMORY.md 和 USER.md 整个塞进 system prompt。优点是立刻有上下文，缺点是每次都塞一堆不一定用得到的东西。而且 Hermes 用了「冻结快照」——会话期间记忆文件更新了，但 prompt 里的版本不变。这是为了保 prefix cache，省钱省时间。</p>
+<p><strong>OpenClaw 是「按需检索」。</strong> 它不把 MEMORY.md 塞进 prompt，而是注入一段纪律：凡是涉及历史信息的，必须先调 memory_search 工具去找。检索结果是带行号的，精确到哪一行。好处是精准，每次只取相关的那几行；代价是多一轮工具调用，慢一些。</p>
+<p><strong>Claude Code 是「分层装载」。</strong> MEMORY.md 的前 200 行常驻 prompt，详细内容按需用文件工具读取。CLAUDE.md 层级文件同样常驻。这是一种折中——比 Hermes 精准，比 OpenClaw 快。</p>
+<p><strong>Codex 是「独立 context」。</strong> 每个 thread 有独立的 context 窗口，父子 thread 之间不共享对话历史。上下文通过显式消息和隐式文件系统传递。这跟前面三个完全不是一个维度——它不是在解决「怎么把记忆塞给一个 AI」，而是在解决「多个 AI 之间怎么传递状态」。</p>
+<h3 id="压缩策略：四种对抗遗忘的方式"><a href="#压缩策略：四种对抗遗忘的方式" class="headerlink" title="压缩策略：四种对抗遗忘的方式"></a>压缩策略：四种对抗遗忘的方式</h3><p>所有大模型都有 context 窗口限制。记忆迟早要被压缩。压缩前做什么、压缩后怎么恢复，这是区分记忆系统好坏的分水岭。</p>
+<p><strong>Hermes 的压缩最有人情味。</strong> 50% 触发，压缩前给 agent 一个「记忆刷新」的机会——让它赶紧把重要的东西从即将被丢弃的对话里抢救出来，写进 MEMORY.md。就像一个人知道自己马上要失忆了，疯狂往便利贴上写东西。</p>
+<p><strong>OpenClaw 的压缩最像人类。</strong> 压缩前不只给 agent 一次机会，而是 runtime 强行插入一个回合——告诉 agent 你只能做一件事：把重要内容写到当天的 memory 文件里。然后这个写入的内容会进入 dreaming 流水线，经过 light sleep、REM sleep、deep sleep 三阶段筛选，有可能最终晋升到长期记忆 MEMORY.md。</p>
+<p><strong>Claude Code 的压缩最工程化。</strong> ~95% 触发，全量摘要替换。但压缩后从磁盘重新注入 CLAUDE.md 和 auto memory——这些「种子文件」是压缩后恢复上下文的唯一来源。这种设计的好处是确定性强，坏处是正在处理中的数据可能被不可逆地丢失。</p>
+<p><strong>Codex 的压缩目前最粗糙。</strong> 配置化的阈值触发，摘要替换。但从社区反馈来看，它的实现还不够稳定。好处是 JSONL rollout 保存了完整的原始记录——即使对话被压缩了，原始数据还在磁盘上。</p>
+<h3 id="Multi-Agent-记忆：两种隔离哲学"><a href="#Multi-Agent-记忆：两种隔离哲学" class="headerlink" title="Multi-Agent 记忆：两种隔离哲学"></a>Multi-Agent 记忆：两种隔离哲学</h3><p>Hermes 和 OpenClaw 主要面向单 agent 场景（OpenClaw 支持多 agent，但每个 agent 的记忆完全隔离）。Claude Code 和 Codex 则有更丰富的 multi-agent 能力，但哲学完全不同。</p>
+<p><strong>Claude Code：委派模式。</strong> Subagent 是一次性的。主 agent 派任务，subagent 干完活返回结果就消失。不持久化，不留痕。但 subagent 可以有自己的 auto memory，积累跨次调用的经验。</p>
+<p>Team 模式允许持久化的 teammate，但 Team 本身不跨 session。进程结束，Team 就没了。</p>
+<p><strong>Codex：图模式。</strong> 每个 thread 是图中长寿的节点。Spawn 关系持久化到 SQLite，可以跨 session 恢复。父子 thread 可以多轮交互，不用每次重讲「我们在聊什么」。每个 thread 有独立的身份（ed25519 私钥），适合分布式部署。</p>
+<p>一句话：Claude Code 的 multi-agent 是「项目经理 + 临时外包」，Codex 是「DAG of agents」。</p>
+<h3 id="记忆的自修改能力"><a href="#记忆的自修改能力" class="headerlink" title="记忆的自修改能力"></a>记忆的自修改能力</h3><p>哪个系统允许 AI 自己修改记忆？</p>
+<p><strong>Hermes 最激进。</strong> Agent 可以主动修改 skill 文件，把踩过的坑写进去。这是「学习」——碰壁之后改菜谱。</p>
+<p><strong>OpenClaw 最有机。</strong> Agent 不直接改 MEMORY.md，但 dreaming 机制会把反复出现的经验自动晋升到长期记忆。这是「巩固」——反复想起，慢慢沉淀。</p>
+<p><strong>Claude Code 最克制。</strong> Auto memory 允许 Claude 自主决定存什么，但它不修改 CLAUDE.md（除非你明确说「add this to CLAUDE.md」）。技能系统是只读的。记忆的写入是有意识的、可审查的。</p>
+<p><strong>Codex 最结构化。</strong> 有一个 memories 子系统（feature flag 控制），但具体行为还在迭代。Agent graph 和 thread 元数据是系统自动维护的，agent 不直接操作。</p>
+<h3 id="哪个适合你？"><a href="#哪个适合你？" class="headerlink" title="哪个适合你？"></a>哪个适合你？</h3><p>不是越复杂越好。每个系统对应不同的使用场景。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">你的需求是 ……</span><br><span class="line"></span><br><span class="line">├── 一个个人 AI 助手帮我处理日常事务</span><br><span class="line">│       → Hermes（轻量、直接、上手快）</span><br><span class="line">│</span><br><span class="line">├── 一个长期陪伴的 AI 系统，记住几个月甚至几年的上下文</span><br><span class="line">│       → OpenClaw（dreaming + hybrid 检索 + 语义搜索）</span><br><span class="line">│</span><br><span class="line">├── 程序员的本地 CLI 助手，帮我写代码</span><br><span class="line">│       → Claude Code（CLAUDE.md 层级 + auto memory + 压缩恢复）</span><br><span class="line">│</span><br><span class="line">├── 企业级 AI agent 平台，给整个团队用</span><br><span class="line">│       → Codex（Thread 持久化 + agent graph + 身份认证 + 审计）</span><br><span class="line">│</span><br><span class="line">├── 需要语义级记忆检索（搜概念，不搜关键词）</span><br><span class="line">│       → OpenClaw（hybrid 检索 + embedding）</span><br><span class="line">│</span><br><span class="line">└── 需要记忆完全透明、可 git 管理</span><br><span class="line">        → Claude Code（所有记忆都是 markdown 文件）</span><br></pre></td></tr></table></figure>
+
+
+<hr>
+<h2 id="写在最后：AI-的记忆到底应该像什么？"><a href="#写在最后：AI-的记忆到底应该像什么？" class="headerlink" title="写在最后：AI 的记忆到底应该像什么？"></a>写在最后：AI 的记忆到底应该像什么？</h2><p>拆完四个系统，我有一个很强的感受。</p>
+<p>Hermes 和 OpenClaw 在试图让 AI 的记忆<strong>像人</strong>。Hermes 用便利贴和日记本做比喻，OpenClaw 直接把神经科学的睡眠巩固机制翻译成了代码。它们的共同假设是：AI 如果要跟人类长期协作，记忆方式应该借鉴人类。</p>
+<p>Claude Code 和 Codex 在试图让 AI 的记忆<strong>像软件</strong>。Claude Code 用文件系统和 git 管理记忆，Codex 用数据库和图结构管理状态。它们的共同假设是：AI 的记忆应该可审计、可恢复、可分布——这是软件工程的标准要求，不是认知科学的模拟。</p>
+<p>哪种对？</p>
+<p>我觉得都对，但解决的是不同的问题。</p>
+<p>如果你要做的是「让一个 AI 跟你建立长期默契」，Hermes 和 OpenClaw 的思路更合适。人类跟人建立默契，靠的就是「你记得我上次说过什么」「你知道我讨厌什么风格」「你在我踩坑之前提醒我」。这些记忆是人格化的、关系化的。</p>
+<p>如果你要做的是「让 AI 可靠地执行任务」，Claude Code 和 Codex 的思路更合适。企业不关心 AI 记不记得你上次聊了什么，企业关心的是「这个 agent 上次跑到哪一步了」「哪个 agent spawn 了哪些子 agent」「出问题了能不能追溯到具体某一步」。</p>
+<p>但如果你仔细看，这四个系统有一个共同的底层矛盾。</p>
+<p><strong>AI 的记忆本质上是在对抗大模型的两个约束：context 窗口有限 + 无状态 API。</strong></p>
+<p>每次调用模型都是无状态的。模型不记得上一秒你说了什么，除非你把完整历史塞进去。但 history 越塞越长，迟早超过 context 窗口。于是你必须压缩、摘要、丢弃。</p>
+<p>所有四个系统的所有设计——便利贴、图书馆、层级文件、图数据库、压缩前刷新、做梦巩固、种子文件、JSONL 重放——全都是在用不同的工程手段对抗这两个约束。</p>
+<p>从这个角度看，记忆系统不是 AI 的「功能」，而是大模型架构局限性的<strong>补丁</strong>。</p>
+<p>如果有一天，模型的 context 窗口大到可以装下你跟它所有的对话历史，或者模型变成了有状态的——这些复杂的记忆系统还需要吗？</p>
+<p>也许不需要了。</p>
+<p>但那天到来之前，这四个系统给了我们四种不同的补丁方案。有的像便利贴，有的像图书馆，有的像文件系统，有的像数据库。它们都在回答同一个问题：<strong>怎么让一个注定会遗忘的存在，表现得好像它记得你。</strong></p>
+<p>这本身就是一个很动人的工程问题。</p>
+<p>不管你用的是哪个系统，下次你打开 AI、发现它还记得你上次说过什么的时候，你知道这背后有多少精心设计在支撑这种「记得」了吗？</p>
+<p>以上，既然看到这里了，如果觉得不错，随手点个赞、在看、转发三连吧，如果想第一时间收到推送，也可以给我个星标⭐～</p>
+<p>谢谢你看我的文章，我们，下次再见。</p>
+</div>
+    <aside class="post-rail">
+      <span class="post-rail__line"></span>
+      <span>LESLIE / WRITING</span>
+    </aside>
+  </div>
+
+  <footer class="post-footer shell">
+    <div><h2>如果这篇文章帮到了你，<br>也许下一篇会更有意思。</h2></div>
+    <a class="button button--primary" href="/writing/">继续阅读 →</a>
+  </footer>
+</article>
+</main>
+    <footer class="site-footer">
+  <div class="footer-grid">
+    <div>
+      <p class="footer-kicker">Leslie Zhang</p>
+      <p class="footer-statement">流水不争先，<br>争的是滔滔不绝。</p>
+    </div>
+    <div class="footer-links">
+      <a href="https://github.com/leslieAIbin" target="_blank" rel="noreferrer">GitHub ↗</a>
+      <a href="https://www.instagram.com/leslieaibin/" target="_blank" rel="noreferrer">Instagram ↗</a>
+      <button type="button" data-wechat-open>微信 / WeChat</button>
+      <a href="mailto:aibinzhangleslie@gmail.com">Email ↗</a>
+      <a href="/atom.xml">RSS ↗</a>
+    </div>
+    <div class="footer-meta">
+      <span>© 2026 Leslie Zhang</span>
+      <span>Writing, research and working systems.</span>
+    </div>
+  </div>
+</footer>
+
+    <dialog class="ask-dialog" id="ask-leslie" aria-labelledby="ask-title">
+  <div class="ask-dialog__shell">
+    <div class="ask-dialog__topbar">
+      <div>
+        <h2 id="ask-title">Ask Leslie</h2>
+      </div>
+      <button class="icon-button" type="button" data-ask-close aria-label="关闭">×</button>
+    </div>
+    <p class="ask-dialog__intro">从本站公开文章中寻找答案。当前版本在浏览器本地检索，不上传问题，也不会编造不存在的经历。</p>
+    <form class="ask-form" data-ask-form>
+      <label class="sr-only" for="ask-query">输入问题</label>
+      <textarea id="ask-query" rows="2" placeholder="例如：Agent Runtime 应该怎么设计？" data-ask-input></textarea>
+      <button type="submit">检索知识库 <span aria-hidden="true">↗</span></button>
+    </form>
+    <div class="ask-suggestions" aria-label="推荐问题">
+      
+        <button type="button" data-ask-suggestion="Agent Runtime 应该怎么设计？">Agent Runtime 应该怎么设计？</button>
+      
+        <button type="button" data-ask-suggestion="如何让 AI 操控真实世界设备？">如何让 AI 操控真实世界设备？</button>
+      
+        <button type="button" data-ask-suggestion="Leslie 最近在研究什么？">Leslie 最近在研究什么？</button>
+      
+    </div>
+    <div class="ask-results" data-ask-results aria-live="polite">
+      <div class="ask-empty">
+        <p>输入一个问题，我会把你带到 Leslie 写过的相关内容。</p>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+    <dialog class="wechat-dialog" id="wechat-leslie" aria-labelledby="wechat-title">
+  <div class="wechat-dialog__shell">
+    <header>
+      <div>
+        <p class="section-label">WeChat</p>
+        <h2 id="wechat-title">微信联系</h2>
+      </div>
+      <button class="icon-button" type="button" data-wechat-close aria-label="关闭微信二维码">×</button>
+    </header>
+    <img src="/images/contact/wechat-leslie.png" alt="Leslie Zhang 的微信二维码" loading="lazy">
+    <p>扫码添加 Leslie，建议备注你的名字与来意。</p>
+  </div>
+</dialog>
+
+    <script>window.ORBITAL_ROOT = '/';</script>
+    <script src="/js/orbital.js" defer></script>
+  </body>
+</html>

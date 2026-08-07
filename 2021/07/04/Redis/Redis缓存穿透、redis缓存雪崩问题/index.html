@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+  <head>
+
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#050b18">
+<meta name="color-scheme" content="dark light">
+<title>Redis缓存穿透，雪崩 | Leslie Zhang</title>
+<meta name="description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta name="author" content="Leslie Zhang">
+<link rel="canonical" href="https://leslieaibin.github.io/2021/07/04/Redis/Redis%E7%BC%93%E5%AD%98%E7%A9%BF%E9%80%8F%E3%80%81redis%E7%BC%93%E5%AD%98%E9%9B%AA%E5%B4%A9%E9%97%AE%E9%A2%98/">
+<link rel="icon" href="/imgs/01.jpg">
+<link rel="alternate" type="application/atom+xml" title="Leslie Zhang" href="/atom.xml">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis缓存穿透，雪崩 | Leslie Zhang">
+<meta property="og:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta property="og:url" content="https://leslieaibin.github.io/2021/07/04/Redis/Redis%E7%BC%93%E5%AD%98%E7%A9%BF%E9%80%8F%E3%80%81redis%E7%BC%93%E5%AD%98%E9%9B%AA%E5%B4%A9%E9%97%AE%E9%A2%98/">
+<meta property="og:image" content="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/34.jpg?raw=true">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Redis缓存穿透，雪崩 | Leslie Zhang">
+<meta name="twitter:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta name="twitter:image" content="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/34.jpg?raw=true">
+<script>
+  (function () {
+    var saved = localStorage.getItem('orbital-theme');
+    var theme = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    document.documentElement.dataset.theme = theme;
+  })();
+</script>
+<link rel="stylesheet" href="/css/orbital.css">
+<meta name="generator" content="Hexo 5.2.0"></head>
+  <body class="page-post">
+    <a class="skip-link" href="#main-content">跳到主要内容</a>
+    <div class="reading-progress" data-reading-progress></div>
+    <header class="site-header" data-header>
+  <div class="nav-shell">
+    <a class="brand" href="/" aria-label="返回首页">
+      <span class="brand-mark" aria-hidden="true"><img src="/images/brand/leslie-mythos-avatar.webp" alt="" width="512" height="512"></span>
+      <span class="brand-copy">
+        <strong>LESLIE</strong>
+        <small>REAL-WORLD AGENTS</small>
+      </span>
+    </a>
+
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav" data-nav-toggle>
+      <span></span><span></span>
+      <span class="sr-only">打开导航</span>
+    </button>
+
+    <nav class="main-nav" id="main-nav" aria-label="主导航" data-nav>
+      
+        <a href="/" class="">首页</a>
+      
+        <a href="/writing/" class="">写作</a>
+      
+        <a href="/projects/" class="">项目</a>
+      
+        <a href="/about/" class="">关于</a>
+      
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换明暗主题">
+        <span class="theme-toggle__sun" aria-hidden="true">☼</span>
+        <span class="theme-toggle__moon" aria-hidden="true">◐</span>
+      </button>
+      <button class="ask-nav" type="button" data-ask-open>ASK LESLIE</button>
+    </nav>
+  </div>
+</header>
+
+    <main id="main-content"><article class="post-shell">
+  <header class="post-hero shell">
+    <a class="post-back" href="/writing/">← 返回写作</a>
+    <div class="post-hero__meta">
+      <time datetime="2021-07-04">2021 年 07 月 04 日</time>
+      <span>4 分钟阅读</span>
+    </div>
+    <h1>Redis缓存穿透，雪崩</h1>
+    
+    <div class="chip-row"><a href="/tags/Redis/">Redis</a></div>
+  </header>
+
+  <div class="post-cover shell"><img src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/34.jpg?raw=true" alt="Redis缓存穿透，雪崩"></div>
+
+  <div class="post-layout shell">
+    <aside class="post-toc" aria-label="文章目录">
+      <span class="aside-title">目录</span>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E7%BC%93%E5%AD%98%E9%9B%AA%E5%B4%A9"><span class="toc-text">什么是缓存雪崩</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="toc-text">解决方案</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E7%BC%93%E5%AD%98%E7%A9%BF%E9%80%8F"><span class="toc-text">什么是缓存穿透</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88-1"><span class="toc-text">解决方案</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88-2"><span class="toc-text">解决方案</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%92%E6%96%A5%E9%94%81"><span class="toc-text">互斥锁</span></a></li></ol></li></ol>
+    </aside>
+    <div class="article-content"><h1 id="缓存雪崩"><a href="#缓存雪崩" class="headerlink" title="缓存雪崩"></a>缓存雪崩</h1><h2 id="什么是缓存雪崩"><a href="#什么是缓存雪崩" class="headerlink" title="什么是缓存雪崩"></a>什么是缓存雪崩</h2><p>由于</p>
+<ul>
+<li>设置缓存时，key都采用了相同expire</li>
+<li>更新策略</li>
+<li>数据热点</li>
+<li>缓存服务宕机</li>
+</ul>
+<p>等原因，可能导致缓存数据同一时刻大规模不可用，或者都更新</p>
+<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><ul>
+<li>更新策略在时间上做到比较均匀</li>
+<li>使用的热数据尽量分散到不同的机器上</li>
+<li>多台机器做主从复制或者多副本，实现高可用</li>
+<li>实现熔断限流机制，对系统进行负载能力控制</li>
+</ul>
+<p>在原有失效时间基础上增加一个随机值，比如1~5分钟的随机，这样每个缓存的过期时间重复率就会降低，集体失效概率也会大大降低。</p>
+<h1 id="缓存穿透"><a href="#缓存穿透" class="headerlink" title="缓存穿透"></a>缓存穿透</h1><h2 id="什么是缓存穿透"><a href="#什么是缓存穿透" class="headerlink" title="什么是缓存穿透"></a>什么是缓存穿透</h2><p>大量并发查询不存在的KEY，导致都直接将压力透传给数据库</p>
+<p>为什么多次透传？不存在一直为空。需要注意让缓存能够区分KEY不存在和查询到一个空值</p>
+<p>例如：访问<strong>id=-1</strong>的数据。可能出现绕过Redis依然频繁访问数据库，称为缓存穿透，多出现在查询为null的情况不被缓存时。</p>
+<h2 id="解决方案-1"><a href="#解决方案-1" class="headerlink" title="解决方案"></a>解决方案</h2><ul>
+<li>缓存空值的KEY，这样第一次不存在也会被加载会记录，下次拿到有这个KEY</li>
+<li>Bloom过滤或RoaringBitmap判断Key是否存在</li>
+</ul>
+<p>最常见的布隆过滤器，将多有可能存在的数据哈希到一个足够大的Bitmap中，一个一定不存在的数据会被这个Bitmap拦截掉，从而避免了对底层存储系统的查询压力</p>
+<ul>
+<li>完全以缓存为准，</li>
+<li>使用 延迟异步加载 的策略2，这样就不会触发更新。</li>
+</ul>
+<p>更为简单粗暴的方法，如果一个查询返回的数据为空（不管是数据不存在，还是系统故障），仍然把这个空结果进行缓存，但它的过期时间会很短，最长不超过5min。</p>
+<h1 id="缓存击穿"><a href="#缓存击穿" class="headerlink" title="缓存击穿"></a>缓存击穿</h1><p>击穿是针对某一个Key缓存，而雪崩是很多key</p>
+<p>某个Key失效时，正好有大量并发请求访问该Key</p>
+<p>通常使用缓存 + 过期时间的策略来帮助我们加速接口的访问速度，减少了后端负载，同时保证功能的更新，一般情况下这个种模式已经基本满足要求了</p>
+<p>但如下问题若同时出现，可能对系统致命：</p>
+<ul>
+<li>为热点key，访问量非常大</li>
+<li>缓存的构建是需要时间（可能是个复杂过程，例如复杂SQL、多次I/O、多个接口依赖）</li>
+</ul>
+<p>于是就会导致： 在缓存失效瞬间，有大量线程构建缓存，导致后端负载加剧，甚至可能让系统崩溃。</p>
+<p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/image-20210821140221116.png" alt="image-20210821140221116"></p>
+<h2 id="解决方案-2"><a href="#解决方案-2" class="headerlink" title="解决方案"></a>解决方案</h2><p>所有问题就在限制处理线程的数量，即KEY的更新操作添加全局互斥锁。</p>
+<h3 id="互斥锁"><a href="#互斥锁" class="headerlink" title="互斥锁"></a>互斥锁</h3><p>在缓存失效时（判断拿出来的值为空），不是立即去load db，而是</p>
+<ul>
+<li>先使用缓存工具的某些带成功操作返回值的操作（Redis的SETNX）去set一个mutex key</li>
+<li>当操作返回成功时，再load db的操作并回设缓存；否则，就重试整个get缓存的方法。</li>
+</ul>
+<h1 id="缓存并发"><a href="#缓存并发" class="headerlink" title="缓存并发"></a>缓存并发</h1><p>这里的并发指的是多个redis的client同时set<br>key引起的并发问题。其实redis自身就是单线程操作，多个client并发操作，按照先到先执行的原则，先到的先执行，其余的阻塞。当然，另外的解决方案是把redis.set操作放在队列中使其串行化，必须的一个一个执行。</p>
+<h1 id="缓存预热"><a href="#缓存预热" class="headerlink" title="缓存预热"></a>缓存预热</h1><p>缓存预热就是系统上线后，将相关的缓存数据直接加载到缓存系统。</p>
+<p>这样就可以避免在用户请求的时候，先查询数据库，然后再将数据缓存的问题！用户直接查询事先被预热的缓存数据！</p>
+<p>解决思路：</p>
+<p>1、直接写个缓存刷新页面，上线时手工操作下；</p>
+<p>2、数据量不大，可以在项目启动的时候自动进行加载；</p>
+<p>目的就是在系统上线前，将数据加载到缓存中。</p>
+<h1 id="如何预防缓存雪崩"><a href="#如何预防缓存雪崩" class="headerlink" title="如何预防缓存雪崩"></a>如何预防缓存雪崩</h1><p>在缓存的时候给过期时间在加上一个随机值，这样就会大幅度减少缓存在同一时间过期</p>
+<p>对于“Redis挂掉了，请求全部走数据库”这种情况，我们可以有以下的思路</p>
+<ul>
+<li>事发前：万一Redis的高可用（采用主从架构），尽量避免Redis挂掉这种情况</li>
+<li>事发中：万一Redis真的挂了，可以设置本地缓存（ehcache) + 限流（hystrix)，尽量避免数据库被干掉</li>
+<li>事发后：redis持久化，重启后自动从磁盘加载数据，快速恢复缓存数据</li>
+</ul>
+<ol>
+<li><p>缓存的高可用性</p>
+<p>缓存层设计成高可用，防止缓存大面积故障。即使个别节点，个别机器，甚至是机房宕机，依然可以提供服务，例如Redis Sentinel  和 Redis Cluster 都实现了高可用。</p>
+</li>
+<li><p>缓存降级</p>
+<p>可以利用ehcache等本地缓存，但主要还是对源服务访问进行限流、资源隔离、降级等</p>
+<p>当访问量剧增、服务出现问题仍然需要保证服务还是可用的。系统可以根据一些关键数据进行自动降级，也可以配置开关实现人工降级，这里会涉及到运维的配合。</p>
+</li>
+</ol>
+</div>
+    <aside class="post-rail">
+      <span class="post-rail__line"></span>
+      <span>LESLIE / WRITING</span>
+    </aside>
+  </div>
+
+  <footer class="post-footer shell">
+    <div><h2>如果这篇文章帮到了你，<br>也许下一篇会更有意思。</h2></div>
+    <a class="button button--primary" href="/writing/">继续阅读 →</a>
+  </footer>
+</article>
+</main>
+    <footer class="site-footer">
+  <div class="footer-grid">
+    <div>
+      <p class="footer-kicker">Leslie Zhang</p>
+      <p class="footer-statement">流水不争先，<br>争的是滔滔不绝。</p>
+    </div>
+    <div class="footer-links">
+      <a href="https://github.com/leslieAIbin" target="_blank" rel="noreferrer">GitHub ↗</a>
+      <a href="https://www.instagram.com/leslieaibin/" target="_blank" rel="noreferrer">Instagram ↗</a>
+      <button type="button" data-wechat-open>微信 / WeChat</button>
+      <a href="mailto:aibinzhangleslie@gmail.com">Email ↗</a>
+      <a href="/atom.xml">RSS ↗</a>
+    </div>
+    <div class="footer-meta">
+      <span>© 2026 Leslie Zhang</span>
+      <span>Writing, research and working systems.</span>
+    </div>
+  </div>
+</footer>
+
+    <dialog class="ask-dialog" id="ask-leslie" aria-labelledby="ask-title">
+  <div class="ask-dialog__shell">
+    <div class="ask-dialog__topbar">
+      <div>
+        <h2 id="ask-title">Ask Leslie</h2>
+      </div>
+      <button class="icon-button" type="button" data-ask-close aria-label="关闭">×</button>
+    </div>
+    <p class="ask-dialog__intro">从本站公开文章中寻找答案。当前版本在浏览器本地检索，不上传问题，也不会编造不存在的经历。</p>
+    <form class="ask-form" data-ask-form>
+      <label class="sr-only" for="ask-query">输入问题</label>
+      <textarea id="ask-query" rows="2" placeholder="例如：Agent Runtime 应该怎么设计？" data-ask-input></textarea>
+      <button type="submit">检索知识库 <span aria-hidden="true">↗</span></button>
+    </form>
+    <div class="ask-suggestions" aria-label="推荐问题">
+      
+        <button type="button" data-ask-suggestion="Agent Runtime 应该怎么设计？">Agent Runtime 应该怎么设计？</button>
+      
+        <button type="button" data-ask-suggestion="如何让 AI 操控真实世界设备？">如何让 AI 操控真实世界设备？</button>
+      
+        <button type="button" data-ask-suggestion="Leslie 最近在研究什么？">Leslie 最近在研究什么？</button>
+      
+    </div>
+    <div class="ask-results" data-ask-results aria-live="polite">
+      <div class="ask-empty">
+        <p>输入一个问题，我会把你带到 Leslie 写过的相关内容。</p>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+    <dialog class="wechat-dialog" id="wechat-leslie" aria-labelledby="wechat-title">
+  <div class="wechat-dialog__shell">
+    <header>
+      <div>
+        <p class="section-label">WeChat</p>
+        <h2 id="wechat-title">微信联系</h2>
+      </div>
+      <button class="icon-button" type="button" data-wechat-close aria-label="关闭微信二维码">×</button>
+    </header>
+    <img src="/images/contact/wechat-leslie.png" alt="Leslie Zhang 的微信二维码" loading="lazy">
+    <p>扫码添加 Leslie，建议备注你的名字与来意。</p>
+  </div>
+</dialog>
+
+    <script>window.ORBITAL_ROOT = '/';</script>
+    <script src="/js/orbital.js" defer></script>
+  </body>
+</html>

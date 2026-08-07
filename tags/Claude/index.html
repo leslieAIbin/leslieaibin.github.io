@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+  <head>
+
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#050b18">
+<meta name="color-scheme" content="dark light">
+<title>Leslie Zhang | AI Agent &amp; Agent Infra Engineer</title>
+<meta name="description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta name="author" content="Leslie Zhang">
+<link rel="canonical" href="https://leslieaibin.github.io/tags/Claude/index.html">
+<link rel="icon" href="/imgs/01.jpg">
+<link rel="alternate" type="application/atom+xml" title="Leslie Zhang" href="/atom.xml">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Leslie Zhang | AI Agent &amp; Agent Infra Engineer">
+<meta property="og:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta property="og:url" content="https://leslieaibin.github.io/tags/Claude/index.html">
+<meta property="og:image" content="https://leslieaibin.github.io/og-blue.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Leslie Zhang | AI Agent &amp; Agent Infra Engineer">
+<meta name="twitter:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta name="twitter:image" content="https://leslieaibin.github.io/og-blue.png">
+<script>
+  (function () {
+    var saved = localStorage.getItem('orbital-theme');
+    var theme = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    document.documentElement.dataset.theme = theme;
+  })();
+</script>
+<link rel="stylesheet" href="/css/orbital.css">
+<meta name="generator" content="Hexo 5.2.0"></head>
+  <body class="page-index">
+    <a class="skip-link" href="#main-content">跳到主要内容</a>
+    <div class="reading-progress" data-reading-progress></div>
+    <header class="site-header" data-header>
+  <div class="nav-shell">
+    <a class="brand" href="/" aria-label="返回首页">
+      <span class="brand-mark" aria-hidden="true"><img src="/images/brand/leslie-mythos-avatar.webp" alt="" width="512" height="512"></span>
+      <span class="brand-copy">
+        <strong>LESLIE</strong>
+        <small>REAL-WORLD AGENTS</small>
+      </span>
+    </a>
+
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav" data-nav-toggle>
+      <span></span><span></span>
+      <span class="sr-only">打开导航</span>
+    </button>
+
+    <nav class="main-nav" id="main-nav" aria-label="主导航" data-nav>
+      
+        <a href="/" class="">首页</a>
+      
+        <a href="/writing/" class="">写作</a>
+      
+        <a href="/projects/" class="">项目</a>
+      
+        <a href="/about/" class="">关于</a>
+      
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换明暗主题">
+        <span class="theme-toggle__sun" aria-hidden="true">☼</span>
+        <span class="theme-toggle__moon" aria-hidden="true">◐</span>
+      </button>
+      <button class="ask-nav" type="button" data-ask-open>ASK LESLIE</button>
+    </nav>
+  </div>
+</header>
+
+    <main id="main-content"><section class="page-hero shell"><p class="page-kicker">Writing topic</p><h1># Claude</h1><p>沿着这个关键词，继续往里看。</p></section>
+<section class="section shell"><div class="writing-list" data-writing-list>
+  
+    <article class="writing-row reveal" data-writing-item data-search="claude managed agents到底在做什么 anthropic claude agent 产品分析 claude managed agents到底在做什么 初次接触 claude managed agents 时，容易将其理解为 claude code 的 api 版本——通过 api 创建 agent，在沙箱中执行代码并返回结果。 但查阅官方文档后会发现，它不是一个产品，而是一套 agent基础设施 。它定义了agent怎么跑、怎么授权、怎么和外部世界交互。这更像是aws lambda给serverless的定义——不是又一个计算服务，而是对”函数即服务”这个范式的基础设…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2026-06-07">2026.06.07</time><span>5 MIN</span></div>
+        <h2><a href="/2026/06/07/attention-field/Claude-Managed-Agents/">Claude Managed Agents到底在做什么</a></h2>
+        <p>Claude Managed Agents到底在做什么 初次接触 Claude Managed Agents 时，容易将其理解为 Claude Code 的 API 版本——通过 API 创建 Agent，在沙箱中执行代码并返回结果。 但查阅官方文档后会发现，它不是一个产品，而是一套 Agent基础…</p>
+        <div class="chip-row"><span>Anthropic</span><span>Claude</span><span>Agent</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2026/06/07/attention-field/Claude-Managed-Agents/" aria-label="阅读《Claude Managed Agents到底在做什么》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="用了半个月 gpt 5.5，我反而更离不开 claude 了 claude codex gpt-5.5 ai工具 投研 用了半个月 gpt 5.5，我反而更离不开 claude 了 这半个月一直在用 gpt 5.5，最直接的感受是，它确实变强了。 但它没有让我放弃 claude。 刚好相反，它让我更清楚地知道，自己为什么还需要 claude。 我现在的工作流，大概变成了这样。研究一个陌生领域时，第一步还是交给 claude。原因很简单，它更会把复杂东西讲成人话。你让它解释一个行业、一家公司、一条技术路线，它通常能先把全貌铺出来，让你知道这件事大概长什么样，哪些概念重要，哪些坑暂时可以先放一放。…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2026-05-08">2026.05.08</time><span>3 MIN</span></div>
+        <h2><a href="/2026/05/08/attention-field/GPT5.5%E4%BD%BF%E7%94%A8%E6%84%9F%E5%8F%97/">用了半个月 GPT 5.5，我反而更离不开 Claude 了</a></h2>
+        <p>用了半个月 GPT 5.5，我反而更离不开 Claude 了 这半个月一直在用 GPT 5.5，最直接的感受是，它确实变强了。 但它没有让我放弃 Claude。 刚好相反，它让我更清楚地知道，自己为什么还需要 Claude。 我现在的工作流，大概变成了这样。研究一个陌生领域时，第一步还是交给 Cla…</p>
+        <div class="chip-row"><span>Claude</span><span>Codex</span><span>GPT-5.5</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2026/05/08/attention-field/GPT5.5%E4%BD%BF%E7%94%A8%E6%84%9F%E5%8F%97/" aria-label="阅读《用了半个月 GPT 5.5，我反而更离不开 Claude 了》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="anthropic 发布最强模型 claude mythos，但不让你用 ai anthropic claude 安全 零日漏洞 anthropic 发布了跑分断崖式领先的新模型 claude mythos preview，但它不会上线 claude.ai，也不会开放 api。原因是这个模型的网络安全攻防能力太强了——强到能自主发现并利用零日漏洞。取而代之的是 project glasswing 计划：只借给苹果、微软、亚马逊等 12 家巨头用来找漏洞。">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2026-04-08">2026.04.08</time><span>6 MIN</span></div>
+        <h2><a href="/2026/04/08/Anthropic-%E5%8F%91%E5%B8%83%E6%9C%80%E5%BC%BA%E6%A8%A1%E5%9E%8B-Claude-Mythos%EF%BC%8C%E4%BD%86%E4%B8%8D%E8%AE%A9%E4%BD%A0%E7%94%A8/">Anthropic 发布最强模型 Claude Mythos，但不让你用</a></h2>
+        <p>Anthropic 发布了跑分断崖式领先的新模型 Claude Mythos Preview，但它不会上线 claude.ai，也不会开放 API。原因是这个模型的网络安全攻防能力太强了——强到能自主发现并利用零日漏洞。取而代之的是 Project Glasswing 计划：只借给苹果、微软、亚马逊…</p>
+        <div class="chip-row"><span>AI</span><span>Anthropic</span><span>Claude</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2026/04/08/Anthropic-%E5%8F%91%E5%B8%83%E6%9C%80%E5%BC%BA%E6%A8%A1%E5%9E%8B-Claude-Mythos%EF%BC%8C%E4%BD%86%E4%B8%8D%E8%AE%A9%E4%BD%A0%E7%94%A8/" aria-label="阅读《Anthropic 发布最强模型 Claude Mythos，但不让你用》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="用 claude 自动化了一整天工作流，我总结出这些 claude agent skills ai自动化 工作流 很多人觉得 claude 就是个聊天工具。看完这个一小时的实战演示，再结合我自己这段时间的摸索，我重新审视了 claude 的定位——它远比我想象的更像一个&#34;工作流引擎&#34;。">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2026-04-06">2026.04.06</time><span>10 MIN</span></div>
+        <h2><a href="/2026/04/06/%E7%94%A8-Claude-%E8%87%AA%E5%8A%A8%E5%8C%96%E4%BA%86%E4%B8%80%E6%95%B4%E5%A4%A9%E5%B7%A5%E4%BD%9C%E6%B5%81%EF%BC%8C%E6%88%91%E6%80%BB%E7%BB%93%E5%87%BA%E8%BF%99%E4%BA%9B/">用 Claude 自动化了一整天工作流，我总结出这些</a></h2>
+        <p>很多人觉得 Claude 就是个聊天工具。看完这个一小时的实战演示，再结合我自己这段时间的摸索，我重新审视了 Claude 的定位——它远比我想象的更像一个&#34;工作流引擎&#34;。</p>
+        <div class="chip-row"><span>Claude</span><span>Agent</span><span>Skills</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2026/04/06/%E7%94%A8-Claude-%E8%87%AA%E5%8A%A8%E5%8C%96%E4%BA%86%E4%B8%80%E6%95%B4%E5%A4%A9%E5%B7%A5%E4%BD%9C%E6%B5%81%EF%BC%8C%E6%88%91%E6%80%BB%E7%BB%93%E5%87%BA%E8%BF%99%E4%BA%9B/" aria-label="阅读《用 Claude 自动化了一整天工作流，我总结出这些》">↗</a>
+    </article>
+  
+</div>
+<span class="page-number current">1</span></section>
+</main>
+    <footer class="site-footer">
+  <div class="footer-grid">
+    <div>
+      <p class="footer-kicker">Leslie Zhang</p>
+      <p class="footer-statement">流水不争先，<br>争的是滔滔不绝。</p>
+    </div>
+    <div class="footer-links">
+      <a href="https://github.com/leslieAIbin" target="_blank" rel="noreferrer">GitHub ↗</a>
+      <a href="https://www.instagram.com/leslieaibin/" target="_blank" rel="noreferrer">Instagram ↗</a>
+      <button type="button" data-wechat-open>微信 / WeChat</button>
+      <a href="mailto:aibinzhangleslie@gmail.com">Email ↗</a>
+      <a href="/atom.xml">RSS ↗</a>
+    </div>
+    <div class="footer-meta">
+      <span>© 2026 Leslie Zhang</span>
+      <span>Writing, research and working systems.</span>
+    </div>
+  </div>
+</footer>
+
+    <dialog class="ask-dialog" id="ask-leslie" aria-labelledby="ask-title">
+  <div class="ask-dialog__shell">
+    <div class="ask-dialog__topbar">
+      <div>
+        <h2 id="ask-title">Ask Leslie</h2>
+      </div>
+      <button class="icon-button" type="button" data-ask-close aria-label="关闭">×</button>
+    </div>
+    <p class="ask-dialog__intro">从本站公开文章中寻找答案。当前版本在浏览器本地检索，不上传问题，也不会编造不存在的经历。</p>
+    <form class="ask-form" data-ask-form>
+      <label class="sr-only" for="ask-query">输入问题</label>
+      <textarea id="ask-query" rows="2" placeholder="例如：Agent Runtime 应该怎么设计？" data-ask-input></textarea>
+      <button type="submit">检索知识库 <span aria-hidden="true">↗</span></button>
+    </form>
+    <div class="ask-suggestions" aria-label="推荐问题">
+      
+        <button type="button" data-ask-suggestion="Agent Runtime 应该怎么设计？">Agent Runtime 应该怎么设计？</button>
+      
+        <button type="button" data-ask-suggestion="如何让 AI 操控真实世界设备？">如何让 AI 操控真实世界设备？</button>
+      
+        <button type="button" data-ask-suggestion="Leslie 最近在研究什么？">Leslie 最近在研究什么？</button>
+      
+    </div>
+    <div class="ask-results" data-ask-results aria-live="polite">
+      <div class="ask-empty">
+        <p>输入一个问题，我会把你带到 Leslie 写过的相关内容。</p>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+    <dialog class="wechat-dialog" id="wechat-leslie" aria-labelledby="wechat-title">
+  <div class="wechat-dialog__shell">
+    <header>
+      <div>
+        <p class="section-label">WeChat</p>
+        <h2 id="wechat-title">微信联系</h2>
+      </div>
+      <button class="icon-button" type="button" data-wechat-close aria-label="关闭微信二维码">×</button>
+    </header>
+    <img src="/images/contact/wechat-leslie.png" alt="Leslie Zhang 的微信二维码" loading="lazy">
+    <p>扫码添加 Leslie，建议备注你的名字与来意。</p>
+  </div>
+</dialog>
+
+    <script>window.ORBITAL_ROOT = '/';</script>
+    <script src="/js/orbital.js" defer></script>
+  </body>
+</html>

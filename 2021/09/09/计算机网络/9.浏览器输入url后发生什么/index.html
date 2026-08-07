@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+  <head>
+
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#050b18">
+<meta name="color-scheme" content="dark light">
+<title>浏览器输入url后 | Leslie Zhang</title>
+<meta name="description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta name="author" content="Leslie Zhang">
+<link rel="canonical" href="https://leslieaibin.github.io/2021/09/09/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/9.%E6%B5%8F%E8%A7%88%E5%99%A8%E8%BE%93%E5%85%A5url%E5%90%8E%E5%8F%91%E7%94%9F%E4%BB%80%E4%B9%88/">
+<link rel="icon" href="/imgs/01.jpg">
+<link rel="alternate" type="application/atom+xml" title="Leslie Zhang" href="/atom.xml">
+<meta property="og:type" content="article">
+<meta property="og:title" content="浏览器输入url后 | Leslie Zhang">
+<meta property="og:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta property="og:url" content="https://leslieaibin.github.io/2021/09/09/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/9.%E6%B5%8F%E8%A7%88%E5%99%A8%E8%BE%93%E5%85%A5url%E5%90%8E%E5%8F%91%E7%94%9F%E4%BB%80%E4%B9%88/">
+<meta property="og:image" content="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/44.jpg?raw=true">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="浏览器输入url后 | Leslie Zhang">
+<meta name="twitter:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta name="twitter:image" content="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/44.jpg?raw=true">
+<script>
+  (function () {
+    var saved = localStorage.getItem('orbital-theme');
+    var theme = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    document.documentElement.dataset.theme = theme;
+  })();
+</script>
+<link rel="stylesheet" href="/css/orbital.css">
+<meta name="generator" content="Hexo 5.2.0"></head>
+  <body class="page-post">
+    <a class="skip-link" href="#main-content">跳到主要内容</a>
+    <div class="reading-progress" data-reading-progress></div>
+    <header class="site-header" data-header>
+  <div class="nav-shell">
+    <a class="brand" href="/" aria-label="返回首页">
+      <span class="brand-mark" aria-hidden="true"><img src="/images/brand/leslie-mythos-avatar.webp" alt="" width="512" height="512"></span>
+      <span class="brand-copy">
+        <strong>LESLIE</strong>
+        <small>REAL-WORLD AGENTS</small>
+      </span>
+    </a>
+
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav" data-nav-toggle>
+      <span></span><span></span>
+      <span class="sr-only">打开导航</span>
+    </button>
+
+    <nav class="main-nav" id="main-nav" aria-label="主导航" data-nav>
+      
+        <a href="/" class="">首页</a>
+      
+        <a href="/writing/" class="">写作</a>
+      
+        <a href="/projects/" class="">项目</a>
+      
+        <a href="/about/" class="">关于</a>
+      
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换明暗主题">
+        <span class="theme-toggle__sun" aria-hidden="true">☼</span>
+        <span class="theme-toggle__moon" aria-hidden="true">◐</span>
+      </button>
+      <button class="ask-nav" type="button" data-ask-open>ASK LESLIE</button>
+    </nav>
+  </div>
+</header>
+
+    <main id="main-content"><article class="post-shell">
+  <header class="post-hero shell">
+    <a class="post-back" href="/writing/">← 返回写作</a>
+    <div class="post-hero__meta">
+      <time datetime="2021-09-09">2021 年 09 月 09 日</time>
+      <span>5 分钟阅读</span>
+    </div>
+    <h1>浏览器输入url后</h1>
+    
+    <div class="chip-row"><a href="/tags/TCP-IP/">TCP/IP</a></div>
+  </header>
+
+  <div class="post-cover shell"><img src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/44.jpg?raw=true" alt="浏览器输入url后"></div>
+
+  <div class="post-layout shell">
+    <aside class="post-toc" aria-label="文章目录">
+      <span class="aside-title">目录</span>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#DNS%E8%A7%A3%E6%9E%90"><span class="toc-text">DNS解析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TCP%E8%BF%9E%E6%8E%A5"><span class="toc-text">TCP连接</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%91%E9%80%81HTTP%E8%AF%B7%E6%B1%82"><span class="toc-text">发送HTTP请求</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%A4%84%E7%90%86%E8%AF%B7%E6%B1%82%E5%B9%B6%E8%BF%94%E5%9B%9EHTTP%E6%8A%A5%E6%96%87"><span class="toc-text">服务器处理请求并返回HTTP报文</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B5%8F%E8%A7%88%E5%99%A8%E8%A7%A3%E6%9E%90%E6%B8%B2%E6%9F%93%E9%A1%B5%E9%9D%A2"><span class="toc-text">浏览器解析渲染页面</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%9E%E6%8E%A5%E7%BB%93%E6%9D%9F"><span class="toc-text">连接结束</span></a></li></ol>
+    </aside>
+    <div class="article-content"><h1 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h1><p>（1）DNS 解析</p>
+<p>（2）TCP 连接</p>
+<p>（3）发送 HTTP 请求</p>
+<p>（4）服务器处理请求并返回 HTTP 报文</p>
+<p>（5）浏览器解析渲染页面</p>
+<p>（6）连接结束</p>
+<h1 id="详细内容"><a href="#详细内容" class="headerlink" title="详细内容"></a>详细内容</h1><h2 id="DNS解析"><a href="#DNS解析" class="headerlink" title="DNS解析"></a>DNS解析</h2><ol>
+<li>输入 IP，此时电脑发送一个 DNS 请求到本地 DNS 服务器（一般是网络接入服务商提供 eg:电信，移动）;</li>
+<li>本地 DNS 服务器会首先查询它的缓存记录，如果有，则直接返回结果，若没有，本地 DNS 服务器还要向 DNS 根服务器进行查询；</li>
+<li>DNS 根服务器没有记录具体域名和 IP 地址的对应关系，而是告诉本地 DNS 服务器，可到域服务器上继续查询，并给出域服务器地址；</li>
+<li>本地服务器继续向域服务器发出请求，返回域名的解析服务器地址；</li>
+<li>本地 DNS 向域名解析服务器发出请求，收到域名与 IP 地址对应关系；</li>
+<li>本地 DNS 服务器将 IP 地址返回电脑，且保存副本到缓存已备下次查询。</li>
+</ol>
+<h2 id="TCP连接"><a href="#TCP连接" class="headerlink" title="TCP连接"></a>TCP连接</h2><p>主要是三次握手：</p>
+<p>　　1. 建立连接时，客户端发送syn包（syn=j）到服务器，并进入SYN_SENT状态，等待服务器确认； </p>
+<p>　　2. 服务器收到syn包，必须确认客户的SYN（ack=j+1），同时自己也发送一个SYN包（syn=k），即SYN+ACK包，此时服务器进入SYN_RECV状态；</p>
+<p>　　3. 客户端收到服务器的SYN+ACK包，向服务器发送确认包ACK(ack=k+1），此包发送完毕，客户端和服务器进入ESTABLISHED（TCP连接成功）状态，完成三次握手。</p>
+<h2 id="发送HTTP请求"><a href="#发送HTTP请求" class="headerlink" title="发送HTTP请求"></a>发送HTTP请求</h2><p>发送HTTP请求的过程就是构建HTTP请求报文并通过TCP协议中发送到服务器指定端口(HTTP协议80/8080, HTTPS协议443)。HTTP请求报文是由三部分组成: 请求行, 请求头和请求体</p>
+<p>　　1.请求行：Method Request-URL HTTP-Version CRLF ；常用的请求方法有: GET, POST, PUT, DELETE, OPTIONS, HEAD。</p>
+<p>　　2.请求头：常见的请求头有: Accept, Accept-Charset, Accept-Encoding, Accept-Language, Content-Type, Authorization, Cookie, User-Agent等。</p>
+<p>　　3.请求体：当使用POST, PUT等方法时，通常需要客户端向服务器传递数据。这些数据就储存在请求正文中。在请求包头中有一些与请求正文相关的信息，例如: 现在的Web应用通常采用Rest架构，请求的数据格式一般为json。这时就需要设置Content-Type: application/json。</p>
+<h2 id="服务器处理请求并返回HTTP报文"><a href="#服务器处理请求并返回HTTP报文" class="headerlink" title="服务器处理请求并返回HTTP报文"></a>服务器处理请求并返回HTTP报文</h2><p>服务器在收到浏览器发送的HTTP请求之后，会将收到的HTTP报文封装成HTTP的Request对象，并通过不同的Web服务器进行处理，处理完的结果以HTTP的Response对象返回，HTTP响应报文也是由三部分组成: 状态码, 响应报头和响应报文。</p>
+<ol>
+<li>1XX 信息性状态码<ul>
+<li>100 继续</li>
+<li>101 切换协议</li>
+</ul>
+</li>
+<li>2XX 成功状态码<ul>
+<li>200 OK 成功处理了请求</li>
+<li>204 No Content 请求处理成功，但没有资源可返回</li>
+<li>206 Partial Content 请求资源的某一部分</li>
+</ul>
+</li>
+<li>3XX 重定向状态码<ul>
+<li>301 永久性重定向，表示请求的资源已被分配了新的 URI</li>
+<li>302 临时性重定向，资源的 URL 已临时定位到其他位置</li>
+<li>303 告诉客户端应该用另一个 URL 获取资源</li>
+<li>304 表示客户端发送附带条件的请求时，服务器端允许请求访问资源，但未满足条件的情况</li>
+</ul>
+</li>
+<li>4XX 客户端错误状态码<ul>
+<li>400 表示请求报文中存在语法错误</li>
+<li>401 未授权</li>
+<li>403 服务器拒绝了请求</li>
+<li>404 服务器无法找到所请求的 URL</li>
+</ul>
+</li>
+<li>5XX 服务器错误状态码<ul>
+<li>500 内部服务器错误</li>
+<li>502 错误网关</li>
+<li>503 服务器暂时处于超负载或正在进行停机维护，现在无法处理请求。</li>
+<li>504 响应超时</li>
+</ul>
+</li>
+</ol>
+<h2 id="浏览器解析渲染页面"><a href="#浏览器解析渲染页面" class="headerlink" title="浏览器解析渲染页面"></a>浏览器解析渲染页面</h2><p>浏览器是一个边解析边渲染的过程。首先浏览器解析HTML文件构建DOM树，然后解析CSS文件构建渲染树，等到渲染树构建完成后，浏览器开始布局渲染树并将其绘制到屏幕上。</p>
+<p>　　reflow(回流)：也称作Layout，中文叫回流，一般意味着元素的内容、结构、位置或尺寸发生了变化，需要重新计算样式和渲染树，这个过程称为Reflow</p>
+<p>　　repain(重绘)：当盒模型的位置,大小以及其他属性，如颜色,字体,等确定下来之后，浏览器便开始绘制内容，这个过程称为repain。</p>
+<h2 id="连接结束"><a href="#连接结束" class="headerlink" title="连接结束"></a>连接结束</h2><p>主要是四次挥手：</p>
+<p>　　1.客户端发出连接释放报文段（FIN=1，序号seq=u），并停止再发送数据，主动关闭TCP连接，进入FIN_WAIT1（终止等待1）状态，等待服务端的确认。</p>
+<p>　　2.服务端收到连接释放报文段后即发出确认报文段（ACK=1，确认号ack=u+1，序号seq=v），服务端进入CLOSE_WAIT（关闭等待）状态，此时的TCP处于半关闭状态，客户端到服务端的连接释放。客户端收到服务端的确认后，进入FIN_WAIT2（终止等待2）状态，等待服务端发出的连接释放报文段。</p>
+<p>　　3.服务端没有要向客户端发出的数据，服务端发出连接释放报文段（FIN=1，ACK=1，序号seq=w，确认号ack=u+1），服务端进入LAST_ACK（最后确认）状态，等待客户端确认。</p>
+<p>　　4.客户端收到服务端的连接释放报文段后，对此发出确认报文段（ACK=1，seq=u+1，ack=w+1），客户端进入TIME_WAIT（时间等待）状态。此时TCP未释放掉，需要经过时间等待计时器设置的时间2MSL后，客户端才进入CLOSED状态。</p>
+</div>
+    <aside class="post-rail">
+      <span class="post-rail__line"></span>
+      <span>LESLIE / WRITING</span>
+    </aside>
+  </div>
+
+  <footer class="post-footer shell">
+    <div><h2>如果这篇文章帮到了你，<br>也许下一篇会更有意思。</h2></div>
+    <a class="button button--primary" href="/writing/">继续阅读 →</a>
+  </footer>
+</article>
+</main>
+    <footer class="site-footer">
+  <div class="footer-grid">
+    <div>
+      <p class="footer-kicker">Leslie Zhang</p>
+      <p class="footer-statement">流水不争先，<br>争的是滔滔不绝。</p>
+    </div>
+    <div class="footer-links">
+      <a href="https://github.com/leslieAIbin" target="_blank" rel="noreferrer">GitHub ↗</a>
+      <a href="https://www.instagram.com/leslieaibin/" target="_blank" rel="noreferrer">Instagram ↗</a>
+      <button type="button" data-wechat-open>微信 / WeChat</button>
+      <a href="mailto:aibinzhangleslie@gmail.com">Email ↗</a>
+      <a href="/atom.xml">RSS ↗</a>
+    </div>
+    <div class="footer-meta">
+      <span>© 2026 Leslie Zhang</span>
+      <span>Writing, research and working systems.</span>
+    </div>
+  </div>
+</footer>
+
+    <dialog class="ask-dialog" id="ask-leslie" aria-labelledby="ask-title">
+  <div class="ask-dialog__shell">
+    <div class="ask-dialog__topbar">
+      <div>
+        <h2 id="ask-title">Ask Leslie</h2>
+      </div>
+      <button class="icon-button" type="button" data-ask-close aria-label="关闭">×</button>
+    </div>
+    <p class="ask-dialog__intro">从本站公开文章中寻找答案。当前版本在浏览器本地检索，不上传问题，也不会编造不存在的经历。</p>
+    <form class="ask-form" data-ask-form>
+      <label class="sr-only" for="ask-query">输入问题</label>
+      <textarea id="ask-query" rows="2" placeholder="例如：Agent Runtime 应该怎么设计？" data-ask-input></textarea>
+      <button type="submit">检索知识库 <span aria-hidden="true">↗</span></button>
+    </form>
+    <div class="ask-suggestions" aria-label="推荐问题">
+      
+        <button type="button" data-ask-suggestion="Agent Runtime 应该怎么设计？">Agent Runtime 应该怎么设计？</button>
+      
+        <button type="button" data-ask-suggestion="如何让 AI 操控真实世界设备？">如何让 AI 操控真实世界设备？</button>
+      
+        <button type="button" data-ask-suggestion="Leslie 最近在研究什么？">Leslie 最近在研究什么？</button>
+      
+    </div>
+    <div class="ask-results" data-ask-results aria-live="polite">
+      <div class="ask-empty">
+        <p>输入一个问题，我会把你带到 Leslie 写过的相关内容。</p>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+    <dialog class="wechat-dialog" id="wechat-leslie" aria-labelledby="wechat-title">
+  <div class="wechat-dialog__shell">
+    <header>
+      <div>
+        <p class="section-label">WeChat</p>
+        <h2 id="wechat-title">微信联系</h2>
+      </div>
+      <button class="icon-button" type="button" data-wechat-close aria-label="关闭微信二维码">×</button>
+    </header>
+    <img src="/images/contact/wechat-leslie.png" alt="Leslie Zhang 的微信二维码" loading="lazy">
+    <p>扫码添加 Leslie，建议备注你的名字与来意。</p>
+  </div>
+</dialog>
+
+    <script>window.ORBITAL_ROOT = '/';</script>
+    <script src="/js/orbital.js" defer></script>
+  </body>
+</html>

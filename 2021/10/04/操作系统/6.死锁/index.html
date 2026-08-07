@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+  <head>
+
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#050b18">
+<meta name="color-scheme" content="dark light">
+<title>6.死锁的概念 | Leslie Zhang</title>
+<meta name="description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta name="author" content="Leslie Zhang">
+<link rel="canonical" href="https://leslieaibin.github.io/2021/10/04/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/6.%E6%AD%BB%E9%94%81/">
+<link rel="icon" href="/imgs/01.jpg">
+<link rel="alternate" type="application/atom+xml" title="Leslie Zhang" href="/atom.xml">
+<meta property="og:type" content="article">
+<meta property="og:title" content="6.死锁的概念 | Leslie Zhang">
+<meta property="og:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta property="og:url" content="https://leslieaibin.github.io/2021/10/04/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/6.%E6%AD%BB%E9%94%81/">
+<meta property="og:image" content="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/36.jpg?raw=true">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="6.死锁的概念 | Leslie Zhang">
+<meta name="twitter:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta name="twitter:image" content="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/36.jpg?raw=true">
+<script>
+  (function () {
+    var saved = localStorage.getItem('orbital-theme');
+    var theme = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    document.documentElement.dataset.theme = theme;
+  })();
+</script>
+<link rel="stylesheet" href="/css/orbital.css">
+<meta name="generator" content="Hexo 5.2.0"></head>
+  <body class="page-post">
+    <a class="skip-link" href="#main-content">跳到主要内容</a>
+    <div class="reading-progress" data-reading-progress></div>
+    <header class="site-header" data-header>
+  <div class="nav-shell">
+    <a class="brand" href="/" aria-label="返回首页">
+      <span class="brand-mark" aria-hidden="true"><img src="/images/brand/leslie-mythos-avatar.webp" alt="" width="512" height="512"></span>
+      <span class="brand-copy">
+        <strong>LESLIE</strong>
+        <small>REAL-WORLD AGENTS</small>
+      </span>
+    </a>
+
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav" data-nav-toggle>
+      <span></span><span></span>
+      <span class="sr-only">打开导航</span>
+    </button>
+
+    <nav class="main-nav" id="main-nav" aria-label="主导航" data-nav>
+      
+        <a href="/" class="">首页</a>
+      
+        <a href="/writing/" class="">写作</a>
+      
+        <a href="/projects/" class="">项目</a>
+      
+        <a href="/about/" class="">关于</a>
+      
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换明暗主题">
+        <span class="theme-toggle__sun" aria-hidden="true">☼</span>
+        <span class="theme-toggle__moon" aria-hidden="true">◐</span>
+      </button>
+      <button class="ask-nav" type="button" data-ask-open>ASK LESLIE</button>
+    </nav>
+  </div>
+</header>
+
+    <main id="main-content"><article class="post-shell">
+  <header class="post-hero shell">
+    <a class="post-back" href="/writing/">← 返回写作</a>
+    <div class="post-hero__meta">
+      <time datetime="2021-10-04">2021 年 10 月 04 日</time>
+      <span>4 分钟阅读</span>
+    </div>
+    <h1>6.死锁的概念</h1>
+    
+    <div class="chip-row"><a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">操作系统</a></div>
+  </header>
+
+  <div class="post-cover shell"><img src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/36.jpg?raw=true" alt="6.死锁的概念"></div>
+
+  <div class="post-layout shell">
+    <aside class="post-toc" aria-label="文章目录">
+      <span class="aside-title">目录</span>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E6%AD%BB%E9%94%81%E6%A6%82%E5%BF%B5"><span class="toc-text">一、死锁概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E4%BA%A7%E7%94%9F%E6%AD%BB%E9%94%81%E7%9A%84%E5%9B%9B%E4%B8%AA%E5%BF%85%E8%A6%81%E6%9D%A1%E4%BB%B6"><span class="toc-text">二、产生死锁的四个必要条件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E6%AD%BB%E9%94%81%E7%9A%84%E9%A2%84%E9%98%B2"><span class="toc-text">三、死锁的预防</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E6%AD%BB%E9%94%81%E7%9A%84%E9%81%BF%E5%85%8D"><span class="toc-text">四、死锁的避免</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94%E3%80%81%E6%AD%BB%E9%94%81%E7%9A%84%E6%A3%80%E6%B5%8B%E5%8F%8A%E8%A7%A3%E9%99%A4"><span class="toc-text">五、死锁的检测及解除</span></a></li></ol>
+    </aside>
+    <div class="article-content"><h1 id="死锁概念，死锁产生的四个必要条件，如何避免和预防死锁"><a href="#死锁概念，死锁产生的四个必要条件，如何避免和预防死锁" class="headerlink" title="死锁概念，死锁产生的四个必要条件，如何避免和预防死锁"></a>死锁概念，死锁产生的四个必要条件，如何避免和预防死锁</h1><h2 id="一、死锁概念"><a href="#一、死锁概念" class="headerlink" title="一、死锁概念"></a>一、死锁概念</h2><p>死锁是指两个或多个进程在执行的过程中，因为竞争资源而造成互相等待的现象，若无外力作用，它们都无法推进下去。-<br>1.在等待对方时占有不可抢占的资源-<br>举个例子，假设有P1，P2两个进程，都需要A和B两个资源，两个都等待另一个资源而不肯释放资源，就这样无限等待中，这就形成死锁。这只是死锁的一种情况，就是在等待对方时占有不可抢占的资源。-<br>2.竞争可消耗资源引起死锁-<br>有P1，P2，P3三个进程，P1向P2发送消息并接受P3消息，P2向P3发送消息并接受P2消息，P3向P1发送消息并接受P2消息，如果设置是先接到消息后发送消息，则所有的消息都不能发送，也造成了死锁。-<br>3.进程推进顺序不当引起死锁-<br>有进程P1，P2，都需要资源A,B，本来可以P1运行A，P1运行B，P2运行B，P2运行A，P2运行B，但顺序换了，P1运行A时P2运行B，容易引发死锁，属于第一种的资源抢占问题。</p>
+<h2 id="二、产生死锁的四个必要条件"><a href="#二、产生死锁的四个必要条件" class="headerlink" title="二、产生死锁的四个必要条件"></a>二、产生死锁的四个必要条件</h2><p>1.互斥条件-<br>一个资源每次只能被一个进程使用，即在一段时间内某资源仅为一个进程所使用。此时如果有其他进程请求该资源，则请求进程只能等待。-<br>2.请求与保持条件-<br>进程中已经保持了至少一个资源，但又提出了新的资源请求，而该资源已经被其他进程占有，此时请求进程被阻塞，但对自己已经获得资源保持不放。-<br>3.不可剥夺条件-<br>进程未使用完的资源在未使用完毕之前，不能被其他进程强行夺走，即只能由获得该资源的进程自己来释放。-<br>4.循环等待条件-<br>若干进程间形成首尾相接循环等待资源的关系。在发生死锁时必然存在一个进程等待队列{P1，P2，…,Pn},其中P1等待P2占有的资源，P2等待P3占有的资源，…，Pn等待P1占有的资源，形成一个进程等待环路，环路中每一个进程所占有的资源同时被另一个申请。</p>
+<p>注意：这四个条件是死锁的必然条件，只要系统发生死锁，这些条件必然成立。只要有上述条件有一条不满足，就不会发生死锁。</p>
+<h2 id="三、死锁的预防"><a href="#三、死锁的预防" class="headerlink" title="三、死锁的预防"></a>三、死锁的预防</h2><p>我们可以通过破坏产生死锁的四个必要条件来预防死锁，由于资源互斥是固有特性无法改变的。-<br>1.破坏“请求与保持”条件-<br>方法一：静态分配，每个进程在开始执行时就申请他所需要的全部资源。-<br>方法二：动态分配，每个进程在申请所需要的资源时他本身不占用系统资源。-<br>2.破坏“不可剥夺”条件-<br>一个进程不可获得其所需要的全部资源便处于等待状态，等待期间他占用的资源将被隐式的释放重新加入到系统的资源列表中，可以被其他进程使用，而等待的进程只有重新获得自己原有的资源以及新申请的资源才可以重新启动，执行。-<br>3.破坏“循环等待”条件-<br>采用资源有序分配的基本思想。将系统中的资源顺序进行编号，将紧缺的、稀少的资源采用较大的编号，申请资源时必须按照编号的顺序执行，一个进程只有较小编号的进程才能申请较大编号的进程。</p>
+<h2 id="四、死锁的避免"><a href="#四、死锁的避免" class="headerlink" title="四、死锁的避免"></a>四、死锁的避免</h2><p>基本思想：系统对进程发出每一个系统能够满足的资源申请进行动态检查，并根据检查结果决定是否分配资源，如果分配后系统可能发生死锁，则不予分配，否则分配。这是一种动态策略。典型的避免死锁的算法试银行家算法。</p>
+<h2 id="五、死锁的检测及解除"><a href="#五、死锁的检测及解除" class="headerlink" title="五、死锁的检测及解除"></a>五、死锁的检测及解除</h2><p>无需采取任何措施，允许进程在运行过程中发生死锁。通过系统的检测机构及时的检测出死锁的发生，然后采取某种措施解除死锁。<br><img src="https://cubox.pro/c/filters:no_upscale()?imageUrl=https://img-blog.csdn.net/20180410144930427?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1pXRTc2MTYxNzU=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70"><br>死锁的预防和避免都属于事先预防策略，但预防死锁的限制条件较为严格，实现起来较为简单，但往往导致资源利用率低。避免死锁的限制条件相对宽松，资源分配后需要通过算法来判断是否进入不安全状态，实现起来较为复杂。</p>
+</div>
+    <aside class="post-rail">
+      <span class="post-rail__line"></span>
+      <span>LESLIE / WRITING</span>
+    </aside>
+  </div>
+
+  <footer class="post-footer shell">
+    <div><h2>如果这篇文章帮到了你，<br>也许下一篇会更有意思。</h2></div>
+    <a class="button button--primary" href="/writing/">继续阅读 →</a>
+  </footer>
+</article>
+</main>
+    <footer class="site-footer">
+  <div class="footer-grid">
+    <div>
+      <p class="footer-kicker">Leslie Zhang</p>
+      <p class="footer-statement">流水不争先，<br>争的是滔滔不绝。</p>
+    </div>
+    <div class="footer-links">
+      <a href="https://github.com/leslieAIbin" target="_blank" rel="noreferrer">GitHub ↗</a>
+      <a href="https://www.instagram.com/leslieaibin/" target="_blank" rel="noreferrer">Instagram ↗</a>
+      <button type="button" data-wechat-open>微信 / WeChat</button>
+      <a href="mailto:aibinzhangleslie@gmail.com">Email ↗</a>
+      <a href="/atom.xml">RSS ↗</a>
+    </div>
+    <div class="footer-meta">
+      <span>© 2026 Leslie Zhang</span>
+      <span>Writing, research and working systems.</span>
+    </div>
+  </div>
+</footer>
+
+    <dialog class="ask-dialog" id="ask-leslie" aria-labelledby="ask-title">
+  <div class="ask-dialog__shell">
+    <div class="ask-dialog__topbar">
+      <div>
+        <h2 id="ask-title">Ask Leslie</h2>
+      </div>
+      <button class="icon-button" type="button" data-ask-close aria-label="关闭">×</button>
+    </div>
+    <p class="ask-dialog__intro">从本站公开文章中寻找答案。当前版本在浏览器本地检索，不上传问题，也不会编造不存在的经历。</p>
+    <form class="ask-form" data-ask-form>
+      <label class="sr-only" for="ask-query">输入问题</label>
+      <textarea id="ask-query" rows="2" placeholder="例如：Agent Runtime 应该怎么设计？" data-ask-input></textarea>
+      <button type="submit">检索知识库 <span aria-hidden="true">↗</span></button>
+    </form>
+    <div class="ask-suggestions" aria-label="推荐问题">
+      
+        <button type="button" data-ask-suggestion="Agent Runtime 应该怎么设计？">Agent Runtime 应该怎么设计？</button>
+      
+        <button type="button" data-ask-suggestion="如何让 AI 操控真实世界设备？">如何让 AI 操控真实世界设备？</button>
+      
+        <button type="button" data-ask-suggestion="Leslie 最近在研究什么？">Leslie 最近在研究什么？</button>
+      
+    </div>
+    <div class="ask-results" data-ask-results aria-live="polite">
+      <div class="ask-empty">
+        <p>输入一个问题，我会把你带到 Leslie 写过的相关内容。</p>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+    <dialog class="wechat-dialog" id="wechat-leslie" aria-labelledby="wechat-title">
+  <div class="wechat-dialog__shell">
+    <header>
+      <div>
+        <p class="section-label">WeChat</p>
+        <h2 id="wechat-title">微信联系</h2>
+      </div>
+      <button class="icon-button" type="button" data-wechat-close aria-label="关闭微信二维码">×</button>
+    </header>
+    <img src="/images/contact/wechat-leslie.png" alt="Leslie Zhang 的微信二维码" loading="lazy">
+    <p>扫码添加 Leslie，建议备注你的名字与来意。</p>
+  </div>
+</dialog>
+
+    <script>window.ORBITAL_ROOT = '/';</script>
+    <script src="/js/orbital.js" defer></script>
+  </body>
+</html>

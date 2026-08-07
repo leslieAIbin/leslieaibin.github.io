@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+  <head>
+
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#050b18">
+<meta name="color-scheme" content="dark light">
+<title>Leslie Zhang | AI Agent &amp; Agent Infra Engineer</title>
+<meta name="description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta name="author" content="Leslie Zhang">
+<link rel="canonical" href="https://leslieaibin.github.io/tags/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/index.html">
+<link rel="icon" href="/imgs/01.jpg">
+<link rel="alternate" type="application/atom+xml" title="Leslie Zhang" href="/atom.xml">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Leslie Zhang | AI Agent &amp; Agent Infra Engineer">
+<meta property="og:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta property="og:url" content="https://leslieaibin.github.io/tags/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/index.html">
+<meta property="og:image" content="https://leslieaibin.github.io/og-blue.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Leslie Zhang | AI Agent &amp; Agent Infra Engineer">
+<meta name="twitter:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta name="twitter:image" content="https://leslieaibin.github.io/og-blue.png">
+<script>
+  (function () {
+    var saved = localStorage.getItem('orbital-theme');
+    var theme = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    document.documentElement.dataset.theme = theme;
+  })();
+</script>
+<link rel="stylesheet" href="/css/orbital.css">
+<meta name="generator" content="Hexo 5.2.0"></head>
+  <body class="page-index">
+    <a class="skip-link" href="#main-content">跳到主要内容</a>
+    <div class="reading-progress" data-reading-progress></div>
+    <header class="site-header" data-header>
+  <div class="nav-shell">
+    <a class="brand" href="/" aria-label="返回首页">
+      <span class="brand-mark" aria-hidden="true"><img src="/images/brand/leslie-mythos-avatar.webp" alt="" width="512" height="512"></span>
+      <span class="brand-copy">
+        <strong>LESLIE</strong>
+        <small>REAL-WORLD AGENTS</small>
+      </span>
+    </a>
+
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav" data-nav-toggle>
+      <span></span><span></span>
+      <span class="sr-only">打开导航</span>
+    </button>
+
+    <nav class="main-nav" id="main-nav" aria-label="主导航" data-nav>
+      
+        <a href="/" class="">首页</a>
+      
+        <a href="/writing/" class="">写作</a>
+      
+        <a href="/projects/" class="">项目</a>
+      
+        <a href="/about/" class="">关于</a>
+      
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换明暗主题">
+        <span class="theme-toggle__sun" aria-hidden="true">☼</span>
+        <span class="theme-toggle__moon" aria-hidden="true">◐</span>
+      </button>
+      <button class="ask-nav" type="button" data-ask-open>ASK LESLIE</button>
+    </nav>
+  </div>
+</header>
+
+    <main id="main-content"><section class="page-hero shell"><p class="page-kicker">Writing topic</p><h1># 消息队列</h1><p>沿着这个关键词，继续往里看。</p></section>
+<section class="section shell"><div class="writing-list" data-writing-list>
+  
+    <article class="writing-row reveal" data-writing-item data-search="消息队列幂等性 消息队列 rabbitmq消费幂等性 什么是幂等性 幂等性，简单来说就是 对于同一个系统，在同样条件下，一次请求和重复多次请求对资源的影响是一致的，就称该操作为幂等的 。比如说如果有一个接口是幂等的，当传入相同条件时，其效果必须是相同的。在rabbitmq中消费幂等就是指给消费者发送多条同样的消息，消费者只会消费其中的一条。例如，在一次购物中提交订单进行支付时，当网络延迟等其他问题造成消费者重新支付，如果没有幂等性的支持，那么会对同一订单进行两次扣款，这是非常严重的，因此有了幂等性，当…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-11-12">2021.11.12</time><span>5 MIN</span></div>
+        <h2><a href="/2021/11/12/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E6%80%8E%E6%A0%B7%E4%BF%9D%E8%AF%81%E5%B9%82%E7%AD%89%E6%80%A7/">消息队列幂等性</a></h2>
+        <p>RabbitMQ消费幂等性 什么是幂等性 幂等性，简单来说就是 对于同一个系统，在同样条件下，一次请求和重复多次请求对资源的影响是一致的，就称该操作为幂等的 。比如说如果有一个接口是幂等的，当传入相同条件时，其效果必须是相同的。在RabbitMQ中消费幂等就是指给消费者发送多条同样的消息，消费者只会…</p>
+        <div class="chip-row"><span>消息队列</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/11/12/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E6%80%8E%E6%A0%B7%E4%BF%9D%E8%AF%81%E5%B9%82%E7%AD%89%E6%80%A7/" aria-label="阅读《消息队列幂等性》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="消息队列问题 消息队列 mq 的问题 任何技术都会有利有弊，mq 给整体系统架构带来很多好处，但也会付出一定的代价。 mq 主要引入了以下问题： 系统可用性降低 ：引入了 mq 后，通信需要基于 mq 完成，如果 mq 宕机，则服务不可用。 系统复杂度提高 使用 mq，需要关注一些新的问题： 如何保证消息没有 重复消费 ？ 如何处理 消息丢失 的问题？ 如何保证传递 消息的顺序性 ？ 如何处理大量 消息积压 的问题？ 一致性问题 ：假设系统 a 处理完直接返回成功的结果给用户，用户认为请求成功。但如…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-11-11">2021.11.11</time><span>6 MIN</span></div>
+        <h2><a href="/2021/11/11/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/%E6%B6%88%E6%81%AF%E5%A0%86%E7%A7%AF%E5%A4%AA%E5%A4%9A%E6%80%8E%E4%B9%88%E5%8A%9E/">消息队列问题</a></h2>
+        <p>MQ 的问题 任何技术都会有利有弊，MQ 给整体系统架构带来很多好处，但也会付出一定的代价。 MQ 主要引入了以下问题： 系统可用性降低 ：引入了 MQ 后，通信需要基于 MQ 完成，如果 MQ 宕机，则服务不可用。 系统复杂度提高 使用 MQ，需要关注一些新的问题： 如何保证消息没有 重复消费 ？…</p>
+        <div class="chip-row"><span>消息队列</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/11/11/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/%E6%B6%88%E6%81%AF%E5%A0%86%E7%A7%AF%E5%A4%AA%E5%A4%9A%E6%80%8E%E4%B9%88%E5%8A%9E/" aria-label="阅读《消息队列问题》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="mq的作用 消息队列 mq的作用 消息队列在大型电子商务类网站，如京东、淘宝、去哪儿等网站有着深入的应用， 队列的主要作用是消除高并发访问高峰，加快网站的响应速度。 在不使用消息队列的情况下，用户的请求数据直接写入数据库，在高并发的情况下，会对数据库造成巨大的压力，同时也使得系统响应延迟加剧。 在使用队列后，用户的请求发给队列后立即返回, （例如: 当然不能直接给用户提示订单提交成功，京东上提示：您“您提交了订单，请等待系统确认”）， 再由消息队列的消费者进程从消息队列中获取数据，异步写入数据库。…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-09-26">2021.09.26</time><span>5 MIN</span></div>
+        <h2><a href="/2021/09/26/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/MQ%E7%9A%84%E4%BD%9C%E7%94%A8%E6%80%BB%E7%BB%93/">MQ的作用</a></h2>
+        <p>MQ的作用 消息队列在大型电子商务类网站，如京东、淘宝、去哪儿等网站有着深入的应用， 队列的主要作用是消除高并发访问高峰，加快网站的响应速度。 在不使用消息队列的情况下，用户的请求数据直接写入数据库，在高并发的情况下，会对数据库造成巨大的压力，同时也使得系统响应延迟加剧。 在使用队列后，用户的请求发…</p>
+        <div class="chip-row"><span>消息队列</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/09/26/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/MQ%E7%9A%84%E4%BD%9C%E7%94%A8%E6%80%BB%E7%BB%93/" aria-label="阅读《MQ的作用》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="如何保证消息队列的可靠性传输 消息队列 rabbitmq如何保证消息队列的可靠性传输 生产者弄丢数据 生产者将数据发送到rabbitmq的时候，可能数据就在半路丢失。此时rabbitmq提供事务功能，就是生产者发送数据之前开启rabbitmq事务channel.txselect，然后发送消息，如果消息没有成功被rabbitmq接受到，那么生产者就会异常报错，此时回滚事务channel.txrollback，然后重发消息，如果收到消息就可以提交事务channel.txcommit 但是问题是，rabbitmq 事务机…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-08-26">2021.08.26</time><span>3 MIN</span></div>
+        <h2><a href="/2021/08/26/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/%E5%A6%82%E4%BD%95%E4%BF%9D%E8%AF%81%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E7%9A%84%E5%8F%AF%E9%9D%A0%E6%80%A7%E4%BC%A0%E8%BE%93/">如何保证消息队列的可靠性传输</a></h2>
+        <p>RabbitMQ如何保证消息队列的可靠性传输 生产者弄丢数据 生产者将数据发送到RabbitMQ的时候，可能数据就在半路丢失。此时RabbitMQ提供事务功能，就是生产者发送数据之前开启RabbitMQ事务channel.txSelect，然后发送消息，如果消息没有成功被RabbitMQ接受到，那么…</p>
+        <div class="chip-row"><span>消息队列</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/08/26/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/%E5%A6%82%E4%BD%95%E4%BF%9D%E8%AF%81%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E7%9A%84%E5%8F%AF%E9%9D%A0%E6%80%A7%E4%BC%A0%E8%BE%93/" aria-label="阅读《如何保证消息队列的可靠性传输》">↗</a>
+    </article>
+  
+</div>
+<span class="page-number current">1</span></section>
+</main>
+    <footer class="site-footer">
+  <div class="footer-grid">
+    <div>
+      <p class="footer-kicker">Leslie Zhang</p>
+      <p class="footer-statement">流水不争先，<br>争的是滔滔不绝。</p>
+    </div>
+    <div class="footer-links">
+      <a href="https://github.com/leslieAIbin" target="_blank" rel="noreferrer">GitHub ↗</a>
+      <a href="https://www.instagram.com/leslieaibin/" target="_blank" rel="noreferrer">Instagram ↗</a>
+      <button type="button" data-wechat-open>微信 / WeChat</button>
+      <a href="mailto:aibinzhangleslie@gmail.com">Email ↗</a>
+      <a href="/atom.xml">RSS ↗</a>
+    </div>
+    <div class="footer-meta">
+      <span>© 2026 Leslie Zhang</span>
+      <span>Writing, research and working systems.</span>
+    </div>
+  </div>
+</footer>
+
+    <dialog class="ask-dialog" id="ask-leslie" aria-labelledby="ask-title">
+  <div class="ask-dialog__shell">
+    <div class="ask-dialog__topbar">
+      <div>
+        <h2 id="ask-title">Ask Leslie</h2>
+      </div>
+      <button class="icon-button" type="button" data-ask-close aria-label="关闭">×</button>
+    </div>
+    <p class="ask-dialog__intro">从本站公开文章中寻找答案。当前版本在浏览器本地检索，不上传问题，也不会编造不存在的经历。</p>
+    <form class="ask-form" data-ask-form>
+      <label class="sr-only" for="ask-query">输入问题</label>
+      <textarea id="ask-query" rows="2" placeholder="例如：Agent Runtime 应该怎么设计？" data-ask-input></textarea>
+      <button type="submit">检索知识库 <span aria-hidden="true">↗</span></button>
+    </form>
+    <div class="ask-suggestions" aria-label="推荐问题">
+      
+        <button type="button" data-ask-suggestion="Agent Runtime 应该怎么设计？">Agent Runtime 应该怎么设计？</button>
+      
+        <button type="button" data-ask-suggestion="如何让 AI 操控真实世界设备？">如何让 AI 操控真实世界设备？</button>
+      
+        <button type="button" data-ask-suggestion="Leslie 最近在研究什么？">Leslie 最近在研究什么？</button>
+      
+    </div>
+    <div class="ask-results" data-ask-results aria-live="polite">
+      <div class="ask-empty">
+        <p>输入一个问题，我会把你带到 Leslie 写过的相关内容。</p>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+    <dialog class="wechat-dialog" id="wechat-leslie" aria-labelledby="wechat-title">
+  <div class="wechat-dialog__shell">
+    <header>
+      <div>
+        <p class="section-label">WeChat</p>
+        <h2 id="wechat-title">微信联系</h2>
+      </div>
+      <button class="icon-button" type="button" data-wechat-close aria-label="关闭微信二维码">×</button>
+    </header>
+    <img src="/images/contact/wechat-leslie.png" alt="Leslie Zhang 的微信二维码" loading="lazy">
+    <p>扫码添加 Leslie，建议备注你的名字与来意。</p>
+  </div>
+</dialog>
+
+    <script>window.ORBITAL_ROOT = '/';</script>
+    <script src="/js/orbital.js" defer></script>
+  </body>
+</html>

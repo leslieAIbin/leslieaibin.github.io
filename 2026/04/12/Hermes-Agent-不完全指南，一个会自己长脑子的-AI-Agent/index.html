@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+  <head>
+
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#050b18">
+<meta name="color-scheme" content="dark light">
+<title>Hermes Agent 不完全指南，一个会自己长脑子的 AI Agent | Leslie Zhang</title>
+<meta name="description" content="用了半年 OpenClaw 之后试了下 Hermes Agent。让我意外的不只是它能跑在 5 美元的 VPS 上、支持 15 个模型提供商、还自带迁移工具抢 OpenClaw 用户。而是它那个自学习闭环，会自动从经验里创建 Skills，使用中不断改进，跨会话搜索历史对话。这不就是我一直想要但 OpenClaw 没给的东西吗？">
+<meta name="author" content="Leslie Zhang">
+<link rel="canonical" href="https://leslieaibin.github.io/2026/04/12/Hermes-Agent-%E4%B8%8D%E5%AE%8C%E5%85%A8%E6%8C%87%E5%8D%97%EF%BC%8C%E4%B8%80%E4%B8%AA%E4%BC%9A%E8%87%AA%E5%B7%B1%E9%95%BF%E8%84%91%E5%AD%90%E7%9A%84-AI-Agent/">
+<link rel="icon" href="/imgs/01.jpg">
+<link rel="alternate" type="application/atom+xml" title="Leslie Zhang" href="/atom.xml">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hermes Agent 不完全指南，一个会自己长脑子的 AI Agent | Leslie Zhang">
+<meta property="og:description" content="用了半年 OpenClaw 之后试了下 Hermes Agent。让我意外的不只是它能跑在 5 美元的 VPS 上、支持 15 个模型提供商、还自带迁移工具抢 OpenClaw 用户。而是它那个自学习闭环，会自动从经验里创建 Skills，使用中不断改进，跨会话搜索历史对话。这不就是我一直想要但 OpenClaw 没给的东西吗？">
+<meta property="og:url" content="https://leslieaibin.github.io/2026/04/12/Hermes-Agent-%E4%B8%8D%E5%AE%8C%E5%85%A8%E6%8C%87%E5%8D%97%EF%BC%8C%E4%B8%80%E4%B8%AA%E4%BC%9A%E8%87%AA%E5%B7%B1%E9%95%BF%E8%84%91%E5%AD%90%E7%9A%84-AI-Agent/">
+<meta property="og:image" content="https://leslieaibin.github.io/2026/04/12/Hermes-Agent-%E4%B8%8D%E5%AE%8C%E5%85%A8%E6%8C%87%E5%8D%97%EF%BC%8C%E4%B8%80%E4%B8%AA%E4%BC%9A%E8%87%AA%E5%B7%B1%E9%95%BF%E8%84%91%E5%AD%90%E7%9A%84-AI-Agent/cover.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Hermes Agent 不完全指南，一个会自己长脑子的 AI Agent | Leslie Zhang">
+<meta name="twitter:description" content="用了半年 OpenClaw 之后试了下 Hermes Agent。让我意外的不只是它能跑在 5 美元的 VPS 上、支持 15 个模型提供商、还自带迁移工具抢 OpenClaw 用户。而是它那个自学习闭环，会自动从经验里创建 Skills，使用中不断改进，跨会话搜索历史对话。这不就是我一直想要但 OpenClaw 没给的东西吗？">
+<meta name="twitter:image" content="https://leslieaibin.github.io/2026/04/12/Hermes-Agent-%E4%B8%8D%E5%AE%8C%E5%85%A8%E6%8C%87%E5%8D%97%EF%BC%8C%E4%B8%80%E4%B8%AA%E4%BC%9A%E8%87%AA%E5%B7%B1%E9%95%BF%E8%84%91%E5%AD%90%E7%9A%84-AI-Agent/cover.png">
+<script>
+  (function () {
+    var saved = localStorage.getItem('orbital-theme');
+    var theme = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    document.documentElement.dataset.theme = theme;
+  })();
+</script>
+<link rel="stylesheet" href="/css/orbital.css">
+<meta name="generator" content="Hexo 5.2.0"></head>
+  <body class="page-post">
+    <a class="skip-link" href="#main-content">跳到主要内容</a>
+    <div class="reading-progress" data-reading-progress></div>
+    <header class="site-header" data-header>
+  <div class="nav-shell">
+    <a class="brand" href="/" aria-label="返回首页">
+      <span class="brand-mark" aria-hidden="true"><img src="/images/brand/leslie-mythos-avatar.webp" alt="" width="512" height="512"></span>
+      <span class="brand-copy">
+        <strong>LESLIE</strong>
+        <small>REAL-WORLD AGENTS</small>
+      </span>
+    </a>
+
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav" data-nav-toggle>
+      <span></span><span></span>
+      <span class="sr-only">打开导航</span>
+    </button>
+
+    <nav class="main-nav" id="main-nav" aria-label="主导航" data-nav>
+      
+        <a href="/" class="">首页</a>
+      
+        <a href="/writing/" class="">写作</a>
+      
+        <a href="/projects/" class="">项目</a>
+      
+        <a href="/about/" class="">关于</a>
+      
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换明暗主题">
+        <span class="theme-toggle__sun" aria-hidden="true">☼</span>
+        <span class="theme-toggle__moon" aria-hidden="true">◐</span>
+      </button>
+      <button class="ask-nav" type="button" data-ask-open>ASK LESLIE</button>
+    </nav>
+  </div>
+</header>
+
+    <main id="main-content"><article class="post-shell">
+  <header class="post-hero shell">
+    <a class="post-back" href="/writing/">← 返回写作</a>
+    <div class="post-hero__meta">
+      <time datetime="2026-04-12">2026 年 04 月 12 日</time>
+      <span>7 分钟阅读</span>
+    </div>
+    <h1>Hermes Agent 不完全指南，一个会自己长脑子的 AI Agent</h1>
+    <p class="post-hero__summary">用了半年 OpenClaw 之后试了下 Hermes Agent。让我意外的不只是它能跑在 5 美元的 VPS 上、支持 15 个模型提供商、还自带迁移工具抢 OpenClaw 用户。而是它那个自学习闭环，会自动从经验里创建 Skills，使用中不断改进，跨会话搜索历史对话。这不就是我一直想要但 OpenClaw 没给的东西吗？</p>
+    <div class="chip-row"><a href="/tags/AI-Agent/">AI Agent</a><a href="/tags/Hermes/">Hermes</a><a href="/tags/Nous-Research/">Nous Research</a><a href="/tags/OpenClaw/">OpenClaw</a><a href="/tags/Skills/">Skills</a><a href="/tags/%E8%87%AA%E5%AD%A6%E4%B9%A0/">自学习</a></div>
+  </header>
+
+  <div class="post-cover shell"><img src="/2026/04/12/Hermes-Agent-%E4%B8%8D%E5%AE%8C%E5%85%A8%E6%8C%87%E5%8D%97%EF%BC%8C%E4%B8%80%E4%B8%AA%E4%BC%9A%E8%87%AA%E5%B7%B1%E9%95%BF%E8%84%91%E5%AD%90%E7%9A%84-AI-Agent/cover.png" alt="Hermes Agent 不完全指南，一个会自己长脑子的 AI Agent"></div>
+
+  <div class="post-layout shell">
+    <aside class="post-toc" aria-label="文章目录">
+      <span class="aside-title">目录</span>
+      
+    </aside>
+    <div class="article-content"><h1 id="Hermes-Agent-不完全指南，一个会自己长脑子的-AI-Agent"><a href="#Hermes-Agent-不完全指南，一个会自己长脑子的-AI-Agent" class="headerlink" title="Hermes Agent 不完全指南，一个会自己长脑子的 AI Agent"></a>Hermes Agent 不完全指南，一个会自己长脑子的 AI Agent</h1><p>上周五晚上，我在终端里敲了一行命令。</p>
+<p><code>hermes claw migrate --dry-run</code></p>
+<p>回车之后我就愣住了。</p>
+<p>它检测到了我的 <code>~/.openclaw</code> 目录。SOUL.md、MEMORY.md、所有自定义 Skills、API Keys，一个不落地列了出来。甚至还标注了哪些能完美迁移，哪些需要手动调。</p>
+<p>我当时脑子里就一个想法，这是来抢人的。</p>
+<p><img src="cover.png" alt="终端里检测到 OpenClaw 配置"></p>
+<p>Hermes Agent 是 Nous Research 做的开源 AI Agent。说真的，我之前对 Nous Research 的印象还停留在他们开源的那几个大语言模型上，没想到他们悄悄憋了个大招。</p>
+<p>GitHub 上线 42 天，将近 4 万 Star。200 多个贡献者。这个数据放在 AI Agent 赛道里，不只是火了，是爆炸级的。</p>
+<p>但 Star 数这东西你也知道，很多时候就是大家先 Star 了再说，真正用的人没几个。我自己是抱着「看看又是个啥」的心态开始翻它的文档的。</p>
+<p>翻完之后我得说，这玩意确实有点东西。</p>
+<p>它最大的卖点不是支持 15 个模型提供商，不是能在 Telegram、Discord、Slack、WhatsApp 上跑，也不是那个一行命令安装的终端 TUI 界面。这些 OpenClaw 基本也能做，或者很快就能做。</p>
+<p>它真正不一样的地方在于一个词，自学习。</p>
+<p><img src="01-self-learning.png" alt="会自己长脑子的 Agent"></p>
+<p>我用 OpenClaw 用了半年了。半年来我自己写了一堆 Skills，也装了不少别人的。但坦率的讲，大部分 Skills 写完就再也没更新过。不是因为它们完美，是因为我没时间维护。你知道的，一个人的精力就那么多，写文章、做项目、维护 Skills，总得排个优先级。</p>
+<p>Hermes 不一样。它会自己创建 Skills。</p>
+<p>怎么说呢，比如你让它帮你部署一个 Kubernetes 集群，任务完成之后，它会自动把整个解决方案提炼成一个 Skill 文件，存到 <code>~/.hermes/skills/</code> 目录里。下次遇到类似任务，直接加载这个 Skill，不用从零开始。</p>
+<p>这还不算完。一个 Skill 被创建之后不是封存的。每次使用的时候它会记录执行结果，看看和上次有什么不同，上次方案有没有需要调整的地方，有没有新的边界条件。如果发现改进空间，它直接修改 Skill 文件。</p>
+<p>整个过程你不需要介入。</p>
+<p>我跟你说，这个设计才是 Hermes 的灵魂。</p>
+<p>我们用 Agent 框架最大的痛点是什么？是你得不断手动调教它。你写一个 Skill，你得维护它。记忆系统也一样，你得告诉它什么该记什么不该记。说到底你是在养一个需要你手把手教的工具。</p>
+<p>Hermes 把这个维护负担从人身上转移到了 Agent 自己身上。用的越多它越强，因为它经历的多。GitHub README 里写的那句话，「The agent that grows with you」，和你一起成长的 Agent。我一开始以为是营销文案，用了之后发现这还真不是文案，这是它的核心设计哲学。</p>
+<p>回到记忆系统这块。Hermes 的记忆分两层，也是我觉得目前 Agent 记忆系统设计里最务实的方案。</p>
+<p><img src="02-memory.png" alt="两层记忆架构"></p>
+<p>第一层是 MEMORY.md 和 USER.md，和 OpenClaw 类似，但 Hermes 加了硬限制。MEMORY.md 2200 字符，USER.md 1375 字符，满了就得合并或删除。看着是约束，实际上是在逼 Agent 做信息筛选。当记忆满了，它得自己判断什么重要什么不重要。这个判断过程本身就是学习。</p>
+<p>第二层更厉害。Session Search，所有会话存在 SQLite 数据库里，FTS5 全文索引。Agent 可以随时搜索几周前聊过的内容，即使这些不在活跃记忆里。搜索结果用 Gemini Flash 做摘要。</p>
+<p>你想想看这是什么概念？以前的 Agent 只有两种记忆，要么在系统提示里占空间的短期记忆，要么完全找不到的远古对话。Hermes 把中间地带填上了。不是什么都记，也不是什么都不记，是「需要的时候能找到」。</p>
+<p>还有一个让我觉得比较骚的功能。Hermes 集成了一个叫 Honcho 的用户建模引擎，Plastic Labs 做的。它用「辩证法」的方式来理解用户，不只是记录你喜欢什么，而是试图理解你为什么这样想。</p>
+<p>比如你总是先问「有多少人用过这个工具」再做技术选型，Honcho 会学到你在意的是采用率而非技术先进性。下次它推荐工具时，会优先给你「用户量大」的选项而不是「最新最酷」的。</p>
+<p>这个能力被嵌到了 Agent 的决策过程里。不是插件，不是可选功能，是系统级的。</p>
+<p>说到这里，可能有人想问了，那它和 OpenClaw 到底差多少？</p>
+<p>我用半年 OpenClaw，一周 Hermes，两个都装着。给你一个诚实的感受。</p>
+<p>OpenClaw 的设计思路是，给你一个强大的框架，你定义人格、写 Skills、配置工具，Agent 忠实执行。你投入越多精力调教，Agent 越好用。它是一个需要你投资的系统。</p>
+<p>Hermes 的设计思路是，给你一个能自己学习的 Agent，它从和你的交互中自动积累知识、改进技能、理解你的偏好。你用得越多它越懂你。它是一个会自己投资的系统。</p>
+<p>没有对错。</p>
+<p>但我自己的感受是，OpenClaw 像一个你精心调教的管家，Hermes 像一个聪明的学徒。管家更可控更可靠，学徒更有成长空间。你要哪一个？取决于你最在意什么。</p>
+<p><img src="03-comparison.png" alt="管家 vs 学徒"></p>
+<p>如果你在意的是可控性、稳定性、微信支持、成熟的社区生态，OpenClaw 还是更稳的选择。我自己也还在摸索阶段，两个都留着，暂时不急着做选择。</p>
+<p>如果你在意的是 Agent 能不能自己学会东西、能不能在你不维护的情况下越用越好，Hermes 值得试试。</p>
+<p>模型切换这块差距确实挺大。OpenClaw 换模型得改配置文件，Hermes 一行 <code>/model provider:model</code> 命令，会话里即时切换。15 个提供商，OpenRouter 一家就有 200 多个模型。这个灵活性是碾压级的。</p>
+<p>运行环境也是。OpenClaw 基本绑在你电脑上。Hermes 有六种终端后端，本地、Docker、SSH、Daytona、Singularity、Modal。其中 Daytona 和 Modal 支持 serverless，空闲时休眠需要时唤醒，空闲成本接近零。你可以在 5 美元一个月的 VPS 上跑它。说实话我也没搞懂怎么做到的，但文档里写得很清楚，而且有人验证过了。</p>
+<p>当然了，它也不完美。</p>
+<p>坦率的讲，Windows 原生不支持，得走 WSL2。迁移工具还在早期，复杂的 cron 任务和高级 Skills 配置迁移后还得手动调。2200 字符的记忆限制有时候确实太紧，用弱模型的话合并质量堪忧。文档虽然详细但组织得有点乱，新手想快速上手得翻好几个页面。</p>
+<p>还有一个现实问题。Hermes 目前不支持微信。如果你跟我一样有微信消息平台的需求，这点得接受。社区规模也还小，agentskills.io 上的 Skills 数量远不如 ClawhHub。</p>
+<p>不过 Hermes 的「自创建 Skills」机制在一定程度上弥补了生态不足。你不一定需要社区 Skills，因为你的 Agent 会自己造。三天用下来差异不明显，三个月之后差距会越来越大。</p>
+<p>说了这么多，我想聊一个更深的东西。</p>
+<p>英国哲学家迈克尔·波兰尼提过一个概念叫「默会知识」。他说「我们所知道的比我们能说出来的多得多」。骑自行车的人不需要解释怎么保持平衡，厨师不需要精确到克就能调出好味道。这些知识不是从教科书上学来的，是从一次次的实践中长出来的。</p>
+<p><img src="04-tacit-knowledge.png" alt="默会知识，从实践中学"></p>
+<p>以前的 Agent 框架，不管是 OpenClaw 还是别的，说到底都在尝试把所有知识都「说出来」写进 SKILL.md。你写得越详细，Agent 越好用。但问题是，很多知识你写不出来。你不知道自己知道什么，直到你做了那件事才发现「哦原来这样可以」。</p>
+<p>Hermes 的自学习闭环做的就是把这种「默会知识」的获取方式搬到了 Agent 身上。不是你教它，是它自己从经验里学。它做了什么、什么失败了、怎么修复的、有没有可复用的模式。这些都是在做的过程中自然产生的知识。</p>
+<p>人类几千年的学徒制不就是这样的吗？师傅不写教材，徒弟跟着做。做的过程中自然就学会了。不是被教的，是长出来的。</p>
+<p>Hermes 是第一个认真尝试把这个模式做进 Agent 框架里的项目。</p>
+<p>我相信 OpenClaw 很快也会有类似的能力。这场竞争才刚开始。但 Hermes 的方向，我始终坚信，更接近 Agent 的终局。当 Agent 的能力越来越强、任务越来越复杂时，靠人手动维护 Skills 和记忆是不可持续的。Agent 必须学会自我管理，自己决定学什么、忘什么、改进什么。</p>
+<p>如果你现在就想体验一下「会自己长脑子的 Agent」，Hermes 值得一试。</p>
+<p>回到开头那个命令。<code>hermes claw migrate --dry-run</code>。</p>
+<p>它不只是一个迁移工具。它是 Nous Research 在对 OpenClaw 用户说，我们已经帮你铺好了搬家的路。你来不来，你自己决定。</p>
+<p><img src="05-path.png" alt="搬家的路已经铺好了"></p>
+<hr>
+<p><em>相关链接</em></p>
+<ul>
+<li><em>Hermes Agent 官网，<a target="_blank" rel="noopener" href="https://hermes-agent.nousresearch.com/">https://hermes-agent.nousresearch.com/</a></em></li>
+<li><em>GitHub 仓库，<a target="_blank" rel="noopener" href="https://github.com/NousResearch/Hermes-Agent">https://github.com/NousResearch/Hermes-Agent</a></em></li>
+<li><em>Skills Hub，<a target="_blank" rel="noopener" href="https://agentskills.io/">https://agentskills.io</a></em></li>
+<li><em>文档站，<a target="_blank" rel="noopener" href="https://hermes-agent.nousresearch.com/docs/">https://hermes-agent.nousresearch.com/docs/</a></em></li>
+<li><em>Discord 社区，<a target="_blank" rel="noopener" href="https://discord.gg/NousResearch">https://discord.gg/NousResearch</a></em></li>
+</ul>
+</div>
+    <aside class="post-rail">
+      <span class="post-rail__line"></span>
+      <span>LESLIE / WRITING</span>
+    </aside>
+  </div>
+
+  <footer class="post-footer shell">
+    <div><h2>如果这篇文章帮到了你，<br>也许下一篇会更有意思。</h2></div>
+    <a class="button button--primary" href="/writing/">继续阅读 →</a>
+  </footer>
+</article>
+</main>
+    <footer class="site-footer">
+  <div class="footer-grid">
+    <div>
+      <p class="footer-kicker">Leslie Zhang</p>
+      <p class="footer-statement">流水不争先，<br>争的是滔滔不绝。</p>
+    </div>
+    <div class="footer-links">
+      <a href="https://github.com/leslieAIbin" target="_blank" rel="noreferrer">GitHub ↗</a>
+      <a href="https://www.instagram.com/leslieaibin/" target="_blank" rel="noreferrer">Instagram ↗</a>
+      <button type="button" data-wechat-open>微信 / WeChat</button>
+      <a href="mailto:aibinzhangleslie@gmail.com">Email ↗</a>
+      <a href="/atom.xml">RSS ↗</a>
+    </div>
+    <div class="footer-meta">
+      <span>© 2026 Leslie Zhang</span>
+      <span>Writing, research and working systems.</span>
+    </div>
+  </div>
+</footer>
+
+    <dialog class="ask-dialog" id="ask-leslie" aria-labelledby="ask-title">
+  <div class="ask-dialog__shell">
+    <div class="ask-dialog__topbar">
+      <div>
+        <h2 id="ask-title">Ask Leslie</h2>
+      </div>
+      <button class="icon-button" type="button" data-ask-close aria-label="关闭">×</button>
+    </div>
+    <p class="ask-dialog__intro">从本站公开文章中寻找答案。当前版本在浏览器本地检索，不上传问题，也不会编造不存在的经历。</p>
+    <form class="ask-form" data-ask-form>
+      <label class="sr-only" for="ask-query">输入问题</label>
+      <textarea id="ask-query" rows="2" placeholder="例如：Agent Runtime 应该怎么设计？" data-ask-input></textarea>
+      <button type="submit">检索知识库 <span aria-hidden="true">↗</span></button>
+    </form>
+    <div class="ask-suggestions" aria-label="推荐问题">
+      
+        <button type="button" data-ask-suggestion="Agent Runtime 应该怎么设计？">Agent Runtime 应该怎么设计？</button>
+      
+        <button type="button" data-ask-suggestion="如何让 AI 操控真实世界设备？">如何让 AI 操控真实世界设备？</button>
+      
+        <button type="button" data-ask-suggestion="Leslie 最近在研究什么？">Leslie 最近在研究什么？</button>
+      
+    </div>
+    <div class="ask-results" data-ask-results aria-live="polite">
+      <div class="ask-empty">
+        <p>输入一个问题，我会把你带到 Leslie 写过的相关内容。</p>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+    <dialog class="wechat-dialog" id="wechat-leslie" aria-labelledby="wechat-title">
+  <div class="wechat-dialog__shell">
+    <header>
+      <div>
+        <p class="section-label">WeChat</p>
+        <h2 id="wechat-title">微信联系</h2>
+      </div>
+      <button class="icon-button" type="button" data-wechat-close aria-label="关闭微信二维码">×</button>
+    </header>
+    <img src="/images/contact/wechat-leslie.png" alt="Leslie Zhang 的微信二维码" loading="lazy">
+    <p>扫码添加 Leslie，建议备注你的名字与来意。</p>
+  </div>
+</dialog>
+
+    <script>window.ORBITAL_ROOT = '/';</script>
+    <script src="/js/orbital.js" defer></script>
+  </body>
+</html>

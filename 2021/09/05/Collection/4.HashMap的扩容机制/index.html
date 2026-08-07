@@ -1,0 +1,331 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+  <head>
+
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#050b18">
+<meta name="color-scheme" content="dark light">
+<title>4.HashMap实现原理 | Leslie Zhang</title>
+<meta name="description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta name="author" content="Leslie Zhang">
+<link rel="canonical" href="https://leslieaibin.github.io/2021/09/05/Collection/4.HashMap%E7%9A%84%E6%89%A9%E5%AE%B9%E6%9C%BA%E5%88%B6/">
+<link rel="icon" href="/imgs/01.jpg">
+<link rel="alternate" type="application/atom+xml" title="Leslie Zhang" href="/atom.xml">
+<meta property="og:type" content="article">
+<meta property="og:title" content="4.HashMap实现原理 | Leslie Zhang">
+<meta property="og:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta property="og:url" content="https://leslieaibin.github.io/2021/09/05/Collection/4.HashMap%E7%9A%84%E6%89%A9%E5%AE%B9%E6%9C%BA%E5%88%B6/">
+<meta property="og:image" content="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/39.jpg?raw=true">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="4.HashMap实现原理 | Leslie Zhang">
+<meta name="twitter:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta name="twitter:image" content="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/39.jpg?raw=true">
+<script>
+  (function () {
+    var saved = localStorage.getItem('orbital-theme');
+    var theme = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    document.documentElement.dataset.theme = theme;
+  })();
+</script>
+<link rel="stylesheet" href="/css/orbital.css">
+<meta name="generator" content="Hexo 5.2.0"></head>
+  <body class="page-post">
+    <a class="skip-link" href="#main-content">跳到主要内容</a>
+    <div class="reading-progress" data-reading-progress></div>
+    <header class="site-header" data-header>
+  <div class="nav-shell">
+    <a class="brand" href="/" aria-label="返回首页">
+      <span class="brand-mark" aria-hidden="true"><img src="/images/brand/leslie-mythos-avatar.webp" alt="" width="512" height="512"></span>
+      <span class="brand-copy">
+        <strong>LESLIE</strong>
+        <small>REAL-WORLD AGENTS</small>
+      </span>
+    </a>
+
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav" data-nav-toggle>
+      <span></span><span></span>
+      <span class="sr-only">打开导航</span>
+    </button>
+
+    <nav class="main-nav" id="main-nav" aria-label="主导航" data-nav>
+      
+        <a href="/" class="">首页</a>
+      
+        <a href="/writing/" class="">写作</a>
+      
+        <a href="/projects/" class="">项目</a>
+      
+        <a href="/about/" class="">关于</a>
+      
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换明暗主题">
+        <span class="theme-toggle__sun" aria-hidden="true">☼</span>
+        <span class="theme-toggle__moon" aria-hidden="true">◐</span>
+      </button>
+      <button class="ask-nav" type="button" data-ask-open>ASK LESLIE</button>
+    </nav>
+  </div>
+</header>
+
+    <main id="main-content"><article class="post-shell">
+  <header class="post-hero shell">
+    <a class="post-back" href="/writing/">← 返回写作</a>
+    <div class="post-hero__meta">
+      <time datetime="2021-09-05">2021 年 09 月 05 日</time>
+      <span>10 分钟阅读</span>
+    </div>
+    <h1>4.HashMap实现原理</h1>
+    
+    <div class="chip-row"><a href="/tags/Collection/">Collection</a></div>
+  </header>
+
+  <div class="post-cover shell"><img src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/39.jpg?raw=true" alt="4.HashMap实现原理"></div>
+
+  <div class="post-layout shell">
+    <aside class="post-toc" aria-label="文章目录">
+      <span class="aside-title">目录</span>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A6%82%E8%BF%B0"><span class="toc-text">概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E5%BA%95%E5%B1%82%E6%95%B0%E7%BB%84%E7%9A%84%E9%95%BF%E5%BA%A6%E6%80%BB%E8%A6%81%E6%98%AF2%E7%9A%84n%E6%AC%A1%E6%96%B9%E5%91%A2"><span class="toc-text">为什么底层数组的长度总要是2的n次方呢</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JDK8%E4%B8%ADHashMap%E7%9A%84%E6%94%B9%E8%BF%9B"><span class="toc-text">JDK8中HashMap的改进</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JDK7%E4%B8%AD%E7%9A%84%E6%89%A9%E5%AE%B9%E6%9C%BA%E5%88%B6"><span class="toc-text">JDK7中的扩容机制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JDK8%E7%9A%84%E6%89%A9%E5%AE%B9%E6%9C%BA%E5%88%B6"><span class="toc-text">JDK8的扩容机制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JDK7%E7%9A%84%E5%85%83%E7%B4%A0%E8%BF%81%E7%A7%BB"><span class="toc-text">JDK7的元素迁移</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JDK8%E7%9A%84%E5%85%83%E7%B4%A0%E8%BF%81%E7%A7%BB"><span class="toc-text">JDK8的元素迁移</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#HashMap%E6%89%A9%E5%AE%B9%E6%AD%BB%E5%BE%AA%E7%8E%AF%E9%97%AE%E9%A2%98"><span class="toc-text">HashMap扩容死循环问题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%89%A7%E8%A1%8C%E4%B8%8A%E9%9D%A2%E7%9A%84do-while%E5%BE%AA%E7%8E%AF%EF%BC%8C%E7%AC%AC%E4%B8%80%E8%BD%AE%E5%BE%AA%E7%8E%AF%EF%BC%9A"><span class="toc-text">执行上面的do while循环，第一轮循环：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E8%BD%AE%E5%BE%AA%E7%8E%AF%EF%BC%9A"><span class="toc-text">第二轮循环：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text"></span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E8%BD%AE%E4%B9%9F%E6%98%AF%E6%9C%80%E5%90%8E%E4%B8%80%E8%BD%AE%E5%BE%AA%E7%8E%AF%EF%BC%8C%E5%89%8D%E9%9D%A2%E5%B7%B2%E7%BB%8F%E5%81%87%E8%AE%BE%E7%BB%93%E7%82%B9-c-%E5%B0%86%E5%9C%A8%E6%96%B0%E6%95%B0%E7%BB%84%E4%B8%AD%E7%9A%84%E7%AC%AC%E4%BA%8C%E4%B8%AA%E9%93%BE%E8%A1%A8"><span class="toc-text">第三轮也是最后一轮循环，前面已经假设结点 c 将在新数组中的第二个链表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%9A%E7%BA%BF%E7%A8%8B%E7%8E%AF%E5%A2%83%E4%B8%AD%E6%89%A9%E5%AE%B9"><span class="toc-text">多线程环境中扩容</span></a></li></ol></li></ol>
+    </aside>
+    <div class="article-content"><h1 id="HashMap的实现原理"><a href="#HashMap的实现原理" class="headerlink" title="HashMap的实现原理"></a>HashMap的实现原理</h1><h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>HashMap是Java中对Map接口的实现类，是最常用的实现类中之一。主要有以下几个特性：</p>
+<ul>
+<li>HashMap中的key 和 value 都允许为null， 但最多智能拥有一个null的key</li>
+<li>HashMap不保证顺序性</li>
+<li>HashMap非线性安全</li>
+</ul>
+<p>HashMap的数据结构：</p>
+<p>HashMap内部是以数组+链表的方式存储的数据。</p>
+<p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/image-20210904213431065.png" alt="image-20210904213431065"></p>
+<p>HashMap的数组中，每个元素称之为“<strong>桶</strong>”。需要注意的是，这个“桶”并不等同于“键值对（Entity）”。至于它是什么请往下看。</p>
+<p><strong>初始化</strong></p>
+<p>HashMap在初始化时会创建一个Entity的数组。其个数为<strong>16</strong>。其源码类似下面的代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Entry</span>&lt;<span class="title">K</span>,<span class="title">V</span>&gt; <span class="keyword">implements</span> <span class="title">Map</span>.<span class="title">Entry</span>&lt;<span class="title">K</span>,<span class="title">V</span>&gt; </span>&#123;</span><br><span class="line">    <span class="keyword">final</span> K key;</span><br><span class="line">    V value;</span><br><span class="line">    Entry&lt;K,V&gt; next;</span><br><span class="line">    <span class="keyword">final</span> <span class="keyword">int</span> hash;</span><br><span class="line">    ……</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>其中key和value不必多说，不过它还包含了一个next属性，这说明它可以组织成一个链表结构。</p>
+<p><strong>put()方法</strong></p>
+<p>put方法被调用时，HashMap会根据key计算出对应的hashcode，然后根据hashcode确定该Entity应该存放在数组的哪个位置（应该放在哪个桶里）。</p>
+<p>这种设定有一个问题：实际引用中有可能会发生hash碰撞（即两个数据虽然内容不同，但其hashcode有可能是相同的）！因此，HashMap如果发现hashcode已经存在，则会对key进行euqals对比：</p>
+<ul>
+<li>equals结果是true，则认为确实是同一个key，然后将新的value覆盖旧的value（此时put方法将会返回旧value值）。</li>
+<li>equals结果是false，则认为是hash碰撞，此时会将之前的Entity作为新Entity的next，此时形成一个链表，新Entity则处在链表的首位。</li>
+</ul>
+<p>因此，所谓的<strong>“桶”就是数组每个位置放置的“链表”</strong>。</p>
+<p><strong>get()方法</strong></p>
+<p>如果理解了上述的put逻辑，则get方法就很容易理解。主要有以下几个步骤：</p>
+<ul>
+<li>根据key计算hashcode，然后得出其数组下标（位置）。</li>
+<li>去对应位置获取桶（链表）。</li>
+<li>从头到尾遍历链表的每一个Entity，通过equals方法找到对应的Entity。</li>
+<li></li>
+</ul>
+<p>上述的过程中有一个点未详细说明：<strong>如何根据key的hashcode计算出对应的数组坐标呢？</strong></p>
+<p>HashMap的内部实现用了一个非常巧妙的方法。HashMap的初始容量被定为<strong>16</strong>，且每次增长都是2的倍数。这样设计的目的是要<strong>保证存入map中的元素尽量分散</strong>，尽量避免出现桶中出现链表，这可以有效降低数据查询时的处理速度。</p>
+<p>key是这么一步步转化成数组下标的：</p>
+<p>第一步：Object Key –&gt; int hash</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">static final int hash(Object key) &#123;</span><br><span class="line">    int h;</span><br><span class="line">    return (key == null) ? 0 : (h = key.hashCode()) ^ (h &gt;&gt;&gt; 16);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果key是null，则其hash为0；否则便将 <strong>hashcode</strong> 与 <strong>hashcode的高位</strong> 做 <strong>异或运算</strong>。这是为了尽量避免“低位不变，高位变化”时造成的hash冲突。</p>
+<p>第二步：hash –&gt; i</p>
+<p>上一步计算出的hash是个长度较长的二进制数字，而通常情况下HashMap的底层数组长度（length）较小，因此如果我们进行 <strong>hash % length</strong> 计算，则一定能得到一个下标，且相对比较分散。而在源码中使用了性能更高的算法：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">i = (length - 1) &amp; hash</span><br></pre></td></tr></table></figure>
+
+<p>这个公式对hash和length进行了<strong>按位与</strong>运算，等价于<strong>取余。</strong></p>
+<h2 id="为什么底层数组的长度总要是2的n次方呢"><a href="#为什么底层数组的长度总要是2的n次方呢" class="headerlink" title="为什么底层数组的长度总要是2的n次方呢"></a>为什么底层数组的长度总要是2的n次方呢</h2><p>这时就能说清楚另外一件事情：<strong>为什么底层数组的长度总要是2的n次方呢？</strong></p>
+<p>下图是个示例：</p>
+<p><img src="https://pic2.zhimg.com/80/v2-417a388c7b8ae370fc1ede9e854e54a5_720w.jpg" alt="img"></p>
+<p>可以看到，如果数组长度是2的n次方，那么<strong>length-1</strong>的二进制表示中，一定所有位都是<strong>1</strong>，此时取&amp;运算则可以完整保留hash响应位置的二进制数据。相反的，如果数组长度不是2的n次方，则出现hash碰撞的可能性大大提高。</p>
+<h2 id="JDK8中HashMap的改进"><a href="#JDK8中HashMap的改进" class="headerlink" title="JDK8中HashMap的改进"></a>JDK8中HashMap的改进</h2><p>上文曾提到“<strong>桶</strong>”的概念。其实这个概念在JDK8中才是真正有意义的。因为JDK7中，原始数组的每个元素都一定是个链表（链表的节点一个或者多个），而到了JDK8的时候就不一定是链表了。</p>
+<p>JDK8对存储方式进行改进的原因很简单：如果在一个HashMap中，有很多Key发生了碰撞的时候，就会产生一个超级长的链表。那么在数据查询的时候就会花费O(n)的时间。所以，JDK8中HashMap采用了“<strong>桶</strong>+<strong>链表/红黑树</strong>”数据存储方式：如果链表的长度大于等于8时，其内部便会将链表转化为红黑树的结构。红黑树的查询时间是O(log n)。</p>
+<p>由于数据存储方式发生变化，因此列表扩容时也会发生一些变化。具体细节请看下一篇HashMap的扩容。</p>
+<h1 id="扩容机制"><a href="#扩容机制" class="headerlink" title="扩容机制"></a>扩容机制</h1><p>为了方便说明，这里明确几个名词：</p>
+<ul>
+<li>capacity 即容量，默认16。</li>
+<li>loadFactor 加载因子，默认是0.75</li>
+<li>threshold 阈值。阈值=容量*加载因子。默认12。当元素数量超过阈值时便会触发扩容。</li>
+</ul>
+<p><strong>什么时候触发扩容？</strong></p>
+<p>一般情况下，<strong>当元素数量超过阈值时</strong>便会触发扩容。每次扩容的容量都是之前容量的2倍。</p>
+<p>HashMap的容量是有上限的，必须小于<strong>1&lt;&lt;30</strong>，即1073741824。如果容量超出了这个数，则不再增长，且阈值会被设置为<strong>Integer.MAX_VALUE</strong>（2^31^  - 1) ，即永远不会超出阈值了)。</p>
+<h2 id="JDK7中的扩容机制"><a href="#JDK7中的扩容机制" class="headerlink" title="JDK7中的扩容机制"></a><strong>JDK7中的扩容机制</strong></h2><p>JDK7的扩容机制相对简单，有以下特性：</p>
+<ul>
+<li>空参数的构造函数：以默认容量、默认负载因子、默认阈值初始化数组。内部数组是<strong>空数组</strong>。</li>
+<li>有参构造函数：根据参数确定容量、负载因子、阈值等。</li>
+<li>第一次put时会初始化数组，其容量变为<strong>不小于指定容量的2的幂数</strong>。然后根据负载因子确定阈值。</li>
+<li>如果不是第一次扩容，则 <img src="https://www.zhihu.com/equation?tex=%E6%96%B0%E5%AE%B9%E9%87%8F=%E6%97%A7%E5%AE%B9%E9%87%8F%5Ctimes2" alt="[公式]"> ， <img src="https://www.zhihu.com/equation?tex=%E6%96%B0%E9%98%88%E5%80%BC=%E6%96%B0%E5%AE%B9%E9%87%8F%5Ctimes%E8%B4%9F%E8%BD%BD%E5%9B%A0%E5%AD%90" alt="[公式]"> 。</li>
+</ul>
+<h2 id="JDK8的扩容机制"><a href="#JDK8的扩容机制" class="headerlink" title="JDK8的扩容机制"></a><strong>JDK8的扩容机制</strong></h2><p>JDK8的扩容做了许多调整。</p>
+<p>HashMap的容量变化通常存在以下几种情况：</p>
+<ol>
+<li>空参数的构造函数：实例化的HashMap默认内部数组是null，即没有实例化。第一次调用put方法时，则会开始第一次初始化扩容，长度为16。</li>
+<li>有参构造函数：用于指定容量。会根据指定的正整数找到<strong>不小于指定容量的2的幂数</strong>，将这个数设置赋值给<strong>阈值</strong>（threshold）。第一次调用put方法时，会将阈值赋值给容量，然后让 <img src="https://www.zhihu.com/equation?tex=%E9%98%88%E5%80%BC=%E5%AE%B9%E9%87%8F%5Ctimes%E8%B4%9F%E8%BD%BD%E5%9B%A0%E5%AD%90" alt="[公式]"> 。（因此并不是我们手动指定了容量就一定不会触发扩容，超过阈值后一样会扩容！！）</li>
+<li>如果不是第一次扩容，则容量变为原来的2倍，阈值也变为原来的2倍。<em>（容量和阈值都变为原来的2倍时，负载因子还是不变）</em></li>
+</ol>
+<p>此外还有几个细节需要注意：</p>
+<ul>
+<li>首次put时，先会触发扩容（算是初始化），然后存入数据，然后判断是否需要扩容；</li>
+<li>不是首次put，则不再初始化，直接存入数据，然后判断是否需要扩容；</li>
+</ul>
+<h2 id="JDK7的元素迁移"><a href="#JDK7的元素迁移" class="headerlink" title="JDK7的元素迁移"></a><strong>JDK7的元素迁移</strong></h2><p>JDK7中，HashMap的内部数据保存的都是链表。因此逻辑相对简单：在准备好新的数组后，map会遍历数组的每个“桶”，然后遍历桶中的每个Entity，重新计算其hash值（也有可能不计算），找到新数组中的对应位置，以<strong>头插法</strong>插入新的链表。</p>
+<p>这里有几个注意点：</p>
+<ul>
+<li>是否要重新计算hash值的条件这里不深入讨论，读者可自行查阅源码。</li>
+<li>因为是头插法，因此新旧链表的元素位置会发生转置现象。</li>
+<li>元素迁移的过程中在多线程情境下有可能会触发死循环（无限进行链表反转）。</li>
+</ul>
+<h2 id="JDK8的元素迁移"><a href="#JDK8的元素迁移" class="headerlink" title="JDK8的元素迁移"></a><strong>JDK8的元素迁移</strong></h2><p>JDK8则因为巧妙的设计，性能有了大大的提升：由于数组的容量是以2的幂次方扩容的，那么一个Entity在扩容时，新的位置要么在<strong>原位置</strong>，要么在<strong>原长度+原位置</strong>的位置。原因如下图：</p>
+<p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/v2-da2df9ad67181daa328bb09515c1e1c8_720w.png" alt="img"></p>
+<p>数组长度变为原来的2倍，表现在二进制上就是<strong>多了一个高位参与数组下标确定</strong>。此时，一个元素通过hash转换坐标的方法计算后，恰好出现一个现象：最高位是0则坐标不变，最高位是1则坐标变为“10000+原坐标”，即“原长度+原坐标”。如下图：</p>
+<p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/v2-ac1017eb1b83ce5505bfc032ffbcc29a_720w.jpg" alt="img"></p>
+<p>因此，在扩容时，不需要重新计算元素的hash了，只需要判断最高位是1还是0就好了。</p>
+<p>JDK8的HashMap还有以下细节：</p>
+<ul>
+<li>JDK8在迁移元素时是正序的，不会出现链表转置的发生。</li>
+<li>如果某个桶内的元素超过8个，则会将链表转化成红黑树，加快数据查询效率。</li>
+</ul>
+<h2 id="HashMap扩容死循环问题"><a href="#HashMap扩容死循环问题" class="headerlink" title="HashMap扩容死循环问题"></a>HashMap扩容死循环问题</h2><ul>
+<li><p>当插入一个新的键值对时，会根据key对HashMap底层数组长度取模，得到键值对存放的数组下标，然后调用addEntry() 函数把这个键值对插入到这个下标所在的链表中</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">addEntry</span><span class="params">(<span class="keyword">int</span> hash, K key , V value, <span class="keyword">int</span> bucketIndex)</span></span>&#123;</span><br><span class="line">    Entry&lt;K, V&gt; e = table[bucketIndex];</span><br><span class="line">    table[bucketIndex] = <span class="keyword">new</span> Entry&lt;&gt;(hash, key , value, e);</span><br><span class="line">    <span class="keyword">if</span>(size++ &gt;= threshold)			<span class="comment">// 如果键值对个数超过hashmap当前的阈值</span></span><br><span class="line">        resize(<span class="number">2</span> * table.length)	<span class="comment">// 调整resize()函数进行扩容</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在这个addEntry() 函数中，会判断键值对个数是否超过了HashMap当前容量的阈值，如果超过了，则说明需要扩容，接下来就调用resize() 函数扩容为原来的两倍</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">resize</span><span class="params">(<span class="keyword">int</span> newCapacity)</span> </span>&#123;</span><br><span class="line">    Entry[] oldTable = table;</span><br><span class="line">    <span class="keyword">int</span> oldCapacity = oldTable.length;</span><br><span class="line">    <span class="keyword">if</span> (oldCapacity == MAXIMUM_CAPACITY) &#123;</span><br><span class="line">           threshold = Integer.MAX_VALUE;</span><br><span class="line">          <span class="keyword">return</span>;</span><br><span class="line">     &#125;</span><br><span class="line">    Entry[] newTable = <span class="keyword">new</span> Entry[newCapacity];  <span class="comment">// 创建一个新数组</span></span><br><span class="line">    transfer(newTable);        <span class="comment">// 把老数组中的所有键值对都拷贝到新数组中</span></span><br><span class="line">    table = newTable;        <span class="comment">// 修改老数组的指向，把老数组指向新数组，完成扩容</span></span><br><span class="line">    threshold = (<span class="keyword">int</span>)(newCapacity * loadFactor);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>resize()函数会先创建一个新数组，然后调用 transfer() 函数把老数组中的所有键值对都拷贝到新数组中，最后修改老数组的指向，把老数组指向新数组，完成扩容。</p>
+<p>扩容过程中会出现循环链表的情况就是多个线程在执行 transfer() 函数导致的，下面看看 transfer() 函数的代码</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">transfer</span><span class="params">(Entry[] newTable)</span> </span>&#123;</span><br><span class="line">    Entry[] src = table;        <span class="comment">// 老数组</span></span><br><span class="line">    <span class="keyword">int</span> newCapacity = newTable.length;     <span class="comment">// 新数组的长度</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; src.length; j++) <span class="comment">// 遍历老数组，把老数组中所有键值对拷贝到新数组</span></span><br><span class="line">        Entry&lt;K,V&gt; e = src[j];    <span class="comment">// 记录下老数组第 j 个链表，接下来会链表上的键值对都拷贝到新数组</span></span><br><span class="line">        <span class="keyword">if</span> (e != <span class="keyword">null</span>) &#123;        <span class="comment">// 如果链表不为空才需要拷贝</span></span><br><span class="line">            src[j] = <span class="keyword">null</span>;        <span class="comment">// 先老数组第j个链表置为空链表</span></span><br><span class="line">            <span class="keyword">do</span> &#123;                <span class="comment">// 循环遍历刚才记录下来的链表，把所有键值对都采用头插法插入到新数组对应链表</span></span><br><span class="line">                Entry&lt;K,V&gt; next = e.next;        <span class="comment">// 记录下当前结点的下个结点</span></span><br><span class="line">                <span class="keyword">int</span> i = indexFor(e.hash, newCapacity);    <span class="comment">// 求出该键值对在新数组的下标,即该键值对应该被插入到新数组第几个链表</span></span><br><span class="line">                e.next = newTable[i];    <span class="comment">// 把结点的next指针指向新数组的第i个链表头结点</span></span><br><span class="line">                newTable[i] = e;    <span class="comment">// 新数组第i个链表的头结点前移，指向当前结点</span></span><br><span class="line">                e = next;        <span class="comment">// 把指向当前结点的指针后移</span></span><br><span class="line">            &#125; <span class="keyword">while</span> (e != <span class="keyword">null</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>其中最关键的就是其中的 do while()循环，这里面就是会发生循环链表的代码。</p>
+</li>
+</ul>
+<p>现在先走一遍正常扩容的流程,假设有下面这个HashMap, 假设数组大小为2</p>
+<p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/1456655-20201211210822148-740596617.png" alt="img"></p>
+<p>现在需要对它进行扩容，扩容后数组大小为原来的两倍，创建一个大小为4的数组</p>
+<p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/1456655-20201211210822686-391022651.png" alt="img"></p>
+<p>假设a、b两个数扩容后刚好又hash冲突了，即又在同一个链表中，所在下标为3；c在下标为1的链表中。下面开始扩容。</p>
+<p>e指针指向了老数组的第1个链表</p>
+<h3 id="执行上面的do-while循环，第一轮循环："><a href="#执行上面的do-while循环，第一轮循环：" class="headerlink" title="执行上面的do while循环，第一轮循环："></a>执行上面的do while循环，第一轮循环：</h3><p><a target="_blank" rel="noopener" href="https://img2020.cnblogs.com/blog/1456655/202012/1456655-20201211210823926-116268729.png"><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/1456655-20201211210823926-116268729.png" alt="img"></a></p>
+<h3 id="第二轮循环："><a href="#第二轮循环：" class="headerlink" title="第二轮循环："></a>第二轮循环：</h3><h3 id=""><a href="#" class="headerlink" title=""></a><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/1456655-20210820225941991-619872774.png" alt="img"></h3><h3 id="第三轮也是最后一轮循环，前面已经假设结点-c-将在新数组中的第二个链表"><a href="#第三轮也是最后一轮循环，前面已经假设结点-c-将在新数组中的第二个链表" class="headerlink" title="第三轮也是最后一轮循环，前面已经假设结点 c 将在新数组中的第二个链表"></a>第三轮也是最后一轮循环，前面已经假设结点 c 将在新数组中的第二个链表</h3><p><a target="_blank" rel="noopener" href="https://img2020.cnblogs.com/blog/1456655/202012/1456655-20201211210826842-959746908.png"><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/1456655-20201211210826842-959746908.png" alt="img"></a></p>
+<p>至此，老数组中的健值对已全部拷贝到新数组中</p>
+<h3 id="多线程环境中扩容"><a href="#多线程环境中扩容" class="headerlink" title="多线程环境中扩容"></a>多线程环境中扩容</h3><p>假设在第 二 次循环中的第二步（执行完e.next = newTable[i]；）后当前线程的时间片刚好用完了，当前线程被挂起，这时刚好又有一个线程 P2 也来执行扩容操作，它并不会从第二步开始执行，而是重新从第一步开始执行，加入新线程后的扩容图为</p>
+<p><a target="_blank" rel="noopener" href="https://img2020.cnblogs.com/blog/1456655/202012/1456655-20201211210829300-1877613427.png"><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/1456655-20201211210829300-1877613427.png" alt="img"></a></p>
+<p>可以看到，线程2扩容之后的newTable中的单链表形成了一个环，后续执行get操作的时候，会触发死循环，引起CPU的100%问题。</p>
+<h1 id="扩容后，元素是如何重新分布的"><a href="#扩容后，元素是如何重新分布的" class="headerlink" title="扩容后，元素是如何重新分布的"></a>扩容后，元素是如何重新分布的</h1><ul>
+<li><p>HashMap的初始化是在插入第一个元素时调用resize() 完成的</p>
+</li>
+<li><p>不指定容量，默认容量为16</p>
+</li>
+<li><p>指定容量也不一定按照你的值来，会经过tableSizeFor转成不小于输入值的2的n次幂</p>
+<p>tableSizeFor<code>转换成2的n次幂不是直接赋值给</code>capacity<code>，而是先将值暂时保存在</code>threshold<code>，见源码</code>457<code>，然后在put第一个元素resize时，婉转的传递给</code>newCap</p>
+</li>
+<li><p>put元素时，元素的位置取决于数组的长度和key的hash值按位与的结果 <code>i = (n - 1) &amp; hash</code></p>
+</li>
+<li><p>如果这里没有元素直接放在这里</p>
+</li>
+<li><p>如果有，判断是不是键冲突，如果一样就新值覆盖旧值</p>
+</li>
+<li><p>如果有且不是键冲突，则将其放在元素的next位置，判断元素长度是否大于8，大于8进行树化</p>
+</li>
+<li><p>只有当size大于了扩容阈值 <code>size &gt; threshold</code>， 才会触发扩容，扩容前，当前元素已经放好了</p>
+</li>
+<li><p>扩容时，容量和扩容阈值都翻倍，必须小于 1&lt;&lt;30</p>
+</li>
+<li><p>扩容时，元素在新表中的位置分情况</p>
+</li>
+<li><p>当元素只是孤家寡人即元素的next==null时，位置为e.hash &amp; (newCap - 1)</p>
+</li>
+<li><p>当元素有next节点时，该链表上的元素分两类</p>
+<ul>
+<li> e.hash &amp; oldCap = 0的，在新表中与旧表中的位置一样</li>
+<li> e.hash &amp; oldCap != 0的，位置为旧表位置+旧表容量</li>
+</ul>
+</li>
+<li><p>当前节点时树的话</p>
+<ul>
+<li>(e.hash &amp; bit) == 0 在新表中与旧表中的位置一样</li>
+<li>(e.hash &amp; bit) != 0  位置为旧表位置+旧表容量</li>
+<li>在新的newCap中，判断阶段如果节点数小于6进行树退化，重新树化</li>
+</ul>
+</li>
+</ul>
+</div>
+    <aside class="post-rail">
+      <span class="post-rail__line"></span>
+      <span>LESLIE / WRITING</span>
+    </aside>
+  </div>
+
+  <footer class="post-footer shell">
+    <div><h2>如果这篇文章帮到了你，<br>也许下一篇会更有意思。</h2></div>
+    <a class="button button--primary" href="/writing/">继续阅读 →</a>
+  </footer>
+</article>
+</main>
+    <footer class="site-footer">
+  <div class="footer-grid">
+    <div>
+      <p class="footer-kicker">Leslie Zhang</p>
+      <p class="footer-statement">流水不争先，<br>争的是滔滔不绝。</p>
+    </div>
+    <div class="footer-links">
+      <a href="https://github.com/leslieAIbin" target="_blank" rel="noreferrer">GitHub ↗</a>
+      <a href="https://www.instagram.com/leslieaibin/" target="_blank" rel="noreferrer">Instagram ↗</a>
+      <button type="button" data-wechat-open>微信 / WeChat</button>
+      <a href="mailto:aibinzhangleslie@gmail.com">Email ↗</a>
+      <a href="/atom.xml">RSS ↗</a>
+    </div>
+    <div class="footer-meta">
+      <span>© 2026 Leslie Zhang</span>
+      <span>Writing, research and working systems.</span>
+    </div>
+  </div>
+</footer>
+
+    <dialog class="ask-dialog" id="ask-leslie" aria-labelledby="ask-title">
+  <div class="ask-dialog__shell">
+    <div class="ask-dialog__topbar">
+      <div>
+        <h2 id="ask-title">Ask Leslie</h2>
+      </div>
+      <button class="icon-button" type="button" data-ask-close aria-label="关闭">×</button>
+    </div>
+    <p class="ask-dialog__intro">从本站公开文章中寻找答案。当前版本在浏览器本地检索，不上传问题，也不会编造不存在的经历。</p>
+    <form class="ask-form" data-ask-form>
+      <label class="sr-only" for="ask-query">输入问题</label>
+      <textarea id="ask-query" rows="2" placeholder="例如：Agent Runtime 应该怎么设计？" data-ask-input></textarea>
+      <button type="submit">检索知识库 <span aria-hidden="true">↗</span></button>
+    </form>
+    <div class="ask-suggestions" aria-label="推荐问题">
+      
+        <button type="button" data-ask-suggestion="Agent Runtime 应该怎么设计？">Agent Runtime 应该怎么设计？</button>
+      
+        <button type="button" data-ask-suggestion="如何让 AI 操控真实世界设备？">如何让 AI 操控真实世界设备？</button>
+      
+        <button type="button" data-ask-suggestion="Leslie 最近在研究什么？">Leslie 最近在研究什么？</button>
+      
+    </div>
+    <div class="ask-results" data-ask-results aria-live="polite">
+      <div class="ask-empty">
+        <p>输入一个问题，我会把你带到 Leslie 写过的相关内容。</p>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+    <dialog class="wechat-dialog" id="wechat-leslie" aria-labelledby="wechat-title">
+  <div class="wechat-dialog__shell">
+    <header>
+      <div>
+        <p class="section-label">WeChat</p>
+        <h2 id="wechat-title">微信联系</h2>
+      </div>
+      <button class="icon-button" type="button" data-wechat-close aria-label="关闭微信二维码">×</button>
+    </header>
+    <img src="/images/contact/wechat-leslie.png" alt="Leslie Zhang 的微信二维码" loading="lazy">
+    <p>扫码添加 Leslie，建议备注你的名字与来意。</p>
+  </div>
+</dialog>
+
+    <script>window.ORBITAL_ROOT = '/';</script>
+    <script src="/js/orbital.js" defer></script>
+  </body>
+</html>

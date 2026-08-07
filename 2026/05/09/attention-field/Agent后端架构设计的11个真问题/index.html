@@ -1,0 +1,782 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+  <head>
+
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#050b18">
+<meta name="color-scheme" content="dark light">
+<title>Agent 后端架构设计的 11 个真问题 | Leslie Zhang</title>
+<meta name="description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta name="author" content="Leslie Zhang">
+<link rel="canonical" href="https://leslieaibin.github.io/2026/05/09/attention-field/Agent%E5%90%8E%E7%AB%AF%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E7%9A%8411%E4%B8%AA%E7%9C%9F%E9%97%AE%E9%A2%98/">
+<link rel="icon" href="/imgs/01.jpg">
+<link rel="alternate" type="application/atom+xml" title="Leslie Zhang" href="/atom.xml">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Agent 后端架构设计的 11 个真问题 | Leslie Zhang">
+<meta property="og:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta property="og:url" content="https://leslieaibin.github.io/2026/05/09/attention-field/Agent%E5%90%8E%E7%AB%AF%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E7%9A%8411%E4%B8%AA%E7%9C%9F%E9%97%AE%E9%A2%98/">
+<meta property="og:image" content="https://leslieaibin.github.io/2026/05/09/attention-field/Agent%E5%90%8E%E7%AB%AF%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E7%9A%8411%E4%B8%AA%E7%9C%9F%E9%97%AE%E9%A2%98/illustrations/A1-AI-API-Gateway%E6%9E%B6%E6%9E%84.webp">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Agent 后端架构设计的 11 个真问题 | Leslie Zhang">
+<meta name="twitter:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta name="twitter:image" content="https://leslieaibin.github.io/2026/05/09/attention-field/Agent%E5%90%8E%E7%AB%AF%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E7%9A%8411%E4%B8%AA%E7%9C%9F%E9%97%AE%E9%A2%98/illustrations/A1-AI-API-Gateway%E6%9E%B6%E6%9E%84.webp">
+<script>
+  (function () {
+    var saved = localStorage.getItem('orbital-theme');
+    var theme = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    document.documentElement.dataset.theme = theme;
+  })();
+</script>
+<link rel="stylesheet" href="/css/orbital.css">
+<meta name="generator" content="Hexo 5.2.0"></head>
+  <body class="page-post">
+    <a class="skip-link" href="#main-content">跳到主要内容</a>
+    <div class="reading-progress" data-reading-progress></div>
+    <header class="site-header" data-header>
+  <div class="nav-shell">
+    <a class="brand" href="/" aria-label="返回首页">
+      <span class="brand-mark" aria-hidden="true"><img src="/images/brand/leslie-mythos-avatar.webp" alt="" width="512" height="512"></span>
+      <span class="brand-copy">
+        <strong>LESLIE</strong>
+        <small>REAL-WORLD AGENTS</small>
+      </span>
+    </a>
+
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav" data-nav-toggle>
+      <span></span><span></span>
+      <span class="sr-only">打开导航</span>
+    </button>
+
+    <nav class="main-nav" id="main-nav" aria-label="主导航" data-nav>
+      
+        <a href="/" class="">首页</a>
+      
+        <a href="/writing/" class="">写作</a>
+      
+        <a href="/projects/" class="">项目</a>
+      
+        <a href="/about/" class="">关于</a>
+      
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换明暗主题">
+        <span class="theme-toggle__sun" aria-hidden="true">☼</span>
+        <span class="theme-toggle__moon" aria-hidden="true">◐</span>
+      </button>
+      <button class="ask-nav" type="button" data-ask-open>ASK LESLIE</button>
+    </nav>
+  </div>
+</header>
+
+    <main id="main-content"><article class="post-shell">
+  <header class="post-hero shell">
+    <a class="post-back" href="/writing/">← 返回写作</a>
+    <div class="post-hero__meta">
+      <time datetime="2026-05-09">2026 年 05 月 09 日</time>
+      <span>25 分钟阅读</span>
+    </div>
+    <h1>Agent 后端架构设计的 11 个真问题</h1>
+    
+    <div class="chip-row"><a href="/tags/Agent/">Agent</a><a href="/tags/Architecture/">Architecture</a><a href="/tags/Backend/">Backend</a><a href="/tags/Multi-Tenant/">Multi-Tenant</a><a href="/tags/SSE/">SSE</a><a href="/tags/AG-UI/">AG-UI</a><a href="/tags/StateMachine/">StateMachine</a><a href="/tags/Memory/">Memory</a><a href="/tags/ToolCall/">ToolCall</a></div>
+  </header>
+
+  <div class="post-cover shell"><img src="/2026/05/09/attention-field/Agent%E5%90%8E%E7%AB%AF%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E7%9A%8411%E4%B8%AA%E7%9C%9F%E9%97%AE%E9%A2%98/illustrations/A1-AI-API-Gateway%E6%9E%B6%E6%9E%84.webp" alt="Agent 后端架构设计的 11 个真问题"></div>
+
+  <div class="post-layout shell">
+    <aside class="post-toc" aria-label="文章目录">
+      <span class="aside-title">目录</span>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BC%95%E8%A8%80%EF%BC%9A%E6%8A%8A-demo-%E5%8F%98%E6%88%90%E7%94%9F%E4%BA%A7%E6%9C%8D%E5%8A%A1%EF%BC%8C%E5%B7%AE%E7%9A%84%E5%B0%B1%E6%98%AF%E8%BF%99-11-%E4%B8%AA%E9%97%AE%E9%A2%98"><span class="toc-text">引言：把 demo 变成生产服务，差的就是这 11 个问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%A4%9A%E6%A8%A1%E5%9E%8B%E6%94%AF%E6%8C%81%E6%9E%B6%E6%9E%84%E5%BA%94%E8%AF%A5%E6%80%8E%E4%B9%88%E8%AE%BE%E8%AE%A1%EF%BC%9F"><span class="toc-text">1. 多模型支持架构应该怎么设计？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%86%85%E9%83%A8%E5%88%86%E5%B1%82"><span class="toc-text">内部分层</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Relay-%E5%B1%82%E4%B8%BA%E4%BB%80%E4%B9%88%E5%8D%95%E7%8B%AC%E6%8B%86%E5%87%BA%E6%9D%A5"><span class="toc-text">Relay 层为什么单独拆出来</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E6%AC%A1%E6%A8%A1%E5%9E%8B%E8%B0%83%E7%94%A8%E7%9A%84%E5%AE%8C%E6%95%B4%E9%93%BE%E8%B7%AF"><span class="toc-text">一次模型调用的完整链路</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%8B%E9%9D%A2%E8%BF%99%E4%BA%9B%E5%9D%91%EF%BC%8C%E6%96%B0%E5%A2%9E%E4%BB%BB%E4%BD%95%E4%B8%80%E5%AE%B6-provider-%E9%83%BD%E4%BC%9A%E6%92%9E"><span class="toc-text">下面这些坑，新增任何一家 provider 都会撞</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%A4%9A%E7%A7%9F%E6%88%B7%E5%9C%BA%E6%99%AF%E4%B8%8B%E6%A8%A1%E5%9E%8B%E5%88%87%E6%8D%A2%E8%83%BD%E4%B8%8D%E8%83%BD%E7%83%AD%E6%9B%B4%E6%96%B0%EF%BC%9F"><span class="toc-text">2. 多租户场景下模型切换能不能热更新？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%8E%E5%8F%B0%E6%94%B9-%E2%86%92-DB-%E2%86%92-%E7%BC%93%E5%AD%98%E5%A4%B1%E6%95%88-%E2%86%92-%E4%B8%8B%E6%AC%A1%E8%AF%B7%E6%B1%82%E7%94%9F%E6%95%88"><span class="toc-text">后台改 → DB → 缓存失效 → 下次请求生效</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E2%80%9C%E5%88%87%E6%8D%A2%E6%A8%A1%E5%9E%8B%E2%80%9D%E5%9C%A8%E5%A4%9A%E7%A7%9F%E6%88%B7%E4%B8%8B%E5%88%B0%E5%BA%95%E6%98%AF%E5%88%87%E4%BB%80%E4%B9%88"><span class="toc-text">“切换模型”在多租户下到底是切什么</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B3%BB%E7%BB%9F%E7%BA%A7%E8%87%AA%E5%8A%A8%E5%88%87%E6%8D%A2%EF%BC%9A%E6%B8%A0%E9%81%93%E8%B7%AF%E7%94%B1-%E5%81%A5%E5%BA%B7%E6%A3%80%E6%9F%A5"><span class="toc-text">系统级自动切换：渠道路由 + 健康检查</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%B7%E6%A0%BC-%E5%80%8D%E7%8E%87%E2%80%9D%E5%BF%AB%E7%85%A7%E2%80%9D%E6%9C%BA%E5%88%B6%EF%BC%9A%E7%83%AD%E6%9B%B4%E4%B8%8B%E8%AE%A1%E8%B4%B9%E4%B8%8D%E5%87%BA%E4%BA%8B%E6%95%85%E7%9A%84%E5%85%B3%E9%94%AE"><span class="toc-text">价格 &#x2F; 倍率”快照”机制：热更下计费不出事故的关键</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%87%A0%E4%B8%AA%E5%8F%8D%E5%A4%8D%E8%B8%A9%E8%BF%87%E7%9A%84%E5%9D%91"><span class="toc-text">几个反复踩过的坑</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-agent-%E7%9A%84%E8%AE%B0%E5%BF%86-%E5%B7%A5%E5%85%B7%E8%B0%83%E7%94%A8-%E7%9F%A5%E8%AF%86%E8%A7%A3%E9%94%81%E6%80%8E%E4%B9%88%E5%AE%9E%E7%8E%B0%EF%BC%9F"><span class="toc-text">3. agent 的记忆 &#x2F; 工具调用 &#x2F; 知识解锁怎么实现？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E4%B8%80%E4%B8%AA-agent-%E5%9C%A8%E7%B3%BB%E7%BB%9F%E9%87%8C%E4%BC%9A%E6%9C%89%E5%93%AA%E4%BA%9B%E7%8A%B6%E6%80%81%EF%BC%9F"><span class="toc-text">4. 一个 agent 在系统里会有哪些状态？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E5%90%8E%E7%AB%AF-agent-%E6%98%AF%E5%90%A6%E6%94%AF%E6%8C%81%E5%A4%9A%E7%A7%9F%E6%88%B7%E5%B9%B6%E5%8F%91%E8%B0%83%E7%94%A8%EF%BC%9F"><span class="toc-text">5. 后端 agent 是否支持多租户并发调用？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-session-%E5%92%8C-user-id-%E5%A6%82%E4%BD%95%E7%BB%91%E5%AE%9A%EF%BC%9F"><span class="toc-text">6. session 和 user id 如何绑定？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-agent-%E5%B7%A5%E5%85%B7%E8%B0%83%E7%94%A8%E7%9A%84%E5%AE%8C%E6%95%B4%E6%B5%81%E7%A8%8B%E6%80%8E%E4%B9%88%E8%B5%B0%EF%BC%9F"><span class="toc-text">7. agent 工具调用的完整流程怎么走？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-%E9%95%BF%E6%9C%9F%E8%AE%B0%E5%BF%86%E5%92%8C%E7%9F%AD%E6%9C%9F%E8%AE%B0%E5%BF%86%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB%EF%BC%9F"><span class="toc-text">8. 长期记忆和短期记忆有什么区别？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#9-SSE-%E5%9C%A8%E5%89%8D%E5%90%8E%E7%AB%AF%E4%B9%8B%E9%97%B4%E5%A6%82%E4%BD%95%E4%BA%A4%E4%BA%92%EF%BC%9F"><span class="toc-text">9. SSE 在前后端之间如何交互？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#10-%E5%90%8E%E7%AB%AF%E6%8E%A8%E6%B5%81%E9%80%9A%E5%B8%B8%E9%87%87%E7%94%A8%E4%BB%80%E4%B9%88%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F%EF%BC%9F"><span class="toc-text">10. 后端推流通常采用什么数据格式？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#11-agent-%E5%B7%A5%E5%85%B7%E8%B0%83%E7%94%A8%E6%97%B6-SSE-%E4%BA%8B%E4%BB%B6%E9%80%9A%E5%B8%B8%E5%8C%85%E5%90%AB%E5%93%AA%E4%BA%9B%E5%AD%97%E6%AE%B5%EF%BC%9F"><span class="toc-text">11. agent 工具调用时 SSE 事件通常包含哪些字段？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#BaseEvent%EF%BC%9A%E6%89%80%E6%9C%89%E4%BA%8B%E4%BB%B6%E9%83%BD%E7%BB%A7%E6%89%BF%E7%9A%84%E4%B8%89%E4%B8%AA%E5%AD%97%E6%AE%B5"><span class="toc-text">BaseEvent：所有事件都继承的三个字段</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Lifecycle-%E4%BA%94%E4%BB%B6%E5%A5%97%EF%BC%9A%E7%AE%A1-agent-%E8%B7%91%E5%AE%8C%E6%95%B4%E8%BD%AE%E6%AC%A1%E7%9A%84%E8%BE%B9%E7%95%8C"><span class="toc-text">Lifecycle 五件套：管 agent 跑完整轮次的边界</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Text-Message-%E5%9B%9B%E4%BB%B6%E5%A5%97%EF%BC%9A%E6%B5%81%E5%BC%8F%E6%96%87%E6%9C%AC%E8%BE%93%E5%87%BA"><span class="toc-text">Text Message 四件套：流式文本输出</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Tool-Call-%E4%BA%94%E4%BB%B6%E5%A5%97%EF%BC%9A%E6%9C%AC%E8%8A%82%E7%9A%84%E6%A0%B8%E5%BF%83"><span class="toc-text">Tool Call 五件套：本节的核心</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#State-%E4%B8%89%E4%BB%B6%E5%A5%97%EF%BC%9A%E5%85%B1%E4%BA%AB%E7%8A%B6%E6%80%81%E5%90%8C%E6%AD%A5"><span class="toc-text">State 三件套：共享状态同步</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Activity-%E4%B8%A4%E4%BB%B6%E5%A5%97%EF%BC%9A%E7%BB%93%E6%9E%84%E5%8C%96%E6%B4%BB%E5%8A%A8%E6%B6%88%E6%81%AF"><span class="toc-text">Activity 两件套：结构化活动消息</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Reasoning-%E4%B8%83%E4%BB%B6%E5%A5%97%EF%BC%9A%E6%80%9D%E8%80%83%E8%BF%87%E7%A8%8B%E7%9A%84%E6%B5%81%E5%BC%8F"><span class="toc-text">Reasoning 七件套：思考过程的流式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Special-%E4%B8%89%E4%BB%B6%E5%A5%97%EF%BC%9A%E9%80%8F%E4%BC%A0-%E8%87%AA%E5%AE%9A%E4%B9%89-%E5%85%83%E4%BA%8B%E4%BB%B6"><span class="toc-text">Special 三件套：透传 &#x2F; 自定义 &#x2F; 元事件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B7%B2%E5%BC%83%E7%94%A8%EF%BC%9ATHINKING"><span class="toc-text">已弃用：THINKING_*</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0%E9%87%8C%E6%9C%80%E5%AE%B9%E6%98%93%E5%87%BA%E9%97%AE%E9%A2%98%E7%9A%84%E5%87%A0%E4%B8%AA%E5%AD%97%E6%AE%B5"><span class="toc-text">实现里最容易出问题的几个字段</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#12-%E7%BB%93%E8%AF%AD%EF%BC%9A%E5%A5%BD%E7%9A%84-agent-%E5%90%8E%E7%AB%AF%E6%98%AF%E5%81%9A%E5%87%8F%E6%B3%95%E5%81%9A%E5%87%BA%E6%9D%A5%E7%9A%84"><span class="toc-text">12. 结语：好的 agent 后端是做减法做出来的</span></a></li></ol>
+    </aside>
+    <div class="article-content"><h1 id="Agent-后端架构设计的-11-个真问题"><a href="#Agent-后端架构设计的-11-个真问题" class="headerlink" title="Agent 后端架构设计的 11 个真问题"></a>Agent 后端架构设计的 11 个真问题</h1><h2 id="引言：把-demo-变成生产服务，差的就是这-11-个问题"><a href="#引言：把-demo-变成生产服务，差的就是这-11-个问题" class="headerlink" title="引言：把 demo 变成生产服务，差的就是这 11 个问题"></a>引言：把 demo 变成生产服务，差的就是这 11 个问题</h2><p>写一个 agent demo 是很容易的事。</p>
+<p>OpenAI SDK 一把梭，加个 LangChain，加个工具列表，三十行 Python 跑起来就能聊。但如果你要把它做成一个对外提供服务的后端 —— 上 K8s、扛多租户、接前端、做计费、保 SLA —— 你就会一个接一个地撞上下面这 11 个问题：</p>
+<ul>
+<li><strong>多模型怎么接？</strong> 同一个服务里既要调 GPT-4o，又要调 Claude、Qwen、DeepSeek、Gemini，还要按业务场景路由。</li>
+<li><strong>多租户能不能热更模型？</strong> 客户 A 想换 model，不重启服务就能生效吗？</li>
+<li><strong>工具/知识/记忆怎么按 agent 分权？</strong> 不是所有 agent 都能调所有工具。</li>
+<li><strong>agent 在系统里到底有几种状态？</strong> 不是简单的 running / done。</li>
+<li><strong>后端怎么扛多租户并发？</strong> 每个用户单独起进程显然不行。</li>
+<li><strong>session 和 user 怎么绑？</strong> 安全和隔离的边界在哪。</li>
+<li><strong>一次工具调用从前端到 LLM 到工具再回来，链路是什么样？</strong></li>
+<li><strong>长期记忆和短期记忆有什么区别？</strong></li>
+<li><strong>SSE 在前后端之间到底怎么走？</strong></li>
+<li><strong>后端推流用什么数据格式？</strong></li>
+<li><strong>工具调用对应的 SSE 事件有哪些字段？</strong></li>
+</ul>
+<p>这 11 个问题里，前 8 个是后端架构问题，后 3 个是 <strong>前后端协议问题</strong>。协议这块业界已经有一份相对成熟的标准 —— <strong>AG-UI Protocol</strong>（<a target="_blank" rel="noopener" href="https://docs.ag-ui.com/">ag-ui.com</a>），后面我会直接对着它讲，避免每家自创一套的混乱。</p>
+<p>这篇文章的目标不是给你一份”标准答案”，而是把每个问题背后的设计空间、常见解法和它们的取舍讲清楚。读完你会知道：</p>
+<ul>
+<li>这 11 个问题在工业实现里<strong>通常</strong>怎么解</li>
+<li>每个解法的<strong>边界和代价</strong>是什么</li>
+<li>为什么 AG-UI Protocol 的事件分类是那样的，背后什么逻辑</li>
+</ul>
+<hr>
+<h2 id="1-多模型支持架构应该怎么设计？"><a href="#1-多模型支持架构应该怎么设计？" class="headerlink" title="1. 多模型支持架构应该怎么设计？"></a>1. 多模型支持架构应该怎么设计？</h2><p>需求很简单：一个服务里同时挂 OpenAI / Anthropic / Google / Qwen / DeepSeek / Bedrock / 自建 vLLM，业务方按场景指定用哪个。</p>
+<p>但”挂多个模型”这件事本身有四个隐藏变量：</p>
+<table>
+<thead>
+<tr>
+<th>变量</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Provider</strong></td>
+<td>OpenAI / Anthropic / Google / 火山 / Azure / Bedrock / Ollama / 自建 vLLM ……</td>
+</tr>
+<tr>
+<td><strong>Model</strong></td>
+<td>gpt-4o / claude-sonnet-4-6 / gemini-2.5-pro / qwen-max …… 同一 provider 下又有多个</td>
+</tr>
+<tr>
+<td><strong>Purpose</strong></td>
+<td>react agent / planner / vlm judge / summarizer 可能要用不同模型</td>
+</tr>
+<tr>
+<td><strong>Capability</strong></td>
+<td>是否支持 function calling / 流式 / 图像输入 / thinking</td>
+</tr>
+</tbody></table>
+<p>工业上最成熟的解法是 <strong>做一个独立的 AI API Gateway</strong>，把多模型适配做成基础设施。开源参考是 **<a target="_blank" rel="noopener" href="https://github.com/QuantumNous/new-api">new-api</a> / <a target="_blank" rel="noopener" href="https://github.com/songquanpeng/one-api">one-api</a> / <a target="_blank" rel="noopener" href="https://github.com/BerriAI/litellm">LiteLLM</a>**，国内大量公司私有化部署的就是这一套。</p>
+<p>它的核心思想只有三句：</p>
+<ol>
+<li><strong>对外只暴露一套统一的 OpenAI 兼容协议</strong>，业务方不用学每家供应商的 API。</li>
+<li><strong>内部按 provider 拆 Channel Adaptor</strong>，每个供应商一个独立模块负责协议转换 / 流式 / usage / 错误。</li>
+<li><strong>顺手把鉴权、令牌、额度、计费、日志、健康检查、失败重试都打包</strong>，反正请求都过这一道。</li>
+</ol>
+<p>整体架构长这样：</p>
+<p><img src="illustrations/A1-AI-API-Gateway%E6%9E%B6%E6%9E%84.webp" alt="AI API Gateway 架构：业务统一接 OpenAI 兼容协议 → Router/Middleware/Controller/Service/Relay/Channel Adaptor 分层 → 各 provider 独立 adaptor"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">┌────────────────────────────────────────────────────────────────────┐</span><br><span class="line">│  业务系统 &#x2F; Agent 进程   只接一个 OpenAI 兼容入口                    │</span><br><span class="line">│      POST &#x2F;v1&#x2F;chat&#x2F;completions   &#123; &quot;model&quot;: &quot;claude-sonnet-4-6&quot; &#125; │</span><br><span class="line">└──────────────────────────────────┬─────────────────────────────────┘</span><br><span class="line">                                   ▼</span><br><span class="line">   ┌─────────────────────────────────────────────────────────────────┐</span><br><span class="line">   │  AI API Gateway   (e.g. new-api &#x2F; one-api &#x2F; LiteLLM)             │</span><br><span class="line">   │  ─────────────────                                                │</span><br><span class="line">   │   Router → Middleware → Controller → Service → Relay              │</span><br><span class="line">   │                                                  │                │</span><br><span class="line">   │                          ┌───────────────────────┼──────────┐    │</span><br><span class="line">   │                          ▼                       ▼          ▼    │</span><br><span class="line">   │                 ┌─────────────┐        ┌─────────────┐  ┌──────┐│</span><br><span class="line">   │                 │ OpenAI Adapt│        │ Claude Adapt│  │ AWS  ││</span><br><span class="line">   │                 │  请求转换    │        │  请求转换   │  │Bedrock││</span><br><span class="line">   │                 │  流式转换    │        │  流式转换   │  │ 签名  ││</span><br><span class="line">   │                 │  usage 提取 │        │  usage 提取 │  │ ...  ││</span><br><span class="line">   │                 │  错误归一    │        │  错误归一   │  │      ││</span><br><span class="line">   │                 └──────┬──────┘        └──────┬──────┘  └──┬───┘│</span><br><span class="line">   └────────────────────────┼──────────────────────┼────────────┼────┘</span><br><span class="line">                            ▼                      ▼            ▼</span><br><span class="line">                       OpenAI 真接口          Anthropic 真接口   Bedrock</span><br></pre></td></tr></table></figure>
+
+<h3 id="内部分层"><a href="#内部分层" class="headerlink" title="内部分层"></a>内部分层</h3><p>new-api / one-api 的内部分层非常清楚，每一层的职责是固定的：</p>
+<table>
+<thead>
+<tr>
+<th>层</th>
+<th>职责</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Router</strong></td>
+<td>注册 API、Relay、Dashboard、Web 路由</td>
+</tr>
+<tr>
+<td><strong>Middleware</strong></td>
+<td>鉴权、限流、请求 ID、国际化、日志</td>
+</tr>
+<tr>
+<td><strong>Controller</strong></td>
+<td>解析参数、调度业务、统一响应</td>
+</tr>
+<tr>
+<td><strong>Service</strong></td>
+<td>额度、计费、渠道选择、用量记账</td>
+</tr>
+<tr>
+<td><strong>Relay</strong></td>
+<td>协议转换、流式处理、usage 提取、错误映射 —— <strong>多模型差异收口在这里</strong></td>
+</tr>
+<tr>
+<td><strong>Channel Adaptor</strong></td>
+<td>每个 provider 一个独立模块（OpenAI / Claude / Gemini / Bedrock / Azure / DeepSeek / Qwen ……）</td>
+</tr>
+<tr>
+<td><strong>Model</strong></td>
+<td>GORM 管理用户、令牌、渠道、日志、配置</td>
+</tr>
+</tbody></table>
+<p>主链路一句话：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Client → Router → Middleware → Controller → Service → Relay → Upstream Provider</span><br><span class="line">                                  │</span><br><span class="line">                                Model</span><br><span class="line">                                  │</span><br><span class="line">                              Database</span><br></pre></td></tr></table></figure>
+
+<p>这种分层最大的价值是 <strong>新增一个供应商，主要工作集中在新加一个 channel adaptor</strong>，业务链路、鉴权、计费、日志全都不用动。</p>
+<h3 id="Relay-层为什么单独拆出来"><a href="#Relay-层为什么单独拆出来" class="headerlink" title="Relay 层为什么单独拆出来"></a>Relay 层为什么单独拆出来</h3><p>因为 AI 供应商的差异 <strong>几乎全部集中在协议层</strong>：</p>
+<ul>
+<li><strong>请求字段不同</strong>：OpenAI 用 <code>messages</code>，Gemini 用 <code>contents</code>，Claude 把 <code>system</code> 单独拎出来。</li>
+<li><strong>鉴权方式不同</strong>：OpenAI / Anthropic 是 Bearer Key，AWS Bedrock 要 SigV4 签名，Azure 要带 endpoint 和 deployment ID。</li>
+<li><strong>流式格式不同</strong>：有的返回 SSE 配 <code>data: [DONE]</code>，Anthropic 用 <code>event: message_stop</code>，Bedrock 是事件 JSON 块。</li>
+<li><strong>usage 字段不同</strong>：cache token / image token / audio token 的统计字段每家都不一样。</li>
+<li><strong>错误结构不同</strong>：HTTP 状态码 + 错误体字段名各家有自己的玩法。</li>
+</ul>
+<p>把这些差异封装在 Relay 层，对上接收平台内部统一的请求 DTO + 上下文，对下调用具体 channel adaptor。Controller / Service 完全不用关心”现在请求的是 Claude 还是 OpenAI”。</p>
+<h3 id="一次模型调用的完整链路"><a href="#一次模型调用的完整链路" class="headerlink" title="一次模型调用的完整链路"></a>一次模型调用的完整链路</h3><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">1. 接收请求       客户端带 API Key 请求 /v1/chat/completions</span><br><span class="line">2. 鉴权校验       检查令牌、用户状态、模型权限、额度、限流</span><br><span class="line">3. 渠道选择       按模型 + 分组 + 权重 + 健康度选上游</span><br><span class="line">4. 请求转换       Relay 把统一请求转成目标供应商格式</span><br><span class="line">5. 响应处理       支持普通响应和 SSE 流式，统一错误结构</span><br><span class="line">6. 计费落库       按真实 usage 结算额度，写请求日志和费用</span><br></pre></td></tr></table></figure>
+
+<p>最关键的两个动作是 <strong>预扣 + 结算</strong>：预扣是为了防止用户额度不足还继续发起高成本请求；结算是为了按上游真实 usage 修正最终费用。</p>
+<h3 id="下面这些坑，新增任何一家-provider-都会撞"><a href="#下面这些坑，新增任何一家-provider-都会撞" class="headerlink" title="下面这些坑，新增任何一家 provider 都会撞"></a>下面这些坑，新增任何一家 provider 都会撞</h3><p><strong>1. 路由维度选 model，不要选 provider</strong>。业务方只应该说”我要用 <code>claude-sonnet-4-6</code>“，不该说”打到 Anthropic”。同一个模型可能挂在多条渠道（Anthropic 官方 + Bedrock + 自建代理），网关来选。</p>
+<p><strong>2. 可选标量字段必须用指针类型</strong>。这是网关 / adapter 类项目的高频坑：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ❌ 错的</span></span><br><span class="line">Temperature <span class="keyword">float64</span> <span class="string">`json:&quot;temperature,omitempty&quot;`</span></span><br><span class="line">Stream      <span class="keyword">bool</span>    <span class="string">`json:&quot;stream,omitempty&quot;`</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// ✅ 对的</span></span><br><span class="line">Temperature *<span class="keyword">float64</span> <span class="string">`json:&quot;temperature,omitempty&quot;`</span></span><br><span class="line">Stream      *<span class="keyword">bool</span>    <span class="string">`json:&quot;stream,omitempty&quot;`</span></span><br></pre></td></tr></table></figure>
+
+<p>原因：用户<strong>显式传 <code>0</code> / <code>false</code></strong> 和 <strong>没传</strong> 是两种不同语义。<code>temperature: 0</code> 表示要确定性输出，<code>stream: false</code> 表示明确不要流式。用普通类型加 <code>omitempty</code>，重新 marshal 时这些零值会被吃掉，转发给上游就丢了。<strong>用指针才能区分 <code>nil</code>（没传）和 <code>*v=0</code>（显式传零）</strong>。</p>
+<p><strong>3. usage 字段必须按 provider 各自归一</strong>。OpenAI 把 cache hit token 算进 prompt tokens；Anthropic 单独返回 <code>cache_read_input_tokens</code> / <code>cache_creation_input_tokens</code>；Gemini 又是另一套结构。adapter 必须在自己内部把上游 usage 解到统一结构（<code>input / output / cache_read / cache_create / image / audio_in / audio_out</code>），否则要么重复计费要么漏计费。</p>
+<p><strong>4. 流式响应的”结束条件”非常脆</strong>。OpenAI SSE 用 <code>data: [DONE]</code>，Anthropic 用 <code>event: message_stop</code>，Bedrock 是流式 JSON 块。adapter 必须各自做四件事：<strong>结束识别 + 最终 usage 提取 + 客户端断开感知 + 超时兜底</strong>，少一件都会导致日志不全或额度漏扣。</p>
+<p><strong>5. 错误必须分”可重试”和”不可重试”**。网络超时 / 临时 5xx / 限流 → 切渠道重试；鉴权失败 / 参数错误 / 余额不足 → 直接返回。</strong>把参数错误当可重试会浪费渠道配额，把临时 5xx 当不可重试会拉低成功率**。</p>
+<p><strong>6. JSON 序列化走统一 wrapper</strong>。new-api 里所有 JSON 操作都收口到 <code>common.Marshal</code> / <code>common.Unmarshal</code>，业务代码不直接 import <code>encoding/json</code>。这样以后切换更快的 JSON 库（sonic / jsoniter）或统一加错误埋点，只改一处。</p>
+<p><strong>7. Capability 检查必须前置</strong>。在网关路由阶段就判断”这个 model 支不支持 tools / vision / stream”，不要等到上游 400 才发现。</p>
+<p><strong>8. 模型映射要做在 channel 维度</strong>。同一个对外暴露的 <code>gpt-4o</code> 模型，可能在 channel #1 上叫 <code>gpt-4o</code>，在 channel #2（Azure 部署）上叫 <code>my-gpt4-deployment</code>，channel #3（自建代理）上叫 <code>internal-gpt4</code>。<strong>模型映射放在 channel 配置里</strong>，业务侧只看到统一的对外名。</p>
+<p>工程取舍上一句话：<strong>不要从零写自己的 ChatModel 抽象层</strong>。直接用 new-api / one-api 这种成熟方案做二次开发，需要新增 provider 时按既有 channel adaptor 的模式加一个，工作量比从零写小一个数量级，而且鉴权 / 计费 / 健康检查 / 后台都是免费送的。</p>
+<hr>
+<h2 id="2-多租户场景下模型切换能不能热更新？"><a href="#2-多租户场景下模型切换能不能热更新？" class="headerlink" title="2. 多租户场景下模型切换能不能热更新？"></a>2. 多租户场景下模型切换能不能热更新？</h2><p>能。客户 A 想把默认模型从 GPT-4o 切到 Claude，<strong>不需要重启服务、不需要发版</strong>，下一次请求就能生效。</p>
+<p>但要先把”切换”四个不同的语义掰清楚，因为它们对应不同的处理路径：</p>
+<table>
+<thead>
+<tr>
+<th>触发方</th>
+<th>切换对象</th>
+<th>频率</th>
+<th>典型场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>运营 / 管理员</strong></td>
+<td>默认模型、模型映射、模型价格</td>
+<td>周级</td>
+<td>上线了一个新模型、价格调整</td>
+</tr>
+<tr>
+<td><strong>业务方 / 租户</strong></td>
+<td>自己分组下的可用模型集合</td>
+<td>月级</td>
+<td>客户 A 想从 GPT-4 切到 Claude</td>
+</tr>
+<tr>
+<td><strong>系统自动</strong></td>
+<td>某个具体渠道的可用性</td>
+<td>秒级</td>
+<td>上游 5xx 暴涨，自动切到备用渠道</td>
+</tr>
+<tr>
+<td><strong>请求级</strong></td>
+<td>某次请求实际打到哪个上游</td>
+<td>毫秒级</td>
+<td>路由按权重 / 优先级选 channel</td>
+</tr>
+</tbody></table>
+<p>再加一种听上去 fancy 但 LLM 上下文里几乎没合理需求的 —— **”运行中的 turn 中途换 model”**：一个 turn 跑到一半换模型，前面的 thinking、tool call、token 全废。所以下面只讨论前四种。</p>
+<p>承接上一节，我们直接用 new-api 这套 AI API Gateway 的方案 —— 它<strong>自带</strong>了热更新能力，不需要再额外造配置中心。</p>
+<h3 id="后台改-→-DB-→-缓存失效-→-下次请求生效"><a href="#后台改-→-DB-→-缓存失效-→-下次请求生效" class="headerlink" title="后台改 → DB → 缓存失效 → 下次请求生效"></a>后台改 → DB → 缓存失效 → 下次请求生效</h3><p>new-api / one-api 的热更新模式很直接：<strong>所有”会变的东西”都存在数据库里</strong>（渠道、模型映射、用户、令牌、分组、倍率、价格表达式），管理员在后台改完写入 DB，立刻刷新对应的内存缓存，下一次请求拿新值。</p>
+<p><img src="illustrations/A2-%E7%AE%A1%E7%90%86%E5%90%8E%E5%8F%B0%E7%83%AD%E6%9B%B4%E9%93%BE%E8%B7%AF.webp" alt="new-api 风格热更链路：后台改 → DB 落库 → Cache 按 key 失效 / 重新加载 → 下次请求生效，全程不发版"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">┌──────────────┐  ┌─────────────────────────────────────────────────────┐</span><br><span class="line">│ 管理后台 UI  │  │             AI API Gateway                            │</span><br><span class="line">│ ────────────│  │  ─────────────────────                                │</span><br><span class="line">│ 渠道管理     │──▶ Controller                                            │</span><br><span class="line">│ 模型映射     │  │      │                                                │</span><br><span class="line">│ 分组倍率     │  │      ▼                                                │</span><br><span class="line">│ 价格表达式   │  │  Service.UpdateChannel ─── tx ──▶ DB                  │</span><br><span class="line">│ 权重调整     │  │      │                          (channels &#x2F; models)   │</span><br><span class="line">│ 用户分组     │  │      ▼                                                │</span><br><span class="line">└──────────────┘  │  Cache.Refresh(channelID)  ◀──── 后台周期 health check│</span><br><span class="line">                  │      │                                                │</span><br><span class="line">                  │      ▼                                                │</span><br><span class="line">                  │  下一次 &#x2F;v1&#x2F;chat&#x2F;completions 请求 → 拿到新值          │</span><br><span class="line">                  └─────────────────────────────────────────────────────┘</span><br></pre></td></tr></table></figure>
+
+<p>new-api 启动流程里就明确做了这件事：<strong>初始化数据库 → 加载选项 / 模型倍率 / 渠道缓存 → 起后台任务（渠道检测 / 任务轮询 / 订阅额度重置）</strong>。运行期间，管理员每次保存配置都触发对应的 cache refresh，不需要重启进程。</p>
+<h3 id="“切换模型”在多租户下到底是切什么"><a href="#“切换模型”在多租户下到底是切什么" class="headerlink" title="“切换模型”在多租户下到底是切什么"></a>“切换模型”在多租户下到底是切什么</h3><p>这里有个常见的误区：**多租户切模型不是”每个租户一份独立配置”**。</p>
+<p>new-api 这套方案的”多租户”是<strong>用户 / 令牌 / 分组三层</strong>，所有租户<strong>共用同一份 channel 池子</strong>，差异通过分组（group）映射出来：</p>
+<table>
+<thead>
+<tr>
+<th>层</th>
+<th>控制对象</th>
+<th>切换方式</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>用户层</strong></td>
+<td>用户状态、角色、余额、所属分组</td>
+<td>后台改用户的 group</td>
+</tr>
+<tr>
+<td><strong>令牌层</strong></td>
+<td>API Key、过期时间、额度限制、可用模型范围</td>
+<td>后台改令牌的 model 白名单</td>
+</tr>
+<tr>
+<td><strong>渠道层</strong></td>
+<td>不同分组可见不同渠道、不同分组用不同倍率</td>
+<td>后台改 channel 的 groups 字段</td>
+</tr>
+</tbody></table>
+<p>所以”客户 A 想换模型”这件事的真实做法是：</p>
+<ol>
+<li>在后台把客户 A 所属的分组改成”vip” / “claude-only” / 任何想要的标签。</li>
+<li>渠道侧已配置好”<code>claude-sonnet-4-6</code> 这条 channel 对 vip 分组开放”。</li>
+<li>客户 A 下次请求带 <code>model: &quot;claude-sonnet-4-6&quot;</code>，路由算法看到 group 匹配 → 命中 → 走 Anthropic 的 channel adaptor。</li>
+</ol>
+<p>整个过程客户感知不到任何重启，连 API Key 都不用换。</p>
+<h3 id="系统级自动切换：渠道路由-健康检查"><a href="#系统级自动切换：渠道路由-健康检查" class="headerlink" title="系统级自动切换：渠道路由 + 健康检查"></a>系统级自动切换：渠道路由 + 健康检查</h3><p>第三种切换 —— “上游故障，自动切” —— 是 new-api 这类网关<strong>自带</strong>的能力。</p>
+<p>核心是<strong>渠道路由策略</strong>，要解两个问题：选哪个渠道、失败后怎么办。</p>
+<p>选择渠道时通常会看：</p>
+<ul>
+<li>该渠道是否支持请求模型</li>
+<li>用户分组是否允许使用该渠道</li>
+<li>渠道是否启用（管理员可手动禁用）</li>
+<li>渠道权重和优先级</li>
+<li>最近健康检查是否通过</li>
+<li>是否触发限流或错误熔断</li>
+</ul>
+<p>失败处理：</p>
+<ul>
+<li><strong>可重试错误</strong>（网络超时 / 临时 5xx / 限流）→ 切换到备用渠道</li>
+<li><strong>不可重试错误</strong>（鉴权失败 / 参数错误 / 余额不足）→ 直接返回</li>
+<li>记录失败原因供后台排查</li>
+<li>后台周期性自动测试渠道，更新可用性</li>
+</ul>
+<p>这样业务侧只关心模型名，不需要关心”OpenAI 上海区今天出问题了”。<strong>业务和具体供应商完全解耦</strong>，是这套方案最大的工程价值。</p>
+<h3 id="价格-倍率”快照”机制：热更下计费不出事故的关键"><a href="#价格-倍率”快照”机制：热更下计费不出事故的关键" class="headerlink" title="价格 / 倍率”快照”机制：热更下计费不出事故的关键"></a>价格 / 倍率”快照”机制：热更下计费不出事故的关键</h3><p>这是 new-api 的<strong>核心设计之一</strong>，单独拎出来讲。</p>
+<p>热更的一个隐藏陷阱是：<strong>请求过程中如果价格被改了，预扣按 A 价、结算按 B 价，账永远对不上</strong>。</p>
+<p>new-api 的解法是 <strong>请求开始时冻结快照</strong>：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">1. 请求进来 → 估算 token → 查当时的价格 / 分组倍率 / 计费表达式</span><br><span class="line">2. 把这份&quot;价格快照&quot;挂在请求 context 上</span><br><span class="line">3. 按快照预扣额度</span><br><span class="line">4. 请求完成 → 拿上游真实 usage → 用同一份快照重新计算 → 退还或补扣差额</span><br><span class="line">5. 写日志，把快照内容也记下，便于事后核账</span><br></pre></td></tr></table></figure>
+
+<p>这样即使请求执行的 30 秒里管理员改了价格，<strong>已在跑的请求按旧价结算</strong>，新请求按新价 —— 行为可预期，账可对。</p>
+<p>如果没有快照，热更必然带来计费事故。</p>
+<h3 id="几个反复踩过的坑"><a href="#几个反复踩过的坑" class="headerlink" title="几个反复踩过的坑"></a>几个反复踩过的坑</h3><p><strong>1. 缓存失效必须按 key 粒度</strong>。改了渠道 #5 的密钥，只该刷 #5 的缓存，不要全量重建。new-api 实现是 <code>Cache.RefreshChannel(id)</code> 而不是 <code>Cache.Reload()</code>。全量重建在大库下能让进程卡几秒，期间的请求要么慢要么失败。</p>
+<p><strong>2. 健康检查不能太勤</strong>。每分钟一次都算激进 —— 绝大多数模型 API 都按调用计费，健康检查本身要花钱。常见做法是 <strong>5~15 分钟一次主动 ping + 实时请求失败计数熔断</strong>两路结合。</p>
+<p><strong>3. “运行中切换”接口直接堵在入口</strong>。任何 API 都不要支持”切换正在跑的 turn 的 model”，包括看似无害的”切换 base_url”。一个 turn 选定的渠道必须从开始到结束保持不变。</p>
+<p><strong>4. 多数据库下的迁移要按 DB 类型分支</strong>。new-api 支持 SQLite / MySQL / PostgreSQL，每次给 channel / model 表加字段，迁移脚本必须分别测三套 —— SQLite 不支持很多 <code>ALTER COLUMN</code>，PostgreSQL 的 boolean / JSON 操作和 MySQL 差很多。</p>
+<p><strong>5. 敏感字段要脱敏展示</strong>。后台展示渠道密钥、支付回调密钥时，<strong>永远只显示前 4 位 + 星号</strong>，编辑时单独走”重置”按钮。一个截图泄露线上 OpenAI key 的事故就够你解释半年的。</p>
+<p><strong>6. 多租户≠多套配置</strong>。诚实地说：绝大多数 agent 后端用 new-api 这套方案做的”多租户”，本质是 <strong>数据隔离（user_id / project_id）+ 权限隔离 + 用量隔离</strong>，不是配置隔离 —— 全公司共用一份 channel 池子，租户之间的差异通过分组和倍率体现。如果你真的需要”每个租户一份独立配置 + 独立计费体系 + 独立后台” 的 SaaS 多租户，那是另一个量级的工程，需要在 new-api 之上再封一层 tenant 维度，把所有缓存按 tenant_id 分桶、限流计费都带租户维度。</p>
+<p>回到开头那个问题 —— <strong>客户 A 想换 model，不重启服务就能生效吗？</strong> 能。后台改两下分组 / 模型映射，下一次请求就走新模型。前提是你用的是 new-api 这套带管理后台 + 数据库 + 缓存刷新的方案，而不是把模型配置写在 YAML 里硬编码进进程的那种。</p>
+<hr>
+<h2 id="3-agent-的记忆-工具调用-知识解锁怎么实现？"><a href="#3-agent-的记忆-工具调用-知识解锁怎么实现？" class="headerlink" title="3. agent 的记忆 / 工具调用 / 知识解锁怎么实现？"></a>3. agent 的记忆 / 工具调用 / 知识解锁怎么实现？</h2><p>这三件事看似无关，但在工业实现里它们共享同一个机制：<strong>按 agent 类型做能力门控</strong>。</p>
+<p>一个真实的 agent 后端通常会有十几种 agent 类型（react / planner / executor / grader / summarizer / vlm-judge ……），每种 agent 能用的工具集、能读的知识库、能访问的记忆段都不一样。如果不做门控，会出三种问题：</p>
+<ul>
+<li><strong>能力越界</strong>：planner 不该自己执行操作，但你给它绑了 <code>execute_command</code> 工具。</li>
+<li><strong>上下文污染</strong>：vlm-judge 不需要看历史 chat 记录，但你把整个 session memory 都喂给它，token 飙升。</li>
+<li><strong>权限漏洞</strong>：低权限的 agent 通过工具访问到了高权限的资源。</li>
+</ul>
+<p>业界比较干净的解法是 <strong>元数据驱动的能力声明 + 准入检查</strong>：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 工具元数据</span></span><br><span class="line"><span class="keyword">type</span> ToolMetadata <span class="keyword">struct</span> &#123;</span><br><span class="line">    Name           <span class="keyword">string</span></span><br><span class="line">    Type           ToolType        <span class="comment">// local / http / mcp / external</span></span><br><span class="line">    Schema         JSONSchema</span><br><span class="line">    AllowedAgents  []<span class="keyword">string</span>        <span class="comment">// 空数组 = 所有 agent 可用；非空 = 白名单</span></span><br><span class="line">    FeatureGate    <span class="keyword">string</span>          <span class="comment">// 功能开关 key，未开启则不可见</span></span><br><span class="line">    RequiredScopes []<span class="keyword">string</span>        <span class="comment">// OAuth-style 权限范围</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 准入检查</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *ToolRegistry)</span> <span class="title">GetToolsByAgent</span><span class="params">(agentType <span class="keyword">string</span>)</span> []<span class="title">Tool</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> allowed []Tool</span><br><span class="line">    <span class="keyword">for</span> _, t := <span class="keyword">range</span> r.all &#123;</span><br><span class="line">        <span class="keyword">if</span> !t.FeatureGate.Enabled() &#123; <span class="keyword">continue</span> &#125;       <span class="comment">// 1. feature gate</span></span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">len</span>(t.AllowedAgents) &gt; <span class="number">0</span> &amp;&amp;</span><br><span class="line">           !slices.Contains(t.AllowedAgents, agentType) &#123;</span><br><span class="line">            <span class="keyword">continue</span>                                    <span class="comment">// 2. agent 白名单</span></span><br><span class="line">        &#125;</span><br><span class="line">        allowed = <span class="built_in">append</span>(allowed, t)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> allowed</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>工具准入是这样，知识库 / 记忆段也是同一套思路 —— 都是”声明谁能看 + 运行时检查”的组合。</p>
+<p>三个反复踩过的坑：</p>
+<p><strong>1. 默认拒绝 vs 默认允许</strong>。默认拒绝（必须明确声明 AllowedAgents 才能用）更安全但维护成本高，每加一个 agent 都要review 一遍工具列表；默认允许（空数组 = 全部可用）更方便但容易出权限事故。<strong>给写操作类工具用默认拒绝，给读操作工具用默认允许</strong>是常见折中。</p>
+<p><strong>2. 不要把权限检查放到工具内部</strong>。每个工具都自己写 <code>if agentType != &quot;executor&quot; &#123; return error &#125;</code> 是反模式 —— 一是重复，二是绕过点太多（万一忘写就是漏洞）。统一在 Registry 这一层做。</p>
+<p><strong>3. 知识库 / 记忆段的门控更要做行级</strong>。不是”这个 agent 能不能查这个知识库”那么粗，而是”这个 agent 在这个 session、这个 user、这个 project 下能查到哪些条目”。RAG 的检索 query 必须强制带上 user_id / project_id 过滤，不能信任 prompt 里写的”我是 user X”。</p>
+<hr>
+<h2 id="4-一个-agent-在系统里会有哪些状态？"><a href="#4-一个-agent-在系统里会有哪些状态？" class="headerlink" title="4. 一个 agent 在系统里会有哪些状态？"></a>4. 一个 agent 在系统里会有哪些状态？</h2><p>这是我见过被低估最严重的问题。</p>
+<p>很多人写 agent 都用一个布尔变量 <code>running bool</code> 完事 —— 然后真正出 bug 的时候你完全不知道当前 agent 卡在哪。一个生产级的 agent 至少要分清楚 <strong>三层状态</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>层</th>
+<th>关注</th>
+<th>例子</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Lifecycle（生命周期）</strong></td>
+<td>进程级别的”还活着没”</td>
+<td><code>idle / running / stopping / stopped</code></td>
+</tr>
+<tr>
+<td><strong>AgentStatus（业务状态）</strong></td>
+<td>业务流程跑到哪</td>
+<td><code>new / planning / executing / reporting / complete / failed / canceled</code></td>
+</tr>
+<tr>
+<td><strong>StepStatus（单步状态）</strong></td>
+<td>当前 step 在做什么</td>
+<td><code>pending / awaiting_user / executing / done / error</code></td>
+</tr>
+</tbody></table>
+<p>这三层状态机互相独立但有约束关系：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">Lifecycle:  idle ──▶ running ──▶ stopping ──▶ stopped</span><br><span class="line">                       │</span><br><span class="line">                       │ 仅 running 期间才有 AgentStatus 转换</span><br><span class="line">                       ▼</span><br><span class="line">AgentStatus:  new ──▶ planning ──▶ executing ──▶ reporting ──▶ complete</span><br><span class="line">                                       │              │</span><br><span class="line">                                       └─▶ failed ◀───┘</span><br><span class="line">                                       └─▶ canceled</span><br><span class="line"></span><br><span class="line">                      executing 期间才有 StepStatus 转换</span><br><span class="line">                       ▼</span><br><span class="line">StepStatus:  pending ──▶ awaiting_user ──▶ executing ──▶ done</span><br><span class="line">                                              │</span><br><span class="line">                                              └──▶ error</span><br></pre></td></tr></table></figure>
+
+<p>为什么非要分三层？</p>
+<p><strong>因为它们的”可恢复性”不一样</strong>。Lifecycle 是进程级的，crash 就没了，必须靠外部重启；AgentStatus 是业务级的，可以 checkpoint 到 Redis，重启后能恢复；StepStatus 是 turn 级的，通常只在内存里，turn 一结束就清。把它们混成一个 enum，要么状态爆炸（笛卡尔积一下变 50+ 个状态），要么恢复语义一塌糊涂。</p>
+<p>工程上有几个铁律：</p>
+<p><strong>1. 所有状态转换必须经过 <code>CanTransitionTo()</code> 校验</strong>。<code>new → complete</code> 直接跳是不允许的，<code>canceled → running</code> 也是不允许的。把校验集中在一个地方，不是散落在 20 个 if 里。</p>
+<p><strong>2. 每次转换都要发事件</strong>。状态从 <code>planning → executing</code> 要发一个 <code>AgentStatusChanged</code> 事件，前端可以渲染、监控可以打点、审计可以记录。**不要做”静默转换”**，那是事故的温床。</p>
+<p><strong>3. 终态是 sink</strong>。<code>complete / failed / canceled / stopped</code> 进去就出不来。任何”试图从终态再转出”的代码都要直接拒绝。</p>
+<p><strong>4. 中间态要有超时</strong>。<code>planning</code> 卡 30 分钟基本就是死循环了，必须有 watchdog 强制转 <code>failed</code> 并报警。</p>
+<hr>
+<h2 id="5-后端-agent-是否支持多租户并发调用？"><a href="#5-后端-agent-是否支持多租户并发调用？" class="headerlink" title="5. 后端 agent 是否支持多租户并发调用？"></a>5. 后端 agent 是否支持多租户并发调用？</h2><p>支持，但实现思路和”web 服务多租户”不太一样。</p>
+<p>普通 web 服务的多租户是 <strong>stateless + 横向扩展</strong>：每个请求独立、共享的资源是数据库 / 缓存。但 agent 服务是 <strong>有状态的长连接 + 复杂调度</strong> —— 一个 agent run 可能跑十几分钟、中间会有十几个 step、还要保持上下文。这意味着：</p>
+<ul>
+<li><strong>不能 per-request 起新 agent 实例</strong>（每次重新装载工具、记忆、状态太重）</li>
+<li><strong>也不能全局只有一个 agent 实例</strong>（多租户并发会互相污染）</li>
+</ul>
+<p>业界常见的折中是 <strong>per-Run 实例化 + 注册表索引 + 跨节点路由</strong>：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">请求进来</span><br><span class="line">   │</span><br><span class="line">   ▼</span><br><span class="line">┌─────────────────────────┐</span><br><span class="line">│ RouteService.OnMessage  │</span><br><span class="line">└──────────┬──────────────┘</span><br><span class="line">           │</span><br><span class="line">           ├─ Run 已存在？</span><br><span class="line">           │     ├─ 在本机：local registry → agent.OnEvent(msg)</span><br><span class="line">           │     └─ 在他机：Redis 查 location → HTTP 转发</span><br><span class="line">           │</span><br><span class="line">           ├─ Run 不存在但有 checkpoint？</span><br><span class="line">           │     └─ FactoryProvider.Recover(state) → 注册到本机</span><br><span class="line">           │</span><br><span class="line">           └─ 全新 Run？</span><br><span class="line">                 └─ FactoryProvider.Build(ctx) → 注册到本机 + 写 Redis</span><br></pre></td></tr></table></figure>
+
+<p>四个关键设计：</p>
+<p><strong>1. 实例的生命周期绑定 Run，不绑 User</strong>。一个用户可以同时有好几个 Run（多个对话窗口），每个 Run 一个独立 agent 实例，互不干扰。Run 结束 → agent 销毁。</p>
+<p><strong>2. 本地 registry + 远程 registry 双层</strong>。本地 <code>sync.Map[runID]agent</code> 是热路径，O(1) 查找；远程 Redis <code>runner:location:&#123;runID&#125; → machine_ip</code> 是兜底，用来跨节点找到 Run 在哪。</p>
+<p><strong>3. 跨节点用 HTTP 转发，不要用消息队列</strong>。Run 是有顺序的对话，HTTP 直接打到目标机器最简单可靠；用 MQ 会引入乱序、重试、幂等等一堆问题。</p>
+<p><strong>4. 资源维度的分布式锁是必需的</strong>。如果 agent 会调用对外部世界有副作用的工具（操作设备、改数据库、发消息），同一资源同一时刻只能有一个 agent 在操作 —— 加分布式锁，key 形如 <code>dist_lock:&#123;tenant&#125;:&#123;resource_id&#125;</code>。锁要带租约 + 自动续期 + defer 释放。</p>
+<p>至于扩容：节点数 = ⌈活跃 Run 数 / 单机承载⌉，单机承载主要看模型并发上限和工具调用 IO 上限，不是 CPU。</p>
+<hr>
+<h2 id="6-session-和-user-id-如何绑定？"><a href="#6-session-和-user-id-如何绑定？" class="headerlink" title="6. session 和 user id 如何绑定？"></a>6. session 和 user id 如何绑定？</h2><p>这件事看起来很简单 —— <code>session.user_id = current_user.id</code> —— 但生产事故 80% 出在这里。</p>
+<p>session 和 user 绑定要解的真正问题是：<strong>怎么在十几跳的链路里，让”这次操作属于谁”这件事不丢、不被篡改、不能被绕过</strong>。</p>
+<p>绑定的链路至少有三道关：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">┌──────────────┐</span><br><span class="line">│ 1. 认证网关   │  ← 单一信任源</span><br><span class="line">│   ─────────  │</span><br><span class="line">│   解 token    │</span><br><span class="line">│   写 ctx:     │</span><br><span class="line">│     userID    │</span><br><span class="line">│     projectID │</span><br><span class="line">│     orgID     │</span><br><span class="line">└──────┬───────┘</span><br><span class="line">       │ 透传 ctx</span><br><span class="line">       ▼</span><br><span class="line">┌──────────────────────┐</span><br><span class="line">│ 2. 应用层 &#x2F; Domain    │</span><br><span class="line">│   ─────────────       │</span><br><span class="line">│  CreateSessionCmd &#123;   │</span><br><span class="line">│    UserID: ctx.uid    │ ← 命令对象强制带上</span><br><span class="line">│  &#125;                    │</span><br><span class="line">│                       │</span><br><span class="line">│  LoadSession(id):     │</span><br><span class="line">│    if s.UserID !&#x3D; uid │ ← 取 session 时强制校验</span><br><span class="line">│       return Err403   │</span><br><span class="line">└──────┬───────────────┘</span><br><span class="line">       │</span><br><span class="line">       ▼</span><br><span class="line">┌──────────────────────┐</span><br><span class="line">│ 3. 持久化层           │</span><br><span class="line">│   ────────────       │</span><br><span class="line">│  table sessions &#123;    │</span><br><span class="line">│    user_id NOT NULL  │ ← 数据库约束</span><br><span class="line">│    INDEX(user_id)    │</span><br><span class="line">│  &#125;                    │</span><br><span class="line">│  table runs &#123;         │</span><br><span class="line">│    session_id         │</span><br><span class="line">│    user_id            │ ← 冗余写入，便于审计</span><br><span class="line">│  &#125;                    │</span><br><span class="line">└──────────────────────┘</span><br></pre></td></tr></table></figure>
+
+<p>四个常被忽视的细节：</p>
+<p><strong>1. ctx 注入只能由网关来做，不能让业务层自己塞</strong>。如果某个 controller 写了 <code>ctx.WithUserID(&quot;xxx&quot;)</code>，整个权限模型就破了 —— 任何人能调到这个接口就能伪装。<strong>强制网关做、业务层只读不写</strong>。</p>
+<p><strong>2. Session 取出来必须校验 owner</strong>。<code>SELECT * FROM sessions WHERE id = ?</code> 是错的，必须是 <code>WHERE id = ? AND user_id = ?</code>。即使 session_id 在 URL 里被泄露了，也不能让别人加载到。</p>
+<p><strong>3. Run / Message / Event 全部冗余写一遍 user_id</strong>。看起来重复，但好处巨大：审计查”用户 X 在 5 月 9 号做了什么”是单表查，不用 join；删用户数据是单表删，不用递归找关联。</p>
+<p><strong>4. 多租户场景还要带 project_id / org_id</strong>。一个用户可能属于多个 project / org，权限不一样。绑定 key 实际上是 <code>(user_id, project_id, org_id)</code> 三元组，不是单 user_id。</p>
+<hr>
+<h2 id="7-agent-工具调用的完整流程怎么走？"><a href="#7-agent-工具调用的完整流程怎么走？" class="headerlink" title="7. agent 工具调用的完整流程怎么走？"></a>7. agent 工具调用的完整流程怎么走？</h2><p>这是最长也最容易掉链子的链路。从前端按下回车到工具执行完结果回灌给 LLM，一个完整的 turn 至少要经过这些环节：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">[1] Client                  POST &#x2F;chat (SSE) &#123;message, sessionId&#125;</span><br><span class="line">        ↓</span><br><span class="line">[2] Gateway                 解 token, 注入 user&#x2F;project&#x2F;org 到 ctx</span><br><span class="line">        ↓</span><br><span class="line">[3] Controller              setupSSE, bind ChatRequest, hand off to AppService</span><br><span class="line">        ↓</span><br><span class="line">[4] AppService              loadSession+校验owner → ProcessChat command</span><br><span class="line">        ↓</span><br><span class="line">[5] DomainService.Process   构造 Run 实体, persist, dispatch event</span><br><span class="line">        ↓</span><br><span class="line">[6] MQ (optional)           解耦同步链路, 让 controller 早点 return</span><br><span class="line">        ↓</span><br><span class="line">[7] RouteService            按 runID 找 Runner（本机 &#x2F; 跨节点 &#x2F; 新建 &#x2F; 恢复）</span><br><span class="line">        ↓</span><br><span class="line">[8] Runner.OnEvent          驱动 Agent 状态机</span><br><span class="line">        ↓</span><br><span class="line">[9] Agent.processCurrent    根据 AgentStatus 决定下一步</span><br><span class="line">        ↓                        ┌──── planning  → 调 LLM 出计划</span><br><span class="line">                                  ├──── executing → 调 Executor.Step</span><br><span class="line">                                  └──── reporting → 调 LLM 总结</span><br><span class="line">[10] Executor.Step          调 ToolNode.Invoke(toolCall)</span><br><span class="line">        ↓</span><br><span class="line">[11] ToolNode               调度具体 Tool 实现（local &#x2F; mcp &#x2F; http）</span><br><span class="line">        ↓</span><br><span class="line">[12] Tool 返回 result        Executor 把 result 回灌成 message</span><br><span class="line">        ↓</span><br><span class="line">[13] 回到 [9] 再来一轮       直到 AgentStatus &#x3D; complete &#x2F; failed</span><br><span class="line">        ↓</span><br><span class="line">[14] 全程通过 EventStream    每个边界点向 SSE channel 发事件</span><br></pre></td></tr></table></figure>
+
+<p>这条链路里有几个<strong>只有踩过坑才知道</strong>的设计点：</p>
+<p><strong>1. Controller 一定要尽早返回</strong>。HTTP 层不能等 agent 跑完 —— agent 可能跑 30 分钟，HTTP 连接早断了。Controller 把命令丢到 MQ 或 worker pool 后立刻返回 SSE 头部，让 SSE 通道自己流后面的事件。</p>
+<p>**2. agent 协程必须用 <code>context.WithoutCancel</code>**。如果 agent goroutine 直接继承 controller 的 ctx，HTTP 一断 ctx 就被 cancel，agent 立刻挂掉。要专门起一个独立 ctx，只在用户主动 stop 或全局 shutdown 时取消。</p>
+<p><strong>3. Tool call 的”两阶段”**。</strong>先发 ToolCallStart 占位** → 跑工具 → <strong>再发 ToolCallEnd 带结果</strong>。中间可能有几秒到几十秒的工具执行时间，前端需要先看到”我开始调 X 工具了”再看到”我调完了”，否则用户以为卡死。</p>
+<p><strong>4. 工具结果必须回灌成 message 再喂给 LLM</strong>。OpenAI / Anthropic 的 function calling 协议都要求 tool 的 response 也是 message 流的一部分（role: tool / role: function），少了这一步 LLM 第二轮会乱。</p>
+<p><strong>5. 整个链路全程异步发 SSE 事件</strong>。不是等 agent 跑完一次性返回，是边跑边推 —— 这是 agent 体验和”普通 chatbot”的核心差别。</p>
+<hr>
+<h2 id="8-长期记忆和短期记忆有什么区别？"><a href="#8-长期记忆和短期记忆有什么区别？" class="headerlink" title="8. 长期记忆和短期记忆有什么区别？"></a>8. 长期记忆和短期记忆有什么区别？</h2><p>短期记忆是 <strong>对话窗口里能直接看到的历史</strong>，长期记忆是 <strong>跨 session、跨 turn、被压缩 / 被检索出来的过去</strong>。两者解决的问题完全不同。</p>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>短期记忆</th>
+<th>长期记忆</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>存放</strong></td>
+<td>当前 session 的 message 数组</td>
+<td>向量库 / KV 库 / 摘要库</td>
+</tr>
+<tr>
+<td><strong>检索</strong></td>
+<td>全量带（带不下就裁剪）</td>
+<td>按相关性检索</td>
+</tr>
+<tr>
+<td><strong>更新</strong></td>
+<td>每个 turn 自动 append</td>
+<td>异步生成 / 手动 / 定时摘要</td>
+</tr>
+<tr>
+<td><strong>作用</strong></td>
+<td>让 LLM 记住”你刚刚说了什么”</td>
+<td>让 LLM 记住”你上周说了什么”</td>
+</tr>
+<tr>
+<td><strong>关键挑战</strong></td>
+<td>窗口溢出后怎么裁剪</td>
+<td>检索准不准、噪声多不多</td>
+</tr>
+</tbody></table>
+<p>短期记忆的标准做法是 <strong>滑动窗口 + 摘要替换</strong>：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">最新 N 个 turn 完整保留    ←—— 短期记忆主体</span><br><span class="line">  ─────────────────</span><br><span class="line">  Turn N</span><br><span class="line">  Turn N-1</span><br><span class="line">  Turn N-2</span><br><span class="line">  ...</span><br><span class="line"></span><br><span class="line">----- 滑动窗口边界 -----</span><br><span class="line"></span><br><span class="line">  Turn N-W ~ Turn 1     ←—— 摘要替换</span><br><span class="line">  ─────────────────</span><br><span class="line">  这部分用一段 LLM 生成的摘要 &#x2F; 或多段增量摘要顶替</span><br><span class="line">  原始 message 被归档但不进 prompt</span><br><span class="line"></span><br><span class="line">----- 跨 session 边界 -----</span><br><span class="line"></span><br><span class="line">  外部向量库 &#x2F; 知识库     ←—— 长期记忆</span><br><span class="line">  ─────────────────</span><br><span class="line">  按当前 query 检索 top-K</span><br><span class="line">  以 RAG 形式注入 prompt</span><br></pre></td></tr></table></figure>
+
+<p>工程上常见的几个细节：</p>
+<p><strong>1. 滑动窗口的单位是 turn 不是 message</strong>。一个 turn 可能包含 user / assistant / tool 多条 message，按 message 截断会断在工具调用中间，下一轮 LLM 报”missing tool response”。要按 turn 整组裁剪。</p>
+<p><strong>2. 摘要要按 RunID 分组生成</strong>。一个 Run 内部的多步操作摘成一段，而不是把所有历史揉成一段。这样回放性更好。</p>
+<p><strong>3. 摘要不是一次性的，是增量的</strong>。每超过阈值就把”最旧的 K 个 Run”摘成一段，加入摘要列表；摘要列表本身也可能再被摘。多层级的”老三国”-&gt; “演义” -&gt; “故事梗概”。</p>
+<p><strong>4. 工具响应要补齐</strong>。如果摘要把某些 turn 删了，可能留下”有 ToolCallStart 没 ToolCallEnd”的孤儿，喂 LLM 会报错。要在摘要替换时<strong>强制补齐配对</strong>。</p>
+<p><strong>5. 长期记忆别一上来就上 vector DB</strong>。先看你的数据形态：结构化数据（用户偏好 / settings）走 KV 就行；半结构化（历史结论 / 决策）走全文搜索；只有真正语义模糊的才上 embedding + vector search。错配工具会让”长期记忆”变成”长期噪声”。</p>
+<hr>
+<h2 id="9-SSE-在前后端之间如何交互？"><a href="#9-SSE-在前后端之间如何交互？" class="headerlink" title="9. SSE 在前后端之间如何交互？"></a>9. SSE 在前后端之间如何交互？</h2><p>SSE（Server-Sent Events）是 W3C 定义的标准，本质是 <strong>HTTP 长连接 + 服务端单向推 text/event-stream</strong>。它不是 WebSocket，没有客户端反向推送能力 —— 但对 agent 流式输出场景刚好够用。</p>
+<p>完整的请求/响应长这样：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">Client                                        Server</span><br><span class="line">  │                                              │</span><br><span class="line">  │ ── GET &#x2F;chat&#x2F;stream  Accept:text&#x2F;event-stream│</span><br><span class="line">  │ ───────────────────────────────────────────▶│</span><br><span class="line">  │                                              │</span><br><span class="line">  │ ◀── 200 OK                                   │</span><br><span class="line">  │     Content-Type: text&#x2F;event-stream          │</span><br><span class="line">  │     Cache-Control: no-cache                  │</span><br><span class="line">  │     Connection: keep-alive                   │</span><br><span class="line">  │     X-Accel-Buffering: no   ← 关 Nginx 缓冲│</span><br><span class="line">  │     Access-Control-Allow-Origin: ...         │</span><br><span class="line">  │                                              │</span><br><span class="line">  │ ◀── event: RunStarted\ndata: &#123;...&#125;\n\n      │</span><br><span class="line">  │ ◀── event: TextMessageStart\ndata: &#123;...&#125;\n\n│</span><br><span class="line">  │ ◀── event: TextMessageContent\ndata:&#123;...&#125;\n\n</span><br><span class="line">  │ ◀── event: TextMessageContent\ndata:&#123;...&#125;\n\n</span><br><span class="line">  │ ◀── ...                                      │</span><br><span class="line">  │ ◀── :heartbeat\n\n   ← 注释行做心跳         │</span><br><span class="line">  │ ◀── event: ToolCallStart\ndata: &#123;...&#125;\n\n   │</span><br><span class="line">  │ ◀── event: ToolCallEnd\ndata: &#123;...&#125;\n\n     │</span><br><span class="line">  │ ◀── event: RunFinished\ndata: &#123;...&#125;\n\n     │</span><br><span class="line">  │                                              │</span><br><span class="line">  │ ── (close TCP)                               │</span><br></pre></td></tr></table></figure>
+
+<p>要让这条链路在生产稳定，下面这些不是”建议”，是<strong>必做</strong>：</p>
+<p><strong>1. 五个 HTTP 头部一个不能少</strong>。</p>
+<ul>
+<li><code>Content-Type: text/event-stream</code> 浏览器才认 SSE 协议</li>
+<li><code>Cache-Control: no-cache</code> 防中间层缓存</li>
+<li><code>Connection: keep-alive</code> 保持长连</li>
+<li><code>X-Accel-Buffering: no</code> 关 Nginx / 反向代理的缓冲（<strong>这条是最容易漏的</strong>，漏了会导致事件全部 buffer 在网关侧，前端几分钟才看到一次推送）</li>
+<li>跨域场景的 <code>Access-Control-Allow-Origin</code> 等 CORS 头部</li>
+</ul>
+<p><strong>2. 每条事件后必须 flush</strong>。Go 用 <code>gin.Context.Writer.Flush()</code>，Node 用 <code>res.flush()</code>，否则 GC 周期前数据卡在用户态 buffer 里。</p>
+<p><strong>3. 心跳不能少</strong>。SSE 的注释行（<code>:heartbeat\n\n</code>）不会触发 onmessage，但会保持 TCP 活跃。<strong>间隔 10~30 秒</strong>。没心跳的话，公司网络的中间盒子可能 60 秒就 RST 你的连接。</p>
+<p><strong>4. 客户端断线服务端必须立刻感知并停 agent</strong>。<code>req.Context().Done()</code> 监听 → 立刻发取消信号到 agent。<strong>不要继续生成事件喂到无人接收的 channel</strong> —— 不光浪费算力，还会泄漏 token 钱。</p>
+<p><strong>5. 服务端主动结束要发显式终止事件</strong>。比如 <code>RunFinished</code> 或 <code>RunError</code>，让前端知道是”正常结束”还是”出错了”，不要靠 TCP 断开来推断。</p>
+<hr>
+<h2 id="10-后端推流通常采用什么数据格式？"><a href="#10-后端推流通常采用什么数据格式？" class="headerlink" title="10. 后端推流通常采用什么数据格式？"></a>10. 后端推流通常采用什么数据格式？</h2><p>SSE 的 wire format 是给定的（<code>event: xxx\ndata: &lt;string&gt;\n\n</code>），但 <code>data</code> 里到底放什么 —— 这一层每家都自己造过轮子，直到 <strong>AG-UI Protocol</strong> 出现把它收敛成行业事实标准。</p>
+<p>AG-UI 推荐的格式是 <strong>JSON 包裹的 type-discriminated event</strong>：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">event: TEXT_MESSAGE_CONTENT</span><br><span class="line">data: &#123;&quot;type&quot;:&quot;TEXT_MESSAGE_CONTENT&quot;,&quot;timestamp&quot;:1715251200000,&quot;messageId&quot;:&quot;msg_42&quot;,&quot;delta&quot;:&quot;hello &quot;&#125;</span><br><span class="line"></span><br><span class="line">event: TEXT_MESSAGE_CONTENT</span><br><span class="line">data: &#123;&quot;type&quot;:&quot;TEXT_MESSAGE_CONTENT&quot;,&quot;timestamp&quot;:1715251200300,&quot;messageId&quot;:&quot;msg_42&quot;,&quot;delta&quot;:&quot;world&quot;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>每个 data 都是合法 JSON，对象第一个字段固定是 <code>type</code>，剩下是该 type 专属的 payload。</p>
+<p>为什么这样设计？</p>
+<table>
+<thead>
+<tr>
+<th>设计选择</th>
+<th>原因</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>JSON 而不是 protobuf</strong></td>
+<td>浏览器原生支持，DevTools 直接可读，调试零成本</td>
+</tr>
+<tr>
+<td><strong>type 字段必填</strong></td>
+<td>客户端可以按 type 派发到不同 reducer，不用看 event 行就能 dispatch</td>
+</tr>
+<tr>
+<td><strong>payload 扁平不嵌套</strong></td>
+<td>减少前端取值层级（<code>d.delta</code> vs <code>d.payload.content.delta</code>）</td>
+</tr>
+<tr>
+<td><strong>时间戳服务端打</strong></td>
+<td>按服务端时序排序，避免客户端时钟漂移导致渲染错乱</td>
+</tr>
+<tr>
+<td><strong>delta 而不是 full text</strong></td>
+<td>流式场景每次只推增量，减少带宽</td>
+</tr>
+</tbody></table>
+<p>工程实现上要注意：</p>
+<p><strong>1. 反序列化要按 type 路由到对应的 schema</strong>。后端发的时候是知道 type 和 payload 是配对的，前端拿到 <code>data</code> 后要先读 <code>type</code>，再用对应的 schema validate / 解析。<strong>不要用一个大 union schema 解所有事件</strong>，会把字段污染。</p>
+<p><strong>2. delta 一定要有 messageId</strong>。多消息并发流的场景，必须靠 messageId 把 delta 拼回到对应的 message —— 不能假设 delta 顺序就能还原。</p>
+<p><strong>3. 大 payload（图像 / 文件 / 长文本）走外部存储 + URL</strong>。SSE 一条 data 行实际上没有大小硬限制，但单条几 MB 会拖慢 flush，也会让浏览器 EventSource 反序列化卡顿。<strong>JSON 里只放 URL，资源走 CDN</strong>。</p>
+<p><strong>4. 二进制需求场景退到 WebSocket</strong>。如果你需要发音频流 / 帧数据这种二进制，硬塞进 SSE 用 base64 是糟糕的选择 —— 直接换 WebSocket。SSE 是为文本事件设计的。</p>
+<hr>
+<h2 id="11-agent-工具调用时-SSE-事件通常包含哪些字段？"><a href="#11-agent-工具调用时-SSE-事件通常包含哪些字段？" class="headerlink" title="11. agent 工具调用时 SSE 事件通常包含哪些字段？"></a>11. agent 工具调用时 SSE 事件通常包含哪些字段？</h2><p>这是个最具体的问题，正好可以全部对着 AG-UI Protocol 来讲。</p>
+<p>AG-UI 把 agent 的事件分成 <strong>7 大类 30+ 个具体事件</strong>。规范的事件名是 <strong>PascalCase</strong>（<code>RunStarted</code>），但在 SSE 序列化时通常转成 <strong>SNAKE_CASE</strong>（<code>RUN_STARTED</code>），两种写法你在不同 SDK / 文档里都会见到。</p>
+<table>
+<thead>
+<tr>
+<th>大类</th>
+<th>事件</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Lifecycle</strong></td>
+<td>RunStarted / RunFinished / RunError / StepStarted / StepFinished</td>
+<td>控制 run 和 step 的生命周期边界</td>
+</tr>
+<tr>
+<td><strong>Text Message</strong></td>
+<td>TextMessageStart / Content / End / Chunk</td>
+<td>文本流式输出的 start/delta/end 三段式</td>
+</tr>
+<tr>
+<td><strong>Tool Call</strong></td>
+<td>ToolCallStart / Args / End / Result / Chunk</td>
+<td>工具调用的全流程事件</td>
+</tr>
+<tr>
+<td><strong>State</strong></td>
+<td>StateSnapshot / StateDelta / MessagesSnapshot</td>
+<td>共享状态同步（RFC 6902 JSON Patch）</td>
+</tr>
+<tr>
+<td><strong>Activity</strong></td>
+<td>ActivitySnapshot / ActivityDelta</td>
+<td>结构化活动消息（PLAN / SEARCH 等）</td>
+</tr>
+<tr>
+<td><strong>Reasoning</strong></td>
+<td>ReasoningStart / End / MessageStart / Content / End / Chunk / EncryptedValue</td>
+<td>思考过程的流式（OpenAI o1 / Claude thinking）</td>
+</tr>
+<tr>
+<td><strong>Special</strong></td>
+<td>Raw / Custom / MetaEvent</td>
+<td>透传任意自定义事件</td>
+</tr>
+</tbody></table>
+<h3 id="BaseEvent：所有事件都继承的三个字段"><a href="#BaseEvent：所有事件都继承的三个字段" class="headerlink" title="BaseEvent：所有事件都继承的三个字段"></a>BaseEvent：所有事件都继承的三个字段</h3><p>不管哪个具体事件，序列化出来都至少包含这三个字段：</p>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>type</code></td>
+<td>string</td>
+<td>具体事件类型，例如 <code>&quot;RUN_STARTED&quot;</code></td>
+</tr>
+<tr>
+<td><code>timestamp</code></td>
+<td>number?</td>
+<td>服务端打的毫秒时间戳，可选</td>
+</tr>
+<tr>
+<td><code>rawEvent</code></td>
+<td>any?</td>
+<td>如果是从外部协议转换来的，原始数据可挂在这里，可选</td>
+</tr>
+</tbody></table>
+<p>后面具体事件的字段都是在 BaseEvent 之上加的。</p>
+<h3 id="Lifecycle-五件套：管-agent-跑完整轮次的边界"><a href="#Lifecycle-五件套：管-agent-跑完整轮次的边界" class="headerlink" title="Lifecycle 五件套：管 agent 跑完整轮次的边界"></a>Lifecycle 五件套：管 agent 跑完整轮次的边界</h3><p>这是整个协议的骨架。**<code>RunStarted</code> 开场、中间一堆事件、<code>RunFinished</code> / <code>RunError</code> 收尾**。如果 agent 中间分成多个步骤（planner → executor → reporter 这种），用 <code>StepStarted</code> / <code>StepFinished</code> 标边界。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; 1. 一次 run 开始</span><br><span class="line">&#123;</span><br><span class="line">  &quot;type&quot;: &quot;RUN_STARTED&quot;,</span><br><span class="line">  &quot;timestamp&quot;: 1715251200000,</span><br><span class="line">  &quot;threadId&quot;: &quot;thread_abc&quot;,         &#x2F;&#x2F; 会话&#x2F;线程 ID（跨多个 run 复用）</span><br><span class="line">  &quot;runId&quot;: &quot;run_001&quot;,               &#x2F;&#x2F; 本次 run 的唯一 ID</span><br><span class="line">  &quot;parentRunId&quot;: &quot;run_000&quot;,         &#x2F;&#x2F; 可选；用于分支 &#x2F; 时间旅行场景指向父 run</span><br><span class="line">  &quot;input&quot;: &#123; &quot;messages&quot;: [...] &#125;    &#x2F;&#x2F; 可选；本次 run 的完整输入</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 2. 一个具名子步骤开始（如 &quot;planning&quot; &#x2F; &quot;executing&quot; &#x2F; &quot;reporting&quot;）</span><br><span class="line">&#123;</span><br><span class="line">  &quot;type&quot;: &quot;STEP_STARTED&quot;,</span><br><span class="line">  &quot;timestamp&quot;: 1715251200100,</span><br><span class="line">  &quot;stepName&quot;: &quot;planning&quot;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 3. 子步骤结束（必须和某个 STEP_STARTED 配对）</span><br><span class="line">&#123;</span><br><span class="line">  &quot;type&quot;: &quot;STEP_FINISHED&quot;,</span><br><span class="line">  &quot;timestamp&quot;: 1715251205000,</span><br><span class="line">  &quot;stepName&quot;: &quot;planning&quot;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 4. run 正常结束</span><br><span class="line">&#123;</span><br><span class="line">  &quot;type&quot;: &quot;RUN_FINISHED&quot;,</span><br><span class="line">  &quot;timestamp&quot;: 1715251220000,</span><br><span class="line">  &quot;result&quot;: &#123; &quot;summary&quot;: &quot;...&quot; &#125;,             &#x2F;&#x2F; 可选；放到事件根，向后兼容</span><br><span class="line">  &quot;outcome&quot;: &#123;                                 &#x2F;&#x2F; 可选；新版语义化结果</span><br><span class="line">    &quot;type&quot;: &quot;success&quot;                          &#x2F;&#x2F;   &quot;success&quot; 或 &quot;interrupt&quot;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 4&#39;. 如果 run 是被中断而不是跑完，outcome 长这样</span><br><span class="line">&#123;</span><br><span class="line">  &quot;type&quot;: &quot;RUN_FINISHED&quot;,</span><br><span class="line">  &quot;timestamp&quot;: 1715251220000,</span><br><span class="line">  &quot;outcome&quot;: &#123;</span><br><span class="line">    &quot;type&quot;: &quot;interrupt&quot;,</span><br><span class="line">    &quot;interrupts&quot;: [                            &#x2F;&#x2F; 中断详情，例如等待用户确认</span><br><span class="line">      &#123; &quot;kind&quot;: &quot;user_confirm&quot;, &quot;data&quot;: &#123;...&#125; &#125;</span><br><span class="line">    ]</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 5. run 出现不可恢复错误</span><br><span class="line">&#123;</span><br><span class="line">  &quot;type&quot;: &quot;RUN_ERROR&quot;,</span><br><span class="line">  &quot;timestamp&quot;: 1715251210000,</span><br><span class="line">  &quot;message&quot;: &quot;model timeout after 30s&quot;,</span><br><span class="line">  &quot;code&quot;: &quot;MODEL_TIMEOUT&quot;                      &#x2F;&#x2F; 可选错误码</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>工程上几个反复踩过的点：</p>
+<ul>
+<li><strong><code>threadId</code> 和 <code>runId</code> 一定要分清</strong>。<code>threadId</code> 跨多轮对话复用（约等于 session），<code>runId</code> 是单次 agent 运行（一个 thread 通常会有多个 run）。前端要把同一个 thread 下的 run 拼成完整对话。</li>
+<li><strong><code>parentRunId</code> 是树状结构的钥匙</strong>。子 agent 调用 / 重试 / 时间旅行回退都靠它建立 run 之间的父子关系。</li>
+<li><strong><code>RunFinished</code> 的 <code>outcome</code> 是新版字段</strong>，老版本只有顶层 <code>result</code>。<strong>实现端要兼容两种</strong>：旧 producer 不发 <code>outcome</code>，新 consumer 不能假设它一定存在。</li>
+<li><strong><code>StepStarted</code> / <code>StepFinished</code> 必须严格配对</strong>。前端的 step 进度条、loading 态全靠它，缺一个就错乱。</li>
+</ul>
+<h3 id="Text-Message-四件套：流式文本输出"><a href="#Text-Message-四件套：流式文本输出" class="headerlink" title="Text Message 四件套：流式文本输出"></a>Text Message 四件套：流式文本输出</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; 1. 开始一条流式 message</span><br><span class="line">&#123;</span><br><span class="line">  &quot;type&quot;: &quot;TEXT_MESSAGE_START&quot;,</span><br><span class="line">  &quot;timestamp&quot;: 1715251200000,</span><br><span class="line">  &quot;messageId&quot;: &quot;msg_42&quot;,</span><br><span class="line">  &quot;role&quot;: &quot;assistant&quot;        &#x2F;&#x2F; 可选: developer &#x2F; system &#x2F; assistant &#x2F; user &#x2F; tool</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 2. 文本片段（可以发很多次）</span><br><span class="line">&#123;</span><br><span class="line">  &quot;type&quot;: &quot;TEXT_MESSAGE_CONTENT&quot;,</span><br><span class="line">  &quot;timestamp&quot;: 1715251200100,</span><br><span class="line">  &quot;messageId&quot;: &quot;msg_42&quot;,</span><br><span class="line">  &quot;delta&quot;: &quot;hello &quot;          &#x2F;&#x2F; 必须非空</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 3. message 结束</span><br><span class="line">&#123;</span><br><span class="line">  &quot;type&quot;: &quot;TEXT_MESSAGE_END&quot;,</span><br><span class="line">  &quot;timestamp&quot;: 1715251200500,</span><br><span class="line">  &quot;messageId&quot;: &quot;msg_42&quot;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 4. 简化版：一次发送 chunk，自动展开为 START → CONTENT → END</span><br><span class="line">&#123;</span><br><span class="line">  &quot;type&quot;: &quot;TEXT_MESSAGE_CHUNK&quot;,</span><br><span class="line">  &quot;timestamp&quot;: 1715251200000,</span><br><span class="line">  &quot;messageId&quot;: &quot;msg_42&quot;,     &#x2F;&#x2F; 第一个 chunk 必填</span><br><span class="line">  &quot;role&quot;: &quot;assistant&quot;,        &#x2F;&#x2F; 第一个 chunk 必填</span><br><span class="line">  &quot;delta&quot;: &quot;hello world&quot;      &#x2F;&#x2F; 可选；空字符串关闭 message</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="Tool-Call-五件套：本节的核心"><a href="#Tool-Call-五件套：本节的核心" class="headerlink" title="Tool Call 五件套：本节的核心"></a>Tool Call 五件套：本节的核心</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; 1. 开始一次工具调用</span><br><span class="line">&#123;</span><br><span class="line">  &quot;type&quot;: &quot;TOOL_CALL_START&quot;,</span><br><span class="line">  &quot;timestamp&quot;: 1715251200000,</span><br><span class="line">  &quot;toolCallId&quot;: &quot;call_abc123&quot;,        &#x2F;&#x2F; 全局唯一</span><br><span class="line">  &quot;toolCallName&quot;: &quot;search_web&quot;,       &#x2F;&#x2F; 工具名</span><br><span class="line">  &quot;parentMessageId&quot;: &quot;msg_42&quot;         &#x2F;&#x2F; 可选；这个 tool call 挂在哪条 message 上</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 2. 参数流式（参数较长时按片段流出）</span><br><span class="line">&#123;</span><br><span class="line">  &quot;type&quot;: &quot;TOOL_CALL_ARGS&quot;,</span><br><span class="line">  &quot;timestamp&quot;: 1715251200100,</span><br><span class="line">  &quot;toolCallId&quot;: &quot;call_abc123&quot;,</span><br><span class="line">  &quot;delta&quot;: &quot;&#123;\&quot;query\&quot;:\&quot;agent arch&quot;  &#x2F;&#x2F; 参数 JSON 片段，前端拼接</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 3. 参数发送完毕</span><br><span class="line">&#123;</span><br><span class="line">  &quot;type&quot;: &quot;TOOL_CALL_END&quot;,</span><br><span class="line">  &quot;timestamp&quot;: 1715251200200,</span><br><span class="line">  &quot;toolCallId&quot;: &quot;call_abc123&quot;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 4. 工具结果回灌</span><br><span class="line">&#123;</span><br><span class="line">  &quot;type&quot;: &quot;TOOL_CALL_RESULT&quot;,</span><br><span class="line">  &quot;timestamp&quot;: 1715251205000,</span><br><span class="line">  &quot;messageId&quot;: &quot;msg_43&quot;,              &#x2F;&#x2F; 工具响应自己也是一条 message</span><br><span class="line">  &quot;toolCallId&quot;: &quot;call_abc123&quot;,</span><br><span class="line">  &quot;content&quot;: &quot;[&#123;\&quot;title\&quot;:\&quot;...\&quot;&#125;]&quot;, &#x2F;&#x2F; 结果，字符串或序列化后的结构化数据</span><br><span class="line">  &quot;role&quot;: &quot;tool&quot;                      &#x2F;&#x2F; 可选；OpenAI &#x2F; Anthropic 协议的 role</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 5. 简化版：一次发送 chunk，自动展开为 START → ARGS → END</span><br><span class="line">&#123;</span><br><span class="line">  &quot;type&quot;: &quot;TOOL_CALL_CHUNK&quot;,</span><br><span class="line">  &quot;timestamp&quot;: 1715251200000,</span><br><span class="line">  &quot;toolCallId&quot;: &quot;call_abc123&quot;,        &#x2F;&#x2F; 第一个 chunk 必填</span><br><span class="line">  &quot;toolCallName&quot;: &quot;search_web&quot;,       &#x2F;&#x2F; 第一个 chunk 必填</span><br><span class="line">  &quot;parentMessageId&quot;: &quot;msg_42&quot;,        &#x2F;&#x2F; 可选</span><br><span class="line">  &quot;delta&quot;: &quot;&#123;\&quot;query\&quot;:\&quot;...\&quot;&#125;&quot;      &#x2F;&#x2F; 可选参数片段</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="State-三件套：共享状态同步"><a href="#State-三件套：共享状态同步" class="headerlink" title="State 三件套：共享状态同步"></a>State 三件套：共享状态同步</h3><p>很多 agent 需要前后端共享一份”工作区状态”（当前打开的文件、已选中的元素、表单数据……）。AG-UI 用 <strong>快照 + 增量补丁</strong> 的方式同步：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; 1. 全量快照：替换整个 state</span><br><span class="line">&#123;</span><br><span class="line">  &quot;type&quot;: &quot;STATE_SNAPSHOT&quot;,</span><br><span class="line">  &quot;timestamp&quot;: 1715251200000,</span><br><span class="line">  &quot;snapshot&quot;: &#123; &quot;openFile&quot;: &quot;main.go&quot;, &quot;cursor&quot;: 42 &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 2. 增量更新：RFC 6902 JSON Patch</span><br><span class="line">&#123;</span><br><span class="line">  &quot;type&quot;: &quot;STATE_DELTA&quot;,</span><br><span class="line">  &quot;timestamp&quot;: 1715251200500,</span><br><span class="line">  &quot;delta&quot;: [</span><br><span class="line">    &#123; &quot;op&quot;: &quot;replace&quot;, &quot;path&quot;: &quot;&#x2F;cursor&quot;, &quot;value&quot;: 100 &#125;,</span><br><span class="line">    &#123; &quot;op&quot;: &quot;add&quot;,     &quot;path&quot;: &quot;&#x2F;selection&quot;, &quot;value&quot;: [10, 20] &#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 3. 完整 message 历史快照（重连场景常用）</span><br><span class="line">&#123;</span><br><span class="line">  &quot;type&quot;: &quot;MESSAGES_SNAPSHOT&quot;,</span><br><span class="line">  &quot;timestamp&quot;: 1715251200000,</span><br><span class="line">  &quot;messages&quot;: [ &#123;...&#125;, &#123;...&#125;, &#123;...&#125; ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Activity-两件套：结构化活动消息"><a href="#Activity-两件套：结构化活动消息" class="headerlink" title="Activity 两件套：结构化活动消息"></a>Activity 两件套：结构化活动消息</h3><p>Activity 是比纯文本更结构化的”过程展示”，比如 planner 的计划、search agent 的搜索结果列表 —— 前端要按特定 UI 模板渲染。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; 1. 整个 activity 的完整快照</span><br><span class="line">&#123;</span><br><span class="line">  &quot;type&quot;: &quot;ACTIVITY_SNAPSHOT&quot;,</span><br><span class="line">  &quot;timestamp&quot;: 1715251200000,</span><br><span class="line">  &quot;messageId&quot;: &quot;act_01&quot;,</span><br><span class="line">  &quot;activityType&quot;: &quot;PLAN&quot;,                       &#x2F;&#x2F; 判别符：PLAN &#x2F; SEARCH &#x2F; ...</span><br><span class="line">  &quot;content&quot;: &#123;</span><br><span class="line">    &quot;steps&quot;: [</span><br><span class="line">      &#123; &quot;id&quot;: 1, &quot;title&quot;: &quot;...&quot;, &quot;status&quot;: &quot;pending&quot; &#125;,</span><br><span class="line">      &#123; &quot;id&quot;: 2, &quot;title&quot;: &quot;...&quot;, &quot;status&quot;: &quot;pending&quot; &#125;</span><br><span class="line">    ]</span><br><span class="line">  &#125;,</span><br><span class="line">  &quot;replace&quot;: true                               &#x2F;&#x2F; 可选；默认 true</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 2. activity 增量更新</span><br><span class="line">&#123;</span><br><span class="line">  &quot;type&quot;: &quot;ACTIVITY_DELTA&quot;,</span><br><span class="line">  &quot;timestamp&quot;: 1715251200500,</span><br><span class="line">  &quot;messageId&quot;: &quot;act_01&quot;,</span><br><span class="line">  &quot;activityType&quot;: &quot;PLAN&quot;,</span><br><span class="line">  &quot;patch&quot;: [</span><br><span class="line">    &#123; &quot;op&quot;: &quot;replace&quot;, &quot;path&quot;: &quot;&#x2F;steps&#x2F;0&#x2F;status&quot;, &quot;value&quot;: &quot;done&quot; &#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Reasoning-七件套：思考过程的流式"><a href="#Reasoning-七件套：思考过程的流式" class="headerlink" title="Reasoning 七件套：思考过程的流式"></a>Reasoning 七件套：思考过程的流式</h3><p>针对 OpenAI o1 / Claude thinking / DeepSeek-R1 这种”推理模型”的内心独白，AG-UI 给了独立的事件通道。<strong>和 TextMessage 严格分开</strong>，前端通常折叠展示。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; 1. 开始一段推理上下文</span><br><span class="line">&#123; &quot;type&quot;: &quot;REASONING_START&quot;, &quot;timestamp&quot;: ..., &quot;messageId&quot;: &quot;rsn_01&quot; &#125;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 2. 开始一条可见的推理消息</span><br><span class="line">&#123; &quot;type&quot;: &quot;REASONING_MESSAGE_START&quot;, &quot;timestamp&quot;: ..., &quot;messageId&quot;: &quot;rsn_msg_01&quot;, &quot;role&quot;: &quot;reasoning&quot; &#125;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 3. 推理内容流式片段</span><br><span class="line">&#123; &quot;type&quot;: &quot;REASONING_MESSAGE_CONTENT&quot;, &quot;timestamp&quot;: ..., &quot;messageId&quot;: &quot;rsn_msg_01&quot;, &quot;delta&quot;: &quot;let me think...&quot; &#125;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 4. 推理消息结束</span><br><span class="line">&#123; &quot;type&quot;: &quot;REASONING_MESSAGE_END&quot;, &quot;timestamp&quot;: ..., &quot;messageId&quot;: &quot;rsn_msg_01&quot; &#125;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 5. 简化 chunk 版（自动管理 message 生命周期，空 delta 关闭 message）</span><br><span class="line">&#123; &quot;type&quot;: &quot;REASONING_MESSAGE_CHUNK&quot;, &quot;timestamp&quot;: ..., &quot;messageId&quot;: &quot;rsn_msg_01&quot;, &quot;delta&quot;: &quot;let me...&quot; &#125;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 6. 整段推理上下文结束</span><br><span class="line">&#123; &quot;type&quot;: &quot;REASONING_END&quot;, &quot;timestamp&quot;: ..., &quot;messageId&quot;: &quot;rsn_01&quot; &#125;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 7. 加密的思维链（O 系列模型不暴露明文 reasoning，只给加密 blob 用于后续轮次）</span><br><span class="line">&#123;</span><br><span class="line">  &quot;type&quot;: &quot;REASONING_ENCRYPTED_VALUE&quot;,</span><br><span class="line">  &quot;timestamp&quot;: 1715251200000,</span><br><span class="line">  &quot;subtype&quot;: &quot;message&quot;,                         &#x2F;&#x2F; &quot;message&quot; 或 &quot;tool-call&quot;</span><br><span class="line">  &quot;entityId&quot;: &quot;msg_42&quot;,</span><br><span class="line">  &quot;encryptedValue&quot;: &quot;&lt;opaque base64 ...&gt;&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Special-三件套：透传-自定义-元事件"><a href="#Special-三件套：透传-自定义-元事件" class="headerlink" title="Special 三件套：透传 / 自定义 / 元事件"></a>Special 三件套：透传 / 自定义 / 元事件</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; Raw —— 把外部系统的事件原样包一层</span><br><span class="line">&#123;</span><br><span class="line">  &quot;type&quot;: &quot;RAW&quot;,</span><br><span class="line">  &quot;timestamp&quot;: ...,</span><br><span class="line">  &quot;event&quot;: &#123; &#x2F;* 原始数据 *&#x2F; &#125;,</span><br><span class="line">  &quot;source&quot;: &quot;openai&quot;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; Custom —— 业务自定义扩展</span><br><span class="line">&#123;</span><br><span class="line">  &quot;type&quot;: &quot;CUSTOM&quot;,</span><br><span class="line">  &quot;timestamp&quot;: ...,</span><br><span class="line">  &quot;name&quot;: &quot;drone_status_changed&quot;,</span><br><span class="line">  &quot;value&quot;: &#123; &quot;battery&quot;: 87 &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; MetaEvent (draft) —— 旁路注解事件，独立于 run</span><br><span class="line">&#123;</span><br><span class="line">  &quot;type&quot;: &quot;META_EVENT&quot;,</span><br><span class="line">  &quot;timestamp&quot;: ...,</span><br><span class="line">  &quot;metaType&quot;: &quot;thumbs_up&quot;,</span><br><span class="line">  &quot;payload&quot;: &#123; &quot;messageId&quot;: &quot;msg_42&quot; &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="已弃用：THINKING"><a href="#已弃用：THINKING" class="headerlink" title="已弃用：THINKING_*"></a>已弃用：THINKING_*</h3><p><code>THINKING_START / THINKING_END / THINKING_TEXT_MESSAGE_START / CONTENT / END</code> 这一组在 1.0.0 里会被移除，全部用 <code>REASONING_*</code> 替代。新代码不要用了；老代码迁移时按名字一一对应即可。</p>
+<hr>
+<h3 id="实现里最容易出问题的几个字段"><a href="#实现里最容易出问题的几个字段" class="headerlink" title="实现里最容易出问题的几个字段"></a>实现里最容易出问题的几个字段</h3><p><strong>1. <code>toolCallId</code> 是配对锚点</strong>。<code>START → ARGS → END → RESULT</code> 全部靠它配对。<strong>前端必须把它当 key 维护一个状态机</strong>，不能假设事件按顺序到达 —— 网络抖动 / 多 tool 并行都会乱序。</p>
+<p><strong>2. <code>messageId</code> / <code>threadId</code> / <code>runId</code> 三层 ID 别混</strong>。<code>messageId</code> 是单条消息（assistant 回复 / tool result）；<code>runId</code> 是一次 agent 运行（可能包含多条 message）；<code>threadId</code> 是会话（包含多个 run）。<strong>前端必须按这三层维度建索引</strong>，否则多 run 并发时会渲染串台。</p>
+<p><strong>3. <code>parentMessageId</code> 让 tool call 挂在正确的 message 上</strong>。一个 assistant message 可能并行发出多个 tool call，前端渲染需要”在这条 assistant message 下面挂这些 tool call”，靠 parentMessageId 串。</p>
+<p><strong>4. <code>delta</code> 的拼接要 idempotent</strong>。重连场景下可能同一个 delta 被重发，前端应该按 <code>(messageId/toolCallId, sequence)</code> 去重，不能简单 append。</p>
+<p><strong>5. 错误事件的”补偿性”（Paired Events Compensation）</strong>。这是 AG-UI 写在规范里的硬要求 —— 任何 <code>*_START</code> 事件<strong>必须</strong>有对应的 <code>*_END</code> 或显式失败收尾。如果 <code>TOOL_CALL_START</code> 发出去了但工具失败，<strong>必须</strong>发 <code>TOOL_CALL_END</code> + <code>TOOL_CALL_RESULT(error)</code>，或者发一个 <code>RUN_ERROR</code> 把整个 run 结束掉。否则前端会一直 loading。</p>
+<p><strong>6. Reasoning 事件要单独通道渲染</strong>。<code>REASONING_*</code> 和 <code>TEXT_MESSAGE_*</code> 不要混。reasoning 是模型的”内心独白”，前端通常折叠展示；text message 是给用户的”正式回答”，要主区域展示。混了的话样式和折叠逻辑都会出问题。</p>
+<p><strong>7. <code>RUN_FINISHED</code> 的两种 outcome 都要处理</strong>。<code>outcome.type === &quot;success&quot;</code> 是正常结束；<code>outcome.type === &quot;interrupt&quot;</code> 是 agent 主动暂停等用户输入（典型场景：HITL 二次确认）。前端在 <code>interrupt</code> 下不该显示”已完成”，而要显示”等你确认”。</p>
+<p><strong>8. State / Activity 的 JSON Patch 必须严格按 RFC 6902</strong>。简化自创补丁格式 = 跨实现互不兼容。直接用现成的 JSON Patch 库（JS 用 <code>fast-json-patch</code>，Go 用 <code>evanphx/json-patch</code>）。</p>
+<hr>
+<h2 id="12-结语：好的-agent-后端是做减法做出来的"><a href="#12-结语：好的-agent-后端是做减法做出来的" class="headerlink" title="12. 结语：好的 agent 后端是做减法做出来的"></a>12. 结语：好的 agent 后端是做减法做出来的</h2><p>回到开头那 11 个问题。</p>
+<p>每一个单独看，都不是新东西。多模型、热更、状态机、SSE —— 这些技术原语在 web 后端、游戏后端、IoT 平台里都见过。但放在 agent 这个场景下，它们有一个共同的特性：<strong>复杂度会指数级累加</strong>。</p>
+<p>多模型 × 多租户 × 多状态 × 多 tool × 多 agent 类型 × 多 session 并发 × 多 turn 长度 …… 任意两两组合都能新增一类边界 case。如果你不主动做减法，半年后会得到一个谁都不敢动的怪物。</p>
+<p>我自己的经验，这 11 个问题之所以”真”，是因为它们对应了 11 处必须做出<strong>克制</strong>的设计选择：</p>
+<table>
+<thead>
+<tr>
+<th>问题</th>
+<th>克制点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>多模型</td>
+<td>抽象只到 ChatModel，不要造一个万能 LLM 神器</td>
+</tr>
+<tr>
+<td>热更新</td>
+<td>只热更配置，不热更运行中的 turn</td>
+</tr>
+<tr>
+<td>能力门控</td>
+<td>默认拒绝写工具，默认允许读工具</td>
+</tr>
+<tr>
+<td>状态机</td>
+<td>三层独立，不要笛卡尔积</td>
+</tr>
+<tr>
+<td>多租户</td>
+<td>per-Run 实例化，不 per-User 也不 per-Request</td>
+</tr>
+<tr>
+<td>Session 绑定</td>
+<td>单一信任源 + 三道关</td>
+</tr>
+<tr>
+<td>工具调用链路</td>
+<td>控制器尽早返回，agent 用独立 ctx</td>
+</tr>
+<tr>
+<td>记忆</td>
+<td>短期滑窗 + 长期摘要 / 检索，分清楚</td>
+</tr>
+<tr>
+<td>SSE</td>
+<td>五个头一个不能漏，flush + 心跳 + 断线感知</td>
+</tr>
+<tr>
+<td>推流格式</td>
+<td>JSON + type 字段，对齐 AG-UI</td>
+</tr>
+<tr>
+<td>Tool 事件</td>
+<td>toolCallId 串全程，paired events 必须补偿</td>
+</tr>
+</tbody></table>
+<p>每一项都是”我可以做更复杂的，但我选择不做”。这种克制不是偷懒，是对系统长期可维护性的负责。</p>
+<p>agent 后端正在从”demo 阶段”快速进入”工业阶段”，<strong>AG-UI Protocol</strong> 这种标准化的出现就是信号 —— 大家终于愿意承认前后端协议没必要每家自创一套了。这是好事。下一波要标准化的应该是工具协议（MCP 已经在路上）和 agent 间通信协议（A2A 也在路上）。等这几个生态都成熟，今天讨论的很多”自家解法”会被规范替换掉。</p>
+<p>但在那之前，把这 11 个问题想清楚，是把 agent 跑稳的最低成本。</p>
+<hr>
+<blockquote>
+<p>参考资料</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://docs.ag-ui.com/">AG-UI Protocol 官方文档</a> — 事件类型、payload schema、客户端实现</li>
+<li><a target="_blank" rel="noopener" href="https://html.spec.whatwg.org/multipage/server-sent-events.html">Server-Sent Events 标准</a> — W3C 规范</li>
+<li><a target="_blank" rel="noopener" href="https://platform.openai.com/docs/guides/function-calling">OpenAI Function Calling 规范</a> — tool call 协议</li>
+<li><a target="_blank" rel="noopener" href="https://docs.anthropic.com/en/docs/build-with-claude/tool-use">Anthropic Tool Use 规范</a> — Claude 的工具调用语义</li>
+<li><a target="_blank" rel="noopener" href="https://modelcontextprotocol.io/">Model Context Protocol (MCP)</a> — 工具协议标准化</li>
+<li><a href="../25.Agent-CLI-%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%E4%B8%8E%E4%B8%AD%E6%96%AD%E6%A8%A1%E5%9E%8B/Agent-CLI-%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%E4%B8%8E%E4%B8%AD%E6%96%AD%E6%A8%A1%E5%9E%8B.md">本系列 25 篇 · Agent CLI 事件循环与中断模型</a></li>
+<li><a href="../11.Hermes-Agent%20%E8%AE%B0%E5%BF%86%E7%B3%BB%E7%BB%9F%E8%AF%A6%E8%A7%A3/">本系列 11 篇 · Hermes Agent 记忆系统详解</a></li>
+<li><a href="../15.Agent%E8%AE%B0%E5%BF%86%E6%A8%A1%E5%9D%97%E5%AE%9E%E8%B7%B5%E6%8C%87%E5%8D%97/">本系列 15 篇 · Agent 记忆模块实践指南</a></li>
+</ul>
+</blockquote>
+</div>
+    <aside class="post-rail">
+      <span class="post-rail__line"></span>
+      <span>LESLIE / WRITING</span>
+    </aside>
+  </div>
+
+  <footer class="post-footer shell">
+    <div><h2>如果这篇文章帮到了你，<br>也许下一篇会更有意思。</h2></div>
+    <a class="button button--primary" href="/writing/">继续阅读 →</a>
+  </footer>
+</article>
+</main>
+    <footer class="site-footer">
+  <div class="footer-grid">
+    <div>
+      <p class="footer-kicker">Leslie Zhang</p>
+      <p class="footer-statement">流水不争先，<br>争的是滔滔不绝。</p>
+    </div>
+    <div class="footer-links">
+      <a href="https://github.com/leslieAIbin" target="_blank" rel="noreferrer">GitHub ↗</a>
+      <a href="https://www.instagram.com/leslieaibin/" target="_blank" rel="noreferrer">Instagram ↗</a>
+      <button type="button" data-wechat-open>微信 / WeChat</button>
+      <a href="mailto:aibinzhangleslie@gmail.com">Email ↗</a>
+      <a href="/atom.xml">RSS ↗</a>
+    </div>
+    <div class="footer-meta">
+      <span>© 2026 Leslie Zhang</span>
+      <span>Writing, research and working systems.</span>
+    </div>
+  </div>
+</footer>
+
+    <dialog class="ask-dialog" id="ask-leslie" aria-labelledby="ask-title">
+  <div class="ask-dialog__shell">
+    <div class="ask-dialog__topbar">
+      <div>
+        <h2 id="ask-title">Ask Leslie</h2>
+      </div>
+      <button class="icon-button" type="button" data-ask-close aria-label="关闭">×</button>
+    </div>
+    <p class="ask-dialog__intro">从本站公开文章中寻找答案。当前版本在浏览器本地检索，不上传问题，也不会编造不存在的经历。</p>
+    <form class="ask-form" data-ask-form>
+      <label class="sr-only" for="ask-query">输入问题</label>
+      <textarea id="ask-query" rows="2" placeholder="例如：Agent Runtime 应该怎么设计？" data-ask-input></textarea>
+      <button type="submit">检索知识库 <span aria-hidden="true">↗</span></button>
+    </form>
+    <div class="ask-suggestions" aria-label="推荐问题">
+      
+        <button type="button" data-ask-suggestion="Agent Runtime 应该怎么设计？">Agent Runtime 应该怎么设计？</button>
+      
+        <button type="button" data-ask-suggestion="如何让 AI 操控真实世界设备？">如何让 AI 操控真实世界设备？</button>
+      
+        <button type="button" data-ask-suggestion="Leslie 最近在研究什么？">Leslie 最近在研究什么？</button>
+      
+    </div>
+    <div class="ask-results" data-ask-results aria-live="polite">
+      <div class="ask-empty">
+        <p>输入一个问题，我会把你带到 Leslie 写过的相关内容。</p>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+    <dialog class="wechat-dialog" id="wechat-leslie" aria-labelledby="wechat-title">
+  <div class="wechat-dialog__shell">
+    <header>
+      <div>
+        <p class="section-label">WeChat</p>
+        <h2 id="wechat-title">微信联系</h2>
+      </div>
+      <button class="icon-button" type="button" data-wechat-close aria-label="关闭微信二维码">×</button>
+    </header>
+    <img src="/images/contact/wechat-leslie.png" alt="Leslie Zhang 的微信二维码" loading="lazy">
+    <p>扫码添加 Leslie，建议备注你的名字与来意。</p>
+  </div>
+</dialog>
+
+    <script>window.ORBITAL_ROOT = '/';</script>
+    <script src="/js/orbital.js" defer></script>
+  </body>
+</html>

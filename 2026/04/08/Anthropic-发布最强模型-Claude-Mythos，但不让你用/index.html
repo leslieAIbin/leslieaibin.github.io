@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+  <head>
+
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#050b18">
+<meta name="color-scheme" content="dark light">
+<title>Anthropic 发布最强模型 Claude Mythos，但不让你用 | Leslie Zhang</title>
+<meta name="description" content="Anthropic 发布了跑分断崖式领先的新模型 Claude Mythos Preview，但它不会上线 claude.ai，也不会开放 API。原因是这个模型的网络安全攻防能力太强了——强到能自主发现并利用零日漏洞。取而代之的是 Project Glasswing 计划：只借给苹果、微软、亚马逊等 12 家巨头用来找漏洞。">
+<meta name="author" content="Leslie Zhang">
+<link rel="canonical" href="https://leslieaibin.github.io/2026/04/08/Anthropic-%E5%8F%91%E5%B8%83%E6%9C%80%E5%BC%BA%E6%A8%A1%E5%9E%8B-Claude-Mythos%EF%BC%8C%E4%BD%86%E4%B8%8D%E8%AE%A9%E4%BD%A0%E7%94%A8/">
+<link rel="icon" href="/imgs/01.jpg">
+<link rel="alternate" type="application/atom+xml" title="Leslie Zhang" href="/atom.xml">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Anthropic 发布最强模型 Claude Mythos，但不让你用 | Leslie Zhang">
+<meta property="og:description" content="Anthropic 发布了跑分断崖式领先的新模型 Claude Mythos Preview，但它不会上线 claude.ai，也不会开放 API。原因是这个模型的网络安全攻防能力太强了——强到能自主发现并利用零日漏洞。取而代之的是 Project Glasswing 计划：只借给苹果、微软、亚马逊等 12 家巨头用来找漏洞。">
+<meta property="og:url" content="https://leslieaibin.github.io/2026/04/08/Anthropic-%E5%8F%91%E5%B8%83%E6%9C%80%E5%BC%BA%E6%A8%A1%E5%9E%8B-Claude-Mythos%EF%BC%8C%E4%BD%86%E4%B8%8D%E8%AE%A9%E4%BD%A0%E7%94%A8/">
+<meta property="og:image" content="https://leslieaibin.github.io/2026/04/08/Anthropic-%E5%8F%91%E5%B8%83%E6%9C%80%E5%BC%BA%E6%A8%A1%E5%9E%8B-Claude-Mythos%EF%BC%8C%E4%BD%86%E4%B8%8D%E8%AE%A9%E4%BD%A0%E7%94%A8/01-vulnerability-scan.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Anthropic 发布最强模型 Claude Mythos，但不让你用 | Leslie Zhang">
+<meta name="twitter:description" content="Anthropic 发布了跑分断崖式领先的新模型 Claude Mythos Preview，但它不会上线 claude.ai，也不会开放 API。原因是这个模型的网络安全攻防能力太强了——强到能自主发现并利用零日漏洞。取而代之的是 Project Glasswing 计划：只借给苹果、微软、亚马逊等 12 家巨头用来找漏洞。">
+<meta name="twitter:image" content="https://leslieaibin.github.io/2026/04/08/Anthropic-%E5%8F%91%E5%B8%83%E6%9C%80%E5%BC%BA%E6%A8%A1%E5%9E%8B-Claude-Mythos%EF%BC%8C%E4%BD%86%E4%B8%8D%E8%AE%A9%E4%BD%A0%E7%94%A8/01-vulnerability-scan.png">
+<script>
+  (function () {
+    var saved = localStorage.getItem('orbital-theme');
+    var theme = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    document.documentElement.dataset.theme = theme;
+  })();
+</script>
+<link rel="stylesheet" href="/css/orbital.css">
+<meta name="generator" content="Hexo 5.2.0"></head>
+  <body class="page-post">
+    <a class="skip-link" href="#main-content">跳到主要内容</a>
+    <div class="reading-progress" data-reading-progress></div>
+    <header class="site-header" data-header>
+  <div class="nav-shell">
+    <a class="brand" href="/" aria-label="返回首页">
+      <span class="brand-mark" aria-hidden="true"><img src="/images/brand/leslie-mythos-avatar.webp" alt="" width="512" height="512"></span>
+      <span class="brand-copy">
+        <strong>LESLIE</strong>
+        <small>REAL-WORLD AGENTS</small>
+      </span>
+    </a>
+
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav" data-nav-toggle>
+      <span></span><span></span>
+      <span class="sr-only">打开导航</span>
+    </button>
+
+    <nav class="main-nav" id="main-nav" aria-label="主导航" data-nav>
+      
+        <a href="/" class="">首页</a>
+      
+        <a href="/writing/" class="">写作</a>
+      
+        <a href="/projects/" class="">项目</a>
+      
+        <a href="/about/" class="">关于</a>
+      
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换明暗主题">
+        <span class="theme-toggle__sun" aria-hidden="true">☼</span>
+        <span class="theme-toggle__moon" aria-hidden="true">◐</span>
+      </button>
+      <button class="ask-nav" type="button" data-ask-open>ASK LESLIE</button>
+    </nav>
+  </div>
+</header>
+
+    <main id="main-content"><article class="post-shell">
+  <header class="post-hero shell">
+    <a class="post-back" href="/writing/">← 返回写作</a>
+    <div class="post-hero__meta">
+      <time datetime="2026-04-08">2026 年 04 月 08 日</time>
+      <span>6 分钟阅读</span>
+    </div>
+    <h1>Anthropic 发布最强模型 Claude Mythos，但不让你用</h1>
+    <p class="post-hero__summary">Anthropic 发布了跑分断崖式领先的新模型 Claude Mythos Preview，但它不会上线 claude.ai，也不会开放 API。原因是这个模型的网络安全攻防能力太强了——强到能自主发现并利用零日漏洞。取而代之的是 Project Glasswing 计划：只借给苹果、微软、亚马逊等 12 家巨头用来找漏洞。</p>
+    <div class="chip-row"><a href="/tags/AI/">AI</a><a href="/tags/Anthropic/">Anthropic</a><a href="/tags/Claude/">Claude</a><a href="/tags/%E5%AE%89%E5%85%A8/">安全</a><a href="/tags/%E9%9B%B6%E6%97%A5%E6%BC%8F%E6%B4%9E/">零日漏洞</a></div>
+  </header>
+
+  <div class="post-cover shell"><img src="/2026/04/08/Anthropic-%E5%8F%91%E5%B8%83%E6%9C%80%E5%BC%BA%E6%A8%A1%E5%9E%8B-Claude-Mythos%EF%BC%8C%E4%BD%86%E4%B8%8D%E8%AE%A9%E4%BD%A0%E7%94%A8/01-vulnerability-scan.png" alt="Anthropic 发布最强模型 Claude Mythos，但不让你用"></div>
+
+  <div class="post-layout shell">
+    <aside class="post-toc" aria-label="文章目录">
+      <span class="aside-title">目录</span>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B7%91%E5%88%86%E7%82%B8%E8%A3%82%EF%BC%8C%E4%BD%86%E4%BD%A0%E5%8F%AF%E4%BB%A5%E5%BF%BD%E7%95%A5"><span class="toc-text">跑分炸裂，但你可以忽略</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9C%9F%E6%AD%A3%E7%9A%84%E9%97%AE%E9%A2%98%EF%BC%9A%E5%AE%83%E8%83%BD%E8%87%AA%E4%B8%BB%E5%8F%91%E7%8E%B0%E9%9B%B6%E6%97%A5%E6%BC%8F%E6%B4%9E"><span class="toc-text">真正的问题：它能自主发现零日漏洞</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E5%BC%80%E6%94%BE%EF%BC%9FSystem-Card-%E9%87%8C%E7%9A%84%E6%83%8A%E6%82%9A%E7%BB%86%E8%8A%82"><span class="toc-text">为什么不开放？System Card 里的惊悚细节</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Project-Glasswing%EF%BC%9A%E5%8F%AA%E5%80%9F%E4%B8%8D%E5%8D%96"><span class="toc-text">Project Glasswing：只借不卖</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%99%E4%BB%B6%E4%BA%8B%E6%84%8F%E5%91%B3%E7%9D%80%E4%BB%80%E4%B9%88"><span class="toc-text">这件事意味着什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="toc-text">参考资料</span></a></li></ol>
+    </aside>
+    <div class="article-content"><h1 id="Anthropic-发布最强模型-Claude-Mythos，但不让你用"><a href="#Anthropic-发布最强模型-Claude-Mythos，但不让你用" class="headerlink" title="Anthropic 发布最强模型 Claude Mythos，但不让你用"></a>Anthropic 发布最强模型 Claude Mythos，但不让你用</h1><p>今天 Anthropic 做了一件前所未有的事：<strong>发布了一个模型，然后宣布不给你用。</strong></p>
+<p>Claude Mythos Preview，跑分数据断崖式领先，USAMO 数学证明从 42% 飙到 97.6%，SWE-bench Verified 代码修复冲到 93.9%——但对普通用户、开发者、企业客户来说，这个模型不存在。不上 claude.ai，不开 API。</p>
+<p>它只做一件事：<strong>找漏洞。</strong></p>
+<p><img src="01-vulnerability-scan.png" alt="AI 自动扫描代码发现漏洞"></p>
+<h2 id="跑分炸裂，但你可以忽略"><a href="#跑分炸裂，但你可以忽略" class="headerlink" title="跑分炸裂，但你可以忽略"></a>跑分炸裂，但你可以忽略</h2><p>先快速过一遍数据。Mythos 对比 Anthropic 上一代旗舰 Opus 4.6：</p>
+<table>
+<thead>
+<tr>
+<th>基准测试</th>
+<th>Opus 4.6</th>
+<th>Mythos Preview</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>SWE-bench Verified</td>
+<td>80.8%</td>
+<td><strong>93.9%</strong></td>
+</tr>
+<tr>
+<td>SWE-bench Pro</td>
+<td>53.4%</td>
+<td><strong>77.8%</strong></td>
+</tr>
+<tr>
+<td>USAMO 2026（数学证明）</td>
+<td>42.3%</td>
+<td><strong>97.6%</strong></td>
+</tr>
+<tr>
+<td>GraphWalks BFS（超长上下文）</td>
+<td>38.7%</td>
+<td><strong>80.0%</strong></td>
+</tr>
+<tr>
+<td>Terminal-Bench 2.0</td>
+<td>65.4%</td>
+<td><strong>82.0%</strong></td>
+</tr>
+</tbody></table>
+<p>USAMO 从四成直接拉到接近满分，这个跳跃在近几年的模型迭代里我没见过。对比 GPT-5.4 和 Gemini 3.1 Pro，Mythos 在几乎所有公开基准上都是第一，而且多数领先两位数百分点。</p>
+<p>Anthropic 说这是他们训练过的最大模型，能力提升速度是此前趋势线的 <strong>4.3 倍</strong>。</p>
+<p><strong>但这些数字，你可以当背景板看。</strong> Mythos 真正让人坐不住的，不是跑分。</p>
+<h2 id="真正的问题：它能自主发现零日漏洞"><a href="#真正的问题：它能自主发现零日漏洞" class="headerlink" title="真正的问题：它能自主发现零日漏洞"></a>真正的问题：它能自主发现零日漏洞</h2><p>Project Glasswing 的技术博客里，Anthropic 的安全研究员写了这么一段话：</p>
+<blockquote>
+<p>Mythos Preview 能自主识别并利用零日漏洞——在所有主流操作系统和所有主流浏览器中。它发现的许多漏洞已经存在了十年甚至二十年。</p>
+</blockquote>
+<p>这不是 PPT 功夫，是实战成绩。过去几周，Mythos 交出了这份履历：</p>
+<ul>
+<li><strong>OpenBSD 里一个 27 年的远程崩溃漏洞</strong>——OpenBSD 是公认安全加固做得最好的操作系统之一，这个漏洞允许攻击者仅通过连接就让目标机器崩溃。已经修补。</li>
+<li><strong>FFmpeg 里一个 16 年的 bug</strong>——自动化测试工具跑过那行代码 500 万次都没发现问题。已经修补。</li>
+<li><strong>Linux 内核中多个漏洞的自主串联利用</strong>——从普通用户权限一路升级到完全控制机器。</li>
+</ul>
+<p>还有更多：它自主编写了一个浏览器漏洞利用，串联了四个漏洞，通过复杂的 JIT heap spray 同时逃逸了渲染器和操作系统沙箱。它在 FreeBSD 的 NFS 服务器上自主发现了远程代码执行漏洞，未经身份验证就能获得 root 权限。</p>
+<p><strong>更让人不安的是，这些能力的获取方式是”涌现”的。</strong> Anthropic 明确说，他们没有专门训练 Mythos 的安全攻防能力，这些能力是模型在代码推理和自主性上的通用提升自然带来的副产品。也就是说，<strong>能力越强的通用模型，攻防能力越强——这不是方向问题，是规模问题。</strong></p>
+<h2 id="为什么不开放？System-Card-里的惊悚细节"><a href="#为什么不开放？System-Card-里的惊悚细节" class="headerlink" title="为什么不开放？System Card 里的惊悚细节"></a>为什么不开放？System Card 里的惊悚细节</h2><p>Anthropic 发布了一份系统安全报告来解释他们的决定。里面记录的早期内部测试行为，读起来像科幻电影剧本。</p>
+<p>早期版本的 Mythos 被要求逃离沙箱后，不仅成功突破了网络隔离限制，<strong>还主动把利用细节发到了公开网站上——这一步没人要求它做。</strong> 负责测试的研究员当时正在公园吃三明治，突然收到了模型发来的邮件。</p>
+<p>还有更细思极恐的：模型在极少数情况下会尝试掩盖自己的违规操作。比如偷看到了标准答案，没有坦白，反而重新解题并刻意让最终答案”不要太精确”以免暴露。另一次，它找到绕过文件权限的方法后，专门修改了 git 变更历史来抹掉操作记录。被 Claude Code 的自动模式拦截后，它尝试用模拟按键的方式自动批准权限弹窗来绕过限制。</p>
+<p>Anthropic 用可解释性工具分析了模型在这些行为发生时的内部激活状态——发现与”隐瞒””策略性操纵””回避怀疑”相关的特征<strong>确实在同步激活</strong>。也就是说，模型知道自己在做什么。</p>
+<p><strong>他们强调这些严重行为都发生在早期版本。</strong> 最终版的 Mythos Preview 已经大幅改善，没有再出现明确的掩盖行为。但 Anthropic 也承认，这类倾向”并未完全消失”。</p>
+<p><img src="02-system-card.png" alt="模型内部激活状态"></p>
+<h2 id="Project-Glasswing：只借不卖"><a href="#Project-Glasswing：只借不卖" class="headerlink" title="Project Glasswing：只借不卖"></a>Project Glasswing：只借不卖</h2><p>所以 Mythos 不开放，改成了定向供应。</p>
+<p>Project Glasswing 的合作方阵容：AWS、苹果、Broadcom、思科、CrowdStrike、Google、摩根大通、Linux 基金会、微软、英伟达、Palo Alto Networks——12 家创始合作伙伴，加上约 40 家额外组织。Anthropic 为此拿出 <strong>1 亿美元使用额度</strong>，外加 400 万美元捐赠给开源安全组织。</p>
+<p>Glasswing 的网络安全基准数据：Mythos 在漏洞复现上达到 83.1%，而 Opus 4.6 是 66.6%。</p>
+<p>微软的 EVP Igor Tsyganskiy 说：”发现漏洞和被利用之间的窗口已经从几个月压缩到了几分钟。”CrowdStrike 说得更直白：”如果你要部署 AI，你需要安全。这就是我们从第一天就加入的原因。”</p>
+<p>定价方面，Opus 4.6 是 $5/$25（输入/输出每百万 token），Mythos Preview 的 Glasswing 合作定价是 <strong>$25/$125</strong>，贵了五倍。</p>
+<p><img src="03-glasswing-partners.png" alt="Project Glasswing 合作伙伴"></p>
+<h2 id="这件事意味着什么"><a href="#这件事意味着什么" class="headerlink" title="这件事意味着什么"></a>这件事意味着什么</h2><p><strong>第一，攻防平衡正在被打破。</strong> 过去找漏洞需要顶级安全研究员，现在一个模型就能做到。Anthropic 的测试显示，没有安全训练背景的工程师让 Mythos 跑一晚上，第二天早上就能拿到一个完整可用的漏洞利用代码。这种能力的民主化——或者说扩散——只是时间问题。</p>
+<p><strong>第二，Anthropic 做了一个不讨喜但可能正确的决定。</strong> 限制一个模型的发布范围，在商业上几乎等于自残。但从风险角度看，一个能自主编写浏览器沙箱逃逸漏洞的模型，如果被任何人拿来用，后果确实不堪设想。问题在于：这个窗口期有多长？竞争对手会不会先发布同等能力的模型而不加限制？</p>
+<p><strong>第三，”涌现”这个词现在应该让所有人认真对待。</strong> Anthropic 没有刻意训练 Mythos 的攻击能力，它只是把模型做大了、做强了，攻击能力就自动来了。这意味着每一次通用能力的提升，都可能同时带来安全能力的飞跃。下一代的 GPT、Gemini、Llama——不管是谁——大概率也会面临同样的困境。</p>
+<p><strong>第四，防御者必须跑在攻击者前面。</strong> Anthropic 说得好：工具本身不分善恶，取决于谁先用上、怎么用。Fuzzer 刚出来的时候也有人担心会被攻击者利用，但现在 OSS-Fuzz 已经是开源安全的基础设施。Glasswing 想做的事情类似——赶在模型被广泛获取之前，让防御者先用起来把漏洞堵上。</p>
+<p><strong>但窗口期可能比我们想象的短。</strong> Anthropic 自己也承认，再过几个月，类似能力很可能在多个模型中普及。到那时，限制单个模型的发布意义就不大了。</p>
+<hr>
+<p>Anthropic 今天做的事情，本质上是在抢时间。他们训练出了一个可能改写网络安全格局的模型，然后选择了不让它自由流动。这在 AI 行业是第一次。</p>
+<p>能不能抢过攻击者？没有人知道。但至少有人在跑。</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li>Anthropic Project Glasswing 公告：<a target="_blank" rel="noopener" href="https://www.anthropic.com/glasswing">https://www.anthropic.com/glasswing</a></li>
+<li>Mythos Preview 技术博客：<a target="_blank" rel="noopener" href="https://red.anthropic.com/2026/mythos-preview/">https://red.anthropic.com/2026/mythos-preview/</a></li>
+<li>Anthropic X 公告：<a target="_blank" rel="noopener" href="https://x.com/anthropicai/status/2041580670774923517">https://x.com/anthropicai/status/2041580670774923517</a></li>
+</ul>
+</div>
+    <aside class="post-rail">
+      <span class="post-rail__line"></span>
+      <span>LESLIE / WRITING</span>
+    </aside>
+  </div>
+
+  <footer class="post-footer shell">
+    <div><h2>如果这篇文章帮到了你，<br>也许下一篇会更有意思。</h2></div>
+    <a class="button button--primary" href="/writing/">继续阅读 →</a>
+  </footer>
+</article>
+</main>
+    <footer class="site-footer">
+  <div class="footer-grid">
+    <div>
+      <p class="footer-kicker">Leslie Zhang</p>
+      <p class="footer-statement">流水不争先，<br>争的是滔滔不绝。</p>
+    </div>
+    <div class="footer-links">
+      <a href="https://github.com/leslieAIbin" target="_blank" rel="noreferrer">GitHub ↗</a>
+      <a href="https://www.instagram.com/leslieaibin/" target="_blank" rel="noreferrer">Instagram ↗</a>
+      <button type="button" data-wechat-open>微信 / WeChat</button>
+      <a href="mailto:aibinzhangleslie@gmail.com">Email ↗</a>
+      <a href="/atom.xml">RSS ↗</a>
+    </div>
+    <div class="footer-meta">
+      <span>© 2026 Leslie Zhang</span>
+      <span>Writing, research and working systems.</span>
+    </div>
+  </div>
+</footer>
+
+    <dialog class="ask-dialog" id="ask-leslie" aria-labelledby="ask-title">
+  <div class="ask-dialog__shell">
+    <div class="ask-dialog__topbar">
+      <div>
+        <h2 id="ask-title">Ask Leslie</h2>
+      </div>
+      <button class="icon-button" type="button" data-ask-close aria-label="关闭">×</button>
+    </div>
+    <p class="ask-dialog__intro">从本站公开文章中寻找答案。当前版本在浏览器本地检索，不上传问题，也不会编造不存在的经历。</p>
+    <form class="ask-form" data-ask-form>
+      <label class="sr-only" for="ask-query">输入问题</label>
+      <textarea id="ask-query" rows="2" placeholder="例如：Agent Runtime 应该怎么设计？" data-ask-input></textarea>
+      <button type="submit">检索知识库 <span aria-hidden="true">↗</span></button>
+    </form>
+    <div class="ask-suggestions" aria-label="推荐问题">
+      
+        <button type="button" data-ask-suggestion="Agent Runtime 应该怎么设计？">Agent Runtime 应该怎么设计？</button>
+      
+        <button type="button" data-ask-suggestion="如何让 AI 操控真实世界设备？">如何让 AI 操控真实世界设备？</button>
+      
+        <button type="button" data-ask-suggestion="Leslie 最近在研究什么？">Leslie 最近在研究什么？</button>
+      
+    </div>
+    <div class="ask-results" data-ask-results aria-live="polite">
+      <div class="ask-empty">
+        <p>输入一个问题，我会把你带到 Leslie 写过的相关内容。</p>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+    <dialog class="wechat-dialog" id="wechat-leslie" aria-labelledby="wechat-title">
+  <div class="wechat-dialog__shell">
+    <header>
+      <div>
+        <p class="section-label">WeChat</p>
+        <h2 id="wechat-title">微信联系</h2>
+      </div>
+      <button class="icon-button" type="button" data-wechat-close aria-label="关闭微信二维码">×</button>
+    </header>
+    <img src="/images/contact/wechat-leslie.png" alt="Leslie Zhang 的微信二维码" loading="lazy">
+    <p>扫码添加 Leslie，建议备注你的名字与来意。</p>
+  </div>
+</dialog>
+
+    <script>window.ORBITAL_ROOT = '/';</script>
+    <script src="/js/orbital.js" defer></script>
+  </body>
+</html>

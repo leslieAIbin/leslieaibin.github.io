@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+  <head>
+
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#050b18">
+<meta name="color-scheme" content="dark light">
+<title>Leslie Zhang | AI Agent &amp; Agent Infra Engineer</title>
+<meta name="description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta name="author" content="Leslie Zhang">
+<link rel="canonical" href="https://leslieaibin.github.io/categories/Spring/index.html">
+<link rel="icon" href="/imgs/01.jpg">
+<link rel="alternate" type="application/atom+xml" title="Leslie Zhang" href="/atom.xml">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Leslie Zhang | AI Agent &amp; Agent Infra Engineer">
+<meta property="og:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta property="og:url" content="https://leslieaibin.github.io/categories/Spring/index.html">
+<meta property="og:image" content="https://leslieaibin.github.io/og-blue.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Leslie Zhang | AI Agent &amp; Agent Infra Engineer">
+<meta name="twitter:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta name="twitter:image" content="https://leslieaibin.github.io/og-blue.png">
+<script>
+  (function () {
+    var saved = localStorage.getItem('orbital-theme');
+    var theme = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    document.documentElement.dataset.theme = theme;
+  })();
+</script>
+<link rel="stylesheet" href="/css/orbital.css">
+<meta name="generator" content="Hexo 5.2.0"></head>
+  <body class="page-index">
+    <a class="skip-link" href="#main-content">跳到主要内容</a>
+    <div class="reading-progress" data-reading-progress></div>
+    <header class="site-header" data-header>
+  <div class="nav-shell">
+    <a class="brand" href="/" aria-label="返回首页">
+      <span class="brand-mark" aria-hidden="true"><img src="/images/brand/leslie-mythos-avatar.webp" alt="" width="512" height="512"></span>
+      <span class="brand-copy">
+        <strong>LESLIE</strong>
+        <small>REAL-WORLD AGENTS</small>
+      </span>
+    </a>
+
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav" data-nav-toggle>
+      <span></span><span></span>
+      <span class="sr-only">打开导航</span>
+    </button>
+
+    <nav class="main-nav" id="main-nav" aria-label="主导航" data-nav>
+      
+        <a href="/" class="">首页</a>
+      
+        <a href="/writing/" class="">写作</a>
+      
+        <a href="/projects/" class="">项目</a>
+      
+        <a href="/about/" class="">关于</a>
+      
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换明暗主题">
+        <span class="theme-toggle__sun" aria-hidden="true">☼</span>
+        <span class="theme-toggle__moon" aria-hidden="true">◐</span>
+      </button>
+      <button class="ask-nav" type="button" data-ask-open>ASK LESLIE</button>
+    </nav>
+  </div>
+</header>
+
+    <main id="main-content"><section class="page-hero shell"><p class="page-kicker">Writing category</p><h1>Spring</h1><p>同一主题，在不同时间留下的答案。</p></section>
+<section class="section shell"><div class="writing-list" data-writing-list>
+  
+    <article class="writing-row reveal" data-writing-item data-search="05.spring-bean(2) spring spring bean的生命周期 初始化 在创建此bean的bean工厂中设置bean的名称，在普通属性设置之后调用，在 方法之前调用 : 在普通属性设置之后，initializingbean.afterpropertiesset()之前调用 : 回调提供了自己的bean实例工厂，在普通属性设置之后，在 或者自定义初始化方法之前调用 : 设置environment在组件使用时调用 : 设置stringvalueresolver 用来解决嵌入式的值域问题 : 在普通bean对象…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-09-19">2021.09.19</time><span>7 MIN</span></div>
+        <h2><a href="/2021/09/19/Spring/06.Spring-Bean(2)/">05.Spring-Bean(2)</a></h2>
+        <p>Spring Bean的生命周期 初始化 在创建此bean的bean工厂中设置bean的名称，在普通属性设置之后调用，在 方法之前调用 : 在普通属性设置之后，InitializingBean.afterPropertiesSet()之前调用 : 回调提供了自己的bean实例工厂，在普通属性设置之后…</p>
+        <div class="chip-row"><span>Spring</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/09/19/Spring/06.Spring-Bean(2)/" aria-label="阅读《05.Spring-Bean(2)》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="05.spring-ioc(2) spring spring ioc spring ioc容器 作用 控制反转即ioc(inversion of control)，将传统上由程序代码直接控制的对象的调度权交给容器，通过容器来实现对象组件的装配和管理。所谓的”控制反转”概念就是对组件对象控制权的转移，从本身程序代码转到容器，spring ioc 负责创建对象，管理对象（通过依赖注入（di），装配对象，配置对象，并且管理这些对象的整个生命周期）。对于l0c来说,最重要的就是容器。容器管理着bean的生命周期,控制着bean的依…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-09-18">2021.09.18</time><span>7 MIN</span></div>
+        <h2><a href="/2021/09/18/Spring/05.Spring-IoC(2)/">05.Spring-IoC(2)</a></h2>
+        <p>Spring IoC Spring IoC容器 作用 控制反转即IoC(Inversion of Control)，将传统上由程序代码直接控制的对象的调度权交给容器，通过容器来实现对象组件的装配和管理。所谓的”控制反转”概念就是对组件对象控制权的转移，从本身程序代码转到容器，Spring IOC 负…</p>
+        <div class="chip-row"><span>Spring</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/09/18/Spring/05.Spring-IoC(2)/" aria-label="阅读《05.Spring-IoC(2)》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="04.spring-bean spring bean的作用域 一般情况下，我们书写在ioc容器中的配置信息，会在我们的ioc容器运行时被创建，这就导致我们通过ioc容器获取到bean对象的时候，往往都是获取到了单例的bean对象。 这样就意味着无论我们使用多少个 getbean()方法，获取到的同一个 javabean 都是同一个对象，这就是单实例 bean，整个项目都会共享这一个 bean 对象。 在 spring 中，可以在元素的 scope 属性里设置 bean 的作用域，以决定这个 bean 是单实例的还是多实…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-08-07">2021.08.07</time><span>5 MIN</span></div>
+        <h2><a href="/2021/08/07/Spring/04.Spring-Bean/">04.Spring-Bean</a></h2>
+        <p>Bean的作用域 一般情况下，我们书写在IOC容器中的配置信息，会在我们的IOC容器运行时被创建，这就导致我们通过IOC容器获取到bean对象的时候，往往都是获取到了单例的Bean对象。 这样就意味着无论我们使用多少个 getBean()方法，获取到的同一个 JavaBean 都是同一个对象，这就是…</p>
+        <div class="chip-row"><span>Spring</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/08/07/Spring/04.Spring-Bean/" aria-label="阅读《04.Spring-Bean》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="03.spring-aop spring 关于aop 面向切面编程(aspect-oriented programming，俗称aop)提供了一种面向对象编程(object-oriented programming，俗称oop)的补充，面向对象编程最核心的单元是类(class)，然而面向切面编程最核心的单元是切面(aspects)。与面向对象的顺序流程不同，aop采用的是横向切面的方式，注入与主业务流程无关的功能，例如事务管理和日志管理。 spring的一个关键组件是aop框架。 虽然spring ioc容器不依赖于…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-08-06">2021.08.06</time><span>5 MIN</span></div>
+        <h2><a href="/2021/08/06/Spring/03.Spring-AOP/">03.Spring-AOP</a></h2>
+        <p>关于AOP 面向切面编程(Aspect-oriented Programming，俗称AOP)提供了一种面向对象编程(Object-oriented Programming，俗称OOP)的补充，面向对象编程最核心的单元是类(class)，然而面向切面编程最核心的单元是切面(Aspects)。与面向对…</p>
+        <div class="chip-row"><span>Spring</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/08/06/Spring/03.Spring-AOP/" aria-label="阅读《03.Spring-AOP》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="02.spring-ioc spring ioc是什么 ioc—inversion of control，即“控制反转”，不是什么技术，而是一种设计思想。 在java开发中， ioc意味着将你设计好的对象交给容器控制，而不是传统的在你的对象内部直接控制。 如何理解好ioc呢？理解好ioc的关键是要明确“谁控制谁，控制什么，为何是反转（有反转就应该有正转了），哪些方面反转了”，那我们来深入分析一下： 谁控制谁，控制什么： 传统java se程序设计，我们直接在对象内部通过new进行创建对象，是程序主动去创建依赖对象；而…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-08-05">2021.08.05</time><span>7 MIN</span></div>
+        <h2><a href="/2021/08/05/Spring/02.Spring-IoC/">02.Spring-IoC</a></h2>
+        <p>IoC是什么 Ioc—Inversion of Control，即“控制反转”，不是什么技术，而是一种设计思想。 在Java开发中， Ioc意味着将你设计好的对象交给容器控制，而不是传统的在你的对象内部直接控制。 如何理解好Ioc呢？理解好Ioc的关键是要明确“谁控制谁，控制什么，为何是反转（有反转…</p>
+        <div class="chip-row"><span>Spring</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/08/05/Spring/02.Spring-IoC/" aria-label="阅读《02.Spring-IoC》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="01.springboot常用的注解 spring 前言： springmvc的层：dao、service、controller、view的关系 dao层： 负责数据持久化，与数据库进行联络的任务都封装在其中，dao层的数据源以及相关的数据库连接参数都在spring配置文件中进行配置。dao接口中的方法都大同小异，因为对数据库的基本操作类似：insert、delete、update、select。在dao层定义的一些方法，在service层并没有被使用的情况。dao层的操作经过抽象后基本都是通用的，在dao层完成相关的定义，有…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-08-04">2021.08.04</time><span>4 MIN</span></div>
+        <h2><a href="/2021/08/04/Spring/01.SpringBoot%E5%B8%B8%E7%94%A8%E7%9A%84%E6%B3%A8%E8%A7%A3/">01.SpringBoot常用的注解</a></h2>
+        <p>前言： SpringMVC的层：Dao、Service、Controller、View的关系 Dao层： 负责数据持久化，与数据库进行联络的任务都封装在其中，Dao层的数据源以及相关的数据库连接参数都在Spring配置文件中进行配置。Dao接口中的方法都大同小异，因为对数据库的基本操作类似：inse…</p>
+        <div class="chip-row"><span>Spring</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/08/04/Spring/01.SpringBoot%E5%B8%B8%E7%94%A8%E7%9A%84%E6%B3%A8%E8%A7%A3/" aria-label="阅读《01.SpringBoot常用的注解》">↗</a>
+    </article>
+  
+</div>
+<span class="page-number current">1</span></section>
+</main>
+    <footer class="site-footer">
+  <div class="footer-grid">
+    <div>
+      <p class="footer-kicker">Leslie Zhang</p>
+      <p class="footer-statement">流水不争先，<br>争的是滔滔不绝。</p>
+    </div>
+    <div class="footer-links">
+      <a href="https://github.com/leslieAIbin" target="_blank" rel="noreferrer">GitHub ↗</a>
+      <a href="https://www.instagram.com/leslieaibin/" target="_blank" rel="noreferrer">Instagram ↗</a>
+      <button type="button" data-wechat-open>微信 / WeChat</button>
+      <a href="mailto:aibinzhangleslie@gmail.com">Email ↗</a>
+      <a href="/atom.xml">RSS ↗</a>
+    </div>
+    <div class="footer-meta">
+      <span>© 2026 Leslie Zhang</span>
+      <span>Writing, research and working systems.</span>
+    </div>
+  </div>
+</footer>
+
+    <dialog class="ask-dialog" id="ask-leslie" aria-labelledby="ask-title">
+  <div class="ask-dialog__shell">
+    <div class="ask-dialog__topbar">
+      <div>
+        <h2 id="ask-title">Ask Leslie</h2>
+      </div>
+      <button class="icon-button" type="button" data-ask-close aria-label="关闭">×</button>
+    </div>
+    <p class="ask-dialog__intro">从本站公开文章中寻找答案。当前版本在浏览器本地检索，不上传问题，也不会编造不存在的经历。</p>
+    <form class="ask-form" data-ask-form>
+      <label class="sr-only" for="ask-query">输入问题</label>
+      <textarea id="ask-query" rows="2" placeholder="例如：Agent Runtime 应该怎么设计？" data-ask-input></textarea>
+      <button type="submit">检索知识库 <span aria-hidden="true">↗</span></button>
+    </form>
+    <div class="ask-suggestions" aria-label="推荐问题">
+      
+        <button type="button" data-ask-suggestion="Agent Runtime 应该怎么设计？">Agent Runtime 应该怎么设计？</button>
+      
+        <button type="button" data-ask-suggestion="如何让 AI 操控真实世界设备？">如何让 AI 操控真实世界设备？</button>
+      
+        <button type="button" data-ask-suggestion="Leslie 最近在研究什么？">Leslie 最近在研究什么？</button>
+      
+    </div>
+    <div class="ask-results" data-ask-results aria-live="polite">
+      <div class="ask-empty">
+        <p>输入一个问题，我会把你带到 Leslie 写过的相关内容。</p>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+    <dialog class="wechat-dialog" id="wechat-leslie" aria-labelledby="wechat-title">
+  <div class="wechat-dialog__shell">
+    <header>
+      <div>
+        <p class="section-label">WeChat</p>
+        <h2 id="wechat-title">微信联系</h2>
+      </div>
+      <button class="icon-button" type="button" data-wechat-close aria-label="关闭微信二维码">×</button>
+    </header>
+    <img src="/images/contact/wechat-leslie.png" alt="Leslie Zhang 的微信二维码" loading="lazy">
+    <p>扫码添加 Leslie，建议备注你的名字与来意。</p>
+  </div>
+</dialog>
+
+    <script>window.ORBITAL_ROOT = '/';</script>
+    <script src="/js/orbital.js" defer></script>
+  </body>
+</html>

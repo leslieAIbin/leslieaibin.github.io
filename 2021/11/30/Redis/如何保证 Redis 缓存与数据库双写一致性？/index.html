@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+  <head>
+
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#050b18">
+<meta name="color-scheme" content="dark light">
+<title>Redis缓存与数据库一致性问题 | Leslie Zhang</title>
+<meta name="description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta name="author" content="Leslie Zhang">
+<link rel="canonical" href="https://leslieaibin.github.io/2021/11/30/Redis/%E5%A6%82%E4%BD%95%E4%BF%9D%E8%AF%81%20Redis%20%E7%BC%93%E5%AD%98%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E5%8F%8C%E5%86%99%E4%B8%80%E8%87%B4%E6%80%A7%EF%BC%9F/">
+<link rel="icon" href="/imgs/01.jpg">
+<link rel="alternate" type="application/atom+xml" title="Leslie Zhang" href="/atom.xml">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis缓存与数据库一致性问题 | Leslie Zhang">
+<meta property="og:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta property="og:url" content="https://leslieaibin.github.io/2021/11/30/Redis/%E5%A6%82%E4%BD%95%E4%BF%9D%E8%AF%81%20Redis%20%E7%BC%93%E5%AD%98%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E5%8F%8C%E5%86%99%E4%B8%80%E8%87%B4%E6%80%A7%EF%BC%9F/">
+<meta property="og:image" content="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/27.jpg?raw=true">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Redis缓存与数据库一致性问题 | Leslie Zhang">
+<meta name="twitter:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta name="twitter:image" content="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/27.jpg?raw=true">
+<script>
+  (function () {
+    var saved = localStorage.getItem('orbital-theme');
+    var theme = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    document.documentElement.dataset.theme = theme;
+  })();
+</script>
+<link rel="stylesheet" href="/css/orbital.css">
+<meta name="generator" content="Hexo 5.2.0"></head>
+  <body class="page-post">
+    <a class="skip-link" href="#main-content">跳到主要内容</a>
+    <div class="reading-progress" data-reading-progress></div>
+    <header class="site-header" data-header>
+  <div class="nav-shell">
+    <a class="brand" href="/" aria-label="返回首页">
+      <span class="brand-mark" aria-hidden="true"><img src="/images/brand/leslie-mythos-avatar.webp" alt="" width="512" height="512"></span>
+      <span class="brand-copy">
+        <strong>LESLIE</strong>
+        <small>REAL-WORLD AGENTS</small>
+      </span>
+    </a>
+
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav" data-nav-toggle>
+      <span></span><span></span>
+      <span class="sr-only">打开导航</span>
+    </button>
+
+    <nav class="main-nav" id="main-nav" aria-label="主导航" data-nav>
+      
+        <a href="/" class="">首页</a>
+      
+        <a href="/writing/" class="">写作</a>
+      
+        <a href="/projects/" class="">项目</a>
+      
+        <a href="/about/" class="">关于</a>
+      
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换明暗主题">
+        <span class="theme-toggle__sun" aria-hidden="true">☼</span>
+        <span class="theme-toggle__moon" aria-hidden="true">◐</span>
+      </button>
+      <button class="ask-nav" type="button" data-ask-open>ASK LESLIE</button>
+    </nav>
+  </div>
+</header>
+
+    <main id="main-content"><article class="post-shell">
+  <header class="post-hero shell">
+    <a class="post-back" href="/writing/">← 返回写作</a>
+    <div class="post-hero__meta">
+      <time datetime="2021-11-30">2021 年 11 月 30 日</time>
+      <span>5 分钟阅读</span>
+    </div>
+    <h1>Redis缓存与数据库一致性问题</h1>
+    
+    <div class="chip-row"><a href="/tags/Redis/">Redis</a></div>
+  </header>
+
+  <div class="post-cover shell"><img src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/27.jpg?raw=true" alt="Redis缓存与数据库一致性问题"></div>
+
+  <div class="post-layout shell">
+    <aside class="post-toc" aria-label="文章目录">
+      <span class="aside-title">目录</span>
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="toc-text">解决方案</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">总结</span></a></li></ol>
+    </aside>
+    <div class="article-content"><p>在做系统优化时，想到了将数据进行分级存储的思路。因为在系统中会存在一些数据，有些数据的实时性要求不高，比如一些配置信息。</p>
+<p>基本上配置了很久才会变一次。而有一些数据实时性要求非常高，比如订单和流水的数据。所以这里根据数据要求实时性不同将数据分为三级。</p>
+<ul>
+<li>第1级：订单数据和支付流水数据；这两块数据对实时性和精确性要求很高，所以不添加任何缓存，读写操作将直接操作数据库。</li>
+<li>第2级：用户相关数据；这些数据和用户相关，具有读多写少的特征，所以我们使用redis进行缓存。</li>
+<li>第3级：支付配置信息；这些数据和用户无关，具有数据量小，频繁读，几乎不修改的特征，所以我们使用本地内存进行缓存。</li>
+</ul>
+<p>但是只要使用到缓存，无论是本地内存做缓存还是使用 redis 做缓存，那么就会存在数据同步的问题，因为配置信息缓存在内存中，而内存时无法感知到数据在数据库的修改。这样就会造成数据库中的数据与缓存中数据不一致的问题。</p>
+<h3 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h3><p>那么我们这里列出来所有策略，并且讨论他们优劣性。</p>
+<ul>
+<li><p>先更新数据库，后更新缓存</p>
+</li>
+<li><p>先更新数据库，后删除缓存</p>
+</li>
+<li><p>先更新缓存，后更新数据库</p>
+</li>
+<li><p>先删除缓存，后更新数据库</p>
+</li>
+</ul>
+<h4 id="先更新数据库，后更新缓存"><a href="#先更新数据库，后更新缓存" class="headerlink" title="先更新数据库，后更新缓存"></a>先更新数据库，后更新缓存</h4><p>这种场景一般是没有人使用的，主要原因是在更新缓存那一步，为什么呢？因为有的业务需求缓存中存在的值并不是直接从数据库中查出来的，有的是需要经过一系列计算来的缓存值，那么这时候后你要更新缓存的话其实代价是很高的。如果此时有大量的对数据库进行写数据的请求，但是读请求并不多，那么此时如果每次写请求都更新一下缓存，那么性能损耗是非常大的。</p>
+<p>举个例子比如在数据库中有一个值为 1 的值，此时我们有 10 个请求对其每次加一的操作，但是这期间并没有读操作进来，如果用了先更新数据库的办法，那么此时就会有十个请求对缓存进行更新，会有大量的冷数据产生，如果我们不更新缓存而是删除缓存，那么在有读请求来的时候那么就会只更新缓存一次。</p>
+<h4 id="先更新缓存，后更新数据库"><a href="#先更新缓存，后更新数据库" class="headerlink" title="先更新缓存，后更新数据库"></a>先更新缓存，后更新数据库</h4><p>这一种情况应该不需要我们考虑了吧，和第一种情况是一样的。</p>
+<h4 id="先删除缓存，后更新数据库"><a href="#先删除缓存，后更新数据库" class="headerlink" title="先删除缓存，后更新数据库"></a>先删除缓存，后更新数据库</h4><p>该方案也会出问题，具体出现的原因如下。</p>
+<p><img src="https://test-1874253.oss-cn-beijing.aliyuncs.com/img/1460000039078252.png" alt="先删除缓存，后更新数据库"></p>
+<p>此时来了两个请求，请求 A（更新操作） 和请求 B（查询操作）</p>
+<ol>
+<li>请求 A 会先删除 Redis 中的数据，然后去数据库进行更新操作</li>
+<li>此时请求 B 看到 Redis 中的数据时空的，会去数据库中查询该值，补录到 Redis 中</li>
+<li>但是此时请求 A 并没有更新成功，或者事务还未提交</li>
+</ol>
+<p>那么这时候就会产生数据库和 Redis 数据不一致的问题。如何解决呢？其实最简单的解决办法就是延时双删的策略。</p>
+<p><img src="https://test-1874253.oss-cn-beijing.aliyuncs.com/img/1460000039078256.png" alt="延时双删"></p>
+<p>在写库前后都进行redis.del(key)操作，并且设定合理的超时时间。具体步骤是：</p>
+<ul>
+<li>先删除缓存</li>
+<li>再写数据库</li>
+<li>休眠500毫秒（根据具体的业务时间来定）</li>
+<li>再次删除缓存。</li>
+</ul>
+<p>但是上述的保证事务提交完以后再进行删除缓存还有一个问题，就是如果你使用的是 Mysql 的读写分离的架构的话，那么其实主从同步之间也会有时间差。</p>
+<p><img src="https://test-1874253.oss-cn-beijing.aliyuncs.com/img/1460000039078251.png" alt="主从同步时间差"></p>
+<p>此时来了两个请求，请求 A（更新操作） 和请求 B（查询操作）</p>
+<ol>
+<li>请求 A 更新操作，删除了 Redis</li>
+<li>请求主库进行更新操作，主库与从库进行同步数据的操作</li>
+<li>请 B 查询操作，发现 Redis 中没有数据</li>
+<li>去从库中拿去数据</li>
+<li>此时同步数据还未完成，拿到的数据是旧数据</li>
+</ol>
+<p>此时的解决办法就是如果是对 Redis 进行填充数据的查询数据库操作，那么就强制将其指向主库进行查询。</p>
+<p><img src="https://test-1874253.oss-cn-beijing.aliyuncs.com/img/1460000039078255.png" alt="从主库中拿数据"></p>
+<h4 id="先更新数据库，后删除缓存"><a href="#先更新数据库，后删除缓存" class="headerlink" title="先更新数据库，后删除缓存"></a>先更新数据库，后删除缓存</h4><p>问题：这一种情况也会出现问题，比如更新数据库成功了，但是在删除缓存的阶段出错了没有删除成功，那么此时再读取缓存的时候每次都是错误的数据了。</p>
+<p><img src="https://test-1874253.oss-cn-beijing.aliyuncs.com/img/1460000039078254.png" alt="先更新数据库，后删除缓存"></p>
+<p>此时解决方案就是利用消息队列进行删除的补偿。具体的业务逻辑用语言描述如下：</p>
+<ol>
+<li>请求 A 先对数据库进行更新操作</li>
+<li>在对 Redis 进行删除操作的时候发现报错，删除失败</li>
+<li>此时将Redis 的 key 作为消息体发送到消息队列中</li>
+<li>系统接收到消息队列发送的消息后再次对 Redis 进行删除操作</li>
+</ol>
+<p>但是这个方案会有一个缺点就是会对业务代码造成大量的侵入，深深的耦合在一起，所以这时会有一个优化的方案，我们知道对 Mysql 数据库更新操作后再 binlog 日志中我们都能够找到相应的操作，那么我们可以订阅 Mysql 数据库的 binlog 日志对缓存进行操作。</p>
+<p><img src="https://test-1874253.oss-cn-beijing.aliyuncs.com/img/1460000039078253.png" alt="利用订阅 binlog 删除缓存"></p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>每种方案各有利弊，比如在第三种先删除缓存，后更新数据库这个方案我们最后讨论了要更新 Redis 的时候强制走主库查询就能解决问题，那么这样的操作会对业务代码进行大量的侵入，但是不需要增加的系统，不需要增加整体的服务的复杂度。</p>
+<p>最后一种方案我们最后讨论了利用订阅 binlog 日志进行搭建独立系统操作 Redis，这样的缺点其实就是增加了系统复杂度。其实每一次的选择都需要我们对于我们的业务进行评估来选择，没有一种技术是对于所有业务都通用的。没有最好的，只有最适合我们的。</p>
+</div>
+    <aside class="post-rail">
+      <span class="post-rail__line"></span>
+      <span>LESLIE / WRITING</span>
+    </aside>
+  </div>
+
+  <footer class="post-footer shell">
+    <div><h2>如果这篇文章帮到了你，<br>也许下一篇会更有意思。</h2></div>
+    <a class="button button--primary" href="/writing/">继续阅读 →</a>
+  </footer>
+</article>
+</main>
+    <footer class="site-footer">
+  <div class="footer-grid">
+    <div>
+      <p class="footer-kicker">Leslie Zhang</p>
+      <p class="footer-statement">流水不争先，<br>争的是滔滔不绝。</p>
+    </div>
+    <div class="footer-links">
+      <a href="https://github.com/leslieAIbin" target="_blank" rel="noreferrer">GitHub ↗</a>
+      <a href="https://www.instagram.com/leslieaibin/" target="_blank" rel="noreferrer">Instagram ↗</a>
+      <button type="button" data-wechat-open>微信 / WeChat</button>
+      <a href="mailto:aibinzhangleslie@gmail.com">Email ↗</a>
+      <a href="/atom.xml">RSS ↗</a>
+    </div>
+    <div class="footer-meta">
+      <span>© 2026 Leslie Zhang</span>
+      <span>Writing, research and working systems.</span>
+    </div>
+  </div>
+</footer>
+
+    <dialog class="ask-dialog" id="ask-leslie" aria-labelledby="ask-title">
+  <div class="ask-dialog__shell">
+    <div class="ask-dialog__topbar">
+      <div>
+        <h2 id="ask-title">Ask Leslie</h2>
+      </div>
+      <button class="icon-button" type="button" data-ask-close aria-label="关闭">×</button>
+    </div>
+    <p class="ask-dialog__intro">从本站公开文章中寻找答案。当前版本在浏览器本地检索，不上传问题，也不会编造不存在的经历。</p>
+    <form class="ask-form" data-ask-form>
+      <label class="sr-only" for="ask-query">输入问题</label>
+      <textarea id="ask-query" rows="2" placeholder="例如：Agent Runtime 应该怎么设计？" data-ask-input></textarea>
+      <button type="submit">检索知识库 <span aria-hidden="true">↗</span></button>
+    </form>
+    <div class="ask-suggestions" aria-label="推荐问题">
+      
+        <button type="button" data-ask-suggestion="Agent Runtime 应该怎么设计？">Agent Runtime 应该怎么设计？</button>
+      
+        <button type="button" data-ask-suggestion="如何让 AI 操控真实世界设备？">如何让 AI 操控真实世界设备？</button>
+      
+        <button type="button" data-ask-suggestion="Leslie 最近在研究什么？">Leslie 最近在研究什么？</button>
+      
+    </div>
+    <div class="ask-results" data-ask-results aria-live="polite">
+      <div class="ask-empty">
+        <p>输入一个问题，我会把你带到 Leslie 写过的相关内容。</p>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+    <dialog class="wechat-dialog" id="wechat-leslie" aria-labelledby="wechat-title">
+  <div class="wechat-dialog__shell">
+    <header>
+      <div>
+        <p class="section-label">WeChat</p>
+        <h2 id="wechat-title">微信联系</h2>
+      </div>
+      <button class="icon-button" type="button" data-wechat-close aria-label="关闭微信二维码">×</button>
+    </header>
+    <img src="/images/contact/wechat-leslie.png" alt="Leslie Zhang 的微信二维码" loading="lazy">
+    <p>扫码添加 Leslie，建议备注你的名字与来意。</p>
+  </div>
+</dialog>
+
+    <script>window.ORBITAL_ROOT = '/';</script>
+    <script src="/js/orbital.js" defer></script>
+  </body>
+</html>

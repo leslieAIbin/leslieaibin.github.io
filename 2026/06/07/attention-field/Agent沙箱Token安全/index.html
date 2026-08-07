@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+  <head>
+
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#050b18">
+<meta name="color-scheme" content="dark light">
+<title>Agent沙箱Token安全：怎么让工具可用但密钥不可见 | Leslie Zhang</title>
+<meta name="description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta name="author" content="Leslie Zhang">
+<link rel="canonical" href="https://leslieaibin.github.io/2026/06/07/attention-field/Agent%E6%B2%99%E7%AE%B1Token%E5%AE%89%E5%85%A8/">
+<link rel="icon" href="/imgs/01.jpg">
+<link rel="alternate" type="application/atom+xml" title="Leslie Zhang" href="/atom.xml">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Agent沙箱Token安全：怎么让工具可用但密钥不可见 | Leslie Zhang">
+<meta property="og:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta property="og:url" content="https://leslieaibin.github.io/2026/06/07/attention-field/Agent%E6%B2%99%E7%AE%B1Token%E5%AE%89%E5%85%A8/">
+<meta property="og:image" content="https://leslieaibin.github.io/2026/06/07/attention-field/Agent%E6%B2%99%E7%AE%B1Token%E5%AE%89%E5%85%A8/imgs/02-attack-paths.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Agent沙箱Token安全：怎么让工具可用但密钥不可见 | Leslie Zhang">
+<meta name="twitter:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta name="twitter:image" content="https://leslieaibin.github.io/2026/06/07/attention-field/Agent%E6%B2%99%E7%AE%B1Token%E5%AE%89%E5%85%A8/imgs/02-attack-paths.png">
+<script>
+  (function () {
+    var saved = localStorage.getItem('orbital-theme');
+    var theme = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    document.documentElement.dataset.theme = theme;
+  })();
+</script>
+<link rel="stylesheet" href="/css/orbital.css">
+<meta name="generator" content="Hexo 5.2.0"></head>
+  <body class="page-post">
+    <a class="skip-link" href="#main-content">跳到主要内容</a>
+    <div class="reading-progress" data-reading-progress></div>
+    <header class="site-header" data-header>
+  <div class="nav-shell">
+    <a class="brand" href="/" aria-label="返回首页">
+      <span class="brand-mark" aria-hidden="true"><img src="/images/brand/leslie-mythos-avatar.webp" alt="" width="512" height="512"></span>
+      <span class="brand-copy">
+        <strong>LESLIE</strong>
+        <small>REAL-WORLD AGENTS</small>
+      </span>
+    </a>
+
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav" data-nav-toggle>
+      <span></span><span></span>
+      <span class="sr-only">打开导航</span>
+    </button>
+
+    <nav class="main-nav" id="main-nav" aria-label="主导航" data-nav>
+      
+        <a href="/" class="">首页</a>
+      
+        <a href="/writing/" class="">写作</a>
+      
+        <a href="/projects/" class="">项目</a>
+      
+        <a href="/about/" class="">关于</a>
+      
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换明暗主题">
+        <span class="theme-toggle__sun" aria-hidden="true">☼</span>
+        <span class="theme-toggle__moon" aria-hidden="true">◐</span>
+      </button>
+      <button class="ask-nav" type="button" data-ask-open>ASK LESLIE</button>
+    </nav>
+  </div>
+</header>
+
+    <main id="main-content"><article class="post-shell">
+  <header class="post-hero shell">
+    <a class="post-back" href="/writing/">← 返回写作</a>
+    <div class="post-hero__meta">
+      <time datetime="2026-06-07">2026 年 06 月 07 日</time>
+      <span>6 分钟阅读</span>
+    </div>
+    <h1>Agent沙箱Token安全：怎么让工具可用但密钥不可见</h1>
+    
+    <div class="chip-row"><a href="/tags/%E5%AE%89%E5%85%A8/">安全</a><a href="/tags/Agent/">Agent</a><a href="/tags/%E6%B2%99%E7%AE%B1/">沙箱</a><a href="/tags/Token%E7%AE%A1%E7%90%86/">Token管理</a><a href="/tags/OAuth2-0/">OAuth2.0</a></div>
+  </header>
+
+  <div class="post-cover shell"><img src="/2026/06/07/attention-field/Agent%E6%B2%99%E7%AE%B1Token%E5%AE%89%E5%85%A8/imgs/02-attack-paths.png" alt="Agent沙箱Token安全：怎么让工具可用但密钥不可见"></div>
+
+  <div class="post-layout shell">
+    <aside class="post-toc" aria-label="文章目录">
+      <span class="aside-title">目录</span>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%97%AE%E9%A2%98%E6%9C%AC%E8%B4%A8"><span class="toc-text">问题本质</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%8D%E9%9D%A2%E6%95%99%E6%9D%90%E2%80%94%E2%80%94%E5%B8%B8%E8%A7%81%E7%9A%84%E9%94%99%E8%AF%AF%E5%81%9A%E6%B3%95"><span class="toc-text">反面教材——常见的错误做法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="toc-text">1. 环境变量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="toc-text">2. 配置文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%8F%82%E6%95%B0"><span class="toc-text">3. 命令行参数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E7%A1%AC%E7%BC%96%E7%A0%81%E5%9C%A8Skill%EF%BC%88%E5%B7%A5%E5%85%B7%E6%A8%A1%E5%9D%97%EF%BC%89%E4%BB%A3%E7%A0%81%E9%87%8C"><span class="toc-text">4. 硬编码在Skill（工具模块）代码里</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%AD%A3%E7%A1%AE%E6%96%B9%E6%A1%88%E2%80%94%E2%80%94Secret-Broker"><span class="toc-text">正确方案——Secret Broker</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B"><span class="toc-text">工作流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%BF%99%E6%A0%B7%E5%B0%B1%E5%AE%89%E5%85%A8%E4%BA%86"><span class="toc-text">为什么这样就安全了</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Secret-Broker%E7%9A%84%E5%AE%9E%E7%8E%B0%E7%BB%86%E8%8A%82"><span class="toc-text">Secret Broker的实现细节</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%87%AD%E8%AF%81%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F"><span class="toc-text">凭证生命周期</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Scope%EF%BC%88%E6%9D%83%E9%99%90%E8%8C%83%E5%9B%B4%EF%BC%89%E8%AE%BE%E8%AE%A1"><span class="toc-text">Scope（权限范围）设计</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BD%91%E7%BB%9C%E5%B1%82%E9%9A%94%E7%A6%BB"><span class="toc-text">网络层隔离</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A1%8C%E4%B8%9A%E5%AE%9E%E8%B7%B5"><span class="toc-text">行业实践</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#GitHub-Apps%E7%9A%84Installation-Token"><span class="toc-text">GitHub Apps的Installation Token</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#HashiCorp-Vault%E7%9A%84%E5%8A%A8%E6%80%81Secret"><span class="toc-text">HashiCorp Vault的动态Secret</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#AWS-IAM%E4%B8%B4%E6%97%B6%E5%87%AD%E8%AF%81%EF%BC%88STS%EF%BC%89"><span class="toc-text">AWS IAM临时凭证（STS）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%98%E6%9C%89%E4%B8%80%E4%B8%AA%E9%97%AE%E9%A2%98%E2%80%94%E2%80%94Agent%E6%80%8E%E4%B9%88%E2%80%9D%E7%9F%A5%E9%81%93%E2%80%9DToken%E5%9C%A8%E5%93%AA"><span class="toc-text">还有一个问题——Agent怎么”知道”Token在哪</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="toc-text">参考资料</span></a></li></ol>
+    </aside>
+    <div class="article-content"><h1 id="Agent沙箱Token安全：怎么让工具可用但密钥不可见"><a href="#Agent沙箱Token安全：怎么让工具可用但密钥不可见" class="headerlink" title="Agent沙箱Token安全：怎么让工具可用但密钥不可见"></a>Agent沙箱Token安全：怎么让工具可用但密钥不可见</h1><p>很多人觉得沙箱就是安全边界。把Agent放在Docker容器里跑，隔离开文件系统和网络，便认为安全问题已解决。</p>
+<p>但问题是：<strong>Agent需要调用外部API——GitHub、飞书、数据库、LLM。这些调用需要Token。Token放在哪里？</strong> 放环境变量里？放配置文件里？不管放哪里，只要在沙箱内部，Agent（也就是LLM）就能读到——而LLM生成的代码可能会把你的Token发到任何地方。</p>
+<p>这不是假设。已有研究表明，通过间接提示注入（Indirect Prompt Injection），攻击者可以远程操控LLM集成的应用，诱导其执行数据窃取等恶意操作[^1]。</p>
+<p>这不是假设。已有研究表明，LLM Agent可以通过生成的代码把环境变量外泄到攻击者控制的服务器。</p>
+<hr>
+<h2 id="问题本质"><a href="#问题本质" class="headerlink" title="问题本质"></a>问题本质</h2><p>沙箱解决了一半问题：</p>
+<table>
+<thead>
+<tr>
+<th>沙箱能解决</th>
+<th>沙箱解决不了</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>文件系统隔离</td>
+<td>Agent需要访问外部服务</td>
+</tr>
+<tr>
+<td>进程隔离</td>
+<td>访问外部服务需要凭证</td>
+</tr>
+<tr>
+<td>网络入站隔离</td>
+<td>凭证必须在某个地方可用</td>
+</tr>
+</tbody></table>
+<p><strong>核心矛盾：你要让Agent能用工具，但不能让它拿到密钥。</strong></p>
+<p>类比：你请了一个临时工来家里修水管。你需要给他水龙头用（工具），但不能把家门钥匙给他（密钥）。你要做的是——在水龙头上装一个计时开关，临时工来了按一下就能用水，用完自动关，而且他永远看不到你家的水管阀门在哪。</p>
+<hr>
+<h2 id="反面教材——常见的错误做法"><a href="#反面教材——常见的错误做法" class="headerlink" title="反面教材——常见的错误做法"></a>反面教材——常见的错误做法</h2><h3 id="1-环境变量"><a href="#1-环境变量" class="headerlink" title="1. 环境变量"></a>1. 环境变量</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> GITHUB_TOKEN=ghp_xxxxxxxxxxxx</span><br></pre></td></tr></table></figure>
+
+<p>最常见也最危险。LLM可以通过以下方式读到：</p>
+<ul>
+<li>直接让Agent执行 <code>env</code> 命令</li>
+<li>让Agent写一段代码 <code>print(os.environ[&#39;GITHUB_TOKEN&#39;])</code></li>
+<li>让Agent用 <code>curl</code> 把环境变量发到外部服务器</li>
+</ul>
+<p><strong>攻击路径：用户让Agent帮忙调试脚本 → Agent执行了包含环境变量打印的代码 → Token泄露到日志或外部</strong></p>
+<p>[^1]: Greshake et al., “Not what you’ve signed up for: Compromising Real-World LLM-Integrated Applications with Indirect Prompt Injection”, arXiv 2023</p>
+<h3 id="2-配置文件"><a href="#2-配置文件" class="headerlink" title="2. 配置文件"></a>2. 配置文件</h3><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">&quot;github_token&quot;</span>: <span class="string">&quot;ghp_xxxxxxxxxxxx&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;db_password&quot;</span>: <span class="string">&quot;mysecretpassword&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Agent有文件读取能力（这是工具之一）。<code>cat config.json</code> 就能拿到所有Token。</p>
+<h3 id="3-命令行参数"><a href="#3-命令行参数" class="headerlink" title="3. 命令行参数"></a>3. 命令行参数</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./agent --token=ghp_xxxxxxxxxxxx</span><br></pre></td></tr></table></figure>
+
+<p><code>ps aux</code> 可以看到所有进程的启动参数。在同一台机器上的其他进程也能读到。</p>
+<h3 id="4-硬编码在Skill（工具模块）代码里"><a href="#4-硬编码在Skill（工具模块）代码里" class="headerlink" title="4. 硬编码在Skill（工具模块）代码里"></a>4. 硬编码在Skill（工具模块）代码里</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">call_github_api</span>():</span></span><br><span class="line">    token = <span class="string">&quot;ghp_xxxxxxxxxxxx&quot;</span>  <span class="comment"># 写死在代码里</span></span><br><span class="line">    ...</span><br></pre></td></tr></table></figure>
+
+<p>更危险。Agent可能把代码输出给用户看，或者写到日志里。而且代码本身也可能被LLM修改。</p>
+<p><strong>这些方案的问题不在于实现质量，而在于思路本身不可行——只要Token存在于沙箱内部，LLM就能通过生成的代码获取它。</strong></p>
+<p><img src="imgs/02-attack-paths.png" alt="Token泄露路径"></p>
+<hr>
+<h2 id="正确方案——Secret-Broker"><a href="#正确方案——Secret-Broker" class="headerlink" title="正确方案——Secret Broker"></a>正确方案——Secret Broker</h2><p>核心理念：<strong>Token永远不进入沙箱。沙箱通过临时凭证访问外部服务。</strong></p>
+<p><img src="imgs/01-secret-broker.png" alt="Secret Broker架构"></p>
+<h3 id="工作流程"><a href="#工作流程" class="headerlink" title="工作流程"></a>工作流程</h3><ol>
+<li><strong>Skill声明权限</strong>：每个Skill在注册时声明它需要哪些外部服务的什么权限（比如”需要GitHub的repo:read权限”）</li>
+<li><strong>Agent启动Session</strong>：Broker根据Session的Skill列表，预批准对应权限范围</li>
+<li><strong>Skill需要调用外部API时</strong>：<ul>
+<li>向Broker请求临时凭证：<code>POST /broker/credentials &#123; skill: &quot;github&quot;, scope: &quot;repo:read&quot; &#125;</code></li>
+<li>Broker验证当前Session的权限，签发<strong>临时access_token</strong></li>
+<li>Skill用临时凭证调用GitHub API</li>
+<li>凭证有效期15分钟，scope限制为本次请求的最小权限</li>
+</ul>
+</li>
+<li><strong>网络层保证</strong>：沙箱的出站流量经过代理网关（即出站代理，所有从沙箱发出的网络请求都必须经过这个中间层），只允许访问Broker批准的endpoint</li>
+</ol>
+<h3 id="为什么这样就安全了"><a href="#为什么这样就安全了" class="headerlink" title="为什么这样就安全了"></a>为什么这样就安全了</h3><p>即使LLM生成了恶意代码：</p>
+<ul>
+<li>❌ 读环境变量 → 没有Token在环境变量里</li>
+<li>❌ 读配置文件 → 没有Token在配置文件里</li>
+<li>❌ <code>env</code> 命令 → 只能看到临时凭证，15分钟后失效</li>
+<li>❌ 把凭证发到外部 → 出站代理只允许访问批准的API endpoint</li>
+<li>❌ 用临时凭证访问其他服务 → scope限制了只能访问指定的API</li>
+</ul>
+<p>LLM能拿到的只是一个<strong>短时效、窄权限</strong>的临时凭证，而且只能通过沙箱的出站代理使用。原始Token始终在Broker里，沙箱内的代码永远触碰不到。</p>
+<p><img src="imgs/03-credential-lifecycle.png" alt="凭证生命周期"></p>
+<hr>
+<h2 id="Secret-Broker的实现细节"><a href="#Secret-Broker的实现细节" class="headerlink" title="Secret Broker的实现细节"></a>Secret Broker的实现细节</h2><h3 id="凭证生命周期"><a href="#凭证生命周期" class="headerlink" title="凭证生命周期"></a>凭证生命周期</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">签发 → 使用 → 刷新（可选）→ 过期&#x2F;吊销</span><br><span class="line"> │                                    ↑</span><br><span class="line"> └── 有效期15min ────────────────────┘</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>签发</strong>：Broker生成access_token，绑定 session_id + skill_name + scope + 过期时间</li>
+<li><strong>吊销</strong>：Session结束时，Broker主动吊销该Session所有未过期的凭证</li>
+<li><strong>不刷新</strong>：到期了就重新申请，不搞refresh_token那套复杂度</li>
+</ul>
+<h3 id="Scope（权限范围）设计"><a href="#Scope（权限范围）设计" class="headerlink" title="Scope（权限范围）设计"></a>Scope（权限范围）设计</h3><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">&quot;skills&quot;</span>: &#123;</span><br><span class="line">    <span class="attr">&quot;github_pr&quot;</span>: &#123;</span><br><span class="line">      <span class="attr">&quot;service&quot;</span>: <span class="string">&quot;github&quot;</span>,</span><br><span class="line">      <span class="attr">&quot;permissions&quot;</span>: [<span class="string">&quot;repo:read&quot;</span>, <span class="string">&quot;repo:write&quot;</span>, <span class="string">&quot;pull_requests:write&quot;</span>],</span><br><span class="line">      <span class="attr">&quot;max_ttl&quot;</span>: <span class="number">900</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">&quot;db_query&quot;</span>: &#123;</span><br><span class="line">      <span class="attr">&quot;service&quot;</span>: <span class="string">&quot;postgresql&quot;</span>,</span><br><span class="line">      <span class="attr">&quot;permissions&quot;</span>: [<span class="string">&quot;SELECT on public.*&quot;</span>],</span><br><span class="line">      <span class="attr">&quot;max_ttl&quot;</span>: <span class="number">300</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>每个Skill声明自己需要的最小权限（即Scope，如”repo:read”表示只读仓库权限）。Broker在签发时取交集——Skill声明的权限和用户授权给这个Agent的权限取交集，确保凭证的权限范围最小化。</p>
+<h3 id="网络层隔离"><a href="#网络层隔离" class="headerlink" title="网络层隔离"></a>网络层隔离</h3><p>临时凭证只是第一道防线。第二道是<strong>出站代理</strong>：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">沙箱 → 出站代理 → 只允许访问Broker批准的endpoint</span><br><span class="line">                  → github.com:443 (scope: repo)</span><br><span class="line">                  → api.slack.com:443 (scope: chat:write)</span><br><span class="line">                  → 其他请求 → 拒绝</span><br></pre></td></tr></table></figure>
+
+<p>即使临时凭证泄露到沙箱外，也只能在被允许的endpoint上使用。攻击者拿到一个GitHub repo:read的临时凭证，既不能访问Slack，也不能访问数据库。</p>
+<p><img src="imgs/04-outbound-proxy.png" alt="出站代理网络隔离"></p>
+<hr>
+<h2 id="行业实践"><a href="#行业实践" class="headerlink" title="行业实践"></a>行业实践</h2><p>Secret Broker不是新概念。在传统软件领域已经有成熟方案：</p>
+<h3 id="GitHub-Apps的Installation-Token"><a href="#GitHub-Apps的Installation-Token" class="headerlink" title="GitHub Apps的Installation Token"></a>GitHub Apps的Installation Token</h3><p>GitHub Apps不直接使用用户的Personal Access Token。而是在安装时获取一个installation_id，运行时通过它换取临时的installation_token（有效期1小时）。这就是Secret Broker的模式——原始凭证（GitHub App的私钥）永远不在应用代码里，运行时才换取临时凭证。</p>
+<h3 id="HashiCorp-Vault的动态Secret"><a href="#HashiCorp-Vault的动态Secret" class="headerlink" title="HashiCorp Vault的动态Secret"></a>HashiCorp Vault的动态Secret</h3><p>Vault的核心思路一样：不把数据库密码给应用，而是在应用需要时动态生成一个临时的数据库账号，用完就回收。应用永远不知道真实的数据库密码。</p>
+<h3 id="AWS-IAM临时凭证（STS）"><a href="#AWS-IAM临时凭证（STS）" class="headerlink" title="AWS IAM临时凭证（STS）"></a>AWS IAM临时凭证（STS）</h3><p>AWS的做法是：应用代码通过STS的<code>AssumeRole</code> API获取临时凭证（有效期默认1小时，最长可配置到12小时），而不需要在代码中硬编码Access Key。EC2实例也可以通过IAM Role自动获取临时凭证，但那套机制由实例元数据服务管理，与直接调用<code>AssumeRole</code>的生命周期不同。</p>
+<p><strong>这些方案的共同点：凭证不是”给出去”，是”按需签发、限时有效、最小权限”。</strong> Agent沙箱的安全方案，只是把这个成熟模式应用到了LLM时代。</p>
+<hr>
+<h2 id="还有一个问题——Agent怎么”知道”Token在哪"><a href="#还有一个问题——Agent怎么”知道”Token在哪" class="headerlink" title="还有一个问题——Agent怎么”知道”Token在哪"></a>还有一个问题——Agent怎么”知道”Token在哪</h2><p>你可能会想：Agent是LLM，它怎么知道该向Broker请求凭证？</p>
+<p>答案：<strong>Skill代码封装了这些细节。</strong> Agent不直接调用外部API，而是调用Skill。Skill内部实现了”向Broker请求凭证 → 调用外部API → 返回结果”的完整流程。对Agent来说，它只是在调用一个工具，不需要知道Token的存在。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Agent的视角：  调用 create_github_pr(title, body) → 得到PR链接</span><br><span class="line">Skill内部：    请求Broker凭证 → 拿到临时token → 调GitHub API → 返回结果</span><br></pre></td></tr></table></figure>
+
+<p>Agent永远只看到工具的输入输出接口。Token管理、凭证签发、API调用，全封装在Skill内部。</p>
+<hr>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://datatracker.ietf.org/doc/html/rfc6749">OAuth 2.0 Framework (RFC 6749)</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.github.com/en/apps/creating-github-apps/authenticating-with-a-github-app/authenticating-as-a-github-app-installation">GitHub Apps - Authentication as an Installation</a></li>
+<li><a target="_blank" rel="noopener" href="https://developer.hashicorp.com/vault/docs/concepts/lease">HashiCorp Vault - Dynamic Secrets</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_temp.html">AWS IAM - Temporary Security Credentials (STS)</a></li>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2302.12173">Not what you’ve signed up for: Compromising Real-World LLM-Integrated Applications with Indirect Prompt Injection</a></li>
+</ul>
+</div>
+    <aside class="post-rail">
+      <span class="post-rail__line"></span>
+      <span>LESLIE / WRITING</span>
+    </aside>
+  </div>
+
+  <footer class="post-footer shell">
+    <div><h2>如果这篇文章帮到了你，<br>也许下一篇会更有意思。</h2></div>
+    <a class="button button--primary" href="/writing/">继续阅读 →</a>
+  </footer>
+</article>
+</main>
+    <footer class="site-footer">
+  <div class="footer-grid">
+    <div>
+      <p class="footer-kicker">Leslie Zhang</p>
+      <p class="footer-statement">流水不争先，<br>争的是滔滔不绝。</p>
+    </div>
+    <div class="footer-links">
+      <a href="https://github.com/leslieAIbin" target="_blank" rel="noreferrer">GitHub ↗</a>
+      <a href="https://www.instagram.com/leslieaibin/" target="_blank" rel="noreferrer">Instagram ↗</a>
+      <button type="button" data-wechat-open>微信 / WeChat</button>
+      <a href="mailto:aibinzhangleslie@gmail.com">Email ↗</a>
+      <a href="/atom.xml">RSS ↗</a>
+    </div>
+    <div class="footer-meta">
+      <span>© 2026 Leslie Zhang</span>
+      <span>Writing, research and working systems.</span>
+    </div>
+  </div>
+</footer>
+
+    <dialog class="ask-dialog" id="ask-leslie" aria-labelledby="ask-title">
+  <div class="ask-dialog__shell">
+    <div class="ask-dialog__topbar">
+      <div>
+        <h2 id="ask-title">Ask Leslie</h2>
+      </div>
+      <button class="icon-button" type="button" data-ask-close aria-label="关闭">×</button>
+    </div>
+    <p class="ask-dialog__intro">从本站公开文章中寻找答案。当前版本在浏览器本地检索，不上传问题，也不会编造不存在的经历。</p>
+    <form class="ask-form" data-ask-form>
+      <label class="sr-only" for="ask-query">输入问题</label>
+      <textarea id="ask-query" rows="2" placeholder="例如：Agent Runtime 应该怎么设计？" data-ask-input></textarea>
+      <button type="submit">检索知识库 <span aria-hidden="true">↗</span></button>
+    </form>
+    <div class="ask-suggestions" aria-label="推荐问题">
+      
+        <button type="button" data-ask-suggestion="Agent Runtime 应该怎么设计？">Agent Runtime 应该怎么设计？</button>
+      
+        <button type="button" data-ask-suggestion="如何让 AI 操控真实世界设备？">如何让 AI 操控真实世界设备？</button>
+      
+        <button type="button" data-ask-suggestion="Leslie 最近在研究什么？">Leslie 最近在研究什么？</button>
+      
+    </div>
+    <div class="ask-results" data-ask-results aria-live="polite">
+      <div class="ask-empty">
+        <p>输入一个问题，我会把你带到 Leslie 写过的相关内容。</p>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+    <dialog class="wechat-dialog" id="wechat-leslie" aria-labelledby="wechat-title">
+  <div class="wechat-dialog__shell">
+    <header>
+      <div>
+        <p class="section-label">WeChat</p>
+        <h2 id="wechat-title">微信联系</h2>
+      </div>
+      <button class="icon-button" type="button" data-wechat-close aria-label="关闭微信二维码">×</button>
+    </header>
+    <img src="/images/contact/wechat-leslie.png" alt="Leslie Zhang 的微信二维码" loading="lazy">
+    <p>扫码添加 Leslie，建议备注你的名字与来意。</p>
+  </div>
+</dialog>
+
+    <script>window.ORBITAL_ROOT = '/';</script>
+    <script src="/js/orbital.js" defer></script>
+  </body>
+</html>

@@ -1,0 +1,361 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+  <head>
+
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#050b18">
+<meta name="color-scheme" content="dark light">
+<title>大模型推理引擎到底在调度什么？从 vLLM 到 SGLang 看服务端黑箱 | Leslie Zhang</title>
+<meta name="description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta name="author" content="Leslie Zhang">
+<link rel="canonical" href="https://leslieaibin.github.io/2026/06/23/attention-field/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E6%8E%A8%E7%90%86%E5%BC%95%E6%93%8E%E5%88%B0%E5%BA%95%E5%9C%A8%E8%B0%83%E5%BA%A6%E4%BB%80%E4%B9%88/">
+<link rel="icon" href="/imgs/01.jpg">
+<link rel="alternate" type="application/atom+xml" title="Leslie Zhang" href="/atom.xml">
+<meta property="og:type" content="article">
+<meta property="og:title" content="大模型推理引擎到底在调度什么？从 vLLM 到 SGLang 看服务端黑箱 | Leslie Zhang">
+<meta property="og:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta property="og:url" content="https://leslieaibin.github.io/2026/06/23/attention-field/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E6%8E%A8%E7%90%86%E5%BC%95%E6%93%8E%E5%88%B0%E5%BA%95%E5%9C%A8%E8%B0%83%E5%BA%A6%E4%BB%80%E4%B9%88/">
+<meta property="og:image" content="https://leslieaibin.github.io/2026/06/23/attention-field/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E6%8E%A8%E7%90%86%E5%BC%95%E6%93%8E%E5%88%B0%E5%BA%95%E5%9C%A8%E8%B0%83%E5%BA%A6%E4%BB%80%E4%B9%88/imgs/cover.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="大模型推理引擎到底在调度什么？从 vLLM 到 SGLang 看服务端黑箱 | Leslie Zhang">
+<meta name="twitter:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta name="twitter:image" content="https://leslieaibin.github.io/2026/06/23/attention-field/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E6%8E%A8%E7%90%86%E5%BC%95%E6%93%8E%E5%88%B0%E5%BA%95%E5%9C%A8%E8%B0%83%E5%BA%A6%E4%BB%80%E4%B9%88/imgs/cover.jpg">
+<script>
+  (function () {
+    var saved = localStorage.getItem('orbital-theme');
+    var theme = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    document.documentElement.dataset.theme = theme;
+  })();
+</script>
+<link rel="stylesheet" href="/css/orbital.css">
+<meta name="generator" content="Hexo 5.2.0"></head>
+  <body class="page-post">
+    <a class="skip-link" href="#main-content">跳到主要内容</a>
+    <div class="reading-progress" data-reading-progress></div>
+    <header class="site-header" data-header>
+  <div class="nav-shell">
+    <a class="brand" href="/" aria-label="返回首页">
+      <span class="brand-mark" aria-hidden="true"><img src="/images/brand/leslie-mythos-avatar.webp" alt="" width="512" height="512"></span>
+      <span class="brand-copy">
+        <strong>LESLIE</strong>
+        <small>REAL-WORLD AGENTS</small>
+      </span>
+    </a>
+
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav" data-nav-toggle>
+      <span></span><span></span>
+      <span class="sr-only">打开导航</span>
+    </button>
+
+    <nav class="main-nav" id="main-nav" aria-label="主导航" data-nav>
+      
+        <a href="/" class="">首页</a>
+      
+        <a href="/writing/" class="">写作</a>
+      
+        <a href="/projects/" class="">项目</a>
+      
+        <a href="/about/" class="">关于</a>
+      
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换明暗主题">
+        <span class="theme-toggle__sun" aria-hidden="true">☼</span>
+        <span class="theme-toggle__moon" aria-hidden="true">◐</span>
+      </button>
+      <button class="ask-nav" type="button" data-ask-open>ASK LESLIE</button>
+    </nav>
+  </div>
+</header>
+
+    <main id="main-content"><article class="post-shell">
+  <header class="post-hero shell">
+    <a class="post-back" href="/writing/">← 返回写作</a>
+    <div class="post-hero__meta">
+      <time datetime="2026-06-23">2026 年 06 月 23 日</time>
+      <span>10 分钟阅读</span>
+    </div>
+    <h1>大模型推理引擎到底在调度什么？从 vLLM 到 SGLang 看服务端黑箱</h1>
+    
+    <div class="chip-row"><a href="/tags/LLM/">LLM</a><a href="/tags/Inference/">Inference</a><a href="/tags/PagedAttention/">PagedAttention</a><a href="/tags/vLLM/">vLLM</a><a href="/tags/SGLang/">SGLang</a><a href="/tags/Scheduling/">Scheduling</a><a href="/tags/DistServe/">DistServe</a></div>
+  </header>
+
+  <div class="post-cover shell"><img src="/2026/06/23/attention-field/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E6%8E%A8%E7%90%86%E5%BC%95%E6%93%8E%E5%88%B0%E5%BA%95%E5%9C%A8%E8%B0%83%E5%BA%A6%E4%BB%80%E4%B9%88/imgs/cover.jpg" alt="大模型推理引擎到底在调度什么？从 vLLM 到 SGLang 看服务端黑箱"></div>
+
+  <div class="post-layout shell">
+    <aside class="post-toc" aria-label="文章目录">
+      <span class="aside-title">目录</span>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E4%B8%AA%E8%AF%B7%E6%B1%82%E8%BF%9B%E6%9D%A5%E4%BB%A5%E5%90%8E%EF%BC%8C%E4%B8%8D%E6%98%AF%E7%AB%8B%E5%88%BB%E7%AE%97"><span class="toc-text">一个请求进来以后，不是立刻算</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#vLLM-%E6%8A%8A%E6%98%BE%E5%AD%98%E9%97%AE%E9%A2%98%E5%85%88%E8%A7%A3%E5%86%B3%E4%BA%86%E4%B8%80%E5%8D%8A"><span class="toc-text">vLLM 把显存问题先解决了一半</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%9E%E7%BB%AD%E6%89%B9%E5%A4%84%E7%90%86%EF%BC%8C%E8%A7%A3%E5%86%B3%E7%9A%84%E6%98%AF%E2%80%9C%E8%B0%81%E5%9C%A8%E7%AD%89%E8%B0%81%E2%80%9D"><span class="toc-text">连续批处理，解决的是“谁在等谁”</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Prompt-Cache-%E5%92%8C-RadixAttention%EF%BC%8C%E8%A7%A3%E5%86%B3%E7%9A%84%E6%98%AF%E2%80%9C%E6%9C%89%E6%B2%A1%E6%9C%89%E9%87%8D%E5%A4%8D%E5%B9%B2%E6%B4%BB%E2%80%9D"><span class="toc-text">Prompt Cache 和 RadixAttention，解决的是“有没有重复干活”</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8E%A8%E7%90%86%E5%BC%95%E6%93%8E%E5%85%B6%E5%AE%9E%E5%9C%A8%E8%B0%83%E7%9A%84%E6%98%AF%E4%B8%A4%E7%A7%8D%E5%BB%B6%E8%BF%9F"><span class="toc-text">推理引擎其实在调的是两种延迟</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%86%E7%A6%BB%E5%BC%8F%E6%8E%A8%E7%90%86%EF%BC%8C%E5%BC%80%E5%A7%8B%E5%83%8F%E7%9C%9F%E6%AD%A3%E7%9A%84%E9%9B%86%E7%BE%A4%E8%B0%83%E5%BA%A6%E4%BA%86"><span class="toc-text">分离式推理，开始像真正的集群调度了</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SGLang-%E5%81%9A%E7%9A%84%EF%BC%8C%E6%98%AF%E8%AE%A9%E7%BB%93%E6%9E%84%E5%8C%96%E7%A8%8B%E5%BA%8F%E6%9B%B4%E5%83%8F%E7%A8%8B%E5%BA%8F"><span class="toc-text">SGLang 做的，是让结构化程序更像程序</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%8E%B0%E5%9C%A8%E7%9A%84-serving-%E4%BC%98%E5%8C%96%EF%BC%8C%E5%B7%B2%E7%BB%8F%E4%B8%8D%E6%AD%A2%E6%98%AF%E4%B8%80%E4%B8%AA%E5%BC%95%E6%93%8E%E7%9A%84%E9%97%AE%E9%A2%98"><span class="toc-text">现在的 serving 优化，已经不止是一个引擎的问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%81%9A%E5%BA%94%E7%94%A8%E7%9A%84%E4%BA%BA%E8%AF%A5%E7%9C%8B%E4%BB%80%E4%B9%88"><span class="toc-text">做应用的人该看什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%99%E5%9C%A8%E6%9C%80%E5%90%8E"><span class="toc-text">写在最后</span></a></li></ol>
+    </aside>
+    <div class="article-content"><h1 id="大模型推理引擎到底在调度什么？从-vLLM-到-SGLang-看服务端黑箱"><a href="#大模型推理引擎到底在调度什么？从-vLLM-到-SGLang-看服务端黑箱" class="headerlink" title="大模型推理引擎到底在调度什么？从 vLLM 到 SGLang 看服务端黑箱"></a>大模型推理引擎到底在调度什么？从 vLLM 到 SGLang 看服务端黑箱</h1><p>如果你只是在 API 层面用大模型，很容易把这件事想得特别简单。</p>
+<p>发请求。</p>
+<p>等结果。</p>
+<p>结束。</p>
+<p>但你只要开始真做线上服务，就会发现这套东西根本不是“发出去、回回来”这么朴素。你看到的只是一个接口，后面其实是一个不停调度请求、抢显存、拆批次、复用缓存、分配 GPU、平衡 TTFT 和 TPOT 的服务系统。</p>
+<p>它更像一个小型操作系统。</p>
+<p>只是这个操作系统管理的不是文件和进程，而是 token、KV Cache、batch、prefill、decode、以及那些正在排队的人。</p>
+<p>所以这个问题比“模型怎么跑”更值得问。</p>
+<p><strong>推理引擎到底在调度什么？</strong></p>
+<p>答案其实很直接。</p>
+<p>它调度的是有限 GPU 资源，和无限变化的请求形态之间的冲突。</p>
+<p><img src="imgs/cover.jpg" alt="一个推理调度中心像操作系统一样管理 GPU、队列、KV Cache、batch 和请求流，暖色纸艺风"></p>
+<h2 id="一个请求进来以后，不是立刻算"><a href="#一个请求进来以后，不是立刻算" class="headerlink" title="一个请求进来以后，不是立刻算"></a>一个请求进来以后，不是立刻算</h2><p>先别急着看引擎名字。</p>
+<p>先看请求。</p>
+<p>你发一个长 Prompt，它跟一个短问答，不是同一种负载。</p>
+<p>你让模型输出 20 个字，和输出 2000 个字，也不是同一种负载。</p>
+<p>你前面塞了 10 万 token 的文档，和只塞了一句问题，也不是同一种负载。</p>
+<p>但推理引擎在调度时，必须把这些完全不同的请求塞进同一套 GPU 资源池里。</p>
+<p>这就麻烦了。</p>
+<p>因为 LLM 推理有两个阶段，Prefill 和 Decode，性格还完全相反。</p>
+<p>Prefill 需要并行计算，把一大段输入吃进去。</p>
+<p>Decode 需要一点一点生成，每次只吐一个 token。</p>
+<p>如果引擎把这两类请求粗暴混在一起，就会出现两边都不爽的局面。</p>
+<p>Prefill 会把 Decode 挤死。</p>
+<p>Decode 又会让 Prefill 的大 batch 打不满。</p>
+<p>这也是为什么推理引擎的第一件大事不是“算模型”，而是“分配工作”。</p>
+<p>谁先上。</p>
+<p>谁后上。</p>
+<p>谁跟谁一起上。</p>
+<p>谁该等一下。</p>
+<p>谁该换 GPU。</p>
+<p>这些，才是它真正的日常。</p>
+<h2 id="vLLM-把显存问题先解决了一半"><a href="#vLLM-把显存问题先解决了一半" class="headerlink" title="vLLM 把显存问题先解决了一半"></a>vLLM 把显存问题先解决了一半</h2><p>推理引擎这条线里，vLLM 的重要性特别高。</p>
+<p>它不是第一个做 LLM serving 的系统，但它把一个之前没人真正解决好的问题做明白了，<strong>KV Cache 的显存管理。</strong></p>
+<p>PagedAttention 的核心思想很像操作系统分页。</p>
+<p>不是给每个请求预留一整块连续大内存。</p>
+<p>而是把 KV Cache 切成小 block，按需分配，block table 负责映射。</p>
+<p>这件事看起来像内存管理的小改良，其实对 serving 很关键。</p>
+<p>因为 LLM 请求的长度差异太大了。</p>
+<p>如果你按最大长度去预留，浪费会非常夸张。PagedAttention 让这些 cache block 像页一样可共享、可回收、可复制写。它的论文直接说了，这种方式能把以前那种碎片和冗余预留压下去，吞吐提升 2 到 4 倍。</p>
+<p>这一步很重要。</p>
+<p>因为它把“显存不够”从一个粗暴的硬件问题，变成了可以调度的资源问题。</p>
+<p>一旦你能按 block 管显存，后面很多事都能谈。</p>
+<p>连续批处理。</p>
+<p>前缀复用。</p>
+<p>分支共享。</p>
+<p>并发控制。</p>
+<p>甚至分离式推理。</p>
+<p>vLLM 不是把模型跑快了一点。</p>
+<p>它是把“显存怎么分”这件事工程化了。</p>
+<p><img src="imgs/01-pagedattention-blocks.jpg" alt="PagedAttention 的 block table，把逻辑 KV block 映射到非连续物理显存块，像分页一样管理"></p>
+<h2 id="连续批处理，解决的是“谁在等谁”"><a href="#连续批处理，解决的是“谁在等谁”" class="headerlink" title="连续批处理，解决的是“谁在等谁”"></a>连续批处理，解决的是“谁在等谁”</h2><p>如果只做静态 batching，推理系统很容易被一个长请求拖死。</p>
+<p>你凑一批一起算。</p>
+<p>谁先来谁后到不重要。</p>
+<p>重要的是等齐以后一起上。</p>
+<p>这对图像分类、短文本 batch 也许还行，但对 LLM serving 非常不友好。因为 LLM 每个请求的长度和生成速度差异极大，静态 batch 往往会让短请求白白等长请求。</p>
+<p>于是连续批处理就成了主流。</p>
+<p>它的核心意思很朴素。</p>
+<p>不是等整批结束再换人，而是每一轮 decode step 结束后，把做完的请求踢出去，把新来的请求补进来。</p>
+<p>这样 GPU 能持续被喂着跑。</p>
+<p>请求也不用傻等。</p>
+<p>SARATHI 这类工作把这个思路推得更明显，它通过 chunked-prefills 和 decode-maximal batching，让 prefill 的 chunk 去“顺带”填充 decode 的空隙，提升 decode throughput。论文里给出的结果很直接，decode throughput 和端到端 throughput 都能明显提升。</p>
+<p>这背后其实是一种很工程的理解。</p>
+<p>GPU 的空闲不是“自然现象”。</p>
+<p>它是调度没做对。</p>
+<p>只要请求形态足够杂，调度策略就决定了你是把 GPU 喂饱，还是把它晾着。</p>
+<p>而推理引擎的工作，就是尽量少让后者发生。</p>
+<p><img src="imgs/02-continuous-batching.jpg" alt="连续批处理时间轴，静态 batch 卡在一个长请求上，连续批处理在每个 decode step 动态补位"></p>
+<h2 id="Prompt-Cache-和-RadixAttention，解决的是“有没有重复干活”"><a href="#Prompt-Cache-和-RadixAttention，解决的是“有没有重复干活”" class="headerlink" title="Prompt Cache 和 RadixAttention，解决的是“有没有重复干活”"></a>Prompt Cache 和 RadixAttention，解决的是“有没有重复干活”</h2><p>很多 LLM 应用其实并不是每次都在从零开始。</p>
+<p>System Prompt 一样。</p>
+<p>工具定义一样。</p>
+<p>模板一样。</p>
+<p>RAG 的某些检索块一样。</p>
+<p>多轮对话里，前面那一大坨背景也常常一样。</p>
+<p>如果每次都重新 prefill 一遍，那就是赤裸裸的重复劳动。</p>
+<p>所以推理引擎的另一个核心任务，是识别能不能复用。</p>
+<p>vLLM 有 prefix caching。</p>
+<p>SGLang 有 RadixAttention。</p>
+<p>两者的思路都在于把重复前缀的 KV cache 留住，下次命中就直接复用，不必重新算一遍。</p>
+<p>SGLang 的论文把这个讲得很明确，系统专门针对 structured generation、multi-turn chat、RAG、JSON decoding 这些复杂程序做优化，RadixAttention 就是让 KV reuse 变得系统化的关键组件之一。它在这些任务上可以把吞吐拉得很高。</p>
+<p><img src="imgs/03-radix-reuse.jpg" alt="重复干活的部分应该被缓存住，前缀复用把多个请求共享的根节点留在树上"></p>
+<p>这里真正值得注意的，不只是“省了一次 prefill”。</p>
+<p>而是推理引擎开始把“重复内容”看成一等公民。</p>
+<p>以前你可能觉得缓存只是个性能小优化。</p>
+<p>现在不一样了。</p>
+<p>缓存已经是 serving 架构的一部分。</p>
+<p>谁复用得好，谁就更省钱。</p>
+<p>谁前缀稳定，谁就更快。</p>
+<p>谁的工作流更结构化，谁就更吃得到系统红利。</p>
+<p>这也是为什么 Agent、RAG、代码助手一类场景，会特别吃推理引擎的红利。</p>
+<p>因为它们天生会把相同前缀反复打进来。</p>
+<p>这不是偶然。</p>
+<p>这是工作负载的形状决定的。</p>
+<h2 id="推理引擎其实在调的是两种延迟"><a href="#推理引擎其实在调的是两种延迟" class="headerlink" title="推理引擎其实在调的是两种延迟"></a>推理引擎其实在调的是两种延迟</h2><p>调度器最在乎的不是单次平均耗时，而是两种延迟。</p>
+<p>TTFT。</p>
+<p>TPOT。</p>
+<p>前者决定用户多久能看到第一个字，后者决定后面每个 token 的速度。</p>
+<p>这两个东西在 serving 里经常是互相打架的。</p>
+<p>你为了更低 TTFT，可能得减少排队，让请求更快进去。</p>
+<p>你为了更高吞吐，可能得把 batch 塞得更满。</p>
+<p>但 batch 太满，TTFT 又容易上去。</p>
+<p>这就是为什么现代推理引擎的调度并不是单纯追求最大吞吐，而是在吞吐和 tail latency 之间找一个可控点。</p>
+<p>DistServe 这篇论文把这个矛盾说得很直接。它指出，prefill 和 decode 的资源画像不一样，如果混在一起，就会互相干扰。它提出把 prefill 和 decode 分离部署到不同 GPU 上，并根据 TTFT 和 TPOT 约束去共同优化资源分配和并行策略。论文里给出的结果很猛，在约束条件下能显著提高可服务请求量，或者在同等吞吐下把 SLO 压得更紧。</p>
+<p>这其实就是推理引擎调度的本质。</p>
+<p>不是让 GPU 一直忙。</p>
+<p>而是让 GPU 忙得有意义。</p>
+<p>忙在正确的阶段。</p>
+<p>忙在正确的请求上。</p>
+<p>忙在正确的资源池里。</p>
+<p>这件事听上去很普通，但它直接决定线上体验。</p>
+<p><img src="imgs/04-ttft-tpot-slo.jpg" alt="Prefill 和 Decode 的 TTFT / TPOT 目标卡片，旁边是调度器在吞吐和尾延迟之间做取舍"></p>
+<h2 id="分离式推理，开始像真正的集群调度了"><a href="#分离式推理，开始像真正的集群调度了" class="headerlink" title="分离式推理，开始像真正的集群调度了"></a>分离式推理，开始像真正的集群调度了</h2><p>如果把问题再往前推一步，就会发现“一个 GPU 跑一个请求”这套思路，迟早会撞到天花板。</p>
+<p>因为 Prefill 和 Decode 的硬件需求真的不一样。</p>
+<p>Prefill 更像算力密集型。</p>
+<p>Decode 更像带宽密集型。</p>
+<p>把它们硬塞在一个池子里，最后往往是谁都没吃满。</p>
+<p>所以分离式推理开始变得合理。</p>
+<p>Prefill GPU 专门负责把输入吃进去，写好 KV Cache。</p>
+<p>Decode GPU 专门负责后续 token 的生成。</p>
+<p>中间用高速互连把 KV Cache 传过去。</p>
+<p>这就是 DistServe 的主张。它说到底是在说，LLM serving 不应该只按“模型”分资源，而应该按“阶段”分资源。</p>
+<p>这件事很像数据库和流系统里的分层设计。</p>
+<p>不是把所有活都压在一个 worker 上。</p>
+<p>而是按工作特征拆开，分别做最合适的资源调度。</p>
+<p>推理引擎越往后走，越像一个真正的集群调度系统。</p>
+<p>它不是“模型盒子”。</p>
+<p>它是“模型工作流的操作系统”。</p>
+<h2 id="SGLang-做的，是让结构化程序更像程序"><a href="#SGLang-做的，是让结构化程序更像程序" class="headerlink" title="SGLang 做的，是让结构化程序更像程序"></a>SGLang 做的，是让结构化程序更像程序</h2><p>如果 vLLM 的重点是 memory management，那 SGLang 的重点就更偏 structured generation。</p>
+<p>它的出发点不是“怎么把一个请求跑得更快”，而是“怎么让复杂的语言模型程序可表达、可复用、可优化”。</p>
+<p>SGLang 的论文里，前端负责控制流、选择、并行，后端负责用 RadixAttention、compressed FSM、speculative execution 这些东西提速。它在 agent control、logical reasoning、few-shot、JSON decoding、RAG pipelines、多轮 chat 上都给出了很强的吞吐表现。</p>
+<p>这点其实很重要。</p>
+<p>因为很多人把 LLM 应用写成了一堆 prompt 拼接。</p>
+<p>但真正成熟的推理引擎，已经开始把这些结构看成程序了。</p>
+<p>程序就应该有缓存。</p>
+<p>程序就应该有状态。</p>
+<p>程序就应该有控制流。</p>
+<p>程序就应该有分支复用。</p>
+<p>这就是 SGLang 这类系统的方向感。</p>
+<p>不是单次生成，而是生成程序化。</p>
+<p>不是临时拼 prompt，而是把 prompt 结构本身系统化。</p>
+<p><img src="imgs/05-disaggregation.jpg" alt="一个结构化生成程序流，前端分支、并行、选择，后端用缓存和 FSM 加速，像一个可执行的 prompt 语言"></p>
+<h2 id="现在的-serving-优化，已经不止是一个引擎的问题"><a href="#现在的-serving-优化，已经不止是一个引擎的问题" class="headerlink" title="现在的 serving 优化，已经不止是一个引擎的问题"></a>现在的 serving 优化，已经不止是一个引擎的问题</h2><p>如果把这几年所有工作放在一起看，你会发现一个趋势特别明显。</p>
+<p>最早，大家在解决的是“模型怎么跑”。</p>
+<p>后来，大家在解决的是“KV Cache 怎么放”。</p>
+<p>再后来，大家开始解决“请求怎么排队、怎么批、怎么复用、怎么拆阶段”。</p>
+<p>到现在，问题已经演化成“整个 serving 集群怎么围着工作负载做控制”。</p>
+<p>PagedAttention 解决的是内存管理。</p>
+<p>continuous batching 解决的是吞吐和队列。</p>
+<p>prefix caching / RadixAttention 解决的是复用。</p>
+<p>DistServe 解决的是阶段冲突。</p>
+<p>SARATHI 解决的是 chunked prefill 和 decode 的互相占位。</p>
+<p>SGLang 解决的是结构化生成程序的执行。</p>
+<p>这些东西合在一起，才是现在推理引擎的真实面貌。</p>
+<p>它不是一个模型 runtime。</p>
+<p>它是一整套为 LLM 工作负载量身定制的调度系统。</p>
+<h2 id="做应用的人该看什么"><a href="#做应用的人该看什么" class="headerlink" title="做应用的人该看什么"></a>做应用的人该看什么</h2><p>如果你不是做底层引擎，而是在做上层应用，很多时候你不需要知道每一行 CUDA 怎么写。</p>
+<p>但你至少要知道几个很现实的判断。</p>
+<p>第一，固定前缀能不能稳定。</p>
+<p>如果可以，缓存收益会非常大。</p>
+<p>第二，输入和输出的长度分布是什么。</p>
+<p>如果输入特别长，那你会特别吃 prefill 优化。</p>
+<p>如果输出特别长，那你会特别吃 decode 吞吐和 speculative decoding。</p>
+<p>第三，你的工作负载是不是结构化。</p>
+<p>如果你的应用总是 JSON、工具调用、模板输出，那 SGLang 这类 structured generation 系统会特别合适。</p>
+<p>第四，你是不是有多轮共用上下文。</p>
+<p>如果是，那 prefix caching、RadixAttention、段级复用就会变得很重要。</p>
+<p>第五，你是不是在跟 SLO 打架。</p>
+<p>如果你的 TTFT 卡死了，就别先纠结总吞吐。</p>
+<p>如果你的 TPOT 卡死了，就别只盯首字延迟。</p>
+<p>这些判断，比你盲目换“更大模型”更重要。</p>
+<h2 id="写在最后"><a href="#写在最后" class="headerlink" title="写在最后"></a>写在最后</h2><p>推理引擎这个词，听上去像一个单独的技术组件。</p>
+<p>但真到了线上，它其实是整个系统的神经中枢。</p>
+<p>它调度请求。</p>
+<p>它调度显存。</p>
+<p>它调度缓存。</p>
+<p>它调度 batch。</p>
+<p>它调度每一次 prefill 和每一次 decode。</p>
+<p>你看到的是一次回答。</p>
+<p>它看到的是一个不断变化的工作负载图。</p>
+<p>这也是为什么做 LLM 应用的人，迟早都会碰到 serving 这层。</p>
+<p>你不碰它，它也会来碰你。</p>
+<p>因为当你的应用开始变大，最先告诉你“你得懂一点底层”的，从来不是模型，而是成本和延迟。</p>
+<p>大模型不是只要更聪明。</p>
+<p>还要更会被调度。</p>
+<p>能把它调度明白的人，才真正理解了它怎么活在生产环境里。</p>
+<p>以上，既然看到这里了，如果觉得不错，随手点个赞、在看、转发三连吧，如果想第一时间收到推送，也可以给我个星标⭐~<br>谢谢你看我的文章，我们，下次再见。</p>
+<blockquote>
+<p>/ 参考资料<br>Efficient Memory Management for Large Language Model Serving with PagedAttention, 2023<br>SGLang: Efficient Execution of Structured Language Model Programs, 2023<br>SARATHI: Efficient LLM Inference by Piggybacking Decodes with Chunked Prefills, 2023<br>DistServe: Disaggregating Prefill and Decoding for Goodput-optimized Large Language Model Serving, 2024<br>Large-Scale LLM Inference with Heterogeneous Workloads: Prefill-Decode Contention and Asymptotically Optimal Control, 2026</p>
+</blockquote>
+</div>
+    <aside class="post-rail">
+      <span class="post-rail__line"></span>
+      <span>LESLIE / WRITING</span>
+    </aside>
+  </div>
+
+  <footer class="post-footer shell">
+    <div><h2>如果这篇文章帮到了你，<br>也许下一篇会更有意思。</h2></div>
+    <a class="button button--primary" href="/writing/">继续阅读 →</a>
+  </footer>
+</article>
+</main>
+    <footer class="site-footer">
+  <div class="footer-grid">
+    <div>
+      <p class="footer-kicker">Leslie Zhang</p>
+      <p class="footer-statement">流水不争先，<br>争的是滔滔不绝。</p>
+    </div>
+    <div class="footer-links">
+      <a href="https://github.com/leslieAIbin" target="_blank" rel="noreferrer">GitHub ↗</a>
+      <a href="https://www.instagram.com/leslieaibin/" target="_blank" rel="noreferrer">Instagram ↗</a>
+      <button type="button" data-wechat-open>微信 / WeChat</button>
+      <a href="mailto:aibinzhangleslie@gmail.com">Email ↗</a>
+      <a href="/atom.xml">RSS ↗</a>
+    </div>
+    <div class="footer-meta">
+      <span>© 2026 Leslie Zhang</span>
+      <span>Writing, research and working systems.</span>
+    </div>
+  </div>
+</footer>
+
+    <dialog class="ask-dialog" id="ask-leslie" aria-labelledby="ask-title">
+  <div class="ask-dialog__shell">
+    <div class="ask-dialog__topbar">
+      <div>
+        <h2 id="ask-title">Ask Leslie</h2>
+      </div>
+      <button class="icon-button" type="button" data-ask-close aria-label="关闭">×</button>
+    </div>
+    <p class="ask-dialog__intro">从本站公开文章中寻找答案。当前版本在浏览器本地检索，不上传问题，也不会编造不存在的经历。</p>
+    <form class="ask-form" data-ask-form>
+      <label class="sr-only" for="ask-query">输入问题</label>
+      <textarea id="ask-query" rows="2" placeholder="例如：Agent Runtime 应该怎么设计？" data-ask-input></textarea>
+      <button type="submit">检索知识库 <span aria-hidden="true">↗</span></button>
+    </form>
+    <div class="ask-suggestions" aria-label="推荐问题">
+      
+        <button type="button" data-ask-suggestion="Agent Runtime 应该怎么设计？">Agent Runtime 应该怎么设计？</button>
+      
+        <button type="button" data-ask-suggestion="如何让 AI 操控真实世界设备？">如何让 AI 操控真实世界设备？</button>
+      
+        <button type="button" data-ask-suggestion="Leslie 最近在研究什么？">Leslie 最近在研究什么？</button>
+      
+    </div>
+    <div class="ask-results" data-ask-results aria-live="polite">
+      <div class="ask-empty">
+        <p>输入一个问题，我会把你带到 Leslie 写过的相关内容。</p>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+    <dialog class="wechat-dialog" id="wechat-leslie" aria-labelledby="wechat-title">
+  <div class="wechat-dialog__shell">
+    <header>
+      <div>
+        <p class="section-label">WeChat</p>
+        <h2 id="wechat-title">微信联系</h2>
+      </div>
+      <button class="icon-button" type="button" data-wechat-close aria-label="关闭微信二维码">×</button>
+    </header>
+    <img src="/images/contact/wechat-leslie.png" alt="Leslie Zhang 的微信二维码" loading="lazy">
+    <p>扫码添加 Leslie，建议备注你的名字与来意。</p>
+  </div>
+</dialog>
+
+    <script>window.ORBITAL_ROOT = '/';</script>
+    <script src="/js/orbital.js" defer></script>
+  </body>
+</html>

@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+  <head>
+
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#050b18">
+<meta name="color-scheme" content="dark light">
+<title>Agent记忆模块实践指南 — 让AI真正&#34;记住&#34;你是谁 | Leslie Zhang</title>
+<meta name="description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta name="author" content="Leslie Zhang">
+<link rel="canonical" href="https://leslieaibin.github.io/2026/04/15/attention-field/Agent%E8%AE%B0%E5%BF%86%E6%A8%A1%E5%9D%97%E5%AE%9E%E8%B7%B5%E6%8C%87%E5%8D%97/">
+<link rel="icon" href="/imgs/01.jpg">
+<link rel="alternate" type="application/atom+xml" title="Leslie Zhang" href="/atom.xml">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Agent记忆模块实践指南 — 让AI真正&#34;记住&#34;你是谁 | Leslie Zhang">
+<meta property="og:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta property="og:url" content="https://leslieaibin.github.io/2026/04/15/attention-field/Agent%E8%AE%B0%E5%BF%86%E6%A8%A1%E5%9D%97%E5%AE%9E%E8%B7%B5%E6%8C%87%E5%8D%97/">
+<meta property="og:image" content="https://leslieaibin.github.io/2026/04/15/attention-field/Agent%E8%AE%B0%E5%BF%86%E6%A8%A1%E5%9D%97%E5%AE%9E%E8%B7%B5%E6%8C%87%E5%8D%97/illustrations/08-infographic-llm-limitations.webp">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Agent记忆模块实践指南 — 让AI真正&#34;记住&#34;你是谁 | Leslie Zhang">
+<meta name="twitter:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta name="twitter:image" content="https://leslieaibin.github.io/2026/04/15/attention-field/Agent%E8%AE%B0%E5%BF%86%E6%A8%A1%E5%9D%97%E5%AE%9E%E8%B7%B5%E6%8C%87%E5%8D%97/illustrations/08-infographic-llm-limitations.webp">
+<script>
+  (function () {
+    var saved = localStorage.getItem('orbital-theme');
+    var theme = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    document.documentElement.dataset.theme = theme;
+  })();
+</script>
+<link rel="stylesheet" href="/css/orbital.css">
+<meta name="generator" content="Hexo 5.2.0"></head>
+  <body class="page-post">
+    <a class="skip-link" href="#main-content">跳到主要内容</a>
+    <div class="reading-progress" data-reading-progress></div>
+    <header class="site-header" data-header>
+  <div class="nav-shell">
+    <a class="brand" href="/" aria-label="返回首页">
+      <span class="brand-mark" aria-hidden="true"><img src="/images/brand/leslie-mythos-avatar.webp" alt="" width="512" height="512"></span>
+      <span class="brand-copy">
+        <strong>LESLIE</strong>
+        <small>REAL-WORLD AGENTS</small>
+      </span>
+    </a>
+
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav" data-nav-toggle>
+      <span></span><span></span>
+      <span class="sr-only">打开导航</span>
+    </button>
+
+    <nav class="main-nav" id="main-nav" aria-label="主导航" data-nav>
+      
+        <a href="/" class="">首页</a>
+      
+        <a href="/writing/" class="">写作</a>
+      
+        <a href="/projects/" class="">项目</a>
+      
+        <a href="/about/" class="">关于</a>
+      
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换明暗主题">
+        <span class="theme-toggle__sun" aria-hidden="true">☼</span>
+        <span class="theme-toggle__moon" aria-hidden="true">◐</span>
+      </button>
+      <button class="ask-nav" type="button" data-ask-open>ASK LESLIE</button>
+    </nav>
+  </div>
+</header>
+
+    <main id="main-content"><article class="post-shell">
+  <header class="post-hero shell">
+    <a class="post-back" href="/writing/">← 返回写作</a>
+    <div class="post-hero__meta">
+      <time datetime="2026-04-15">2026 年 04 月 15 日</time>
+      <span>16 分钟阅读</span>
+    </div>
+    <h1>Agent记忆模块实践指南 — 让AI真正&#34;记住&#34;你是谁</h1>
+    
+    <div class="chip-row"><a href="/tags/Context-Engineering/">Context Engineering</a><a href="/tags/AI-Agent/">AI Agent</a><a href="/tags/%E8%AE%B0%E5%BF%86%E6%A8%A1%E5%9D%97/">记忆模块</a><a href="/tags/Mem0/">Mem0</a><a href="/tags/Letta/">Letta</a><a href="/tags/MemGPT/">MemGPT</a><a href="/tags/LangMem/">LangMem</a><a href="/tags/Bedrock-AgentCore/">Bedrock AgentCore</a><a href="/tags/%E4%B8%8A%E4%B8%8B%E6%96%87%E5%B7%A5%E7%A8%8B/">上下文工程</a><a href="/tags/Agentic-AI/">Agentic AI</a></div>
+  </header>
+
+  <div class="post-cover shell"><img src="/2026/04/15/attention-field/Agent%E8%AE%B0%E5%BF%86%E6%A8%A1%E5%9D%97%E5%AE%9E%E8%B7%B5%E6%8C%87%E5%8D%97/illustrations/08-infographic-llm-limitations.webp" alt="Agent记忆模块实践指南 — 让AI真正&#34;记住&#34;你是谁"></div>
+
+  <div class="post-layout shell">
+    <aside class="post-toc" aria-label="文章目录">
+      <span class="aside-title">目录</span>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81LLM%E7%9A%84%E2%80%9D%E9%81%97%E5%BF%98%E2%80%9D%E5%9B%B0%E5%A2%83"><span class="toc-text">一、LLM的”遗忘”困境</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E4%B8%A4%E7%A7%8D%E8%AE%B0%E5%BF%86%E7%B1%BB%E5%9E%8B%EF%BC%9A%E7%9F%AD%E6%9C%9F-vs-%E9%95%BF%E6%9C%9F"><span class="toc-text">二、两种记忆类型：短期 vs 长期</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-%E7%9F%AD%E6%9C%9F%E8%AE%B0%E5%BF%86%EF%BC%88Short-term-Memory-STM%EF%BC%89"><span class="toc-text">2.1 短期记忆（Short-term Memory, STM）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-%E9%95%BF%E6%9C%9F%E8%AE%B0%E5%BF%86%EF%BC%88Long-term-Memory-LTM%EF%BC%89"><span class="toc-text">2.2 长期记忆（Long-term Memory, LTM）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E8%AE%B0%E5%BF%86%E7%AE%A1%E7%90%86%E5%9B%9B%E4%BB%B6%E4%BA%8B"><span class="toc-text">三、记忆管理四件事</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E8%AE%B0%E4%BB%80%E4%B9%88%EF%BC%9A%E5%88%A4%E6%96%AD%E5%93%AA%E4%BA%9B%E4%BF%A1%E6%81%AF%E9%9C%80%E8%A6%81%E8%A2%AB%E8%AE%B0%E5%BF%86"><span class="toc-text">3.1 记什么：判断哪些信息需要被记忆</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-%E4%BD%95%E6%97%B6%E8%AE%B0%EF%BC%9A%E8%AE%B0%E5%BF%86%E6%9B%B4%E6%96%B0%E7%AD%96%E7%95%A5"><span class="toc-text">3.2 何时记：记忆更新策略</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-%E5%AD%98%E5%9C%A8%E5%93%AA%EF%BC%9A%E8%AE%B0%E5%BF%86%E7%BB%84%E7%BB%87%E7%BB%93%E6%9E%84"><span class="toc-text">3.3 存在哪：记忆组织结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-4-%E6%80%8E%E4%B9%88%E6%89%BE%EF%BC%9A%E8%AE%B0%E5%BF%86%E6%A3%80%E7%B4%A2%E4%B8%8E%E5%8F%AC%E5%9B%9E"><span class="toc-text">3.4 怎么找：记忆检索与召回</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E4%B8%8A%E4%B8%8B%E6%96%87%E5%B7%A5%E7%A8%8B%EF%BC%9A%E8%AE%B0%E5%BF%86%E7%9A%84%E2%80%9D%E8%B0%83%E5%BA%A6%E5%91%98%E2%80%9D"><span class="toc-text">四、上下文工程：记忆的”调度员”</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94%E3%80%81%E5%9B%9B%E5%A4%A7%E8%AE%B0%E5%BF%86%E6%A1%86%E6%9E%B6%E5%AF%B9%E6%AF%94"><span class="toc-text">五、四大记忆框架对比</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#5-1-Mem0%EF%BC%9A%E6%99%BA%E8%83%BD%E8%AE%B0%E5%BF%86%E7%AE%A1%E7%90%86"><span class="toc-text">5.1 Mem0：智能记忆管理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-2-Letta%EF%BC%88%E5%89%8D%E8%BA%AB%E4%B8%BAMemGPT%EF%BC%89%EF%BC%9A%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98%E6%9E%B6%E6%9E%84"><span class="toc-text">5.2 Letta（前身为MemGPT）：虚拟内存架构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-3-LangMem%EF%BC%9A%E4%B8%89%E7%A7%8D%E8%AE%B0%E5%BF%86%E7%B1%BB%E5%9E%8B"><span class="toc-text">5.3 LangMem：三种记忆类型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-4-Amazon-Bedrock-AgentCore-Memory%EF%BC%9A%E6%89%98%E7%AE%A1%E6%96%B9%E6%A1%88"><span class="toc-text">5.4 Amazon Bedrock AgentCore Memory：托管方案</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD%E3%80%81%E6%88%91%E7%9A%84%E9%80%89%E5%9E%8B%E5%BB%BA%E8%AE%AE"><span class="toc-text">六、我的选型建议</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%85%88%E6%83%B3%E6%B8%85%E6%A5%9A%E4%BD%A0%E7%9A%84%E5%9C%BA%E6%99%AF"><span class="toc-text">1. 先想清楚你的场景</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E8%AE%B0%E5%BF%86%E6%98%AF%E5%9F%BA%E7%A1%80%E8%83%BD%E5%8A%9B%EF%BC%8C%E4%B8%8D%E6%98%AF%E5%8F%AF%E9%80%89%E9%A1%B9"><span class="toc-text">2. 记忆是基础能力，不是可选项</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E7%9F%AD%E6%9C%9F-%E9%95%BF%E6%9C%9F%E6%90%AD%E9%85%8D%E4%BD%BF%E7%94%A8"><span class="toc-text">3. 短期+长期搭配使用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E4%B8%8D%E8%A6%81%E5%BF%BD%E8%A7%86%E8%AE%B0%E5%BF%86%E6%A3%80%E7%B4%A2%E7%9A%84%E8%B4%A8%E9%87%8F"><span class="toc-text">4. 不要忽视记忆检索的质量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E4%B8%8A%E4%B8%8B%E6%96%87%E5%B7%A5%E7%A8%8B%E6%98%AF%E8%AE%B0%E5%BF%86%E7%9A%84%E2%80%9D%E8%B0%83%E5%BA%A6%E5%91%98%E2%80%9D"><span class="toc-text">5. 上下文工程是记忆的”调度员”</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-%E6%A1%86%E6%9E%B6%E9%80%89%E5%9E%8B%E7%9C%8B%E9%9C%80%E6%B1%82"><span class="toc-text">6. 框架选型看需求</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-%E6%8E%A7%E5%88%B6%E6%88%90%E6%9C%AC%EF%BC%9A%E5%8E%8B%E7%BC%A9%E5%92%8C%E9%87%8A%E6%94%BE"><span class="toc-text">7. 控制成本：压缩和释放</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-%E7%BB%99%E7%94%A8%E6%88%B7%E6%8E%A7%E5%88%B6%E6%9D%83"><span class="toc-text">8. 给用户控制权</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%83%E3%80%81%E5%86%99%E5%9C%A8%E6%9C%80%E5%90%8E"><span class="toc-text">七、写在最后</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="toc-text">参考资料</span></a></li></ol>
+    </aside>
+    <div class="article-content"><p>你有没有过这样的体验？</p>
+<p>周一跟AI助手说”我喜欢深色主题，代码风格用ESLint Airbnb”，它记住了。周二再问，它还记得。到周三，新开了一个对话窗口，又得重新说一遍。</p>
+<p>这就是大语言模型的根本问题——<strong>它没有记忆</strong>。准确地说，它是无状态（stateless）的。每次对话都是一张白纸，模型本身不会”记住”过去的任何交互。</p>
+<p>在简单问答场景下，这不算什么问题。但到了Agent场景，这就成了致命缺陷。一个客服Agent如果记不住用户上周反映过什么问题，每次都从零开始问，用户体验直接拉胯。一个代码助手如果记不住项目的技术栈和代码风格，每次都给你推荐不合适的方案，效率反而更低。</p>
+<p>AWS那篇《Agentic AI基础设施实践经验系列（三）：Agent记忆模块的最佳实践》把这个问题讲得比较透彻，从问题分析到解决方案到框架选型，一条线拉下来。我把里面有价值的内容，结合自己的理解，整理成了这篇实践指南。</p>
+<h2 id="一、LLM的”遗忘”困境"><a href="#一、LLM的”遗忘”困境" class="headerlink" title="一、LLM的”遗忘”困境"></a>一、LLM的”遗忘”困境</h2><p>先说清楚问题有多大。原文从四个角度分析了LLM记忆能力的局限：</p>
+<p><strong>上下文窗口有限。</strong> LLM通过一个有限的”上下文窗口”来处理信息，所有输入（包括Prompt和之前的对话片段）都必须塞进这个窗口。一旦信息超出窗口，LLM就”忘记”了，无法再访问。</p>
+<p><strong>复杂任务难以追踪。</strong> 对于需要跨越多轮对话、追踪状态或执行一系列子任务的复杂任务，LLM很难保持连贯性和进展。特别是在Agent场景中，工具的定义和工具的返回值都会占据上下文空间，同时Agent具有自主工作的能力，和LLM的平均交互轮数也大大增加，这个问题更加严重。</p>
+<p><strong>无法个性化。</strong> 由于不记住特定用户的历史偏好、习惯或之前的互动，LLM难以提供真正个性化的体验。每次互动都像是第一次见面。</p>
+<p><strong>长上下文带来的副作用。</strong> 这是最容易被忽略的一点。上下文越长，推理速度越慢、模型检索关键信息的能力可能下降、Token费用也更高。对于需要频繁交互或处理大量文本的应用，这会迅速累积成可观的费用。</p>
+<p>所以记忆系统不是锦上添花，是刚需。记忆系统赋予Agent五个核心能力：</p>
+<ol>
+<li><strong>长期保留与高效管理</strong>：存储超出上下文窗口的信息，实现高效检索和过滤</li>
+<li><strong>持续知识更新</strong>：通过存储交互经验，实现自我改进和知识更新</li>
+<li><strong>个性化服务</strong>：记录用户偏好和历史互动，提供定制化回应</li>
+<li><strong>复杂任务支持</strong>：追踪多Agent任务进展和中间结果，确保连贯完成</li>
+<li><strong>提升交互质量</strong>：保持上下文连贯性，支持深入推理，并通过反思机制从错误中学习</li>
+</ol>
+<p><img src="illustrations/08-infographic-llm-limitations.webp" alt="LLM的&quot;遗忘&quot;困境"></p>
+<h2 id="二、两种记忆类型：短期-vs-长期"><a href="#二、两种记忆类型：短期-vs-长期" class="headerlink" title="二、两种记忆类型：短期 vs 长期"></a>二、两种记忆类型：短期 vs 长期</h2><p>Agent的记忆系统主要分为短期记忆和长期记忆两大类。</p>
+<h3 id="2-1-短期记忆（Short-term-Memory-STM）"><a href="#2-1-短期记忆（Short-term-Memory-STM）" class="headerlink" title="2.1 短期记忆（Short-term Memory, STM）"></a>2.1 短期记忆（Short-term Memory, STM）</h3><p>短期记忆是Agent维护当前对话和任务的即时上下文系统，主要包括：</p>
+<ul>
+<li><strong>会话缓冲（Context）记忆</strong>：保留最近对话历史的滚动窗口，确保回答上下文相关性</li>
+<li><strong>工作记忆</strong>：存储当前任务的临时信息，如中间结果、变量值等</li>
+</ul>
+<p>短期记忆受限于上下文窗口大小，适用于简单对话和单一任务场景。你把它理解为”脑子里正在想的事情”就行了——容量有限，转瞬即逝。</p>
+<h3 id="2-2-长期记忆（Long-term-Memory-LTM）"><a href="#2-2-长期记忆（Long-term-Memory-LTM）" class="headerlink" title="2.2 长期记忆（Long-term Memory, LTM）"></a>2.2 长期记忆（Long-term Memory, LTM）</h3><p>长期记忆是Agent用于<strong>跨会话、跨任务长期保存知识</strong>的记忆形式。它对应于人类大脑中持久保存的记忆——事实知识、过去经历等。长期记忆的实现通常依赖<strong>外部存储</strong>或<strong>知识库</strong>：</p>
+<ul>
+<li><strong>摘要记忆</strong>：将长对话内容提炼为关键摘要存储</li>
+<li><strong>结构化知识库</strong>：使用数据库或知识图谱存储结构化信息</li>
+<li><strong>向量化存储</strong>：通过向量数据库实现基于语义的记忆检索</li>
+</ul>
+<p>长期记忆使Agent能够随着时间累积经验和知识，特别适用于<strong>知识密集型应用</strong>和<strong>需要长期个性化</strong>的场景。</p>
+<p><img src="illustrations/01-infographic-memory-types.webp" alt="短期记忆 vs 长期记忆"></p>
+<h2 id="三、记忆管理四件事"><a href="#三、记忆管理四件事" class="headerlink" title="三、记忆管理四件事"></a>三、记忆管理四件事</h2><p>设计Agent的记忆系统，要解决四个核心问题：<strong>记什么、何时记、存在哪、怎么找</strong>。</p>
+<h3 id="3-1-记什么：判断哪些信息需要被记忆"><a href="#3-1-记什么：判断哪些信息需要被记忆" class="headerlink" title="3.1 记什么：判断哪些信息需要被记忆"></a>3.1 记什么：判断哪些信息需要被记忆</h3><p>这是第一个也是最关键的问题。并非所有对话内容都需要长期保存。记忆往往是多维度和动态的信息结构，包括<strong>时间维度</strong>（理解时间依赖的关系和序列）、<strong>空间维度</strong>（解释基于位置的和几何关系）、参与者<strong>状态</strong>（跟踪多个实体及其不断变化的状况）、意图<strong>上下文</strong>（理解目标、动机和隐含的目的），以及<strong>文化上下文</strong>（在特定社会和文化框架内解释交流）。</p>
+<p>原文用四种常见场景举例了各自的记忆重点：</p>
+<p><strong>代码助手</strong>——记忆用户项目的上下文和偏好。包括代码库结构、命名风格、常用框架/库、以及用户以前提供的代码片段或指令。没有记忆支持时，开发者常常需要重复告诉AI项目的架构或纠正AI偏离项目规范的行为，非常低效。引入持久记忆后，AI能持续参考之前存储的项目背景，”记住”用户的技术栈，保持技术决策的一致性。同时还能记忆用户过往的提问和反馈，下次遇到类似问题直接调用之前的方案。</p>
+<p><strong>智能客服</strong>——记忆用户历史和偏好。包括用户当前任务状态、提过的问题、故障记录、产品使用情况、服务配置和解决方案记录。用户第二次来询问类似问题时，不必重复描述问题细节，系统能回忆起上次给出的建议或已经尝试过的步骤，直接切入重点。此外，记忆用户的产品使用情况和喜好可以使响应更加贴合用户习惯。</p>
+<p><strong>个人助理</strong>——记忆用户个人信息和日程表、目标（如健身学习计划）、行为模式（如每周几锻炼）以及对应用和服务的偏好。随着交互增加，持续的长期记忆使Agent能不断适应用户，逐渐减少对用户指令的依赖，实现更主动和贴心的服务。</p>
+<p><strong>推荐服务</strong>——记忆用户的显式反馈（点赞或明确表达不喜欢）和隐式反馈（浏览记录、点击行为、购买历史），以此构建兴趣档案，持续学习调整推荐策略。</p>
+<p><img src="illustrations/02-infographic-four-scenarios.webp" alt="四种场景的记忆重点"></p>
+<p>原文还给出了一个非常实用的例子——长文档处理场景中的上下文压缩提示词：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"># 文档处理领域的摘要压缩Prompt</span><br><span class="line">custom_system_prompt &#x3D; &quot;&quot;&quot;您正在总结文档处理工作流对话。创建一个简明扼要的要点摘要，该摘要：</span><br><span class="line">    专注于文档处理任务、章节生成和工作流进度</span><br><span class="line">    保留特定文件路径、章节名称和任务完成状态</span><br><span class="line">    维护待办事项列表状态和进度跟踪信息</span><br><span class="line">    省略对话元素，专注于可操作的工作流信息</span><br><span class="line">    使用适合文档处理和内容生成的技术术语</span><br><span class="line">    保留错误消息和重要状态更新</span><br><span class="line">    &quot;&quot;&quot;</span><br></pre></td></tr></table></figure>
+
+<p>当上下文超过指定限额时，就会触发这个基于LLM的压缩机制。这个思路可以直接用到自己的项目里。</p>
+<h3 id="3-2-何时记：记忆更新策略"><a href="#3-2-何时记：记忆更新策略" class="headerlink" title="3.2 何时记：记忆更新策略"></a>3.2 何时记：记忆更新策略</h3><p>记忆更新可通过<strong>轮数触发</strong>或<strong>事件触发</strong>两种方式：</p>
+<ul>
+<li><strong>轮数触发</strong>：每隔3-5轮对话自动生成摘要存入记忆</li>
+<li><strong>事件触发</strong>：在完成任务、场景转换等关键节点记录信息。比如客服完成问题处理时保存解决方案，个人助理更新日程后写入日历</li>
+</ul>
+<p>开发者可以实现监控逻辑，在对话累积或话题转换时，让LLM对近期对话生成摘要，提取关键信息并添加标签便于检索。</p>
+<p>系统也可支持用户主动标记需要记住的信息，通过<strong>口头指令</strong>或<strong>界面</strong>操作。这不仅让用户指定重要内容，也支持删除特定记忆的需求，确保用户对数据的控制权。</p>
+<h3 id="3-3-存在哪：记忆组织结构"><a href="#3-3-存在哪：记忆组织结构" class="headerlink" title="3.3 存在哪：记忆组织结构"></a>3.3 存在哪：记忆组织结构</h3><p>记忆数据通常采用<strong>用户→会话→记忆片段</strong>的三层结构管理：</p>
+<ul>
+<li><strong>用户层</strong>：区分不同账号空间</li>
+<li><strong>会话层</strong>：隔离各对话上下文</li>
+<li><strong>记忆片段层</strong>：存储具体内容及元数据（如时间、关键词、来源等）</li>
+</ul>
+<p>复杂系统可能需要维护多个记忆库——短期工作记忆、长期情节记忆、语义知识库等。合理的结构设计有助于快速检索和有效管理记忆内容。</p>
+<h3 id="3-4-怎么找：记忆检索与召回"><a href="#3-4-怎么找：记忆检索与召回" class="headerlink" title="3.4 怎么找：记忆检索与召回"></a>3.4 怎么找：记忆检索与召回</h3><p>Agent需要基于当前对话意图从记忆库中检索相关信息。主要检索方法包括：</p>
+<ul>
+<li><strong>关键词匹配</strong>：传统的精确或模糊匹配</li>
+<li><strong>向量语义搜索</strong>：通过语义相似度找到最相关的记忆</li>
+<li><strong>元数据过滤</strong>：按时间、来源、类别等属性筛选</li>
+</ul>
+<p>系统将检索到的记忆按相关度排序，选取最相关内容加入到对话上下文中，用于生成更准确的响应。</p>
+<p><img src="illustrations/03-infographic-memory-management.webp" alt="记忆管理四环节"></p>
+<h2 id="四、上下文工程：记忆的”调度员”"><a href="#四、上下文工程：记忆的”调度员”" class="headerlink" title="四、上下文工程：记忆的”调度员”"></a>四、上下文工程：记忆的”调度员”</h2><p>这是原文中一个很有价值的视角——上下文工程（Context Engineering）与记忆系统的关系。</p>
+<p>记忆系统和上下文工程形成共生关系，共同支撑Agent的认知能力。打个比方：<strong>记忆系统是”仓库”，存储历史对话、知识和用户偏好；上下文工程是”调度员”，决定从仓库中取什么东西、怎么组织、怎么呈现给LLM。</strong></p>
+<p>上下文工程的核心在于，LLM的性能根本上取决于它接收的<strong>上下文</strong>。实现了上下文工程的系统一般包含三类基础组件：</p>
+<ol>
+<li><strong>上下文检索与生成</strong>：涵盖Prompt生成和外部知识获取</li>
+<li><strong>上下文处理</strong>：涉及长序列处理、自我完善和结构化信息集成</li>
+<li><strong>上下文管理</strong>：关注记忆层次、压缩技术和优化策略</li>
+</ol>
+<p>用数学化的表述：上下文工程将上下文C重新定义为一组动态结构化的信息组件 c₁, c₂, …, cₙ，这些组件由一组函数进行来源获取、过滤和格式化，最终由高级组装函数A进行编排。</p>
+<p>原文还给出了一个实际项目的例子——处理500+页文档的Agent：</p>
+<blockquote>
+<p>输入文档总量超过500页，远超模型的最大Token限制，同时对生成内容的召回率和准确率有较高要求。</p>
+</blockquote>
+<p>他们的上下文工程策略：</p>
+<ol>
+<li><strong>文档分块处理</strong>：将大型文档集合切分为适当大小的chunks</li>
+<li><strong>摘要生成</strong>：为每个文档块生成精炼的文字摘要，并生成整个文档的摘要信息</li>
+<li><strong>动态上下文管理</strong>：赋予Agent自主选择的能力，根据任务需求动态调取相关文档块</li>
+<li><strong>上下文优化</strong>：任务完成后自动释放不再需要的上下文，优化资源利用</li>
+</ol>
+<p>这个方法的核心思路是：<strong>不是把所有信息一股脑塞给LLM，而是让Agent自己按需取用，用完释放。</strong> 像操作系统的虚拟内存一样。</p>
+<p><img src="illustrations/07-infographic-document-processing.webp" alt="500页文档的上下文工程策略"></p>
+<p><img src="illustrations/04-infographic-context-engineering.webp" alt="上下文工程与记忆关系"></p>
+<h2 id="五、四大记忆框架对比"><a href="#五、四大记忆框架对比" class="headerlink" title="五、四大记忆框架对比"></a>五、四大记忆框架对比</h2><p>原文从开源框架和商业方案两个角度，对目前主流的Agent记忆方案进行了深度分析。</p>
+<h3 id="5-1-Mem0：智能记忆管理"><a href="#5-1-Mem0：智能记忆管理" class="headerlink" title="5.1 Mem0：智能记忆管理"></a>5.1 Mem0：智能记忆管理</h3><p>Mem0是专为AI Agent设计的开源记忆框架，通过智能记忆管理帮助Agent实现状态持久化。它支持<strong>工作记忆、事实记忆、情景记忆和语义记忆</strong>等多种类型，提供智能的LLM提取、过滤和<strong>衰减机制</strong>，有效降低计算成本。同时支持<strong>多模态处理</strong>和Graph记忆功能，既可使用托管服务也可自建部署。</p>
+<p><strong>架构设计：</strong> Mem0包含几个核心模块——核心记忆层、大语言模型层、嵌入模型层、向量存储层、图存储层和持久化存储层。核心记忆层负责判断新增、检索、更新和删除记忆的实现；LLM层负责根据用户输入提取关键信息并生成更新决策；嵌入模型和向量存储层负责记忆的向量化存储和检索；图存储层负责存储抽取出的实体关系，丰富记忆的组织形态。这种分层架构设计确保了可扩展性和可维护性。</p>
+<p><strong>几个关键技术创新：</strong></p>
+<ul>
+<li><strong>双LLM架构</strong>：系统通过两次不同的LLM调用实现分工。第一次专注于信息提取，第二次专门处理决策过程，提高准确性并允许专门优化</li>
+<li><strong>上下文感知处理</strong>：在现有记忆上下文中分析新数据，确保记忆系统的一致性和连贯性，防止碎片化</li>
+<li><strong>智能去重机制</strong>：结合向量相似性搜索与LLM判断，防止冗余信息存储</li>
+<li><strong>冲突解决能力</strong>：当出现矛盾信息时，智能确定保留、更新或删除的适当行动</li>
+</ul>
+<p><strong>集成方式：</strong> 开发者可以通过两种方式集成Mem0——直接调用接口函数（添加、查找、更新记忆等），或将Mem0封装成工具传入Agent框架由Agent自主调用。</p>
+<p><strong>与AWS的集成：</strong> 支持Amazon Bedrock的多种模型（Claude-3.7-Sonnet用于复杂推理、Titan-Embed-Text-v2用于向量化处理）；向量存储支持Amazon Aurora Serverless V2和Amazon OpenSearch；图数据存储支持Amazon Neptune Analytics；Strands Agent框架中也内置了基于Mem0能力封装的mem0_memory工具。</p>
+<p><img src="illustrations/06-infographic-mem0-architecture.webp" alt="Mem0核心架构"></p>
+<h3 id="5-2-Letta（前身为MemGPT）：虚拟内存架构"><a href="#5-2-Letta（前身为MemGPT）：虚拟内存架构" class="headerlink" title="5.2 Letta（前身为MemGPT）：虚拟内存架构"></a>5.2 Letta（前身为MemGPT）：虚拟内存架构</h3><p>Letta的设计思路是将LLM代理类比为计算机操作系统，采用”<strong>虚拟内存</strong>“的概念来管理Agent的记忆。</p>
+<p><strong>核心创新在于双层记忆架构：</strong></p>
+<ul>
+<li><strong>上下文内记忆</strong>：直接存在于模型上下文窗口中，包括系统指令、可读写记忆块和当前对话</li>
+<li><strong>上下文外记忆</strong>：存储历史对话和外部知识的长期存储</li>
+</ul>
+<p>当上下文窗口接近填满时，系统会自动将对话历史压缩为递归摘要并存储为记忆块，同时保留原始对话供后续检索。通过<code>core_memory_append</code>、<code>core_memory_replace</code>和<code>recall</code>等工具实现记忆的编辑与检索，使Agent能够在长期交互中保持连贯性。</p>
+<p>原文给出了一个通过Letta搭建电商客服机器人的完整示例：</p>
+<ul>
+<li>使用Amazon Bedrock的Claude或Titan模型作为基础LLM</li>
+<li>采用Amazon PostgreSQL、OpenSearch作为向量存储后端</li>
+<li>利用ElastiCache缓存来提升推理和问答的效率</li>
+<li>通过AWS Lambda实现记忆管理的无服务器架构</li>
+</ul>
+<p><img src="illustrations/10-infographic-letta-dual-memory.webp" alt="Letta/MemGPT双层记忆架构"></p>
+<h3 id="5-3-LangMem：三种记忆类型"><a href="#5-3-LangMem：三种记忆类型" class="headerlink" title="5.3 LangMem：三种记忆类型"></a>5.3 LangMem：三种记忆类型</h3><p>LangMem由LangChain开发，借鉴人类心理学对记忆的分类，为Agent设计了三种核心记忆类型：</p>
+<ul>
+<li><strong>语义记忆（Semantic Memory）</strong>：存储客观事实、用户偏好和基础知识，作为长期持久化记忆嵌入系统提示中。可通过Collection方式保存完整历史信息，或通过Profile方式只保留最新状态</li>
+<li><strong>情节记忆（Episodic Memory）</strong>：捕捉Agent的交互经历，不仅存储对话内容，还包含完整上下文和推理过程。主要用于构建用户提示词，使Agent能从过往经验中学习</li>
+<li><strong>程序记忆（Procedural Memory）</strong>：专注于”如何做”的实操知识，从初始系统提示开始，通过持续反馈和经验积累不断优化</li>
+</ul>
+<p>LangMem的高级特性包括<strong>主动记忆管理、共享内存机制、命名空间组织和个性化持续进化</strong>能力，使AI Agent能根据重要性动态存储信息，支持多个Agent之间的知识共享。</p>
+<p>目前LangMem主要与LangGraph集成，支持Amazon Bedrock。记忆存储层面有内置的InMemoryStore用于快速迭代测试，也提供对PostgreSQL的支持。</p>
+<h3 id="5-4-Amazon-Bedrock-AgentCore-Memory：托管方案"><a href="#5-4-Amazon-Bedrock-AgentCore-Memory：托管方案" class="headerlink" title="5.4 Amazon Bedrock AgentCore Memory：托管方案"></a>5.4 Amazon Bedrock AgentCore Memory：托管方案</h3><p>相比开源框架，亚马逊云科技提供了<strong>开箱即用的托管服务</strong>。</p>
+<p>AgentCore Memory是一个托管的持久化记忆系统，在架构上采用<strong>分层存储策略</strong>：</p>
+<ul>
+<li><strong>短期记忆层</strong>：存储原始交互事件作为即时上下文</li>
+<li><strong>长期记忆层</strong>：存储从事件中提取的概要知识</li>
+</ul>
+<p>短期记忆负责在一次会话中记录最近几轮对话，确保Agent能”记住”当前对话的上下文；长期记忆从对话中提取结构化关键信息，在多个会话之间保留知识，使Agent能够”学习”用户偏好、事实和摘要等信息。</p>
+<p><strong>记忆策略：</strong> 内置了多种策略来定义如何将原始对话转化为结构化长期记忆：</p>
+<ul>
+<li><strong>SemanticMemoryStrategy</strong>（语义记忆策略）：从对话中抽取事实和知识</li>
+<li><strong>SummaryMemoryStrategy</strong>（摘要策略）：为每个会话生成对话摘要</li>
+<li><strong>UserPreferenceMemoryStrategy</strong>（用户偏好策略）：捕获用户的偏好、风格和重复选择</li>
+</ul>
+<p>使用内置策略时，无需额外配置模型，AgentCore Memory服务会在后台使用预置的模型来完成提取和归纳。开发者调用<code>CreateEvent</code>保存新事件后，如果Memory配置了长期记忆策略，服务会<strong>异步地</strong>对事件内容进行分析（例如调用基础模型）来提炼出可长期保存的知识片段。</p>
+<p><strong>长期记忆记录</strong>生成后存储于Memory中，对应特定的命名空间和类型（如事实、摘要、偏好），每条记录也有<strong>唯一ID</strong>以供检索。</p>
+<p>AgentCore还允许<strong>自定义记忆策略（CustomMemoryStrategy）</strong>，开发者可提供自定义的提示词和选择特定的基础模型来执行记忆提取。</p>
+<p><strong>记忆的使用方式：</strong> 通过<code>list_events</code>获取短期记忆的对话记录，通过<code>retrieve_memories</code>查询长期记忆。Memory模块还可以包装成工具供LLM调用——以Strands Agents框架为例，通过<code>AgentCoreMemoryToolProvider</code>将Memory注册为工具，模型需要回忆信息时可以自主调用查询记忆，或将新信息存入记忆。也可以通过MCP等标准让LLM在推理中动态决定何时读写记忆。</p>
+<p>所有数据以加密方式存储，使用命名空间进行隔离分区，确保不同应用或用户的记忆数据彼此分隔。</p>
+<p><img src="illustrations/09-infographic-agentcore-memory.webp" alt="Bedrock AgentCore Memory托管方案"></p>
+<p><img src="illustrations/05-infographic-four-frameworks.webp" alt="四大记忆框架对比"></p>
+<h2 id="六、我的选型建议"><a href="#六、我的选型建议" class="headerlink" title="六、我的选型建议"></a>六、我的选型建议</h2><p>把四个框架消化完之后，说说我的理解：</p>
+<h3 id="1-先想清楚你的场景"><a href="#1-先想清楚你的场景" class="headerlink" title="1. 先想清楚你的场景"></a>1. 先想清楚你的场景</h3><p>代码助手、客服、个人助理、推荐系统，每个场景的记忆重点完全不同。不要上来就选框架，先把”记什么”想清楚。</p>
+<h3 id="2-记忆是基础能力，不是可选项"><a href="#2-记忆是基础能力，不是可选项" class="headerlink" title="2. 记忆是基础能力，不是可选项"></a>2. 记忆是基础能力，不是可选项</h3><p>原文说得好：”我们应将记忆视作AI智能体的基础而非可选项。” 没有记忆的Agent就像一个每天都在失忆的人，再聪明也白搭。</p>
+<h3 id="3-短期-长期搭配使用"><a href="#3-短期-长期搭配使用" class="headerlink" title="3. 短期+长期搭配使用"></a>3. 短期+长期搭配使用</h3><p>光有短期记忆（上下文窗口）不够，对话一长就忘；光有长期记忆也不行，当前任务的临时信息需要有地方放。两者搭配才是完整方案。</p>
+<h3 id="4-不要忽视记忆检索的质量"><a href="#4-不要忽视记忆检索的质量" class="headerlink" title="4. 不要忽视记忆检索的质量"></a>4. 不要忽视记忆检索的质量</h3><p>存进去了不代表找得到。关键词匹配、向量语义搜索、元数据过滤，三种方式各有优劣，实际使用中往往需要组合使用。</p>
+<h3 id="5-上下文工程是记忆的”调度员”"><a href="#5-上下文工程是记忆的”调度员”" class="headerlink" title="5. 上下文工程是记忆的”调度员”"></a>5. 上下文工程是记忆的”调度员”</h3><p>记住信息是第一步，在正确的时间把正确的信息送到LLM面前才是关键。上下文工程做不好，记忆再多也用不上。</p>
+<h3 id="6-框架选型看需求"><a href="#6-框架选型看需求" class="headerlink" title="6. 框架选型看需求"></a>6. 框架选型看需求</h3><ul>
+<li><strong>想深度定制、完全控制</strong>：选Mem0，灵活度最高，社区活跃</li>
+<li><strong>需要类操作系统的虚拟内存管理</strong>：选Letta/MemGPT，双层记忆架构设计精巧</li>
+<li><strong>已经在用LangChain/LangGraph生态</strong>：选LangMem，集成最顺滑</li>
+<li><strong>不想运维、追求快速上线</strong>：选Bedrock AgentCore Memory，开箱即用</li>
+</ul>
+<h3 id="7-控制成本：压缩和释放"><a href="#7-控制成本：压缩和释放" class="headerlink" title="7. 控制成本：压缩和释放"></a>7. 控制成本：压缩和释放</h3><p>500页文档的例子告诉我们，不是所有信息都要一直留着。分块、摘要、动态调取、用完释放，这些上下文工程策略能有效控制Token消耗。</p>
+<h3 id="8-给用户控制权"><a href="#8-给用户控制权" class="headerlink" title="8. 给用户控制权"></a>8. 给用户控制权</h3><p>支持用户主动标记需要记住的信息，也支持删除特定记忆。记忆是用户数据，用户应该有控制权。</p>
+<h2 id="七、写在最后"><a href="#七、写在最后" class="headerlink" title="七、写在最后"></a>七、写在最后</h2><p>Agent记忆模块这件事，说简单也简单，说复杂也复杂。</p>
+<p>简单的地方在于，核心逻辑就是”存取”二字——把有用的信息存下来，需要的时候取出来用。</p>
+<p>复杂的地方在于，”什么是有用的”、”什么时候取”、”怎么取最快最准”这三个问题，每个都需要针对具体场景仔细设计。再加上成本控制、冲突解决、个性化进化这些高级需求，工程复杂度就上来了。</p>
+<p>原文最后说了一句话我觉得特别好：**”在Agentic AI的大潮中，拥抱并善用记忆者，才能打造出真正有认知连续性的下一代智能体。”**</p>
+<p>没有记忆的Agent只是一个工具，有记忆的Agent才是一个伙伴。</p>
+<hr>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://aws.amazon.com/cn/blogs/china/agentic-ai-infrastructure-deep-practice-experience-thinking-series-three-best-practices-for-agent-memory-module/">Agentic AI基础设施实践经验系列（三）：Agent记忆模块的最佳实践</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.aws.amazon.com/zh_cn/bedrock-agentcore/latest/devguide/memory.html">Amazon Bedrock AgentCore Memory 官方文档</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/mem0ai/mem0">Mem0 开源记忆框架</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/letta-ai/letta">Letta (MemGPT) 框架</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/langchain-ai/langmem">LangMem 记忆框架</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/strands-agents">Strands Agent 开发框架</a></li>
+</ul>
+</div>
+    <aside class="post-rail">
+      <span class="post-rail__line"></span>
+      <span>LESLIE / WRITING</span>
+    </aside>
+  </div>
+
+  <footer class="post-footer shell">
+    <div><h2>如果这篇文章帮到了你，<br>也许下一篇会更有意思。</h2></div>
+    <a class="button button--primary" href="/writing/">继续阅读 →</a>
+  </footer>
+</article>
+</main>
+    <footer class="site-footer">
+  <div class="footer-grid">
+    <div>
+      <p class="footer-kicker">Leslie Zhang</p>
+      <p class="footer-statement">流水不争先，<br>争的是滔滔不绝。</p>
+    </div>
+    <div class="footer-links">
+      <a href="https://github.com/leslieAIbin" target="_blank" rel="noreferrer">GitHub ↗</a>
+      <a href="https://www.instagram.com/leslieaibin/" target="_blank" rel="noreferrer">Instagram ↗</a>
+      <button type="button" data-wechat-open>微信 / WeChat</button>
+      <a href="mailto:aibinzhangleslie@gmail.com">Email ↗</a>
+      <a href="/atom.xml">RSS ↗</a>
+    </div>
+    <div class="footer-meta">
+      <span>© 2026 Leslie Zhang</span>
+      <span>Writing, research and working systems.</span>
+    </div>
+  </div>
+</footer>
+
+    <dialog class="ask-dialog" id="ask-leslie" aria-labelledby="ask-title">
+  <div class="ask-dialog__shell">
+    <div class="ask-dialog__topbar">
+      <div>
+        <h2 id="ask-title">Ask Leslie</h2>
+      </div>
+      <button class="icon-button" type="button" data-ask-close aria-label="关闭">×</button>
+    </div>
+    <p class="ask-dialog__intro">从本站公开文章中寻找答案。当前版本在浏览器本地检索，不上传问题，也不会编造不存在的经历。</p>
+    <form class="ask-form" data-ask-form>
+      <label class="sr-only" for="ask-query">输入问题</label>
+      <textarea id="ask-query" rows="2" placeholder="例如：Agent Runtime 应该怎么设计？" data-ask-input></textarea>
+      <button type="submit">检索知识库 <span aria-hidden="true">↗</span></button>
+    </form>
+    <div class="ask-suggestions" aria-label="推荐问题">
+      
+        <button type="button" data-ask-suggestion="Agent Runtime 应该怎么设计？">Agent Runtime 应该怎么设计？</button>
+      
+        <button type="button" data-ask-suggestion="如何让 AI 操控真实世界设备？">如何让 AI 操控真实世界设备？</button>
+      
+        <button type="button" data-ask-suggestion="Leslie 最近在研究什么？">Leslie 最近在研究什么？</button>
+      
+    </div>
+    <div class="ask-results" data-ask-results aria-live="polite">
+      <div class="ask-empty">
+        <p>输入一个问题，我会把你带到 Leslie 写过的相关内容。</p>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+    <dialog class="wechat-dialog" id="wechat-leslie" aria-labelledby="wechat-title">
+  <div class="wechat-dialog__shell">
+    <header>
+      <div>
+        <p class="section-label">WeChat</p>
+        <h2 id="wechat-title">微信联系</h2>
+      </div>
+      <button class="icon-button" type="button" data-wechat-close aria-label="关闭微信二维码">×</button>
+    </header>
+    <img src="/images/contact/wechat-leslie.png" alt="Leslie Zhang 的微信二维码" loading="lazy">
+    <p>扫码添加 Leslie，建议备注你的名字与来意。</p>
+  </div>
+</dialog>
+
+    <script>window.ORBITAL_ROOT = '/';</script>
+    <script src="/js/orbital.js" defer></script>
+  </body>
+</html>

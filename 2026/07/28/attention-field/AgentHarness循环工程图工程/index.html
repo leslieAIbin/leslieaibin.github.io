@@ -1,0 +1,462 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+  <head>
+
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#050b18">
+<meta name="color-scheme" content="dark light">
+<title>Agent Harness、Loop、Graph：别再把三种 Agent 工程混成一件事 | Leslie Zhang</title>
+<meta name="description" content="写这篇文章时，我刚好用两次真实返工把三个概念分开：Harness 管工作条件，Loop 管证据与返工，Graph 管执行拓扑。它们不是三代技术，而是同一套 Agent 系统的三个工程抓手。">
+<meta name="author" content="Leslie Zhang">
+<link rel="canonical" href="https://leslieaibin.github.io/2026/07/28/attention-field/AgentHarness%E5%BE%AA%E7%8E%AF%E5%B7%A5%E7%A8%8B%E5%9B%BE%E5%B7%A5%E7%A8%8B/">
+<link rel="icon" href="/imgs/01.jpg">
+<link rel="alternate" type="application/atom+xml" title="Leslie Zhang" href="/atom.xml">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Agent Harness、Loop、Graph：别再把三种 Agent 工程混成一件事 | Leslie Zhang">
+<meta property="og:description" content="写这篇文章时，我刚好用两次真实返工把三个概念分开：Harness 管工作条件，Loop 管证据与返工，Graph 管执行拓扑。它们不是三代技术，而是同一套 Agent 系统的三个工程抓手。">
+<meta property="og:url" content="https://leslieaibin.github.io/2026/07/28/attention-field/AgentHarness%E5%BE%AA%E7%8E%AF%E5%B7%A5%E7%A8%8B%E5%9B%BE%E5%B7%A5%E7%A8%8B/">
+<meta property="og:image" content="https://leslieaibin.github.io/2026/07/28/attention-field/AgentHarness%E5%BE%AA%E7%8E%AF%E5%B7%A5%E7%A8%8B%E5%9B%BE%E5%B7%A5%E7%A8%8B/imgs/cover.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Agent Harness、Loop、Graph：别再把三种 Agent 工程混成一件事 | Leslie Zhang">
+<meta name="twitter:description" content="写这篇文章时，我刚好用两次真实返工把三个概念分开：Harness 管工作条件，Loop 管证据与返工，Graph 管执行拓扑。它们不是三代技术，而是同一套 Agent 系统的三个工程抓手。">
+<meta name="twitter:image" content="https://leslieaibin.github.io/2026/07/28/attention-field/AgentHarness%E5%BE%AA%E7%8E%AF%E5%B7%A5%E7%A8%8B%E5%9B%BE%E5%B7%A5%E7%A8%8B/imgs/cover.jpg">
+<script>
+  (function () {
+    var saved = localStorage.getItem('orbital-theme');
+    var theme = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    document.documentElement.dataset.theme = theme;
+  })();
+</script>
+<link rel="stylesheet" href="/css/orbital.css">
+<meta name="generator" content="Hexo 5.2.0"></head>
+  <body class="page-post">
+    <a class="skip-link" href="#main-content">跳到主要内容</a>
+    <div class="reading-progress" data-reading-progress></div>
+    <header class="site-header" data-header>
+  <div class="nav-shell">
+    <a class="brand" href="/" aria-label="返回首页">
+      <span class="brand-mark" aria-hidden="true"><img src="/images/brand/leslie-mythos-avatar.webp" alt="" width="512" height="512"></span>
+      <span class="brand-copy">
+        <strong>LESLIE</strong>
+        <small>REAL-WORLD AGENTS</small>
+      </span>
+    </a>
+
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav" data-nav-toggle>
+      <span></span><span></span>
+      <span class="sr-only">打开导航</span>
+    </button>
+
+    <nav class="main-nav" id="main-nav" aria-label="主导航" data-nav>
+      
+        <a href="/" class="">首页</a>
+      
+        <a href="/writing/" class="">写作</a>
+      
+        <a href="/projects/" class="">项目</a>
+      
+        <a href="/about/" class="">关于</a>
+      
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换明暗主题">
+        <span class="theme-toggle__sun" aria-hidden="true">☼</span>
+        <span class="theme-toggle__moon" aria-hidden="true">◐</span>
+      </button>
+      <button class="ask-nav" type="button" data-ask-open>ASK LESLIE</button>
+    </nav>
+  </div>
+</header>
+
+    <main id="main-content"><article class="post-shell">
+  <header class="post-hero shell">
+    <a class="post-back" href="/writing/">← 返回写作</a>
+    <div class="post-hero__meta">
+      <time datetime="2026-07-28">2026 年 07 月 28 日</time>
+      <span>18 分钟阅读</span>
+    </div>
+    <h1>Agent Harness、Loop、Graph：别再把三种 Agent 工程混成一件事</h1>
+    <p class="post-hero__summary">写这篇文章时，我刚好用两次真实返工把三个概念分开：Harness 管工作条件，Loop 管证据与返工，Graph 管执行拓扑。它们不是三代技术，而是同一套 Agent 系统的三个工程抓手。</p>
+    <div class="chip-row"><a href="/tags/Harness-Engineering/">Harness Engineering</a><a href="/tags/AI-Agent/">AI Agent</a><a href="/tags/Loop-Engineering/">Loop Engineering</a><a href="/tags/Graph-Engineering/">Graph Engineering</a><a href="/tags/LangGraph/">LangGraph</a><a href="/tags/AutoGen/">AutoGen</a></div>
+  </header>
+
+  <div class="post-cover shell"><img src="/2026/07/28/attention-field/AgentHarness%E5%BE%AA%E7%8E%AF%E5%B7%A5%E7%A8%8B%E5%9B%BE%E5%B7%A5%E7%A8%8B/imgs/cover.jpg" alt="Agent Harness、Loop、Graph：别再把三种 Agent 工程混成一件事"></div>
+
+  <div class="post-layout shell">
+    <aside class="post-toc" aria-label="文章目录">
+      <span class="aside-title">目录</span>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E4%B8%AA%E6%A6%82%E5%BF%B5%EF%BC%8C%E5%85%88%E7%94%A8-30-%E7%A7%92%E5%88%86%E5%BC%80"><span class="toc-text">三个概念，先用 30 秒分开</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Harness%EF%BC%9A%E5%85%88%E7%BB%99%E6%A8%A1%E5%9E%8B%E4%B8%80%E4%B8%AA%E8%83%BD%E5%B7%A5%E4%BD%9C%E7%9A%84%E4%B8%96%E7%95%8C"><span class="toc-text">Harness：先给模型一个能工作的世界</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Loop%EF%BC%9A%E9%87%8D%E7%82%B9%E4%B8%8D%E6%98%AF%E5%A4%9A%E8%B7%91%E5%87%A0%E8%BD%AE%EF%BC%8C%E6%98%AF%E6%8A%8A%E7%BB%93%E6%9E%9C%E9%80%81%E5%9B%9E%E7%B3%BB%E7%BB%9F"><span class="toc-text">Loop：重点不是多跑几轮，是把结果送回系统</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E4%B8%AA%E5%AE%8C%E6%95%B4%E7%9A%84-Loop%EF%BC%8C%E8%87%B3%E5%B0%91%E8%A6%81%E6%9C%89%E4%B8%89%E7%A7%8D%E5%87%BA%E5%8F%A3"><span class="toc-text">一个完整的 Loop，至少要有三种出口</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Graph%EF%BC%9A%E5%AE%83%E7%AE%A1%E7%9A%84%E4%B8%8D%E6%98%AF%E6%9B%B4%E8%81%AA%E6%98%8E%EF%BC%8C%E8%80%8C%E6%98%AF%E4%B8%8B%E4%B8%80%E6%AD%A5%E8%B0%81%E8%83%BD%E8%BF%90%E8%A1%8C"><span class="toc-text">Graph：它管的不是更聪明，而是下一步谁能运行</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Graph-%E7%9C%9F%E6%AD%A3%E9%9A%BE%E7%9A%84%E4%B8%8D%E6%98%AF%E7%AE%AD%E5%A4%B4%EF%BC%8C%E8%80%8C%E6%98%AF-State"><span class="toc-text">Graph 真正难的不是箭头，而是 State</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Graph-%E6%B2%A1%E6%9C%89%E6%9D%80%E6%AD%BB-Loop%EF%BC%8C%E5%AE%83%E5%8F%AA%E6%98%AF%E6%8A%8A%E5%85%B3%E7%B3%BB%E7%94%BB%E4%BA%86%E5%87%BA%E6%9D%A5"><span class="toc-text">Graph 没有杀死 Loop，它只是把关系画了出来</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%87%BA%E4%BA%86%E4%BB%80%E4%B9%88%E6%95%85%E9%9A%9C%EF%BC%8C%E5%B0%B1%E6%94%B9%E5%93%AA%E4%B8%80%E5%B1%82"><span class="toc-text">出了什么故障，就改哪一层</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Graph-%E6%9C%80%E5%A4%A7%E7%9A%84%E8%AF%B1%E6%83%91%EF%BC%8C%E6%98%AF%E6%8A%8A%E5%A4%8D%E6%9D%82%E5%BD%93%E6%88%90%E8%83%BD%E5%8A%9B"><span class="toc-text">Graph 最大的诱惑，是把复杂当成能力</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E4%B8%AA%E6%9B%B4%E7%A8%B3%E5%A6%A5%E7%9A%84%E5%BB%BA%E8%AE%BE%E9%A1%BA%E5%BA%8F"><span class="toc-text">一个更稳妥的建设顺序</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%99%E5%9C%A8%E6%9C%80%E5%90%8E"><span class="toc-text">写在最后</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="toc-text">参考资料</span></a></li></ol>
+    </aside>
+    <div class="article-content"><h1 id="Agent-Harness、Loop、Graph：别再把三种-Agent-工程混成一件事"><a href="#Agent-Harness、Loop、Graph：别再把三种-Agent-工程混成一件事" class="headerlink" title="Agent Harness、Loop、Graph：别再把三种 Agent 工程混成一件事"></a>Agent Harness、Loop、Graph：别再把三种 Agent 工程混成一件事</h1><p>写这篇文章时，配图连续出了两次错。</p>
+<p>第一张 Harness 信息图，把「执行控制」画了两遍。</p>
+<p>第二张 Graph State 图，四个主标签都对，却擅自补了一段看起来专业、实际不严谨的小字。</p>
+<p>有意思的是，两次调用都返回成功。文件存在，尺寸正确，画面也挺漂亮。只看 API 状态，任务已经结束；真的把图打开，才知道事情还没做完。</p>
+<p>我后来重写提示词、保留正确版本，再生成、再检查。折腾完这两轮，我突然发现，最近社区里那句「我们还在做 Loops，还是已经该转向 Graphs 了」其实问错了。</p>
+<p>图片模型、参考图、文件系统和权限，决定 Agent 有没有条件完成任务，这是 Harness。</p>
+<p>发现重复标签，把证据退回去，再生成一版，这是 Loop。</p>
+<p>研究、写作、事实核查、配图、验收、同步到 Obsidian 的先后关系，则是一条执行 Graph。</p>
+<p>它们从来不是三选一。</p>
+<p>最近 Graph Engineering 这个词开始变热，看上去像是 Agent 工程的下一代范式。但我把 OpenAI、Anthropic、LangGraph 和 AutoGen 的官方资料重新翻了一遍，判断反而越来越明确：</p>
+<p><strong>Graph 没有取代 Loop，Loop 也没有取代 Harness。</strong></p>
+<p>它们分别处理工作条件、反馈闭环和执行关系。</p>
+<p>环境、反馈、流程。</p>
+<p>先记住这六个字，后面的新名词就不容易把人带跑。</p>
+<p>这里说的 Graph，特指组织 Agent、工具、代码和人工节点的执行图，不是知识图谱。Graph Engineering 目前也更像社区对一类实践的概括，还没有被行业共同接受的标准定义。</p>
+<p><img src="imgs/cover.jpg" alt="Agent Harness、Loop 与 Graph 三种工程切面的封面图"></p>
+<h2 id="三个概念，先用-30-秒分开"><a href="#三个概念，先用-30-秒分开" class="headerlink" title="三个概念，先用 30 秒分开"></a>三个概念，先用 30 秒分开</h2><p>裸模型的一次推理可以生成文本、结构化输出，甚至提出工具调用意图。</p>
+<p>但它不会替应用真正执行工具，也不会天然拥有项目文件、打开浏览器、保存跨会话进度。测试失败后应该重试、回滚，还是停下来找人，同样要由模型外部的运行时决定。</p>
+<p>Agent 能真正做事，靠的是模型外面的系统。</p>
+<p>问题就在这里。模型外面的东西很多，大家又喜欢统一叫「Agent 编排」，于是工具、权限、反馈、状态机、多 Agent 协作全被塞进同一个词里。</p>
+<p>我更愿意把它们拆成三种工程抓手。</p>
+<table>
+<thead>
+<tr>
+<th>工程切面</th>
+<th>它回答的问题</th>
+<th>典型组成</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Harness Engineering</td>
+<td>Agent 在什么工作条件里运行</td>
+<td>工具、文件系统、上下文、记忆、权限、沙箱、日志、模型路由</td>
+</tr>
+<tr>
+<td>Loop Engineering</td>
+<td>一轮做完以后怎么办</td>
+<td>观察、证据、反馈、重试、预算、停止条件、人工复核</td>
+</tr>
+<tr>
+<td>Graph Engineering</td>
+<td>当前步骤结束后，下一步谁能运行</td>
+<td>节点、边、分支、并行、汇合、状态迁移、检查点、受控回环</td>
+</tr>
+</tbody></table>
+<p>这张表是一个排障口诀，不是一堵物理隔离墙。</p>
+<p>不同团队对 Harness 的边界会画得不一样。LangChain 甚至直接用「Agent = Model + Harness」来定义 Agent，把模型之外的代码、配置和执行逻辑都放进 Harness。按这个宽口径，Loop runtime 和 Graph scheduler 也可以算 Harness 的一部分。</p>
+<p>所以这三个词不是三个互斥的盒子。</p>
+<p>更像三个观察系统的角度。</p>
+<p><img src="imgs/01-three-lenses.jpg" alt="Harness、Loop 与 Graph 是三个观察角度，不是三代技术"></p>
+<h2 id="Harness：先给模型一个能工作的世界"><a href="#Harness：先给模型一个能工作的世界" class="headerlink" title="Harness：先给模型一个能工作的世界"></a>Harness：先给模型一个能工作的世界</h2><p>2026 年 2 月，OpenAI 发了一篇很有代表性的文章，标题就叫《Harness engineering: leveraging Codex in an agent-first world》。</p>
+<p>文章里有一句话很准确：当工程团队不再把主要精力放在亲手写每一行代码，而是让 Agent 执行时，人类的工作会转向设计环境、表达意图，并建立让 Agent 可靠工作的反馈回路。</p>
+<p>注意这里的重点。</p>
+<p>不是再写一个更长的 Prompt。</p>
+<p>而是把 Agent 周围的世界搭好。</p>
+<p>OpenAI 那个团队把短小的 <code>AGENTS.md</code> 当作地图，把仓库里的结构化文档当作事实源，再用自定义 lint、结构测试和 CI 约束架构方向。Agent 能看到什么、能修改什么、如何判断自己有没有破坏系统，都被做成了仓库里可读取、可执行、可验证的东西。</p>
+<p>Anthropic 在长任务 Harness 的实践里，也遇到了类似问题。仅靠上下文压缩，并不能让 Agent 跨越多个会话稳定推进。他们增加了初始化 Agent、进度文件、功能清单、测试和干净的工作状态，让下一轮执行知道前一轮做过什么、还有什么没有完成。</p>
+<p>这些东西看起来不神秘。</p>
+<p>文件、脚本、权限、测试、日志。</p>
+<p>但它们组合起来，决定了模型是在一个秩序清楚的工程现场工作，还是被扔进一间堆满杂物的仓库里自己找扳手。</p>
+<p>一个比较完整的 Harness，通常会覆盖六类能力。</p>
+<p><strong>上下文入口。</strong> 系统指令、项目地图、检索结果、任务状态、Skills 和历史决策。</p>
+<p><strong>行动入口。</strong> API、Shell、浏览器、数据库、代码解释器、MCP 工具和外部服务。</p>
+<p><strong>持久化。</strong> 文件、会话、检查点、Git 历史、进度记录和长期记忆。</p>
+<p><strong>执行控制。</strong> 超时、预算、模型路由、并发、审批门和重试上限。</p>
+<p><strong>安全边界。</strong> 沙箱、白名单、密钥隔离、只读模式和人工授权。</p>
+<p><strong>可观测性。</strong> 工具输入输出、状态变化、Trace、延迟、成本和评测结果。</p>
+<p>有一个很好用的判断方法。</p>
+<p>把架构图里的模型暂时拿掉。</p>
+<p>剩下的工作区、工具、状态、规则、沙箱、评测器和 UI，大多都属于 Harness。</p>
+<p>这里还要补一个边界。</p>
+<p>Harness 不只是摆在模型周围的一张静态资源清单，它通常还包含驱动一次 Run 的主动运行时。谁把工具结果追加回上下文，谁处理 handoff，谁控制并发和最大轮次，谁在审批点暂停，再从保存的状态恢复？这些都不是模型自己完成的。</p>
+<p>Session、RunState、Checkpoint 和 Trace 也不能统一塞进「记忆」：Session 主要保存会话历史，RunState 记录一次被暂停的运行，Checkpoint 保存图执行进度，Trace 负责观察调用链。记得聊天、能从断点继续、外部动作不会重复、结果真的正确，是四件不同的事。</p>
+<p>这也解释了为什么同一个基础模型，放进两套 Agent 产品里，表现会差很多。差距未必来自模型智力，更可能来自工具契约是否清楚、状态是否可靠、权限是否克制，以及失败信息能不能回到下一轮。</p>
+<p><strong>Harness 解决的是「它有没有条件把事情做好」。</strong></p>
+<p>但 Harness 也不是越厚越好。</p>
+<p>Anthropic 在 2026 年的长任务实验里专门复盘了这个问题：每一个 Planner、Evaluator、进度文件和上下文重置机制，都隐含着一个假设——模型自己还做不好这件事。模型能力提升以后，有些原本必要的脚手架会变成额外成本，甚至干扰模型工作。</p>
+<p>所以 Harness Engineering 还包含一项经常被忽略的工作：<strong>定期删除已经失去价值的脚手架。</strong></p>
+<p>一个组件该不该保留，可以问三个问题：</p>
+<ul>
+<li>拿掉以后，哪一类可观测指标会明显变差？</li>
+<li>它是在弥补稳定缺陷，还是只是在安抚我们的不安全感？</li>
+<li>新模型上线后，这个假设是否还成立？</li>
+</ul>
+<p>真正成熟的 Harness，不是组件最多，而是每个组件都能解释自己在防什么故障。</p>
+<p><img src="imgs/02-harness-workbench.jpg" alt="Agent Harness 的六类工作条件"></p>
+<h2 id="Loop：重点不是多跑几轮，是把结果送回系统"><a href="#Loop：重点不是多跑几轮，是把结果送回系统" class="headerlink" title="Loop：重点不是多跑几轮，是把结果送回系统"></a>Loop：重点不是多跑几轮，是把结果送回系统</h2><p>只要一个 Agent 会调用工具，它内部就已经有一个小循环。</p>
+<p>模型决定下一步。</p>
+<p>工具执行。</p>
+<p>结果返回上下文。</p>
+<p>模型再决定下一步。</p>
+<p>Anthropic 对 Agent 的描述也是这个方向：模型自主决定如何使用工具和推进过程，在计划、行动、观察、调整之间反复，直到任务完成，或者需要人类介入。</p>
+<p>但工程里常说的 Loop，往往还多了一层。</p>
+<p>我会把它分成两种。</p>
+<p>第一种是 <strong>Agent 内部的执行 Loop</strong>。</p>
+<p>它解决的是「下一步做什么」。读文件、搜索、调用工具、更新计划，都发生在这里。</p>
+<p>第二种是 <strong>系统外层的验证 Loop</strong>。</p>
+<p>它解决的是「这一轮结果够不够好」。测试有没有通过，链接能不能访问，JSON 是否符合 Schema，引用能不能回到原文，风险操作有没有得到批准。</p>
+<p>这两层经常被混在一起，于是 Loop Engineering 容易被误解成写一个 <code>while true</code>，让 Agent 一直干。</p>
+<p>真这样做，得到的通常不是自治。</p>
+<p>是空转。</p>
+<p>一个能上线的 Loop，至少要写清楚这些事情：</p>
+<ul>
+<li>什么事件触发下一轮；</li>
+<li>当前目标状态是什么；</li>
+<li>哪些状态必须带到下一轮；</li>
+<li>允许调用哪些工具、修改哪些资源；</li>
+<li>用什么证据证明成功；</li>
+<li>失败信息如何压缩成下一轮可以执行的反馈；</li>
+<li>什么时候因为成功而退出，什么时候因为预算、超时或不可恢复错误而退出。</li>
+</ul>
+<p>这里最重要的不是循环次数。</p>
+<p>是证据。</p>
+<p>「Agent 觉得已经完成」不是停止条件。「测试通过、Schema 校验成功、引用可访问、审核人批准」才是。</p>
+<p>这也是 Loop Engineering 和 Prompt Engineering 真正拉开距离的地方。Prompt 主要影响一次模型调用怎么做；Loop 负责调用结束后系统如何观察结果、生成反馈、保存进度，并决定要不要继续。</p>
+<p>不过 Loop 也不是越多越好。</p>
+<p>每增加一次评估、一次复核、一次重试，都会增加延迟和成本。只有失败代价高于验证代价时，这个闭环才值得加。</p>
+<p><strong>Loop 解决的是「它做完以后，系统怎么知道对不对」。</strong></p>
+<p><img src="imgs/03-two-loops.jpg" alt="Agent 内部执行 Loop 与系统外部验证 Loop"></p>
+<h3 id="一个完整的-Loop，至少要有三种出口"><a href="#一个完整的-Loop，至少要有三种出口" class="headerlink" title="一个完整的 Loop，至少要有三种出口"></a>一个完整的 Loop，至少要有三种出口</h3><p>很多 Loop 设计只写了成功条件，却没有认真设计失败。</p>
+<p>这很危险。</p>
+<p>OpenAI Agents SDK 的 Runner 就展示了一个最小但完整的执行边界：模型返回最终输出，循环结束；模型发起 handoff，切换当前 Agent 后继续；模型调用工具，执行工具并把结果放回上下文；如果超过 <code>max_turns</code>，则抛出明确的超限错误。</p>
+<p>生产系统在这个基础上，还应该把出口分成三类。</p>
+<p><strong>成功退出。</strong> 验收证据满足要求，例如测试全部通过、引用存在且与原文一致、数据满足 Schema、人工批准已经写入状态。</p>
+<p><strong>受控失败。</strong> 达到最大轮次、预算或超时，或者连续出现同一类错误。系统停止继续消耗资源，保存现场，并返回机器可读的失败原因。</p>
+<p><strong>人工升级。</strong> 遇到高风险副作用、需求冲突或判断置信不足时，不是假装完成，也不是无限重试，而是暂停运行，把当前状态、已尝试方案和待决问题交给人。</p>
+<p>这里还有一个容易被忽略的细节：<strong>失败反馈必须可行动。</strong></p>
+<p>「结果不够好」几乎没有价值。好的反馈应该像这样：</p>
+<blockquote>
+<p>第 4 条引用链接可访问，但原文没有支持“性能提升 3 倍”这个数字；请删除该数字，或补充一手来源。</p>
+</blockquote>
+<p>它指出失败对象、失败证据和允许的修复方向。下一轮不需要重新猜测评分器到底不满意什么。</p>
+<p>如果验证器本身也是另一个大模型，也不要把它当成客观真理。Anthropic 在 Generator–Evaluator 实验里发现，让独立 Evaluator 更挑剔通常比让生成者自我批评更容易，但评估器仍然需要校准，而且依旧会漏掉深层问题。确定性检查、独立模型复核和人工审批，应该按风险组合使用。</p>
+<p><img src="imgs/04-loop-exits.jpg" alt="一个完整 Loop 的三种出口：成功、受控失败与人工升级"></p>
+<h2 id="Graph：它管的不是更聪明，而是下一步谁能运行"><a href="#Graph：它管的不是更聪明，而是下一步谁能运行" class="headerlink" title="Graph：它管的不是更聪明，而是下一步谁能运行"></a>Graph：它管的不是更聪明，而是下一步谁能运行</h2><p>Graph Engineering 问的是另一个问题。</p>
+<p>当前步骤结束以后，谁可以拿到状态，谁可以继续执行？</p>
+<p>在一张执行图里，节点可以是一次模型调用、一个专业 Agent、一段确定性函数、一个工具调用，也可以是人工审批。边负责规定顺序、条件分支、并行展开、结果汇合、回退和退出。</p>
+<p>LangGraph 的官方文档把一张图拆成三个核心对象。</p>
+<p>State，当前系统状态。</p>
+<p>Nodes，读取状态并产生更新的执行单元。</p>
+<p>Edges，根据状态决定下一个节点。</p>
+<p>微软 AutoGen 的 GraphFlow 也是类似思路。它用有向图控制 Agent 之间的执行，支持顺序、并行、条件分支和带安全退出条件的循环。官方给出的使用边界很克制：只有当任务需要严格控制顺序、根据不同结果走不同路径，或者包含复杂的多步骤循环时，才值得使用 GraphFlow。普通对话式协作够用时，先用更简单的 Team。</p>
+<p>截至本文写作时，AutoGen 文档仍把 GraphFlow 标为实验性能力，API 和行为可能继续变化。用它理解设计边界没问题，拿去做长期生产依赖则需要额外评估版本风险。</p>
+<p>这里有两个很容易踩的坑。</p>
+<p>一个是把 Graph 等同于多 Agent。</p>
+<p>不是。</p>
+<p>一张图完全可以只有一个 Agent，其余节点都是代码、测试和人工审批。反过来，一个 Agent 也可以在自己的 Loop 里动态创建多个子 Agent，并不一定要提前画成固定图。</p>
+<p>另一个是把 Graph 等同于确定性。</p>
+<p>也不准确。</p>
+<p>显式的边可以让控制流更可预测，但只要节点里还有模型，节点输出就仍然带有概率性。Graph 真正买到的，是把一部分「接下来怎么办」从长对话里的隐式判断，搬到了可观察、可检查、可限制的结构里。</p>
+<p>这已经很值钱了。</p>
+<p>尤其是长任务。</p>
+<p>LangGraph 的检查点会在执行步骤之间保存图状态，由此支持人在回路、状态恢复、历史回放和故障续跑。同一个 super-step 里，如果并行节点有的成功、有的失败，已经成功的 pending writes 还能被保留下来，恢复时不必把成功节点全部重跑。</p>
+<p>这些能力不是画几条箭头自动得到的。</p>
+<p>你仍然要设计状态结构、幂等性、合并规则、失败语义和退出条件。</p>
+<p>图不难画。</p>
+<p>难的是让图真的能跑。</p>
+<p><strong>Graph 解决的是「事情复杂以后，执行关系怎么保持清楚」。</strong></p>
+<p><img src="imgs/05-graph-runtime.jpg" alt="Graph 用节点、分支、汇合、回环和检查点表达执行关系"></p>
+<h3 id="Graph-真正难的不是箭头，而是-State"><a href="#Graph-真正难的不是箭头，而是-State" class="headerlink" title="Graph 真正难的不是箭头，而是 State"></a>Graph 真正难的不是箭头，而是 State</h3><p>一张流程图可以在白板上五分钟画完。</p>
+<p>一张可以断点恢复、并行执行、不会重复扣款或重复发消息的执行图，难度完全不同。</p>
+<p>至少要把下面四件事说清楚。</p>
+<p><strong>第一，状态的 Schema 是什么。</strong></p>
+<p>不要让所有节点共享一坨无限增长的聊天记录。研究节点需要的是问题、候选信源和证据；写作节点需要的是已核验事实与结构；审批节点只需要变更摘要、风险等级和待批准动作。状态越清楚，节点的权限和上下文越容易收紧。</p>
+<p><strong>第二，并行结果怎样合并。</strong></p>
+<p>LangGraph 用 reducer 定义同一个状态字段的多个更新如何组合。这个细节在并行分支里尤其重要：同一 super-step 的更新顺序可能不稳定。如果业务要求固定顺序，就不能依赖“谁先返回”，而要让分支输出携带排序键，在汇合节点显式排序。</p>
+<p><strong>第三，恢复以后会不会重复产生副作用。</strong></p>
+<p>检查点能让任务继续，但“能恢复”不等于“恢复一定安全”。一个已经开始、尚未记录完成的任务可能在恢复时再次执行。发送邮件、创建订单、扣款、发布文章这类动作，必须使用幂等键，或者先查询目标系统是否已经存在对应结果。</p>
+<p><strong>第四，失败的事务边界在哪里。</strong></p>
+<p>某个并行分支失败，是整批回滚，还是保留成功结果只重试失败分支？LangGraph 的 super-step 有自己的事务与检查点语义，但你的外部数据库、第三方 API 并不会自动加入这笔事务。图运行时的状态一致，不代表现实世界的副作用也一致。</p>
+<p>所以 Graph Engineering 的核心产物，不应该只有一张图。</p>
+<p>还应该包括状态 Schema、节点读写契约、reducer、检查点策略、幂等规则、重试预算和人工升级路径。</p>
+<p><img src="imgs/06-graph-state.jpg" alt="Graph Engineering 的 State、Reducer、Checkpoint 与幂等"></p>
+<p>还有一对经常混淆的图。</p>
+<p><strong>执行拓扑</strong>决定哪个节点能运行，<strong>上下文拓扑</strong>决定每个节点能看到什么消息。两者不是一回事。</p>
+<p>一张 Graph 可以把 Reviewer 放在 Writer 之后，但如果 Reviewer 仍然收到 Writer 的全部思考过程、旧结论和自我评价，它就可能继续沿着同一条路径走。要获得更独立的复核，还需要单独做消息过滤、最小状态投影或干净上下文。</p>
+<p>反过来，上下文隔离也不自动带来正确性。Reviewer 依旧可能误判，因此最终还要回到测试、Schema、原始引用和人工审批这些证据。</p>
+<h2 id="Graph-没有杀死-Loop，它只是把关系画了出来"><a href="#Graph-没有杀死-Loop，它只是把关系画了出来" class="headerlink" title="Graph 没有杀死 Loop，它只是把关系画了出来"></a>Graph 没有杀死 Loop，它只是把关系画了出来</h2><p>Loops 还是 Graphs？</p>
+<p>这个二选一从一开始就不成立。在图论里，Loop 本来就可以表现为一条回环边：审查不通过，Reviewer 回到 Writer；测试失败，Test 回到 Implement。</p>
+<p>反过来，一个 Agent Loop 也可以把「执行一张子图」当作自己的某一步。子图跑完，再把结果交回主循环继续判断。</p>
+<p>开头那两张错误配图，就是一个很小的嵌套案例。</p>
+<p>浏览器、官方资料、Obsidian、图片模型、文件权限和日志组成 Harness；研究、写作、事实核查、配图、验收、同步构成执行路径；而配图节点内部，又跑着「生成 → 打开检查 → 给出具体错误 → 重做」的 Loop。</p>
+<p>第一次 Harness 图出现重复标签时，问题不在 Graph。执行顺序没乱，是图片验证没有通过。第二次 State 图出现错误小字时，也没必要把整篇文章从头再跑，只要回到配图节点局部修正。</p>
+<p>这正是 Graph 的价值：它不消灭 Loop，而是让系统知道哪一段需要回退。</p>
+<p>同样的变化也会发生在代码 Agent 上。最初只有修改、测试、读取报错、再修改，一个 Loop 足够。等任务加入截图检查、数据库迁移和安全扫描，开始出现稳定的并行、汇合、审批与回退路径，再把这些关系固化成 Graph。</p>
+<p>顺序别反了。</p>
+<p>不是先画十个节点，再逼工作适应图；而是先观察 Loop 怎样运行，再把已经稳定的关系画出来。审批门也应该放在付款、删除、发布这些动作之前，因为最终的 Output guardrail 撤销不了已经发生的副作用。</p>
+<h2 id="出了什么故障，就改哪一层"><a href="#出了什么故障，就改哪一层" class="headerlink" title="出了什么故障，就改哪一层"></a>出了什么故障，就改哪一层</h2><p>我觉得这三个词最有价值的地方，不是让架构图看起来更高级。</p>
+<p>是拿来排障。</p>
+<table>
+<thead>
+<tr>
+<th>你看到的故障</th>
+<th>优先检查哪一层</th>
+<th>典型修法</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Agent 拿不到数据、不会用工具、跨会话丢状态</td>
+<td>Harness</td>
+<td>修工具契约、上下文入口、持久化和权限</td>
+</tr>
+<tr>
+<td>第一版经常差一点，失败后不会修，完成标准模糊</td>
+<td>Loop</td>
+<td>增加可执行反馈、证据、预算和退出条件</td>
+</tr>
+<tr>
+<td>多角色的先后顺序、分支、并行和汇合越来越难追踪</td>
+<td>Graph</td>
+<td>显式建模节点、边、状态和检查点</td>
+</tr>
+<tr>
+<td>图画得很漂亮，但每个节点都在重复猜</td>
+<td>Harness + 节点设计</td>
+<td>给节点更好的工具、上下文和确定性检查</td>
+</tr>
+<tr>
+<td>Agent 反复重试同一种错误</td>
+<td>Loop</td>
+<td>改善失败分类，设置上限和人工升级路径</td>
+</tr>
+<tr>
+<td>并行节点互相覆盖结果，恢复后重复产生副作用</td>
+<td>Graph + Harness</td>
+<td>设计 reducer、幂等键、事务边界和权限隔离</td>
+</tr>
+</tbody></table>
+<p>这张表还有一个隐藏用法。</p>
+<p>它能阻止团队过早买框架。</p>
+<p>如果 Agent 连正确的文件都找不到，上 Graph 没用。</p>
+<p>如果完成标准还是一句「看起来不错」，多加三个 Reviewer 也没用。</p>
+<p>如果任务只有一条稳定路径，单 Agent 加一个可靠验证 Loop 已经能做好，强行拆成十个节点只会增加延迟和调试成本。</p>
+<p>先找到故障属于哪一类，再决定改哪一层。</p>
+<h2 id="Graph-最大的诱惑，是把复杂当成能力"><a href="#Graph-最大的诱惑，是把复杂当成能力" class="headerlink" title="Graph 最大的诱惑，是把复杂当成能力"></a>Graph 最大的诱惑，是把复杂当成能力</h2><p>Graph Engineering 火起来以后，最容易发生的事，就是大家开始数节点。</p>
+<p>五个 Agent 好像比一个 Agent 高级。</p>
+<p>二十个节点好像比五个节点专业。</p>
+<p>一张铺满屏幕的图，看上去也确实比一个简单 Loop 更像「系统」。</p>
+<p>但节点数量从来不是可靠性的代理指标。</p>
+<p>Anthropic 的多 Agent Research 系统在它自己的内部研究评测里，相比单 Agent 方案提升了 90.2%。这是一个很亮眼的结果。但同一篇文章也给出了成本：普通 Agent 大约使用聊天模式 4 倍的 token，多 Agent 系统大约是聊天模式的 15 倍。</p>
+<p>这组数据只能说明一件事。</p>
+<p>对于可以广度并行、价值足够高、单个上下文装不下的研究任务，多 Agent 可能值得。</p>
+<p>它不能推出「多 Agent 普遍比单 Agent 好」，更不能推出「Graph 天然比 Loop 正确」。</p>
+<p>Anthropic 自己也强调，复杂系统会用延迟和成本换取更好的任务表现。简单调用能解决的，不要急着上 Agent；清楚的 Agent Loop 能解决的，也不要急着画大图。</p>
+<p>说真的，我现在看到一张 Agent Graph，最先看的不是有多少节点。</p>
+<p>我看四件事。</p>
+<p>状态在哪里。</p>
+<p>证据从哪里来。</p>
+<p>失败退回哪里。</p>
+<p>副作用由谁批准。</p>
+<p>这四个问题答不出来，图越大，事故半径可能越大。</p>
+<h2 id="一个更稳妥的建设顺序"><a href="#一个更稳妥的建设顺序" class="headerlink" title="一个更稳妥的建设顺序"></a>一个更稳妥的建设顺序</h2><p>如果从零搭 Agent，我会先做一件不那么「酷」的事：让工作现场可观察。</p>
+<p>先修 Harness。给 Agent 清楚的项目地图、少而明确的工具、受限权限、可恢复状态和完整日志，让失败能够被定位。</p>
+<p>然后挑一个失败代价高、又容易验证的环节做 Loop：代码任务跑测试，数据任务校验 Schema，研究任务检查引用，外部操作等待人工批准。</p>
+<p>只有当稳定的分支、并行、汇合与回退反复出现，才把它们固化成 Graph。图应该是已观察工作的地图，不是未来组织结构的想象。</p>
+<p>因为图会固化你对系统的理解。理解错了，它只会让错误跑得更稳定。</p>
+<p><img src="imgs/07-nested-diagnostic-map.jpg" alt="Harness、Loop、Graph 的嵌套关系、排障地图与建设顺序"></p>
+<h2 id="写在最后"><a href="#写在最后" class="headerlink" title="写在最后"></a>写在最后</h2><p>回到开头那两张错误配图。</p>
+<p>API 返回成功，不代表图是对的；文件已经存在，也不代表任务完成。</p>
+<p>没有 Harness，模型甚至拿不到参考图和正确文件；没有 Loop，重复标签和错误小字会直接进入文章；没有 Graph，返工时就很难判断应该只重跑配图节点，还是把整条流程推倒重来。</p>
+<p>Agent 工程并不是不断发明新名词。软件工程几十年来都在处理环境、反馈和控制流，只是现在执行者里多了一个会推理、会调用工具、也会犯错的概率模型。</p>
+<p>先看你的 Agent 为什么失败。</p>
+<p>缺工具、状态、权限和可观测性，修 Harness。</p>
+<p>缺证据、重试和停止条件，修 Loop。</p>
+<p>缺分支、并行、汇合和恢复路径，再上 Graph。</p>
+<p>Harness 管工作条件。</p>
+<p>Loop 管反馈闭环。</p>
+<p>Graph 管执行拓扑。</p>
+<p>它们不是三代技术，而是三个问题。</p>
+<p>把问题分对，工程才真正开始。</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ol>
+<li>OpenAI, <a target="_blank" rel="noopener" href="https://openai.com/index/harness-engineering/">Harness engineering: leveraging Codex in an agent-first world</a></li>
+<li>Anthropic, <a target="_blank" rel="noopener" href="https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents">Effective harnesses for long-running agents</a></li>
+<li>LangChain, <a target="_blank" rel="noopener" href="https://www.langchain.com/blog/the-anatomy-of-an-agent-harness">The Anatomy of an Agent Harness</a></li>
+<li>Anthropic, <a target="_blank" rel="noopener" href="https://www.anthropic.com/engineering/building-effective-agents">Building effective agents</a></li>
+<li>Anthropic, <a target="_blank" rel="noopener" href="https://www.anthropic.com/engineering/multi-agent-research-system">How we built our multi-agent research system</a></li>
+<li>Microsoft AutoGen, <a target="_blank" rel="noopener" href="https://microsoft.github.io/autogen/dev/user-guide/agentchat-user-guide/graph-flow.html">GraphFlow (Workflows)</a></li>
+<li>LangGraph, <a target="_blank" rel="noopener" href="https://docs.langchain.com/oss/python/langgraph/graph-api">Graph API overview</a></li>
+<li>LangGraph, <a target="_blank" rel="noopener" href="https://docs.langchain.com/oss/python/langgraph/persistence">Persistence</a></li>
+<li>OpenAI Agents SDK, <a target="_blank" rel="noopener" href="https://openai.github.io/openai-agents-python/running_agents/">Running agents</a></li>
+<li>OpenAI Agents SDK, <a target="_blank" rel="noopener" href="https://openai.github.io/openai-agents-python/human_in_the_loop/">Human-in-the-loop</a></li>
+<li>Anthropic, <a target="_blank" rel="noopener" href="https://www.anthropic.com/engineering/harness-design-long-running-apps">Harness design for long-running application development</a></li>
+<li>LangGraph, <a target="_blank" rel="noopener" href="https://docs.langchain.com/oss/python/langgraph/use-graph-api">Use the Graph API</a></li>
+<li>LangGraph, <a target="_blank" rel="noopener" href="https://docs.langchain.com/oss/python/langgraph/functional-api">Functional API overview</a></li>
+<li>Google ADK, <a target="_blank" rel="noopener" href="https://adk.dev/agents/workflow-agents/">Template agent workflows</a></li>
+<li>OpenAI Agents SDK, <a target="_blank" rel="noopener" href="https://openai.github.io/openai-agents-python/sessions/">Sessions</a></li>
+<li>OpenAI Agents SDK, <a target="_blank" rel="noopener" href="https://openai.github.io/openai-agents-python/guardrails/">Guardrails</a></li>
+<li>OpenAI Agents SDK, <a target="_blank" rel="noopener" href="https://openai.github.io/openai-agents-python/tracing/">Tracing</a></li>
+<li>OpenAI Agents SDK, <a target="_blank" rel="noopener" href="https://openai.github.io/openai-agents-python/handoffs/">Handoffs</a></li>
+</ol>
+</div>
+    <aside class="post-rail">
+      <span class="post-rail__line"></span>
+      <span>LESLIE / WRITING</span>
+    </aside>
+  </div>
+
+  <footer class="post-footer shell">
+    <div><h2>如果这篇文章帮到了你，<br>也许下一篇会更有意思。</h2></div>
+    <a class="button button--primary" href="/writing/">继续阅读 →</a>
+  </footer>
+</article>
+</main>
+    <footer class="site-footer">
+  <div class="footer-grid">
+    <div>
+      <p class="footer-kicker">Leslie Zhang</p>
+      <p class="footer-statement">流水不争先，<br>争的是滔滔不绝。</p>
+    </div>
+    <div class="footer-links">
+      <a href="https://github.com/leslieAIbin" target="_blank" rel="noreferrer">GitHub ↗</a>
+      <a href="https://www.instagram.com/leslieaibin/" target="_blank" rel="noreferrer">Instagram ↗</a>
+      <button type="button" data-wechat-open>微信 / WeChat</button>
+      <a href="mailto:aibinzhangleslie@gmail.com">Email ↗</a>
+      <a href="/atom.xml">RSS ↗</a>
+    </div>
+    <div class="footer-meta">
+      <span>© 2026 Leslie Zhang</span>
+      <span>Writing, research and working systems.</span>
+    </div>
+  </div>
+</footer>
+
+    <dialog class="ask-dialog" id="ask-leslie" aria-labelledby="ask-title">
+  <div class="ask-dialog__shell">
+    <div class="ask-dialog__topbar">
+      <div>
+        <h2 id="ask-title">Ask Leslie</h2>
+      </div>
+      <button class="icon-button" type="button" data-ask-close aria-label="关闭">×</button>
+    </div>
+    <p class="ask-dialog__intro">从本站公开文章中寻找答案。当前版本在浏览器本地检索，不上传问题，也不会编造不存在的经历。</p>
+    <form class="ask-form" data-ask-form>
+      <label class="sr-only" for="ask-query">输入问题</label>
+      <textarea id="ask-query" rows="2" placeholder="例如：Agent Runtime 应该怎么设计？" data-ask-input></textarea>
+      <button type="submit">检索知识库 <span aria-hidden="true">↗</span></button>
+    </form>
+    <div class="ask-suggestions" aria-label="推荐问题">
+      
+        <button type="button" data-ask-suggestion="Agent Runtime 应该怎么设计？">Agent Runtime 应该怎么设计？</button>
+      
+        <button type="button" data-ask-suggestion="如何让 AI 操控真实世界设备？">如何让 AI 操控真实世界设备？</button>
+      
+        <button type="button" data-ask-suggestion="Leslie 最近在研究什么？">Leslie 最近在研究什么？</button>
+      
+    </div>
+    <div class="ask-results" data-ask-results aria-live="polite">
+      <div class="ask-empty">
+        <p>输入一个问题，我会把你带到 Leslie 写过的相关内容。</p>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+    <dialog class="wechat-dialog" id="wechat-leslie" aria-labelledby="wechat-title">
+  <div class="wechat-dialog__shell">
+    <header>
+      <div>
+        <p class="section-label">WeChat</p>
+        <h2 id="wechat-title">微信联系</h2>
+      </div>
+      <button class="icon-button" type="button" data-wechat-close aria-label="关闭微信二维码">×</button>
+    </header>
+    <img src="/images/contact/wechat-leslie.png" alt="Leslie Zhang 的微信二维码" loading="lazy">
+    <p>扫码添加 Leslie，建议备注你的名字与来意。</p>
+  </div>
+</dialog>
+
+    <script>window.ORBITAL_ROOT = '/';</script>
+    <script src="/js/orbital.js" defer></script>
+  </body>
+</html>

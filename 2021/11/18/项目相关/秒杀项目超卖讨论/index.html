@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+  <head>
+
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#050b18">
+<meta name="color-scheme" content="dark light">
+<title>超卖问题 | Leslie Zhang</title>
+<meta name="description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta name="author" content="Leslie Zhang">
+<link rel="canonical" href="https://leslieaibin.github.io/2021/11/18/%E9%A1%B9%E7%9B%AE%E7%9B%B8%E5%85%B3/%E7%A7%92%E6%9D%80%E9%A1%B9%E7%9B%AE%E8%B6%85%E5%8D%96%E8%AE%A8%E8%AE%BA/">
+<link rel="icon" href="/imgs/01.jpg">
+<link rel="alternate" type="application/atom+xml" title="Leslie Zhang" href="/atom.xml">
+<meta property="og:type" content="article">
+<meta property="og:title" content="超卖问题 | Leslie Zhang">
+<meta property="og:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta property="og:url" content="https://leslieaibin.github.io/2021/11/18/%E9%A1%B9%E7%9B%AE%E7%9B%B8%E5%85%B3/%E7%A7%92%E6%9D%80%E9%A1%B9%E7%9B%AE%E8%B6%85%E5%8D%96%E8%AE%A8%E8%AE%BA/">
+<meta property="og:image" content="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/21.jpg?raw=true">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="超卖问题 | Leslie Zhang">
+<meta name="twitter:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta name="twitter:image" content="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/21.jpg?raw=true">
+<script>
+  (function () {
+    var saved = localStorage.getItem('orbital-theme');
+    var theme = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    document.documentElement.dataset.theme = theme;
+  })();
+</script>
+<link rel="stylesheet" href="/css/orbital.css">
+<meta name="generator" content="Hexo 5.2.0"></head>
+  <body class="page-post">
+    <a class="skip-link" href="#main-content">跳到主要内容</a>
+    <div class="reading-progress" data-reading-progress></div>
+    <header class="site-header" data-header>
+  <div class="nav-shell">
+    <a class="brand" href="/" aria-label="返回首页">
+      <span class="brand-mark" aria-hidden="true"><img src="/images/brand/leslie-mythos-avatar.webp" alt="" width="512" height="512"></span>
+      <span class="brand-copy">
+        <strong>LESLIE</strong>
+        <small>REAL-WORLD AGENTS</small>
+      </span>
+    </a>
+
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav" data-nav-toggle>
+      <span></span><span></span>
+      <span class="sr-only">打开导航</span>
+    </button>
+
+    <nav class="main-nav" id="main-nav" aria-label="主导航" data-nav>
+      
+        <a href="/" class="">首页</a>
+      
+        <a href="/writing/" class="">写作</a>
+      
+        <a href="/projects/" class="">项目</a>
+      
+        <a href="/about/" class="">关于</a>
+      
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换明暗主题">
+        <span class="theme-toggle__sun" aria-hidden="true">☼</span>
+        <span class="theme-toggle__moon" aria-hidden="true">◐</span>
+      </button>
+      <button class="ask-nav" type="button" data-ask-open>ASK LESLIE</button>
+    </nav>
+  </div>
+</header>
+
+    <main id="main-content"><article class="post-shell">
+  <header class="post-hero shell">
+    <a class="post-back" href="/writing/">← 返回写作</a>
+    <div class="post-hero__meta">
+      <time datetime="2021-11-18">2021 年 11 月 18 日</time>
+      <span>5 分钟阅读</span>
+    </div>
+    <h1>超卖问题</h1>
+    
+    <div class="chip-row"><a href="/tags/Java/">Java</a></div>
+  </header>
+
+  <div class="post-cover shell"><img src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/21.jpg?raw=true" alt="超卖问题"></div>
+
+  <div class="post-layout shell">
+    <aside class="post-toc" aria-label="文章目录">
+      <span class="aside-title">目录</span>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AE%BE%E7%BD%AE%E4%B8%BA%E5%AD%97%E6%AE%B5%E6%97%A0%E7%AC%A6%E5%8F%B7%E8%A7%A3%E5%86%B3"><span class="toc-text">设置为字段无符号解决</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#select-for-update%EF%BC%88%E6%84%9F%E8%A7%89%E5%B9%B6%E4%B8%8D%E8%83%BD%E4%BF%9D%E8%AF%81%E5%8E%9F%E5%AD%90%E6%80%A7%EF%BC%89"><span class="toc-text">select for update（感觉并不能保证原子性）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98"><span class="toc-text">常见问题</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%87%87%E7%94%A8%E4%BA%8B%E5%8A%A1%EF%BC%8C%E5%85%88%E6%9F%A5%E5%90%8E%E5%86%99%E5%86%8D%E6%9F%A5%EF%BC%8C%E7%A1%AE%E4%BF%9D%E6%B2%A1%E9%97%AE%E9%A2%98"><span class="toc-text">采用事务，先查后写再查，确保没问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#update%E8%AF%AD%E5%8F%A5%E5%A2%9E%E5%8A%A0available%E6%9F%A5%E8%AF%A2%E6%9D%A1%E4%BB%B6"><span class="toc-text">update语句增加available查询条件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%87%87%E7%94%A8%E8%AE%BE%E7%BD%AE%E5%BA%93%E5%AD%98%E8%80%8C%E4%B8%8D%E6%98%AF%E6%89%A3%E5%87%8F%E5%BA%93%E5%AD%98"><span class="toc-text">采用设置库存而不是扣减库存</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BC%95%E7%94%A8"><span class="toc-text">引用</span></a></li></ol>
+    </aside>
+    <div class="article-content"><h1 id="常见写法安全性及效率分析"><a href="#常见写法安全性及效率分析" class="headerlink" title="常见写法安全性及效率分析"></a>常见写法安全性及效率分析</h1><p>假设我们的商品表的schema是下面这样的：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> <span class="string">`goods`</span> (<span class="string">``</span><span class="string">`</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">`</span><span class="string">``</span> <span class="string">`id`</span> <span class="built_in">int</span>(<span class="number">10</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span> AUTO_INCREMENT <span class="keyword">COMMENT</span><span class="string">``</span><span class="string">` `</span><span class="string">&#x27;自增id&#x27;</span><span class="string">``</span>,<span class="string">`</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">`</span><span class="string">``</span> <span class="string">`name`</span> <span class="built_in">varchar</span>(<span class="number">256</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">DEFAULT</span><span class="string">``</span><span class="string">` `</span><span class="string">&#x27;&#x27;</span><span class="string">` `</span><span class="keyword">COMMENT</span><span class="string">` `</span><span class="string">&#x27;商品名称&#x27;</span><span class="string">``</span>,<span class="string">`</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">`</span><span class="string">``</span> <span class="string">`available`</span> <span class="built_in">int</span>(<span class="number">11</span>) <span class="keyword">unsigned</span> <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">DEFAULT</span><span class="string">``</span><span class="string">` `</span><span class="string">&#x27;0&#x27;</span><span class="string">` `</span><span class="keyword">COMMENT</span><span class="string">` `</span><span class="string">&#x27;库存剩余量&#x27;</span><span class="string">``</span>,<span class="string">`</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">`</span><span class="string">``</span> <span class="string">`stock`</span> <span class="built_in">int</span>(<span class="number">11</span>) <span class="keyword">unsigned</span> <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">DEFAULT</span><span class="string">``</span><span class="string">` `</span><span class="string">&#x27;0&#x27;</span><span class="string">` `</span><span class="keyword">COMMENT</span><span class="string">` `</span><span class="string">&#x27;总库存量&#x27;</span><span class="string">``</span>,<span class="string">`</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">`</span><span class="string">``</span>PRIMARY <span class="keyword">KEY</span> (<span class="string">`id`</span>)<span class="string">``</span><span class="string">`</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">`</span>) <span class="keyword">ENGINE</span>=<span class="keyword">InnoDB</span> <span class="keyword">DEFAULT</span> <span class="keyword">CHARSET</span>=utf8 <span class="keyword">COMMENT</span>=<span class="string">``</span><span class="string">&#x27;商品表&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="设置为字段无符号解决"><a href="#设置为字段无符号解决" class="headerlink" title="设置为字段无符号解决"></a>设置为字段无符号解决</h2><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">num = <span class="keyword">select</span> available <span class="keyword">from</span> goods <span class="keyword">where</span> <span class="keyword">id</span> = xx ;</span><br><span class="line">if(num &gt; 0)&#123;</span><br><span class="line">   affectRows = udpate goods <span class="keyword">set</span> available = available - <span class="number">1</span> <span class="keyword">where</span> <span class="keyword">id</span> = xx ;</span><br><span class="line">   if(affectRows == 1)&#123;</span><br><span class="line">       return ok ;</span><br><span class="line">   &#125;else&#123;</span><br><span class="line">       return fatal ;</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>这种做法大家的想法是我们将库存字段设置成无符号类型，这样当库存字段在sql执行时候被置为负数的时候mysql就会报错，那么affectRow就会是0或者可以捕获到这个异常，从而实现并发下的数据安全。</strong></p>
+<h4 id="解法释义"><a href="#解法释义" class="headerlink" title="解法释义"></a>解法释义</h4><p>实际上这段代码是危险的，因为在不同版本的mysql和配置下，这段代码的表现完全不同。具体的情况会出现3种不同的结果：</p>
+<ul>
+<li>  代码正常运行，执行update的时候报错</li>
+<li>  代码最终执行结果出现了 -1</li>
+<li>  最终update操作之后，available变成了一个很大的数目</li>
+</ul>
+<p>为什么会出现这三种情况呢？</p>
+<p>我想在学习开始学习计算机的时候都讲过计算机的加减法计算方法。</p>
+<p><code>思考一下，无符号2 减去 无符号3 在计算机中的运算是什么样的？</code></p>
+<p><code>2 - 3 = 2 + (-3)</code></p>
+<p><code>假设我们的计算机是4位的,2的补码表示:0010,-3的补码表示为1011</code></p>
+<p><code>那么加和的结果是</code></p>
+<p><code>0010</code></p>
+<p><code>1011 +</code></p>
+<p><code>------</code></p>
+<p><code>1111 =</code></p>
+<p><code>1111解释为有符号数是多少呢？ -1</code></p>
+<p><code>1111解释为无符号数是多少呢？ 15</code></p>
+<p>所以呢？如果mysql不做任何处理的话，你的无符号数减法的结果不会报错，最终你算出来的库存还是一个非常大的值(可怕)。<br>但是幸运的是mysql 后来的版本帮你做了这件事情(具体哪个版本我也不清楚)，所以如果是mysql做了无符号检测的话，如果减出的结果是负值，会报错，这是大多数人期待的结果。-1这种情况是需要你设置一下sqlmode的，这也是会出现的情况。</p>
+<h4 id="解法总结"><a href="#解法总结" class="headerlink" title="解法总结"></a>解法总结</h4><ul>
+<li>  这个办法很多人用的时候没问题，那只能说明可能是机缘巧合，但是对于业务代码而言，不能靠碰运气，需要消除不确定性、缩小迁移成本。</li>
+<li>  如果你想采用这种办法，辛苦你把你们msyql相应的版本及配置搞清楚，确定无符号在你所在的版本会出现什么结果。</li>
+</ul>
+<h2 id="select-for-update（感觉并不能保证原子性）"><a href="#select-for-update（感觉并不能保证原子性）" class="headerlink" title="select for update（感觉并不能保证原子性）"></a>select for update（感觉并不能保证原子性）</h2><h4 id="解法释义-1"><a href="#解法释义-1" class="headerlink" title="解法释义"></a>解法释义</h4><p>读取时候就开始加排他锁也是网上常见的办法之一，具体实现如下：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">begin</span> tran ;</span><br><span class="line">num = <span class="keyword">select</span> avaliable <span class="keyword">from</span> goods <span class="keyword">where</span> <span class="keyword">id</span> = xxx <span class="keyword">for</span> <span class="keyword">update</span>;</span><br><span class="line">if (num &gt;= 0)&#123;</span><br><span class="line">   affectNum = udpate goods <span class="keyword">set</span> available = available - <span class="number">1</span> <span class="keyword">where</span> <span class="keyword">id</span> = xx ;</span><br><span class="line">   <span class="keyword">commit</span> ;</span><br><span class="line"> return affectNum ;</span><br><span class="line">&#125;else&#123;</span><br><span class="line"> <span class="keyword">rollback</span> ;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>该解法在用户读取的时候对相应的数据加排他锁，保证自己在更新的时候该行的数据不会被别的进程更改.所有写请求及排他锁加锁都会被阻塞。</p>
+<p>想想这样的情况，A进程执行过程中，出现死机的情况导致commit/rollback请求没有被发送到mysqlserver，那么所有请求都会锁等待。</p>
+<h4 id="解法总结-1"><a href="#解法总结-1" class="headerlink" title="解法总结"></a>解法总结</h4><ul>
+<li><p>  低流量可以采用这种办法来保证数据的安全性</p>
+</li>
+<li><p>性能低下，平均需要发送4次mysql请求，同时会造成所有同类请求锁等待。</p>
+<h3 id="常见问题"><a href="#常见问题" class="headerlink" title="常见问题"></a>常见问题</h3></li>
+<li><p>  select for udpate 需要在显式的指定在事务代码块执行，不然不会起作用。很多网友都理所当然的人为select for update直接就可以加排他锁</p>
+</li>
+<li><p>  排他锁的释放是在rollback/commit 动作完成才会释放，不是在update操作之后。mysql innodb执行两段锁协议，加锁阶段只加锁，解锁阶段只解锁。</p>
+</li>
+</ul>
+<h2 id="采用事务，先查后写再查，确保没问题"><a href="#采用事务，先查后写再查，确保没问题" class="headerlink" title="采用事务，先查后写再查，确保没问题"></a>采用事务，先查后写再查，确保没问题</h2><h4 id="解法释义-2"><a href="#解法释义-2" class="headerlink" title="解法释义"></a>解法释义</h4><p>这时候的available设置为有符号类型，解决方案一的问题</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">begin</span> tran ;</span><br><span class="line"></span><br><span class="line">num = <span class="keyword">select</span> available <span class="keyword">from</span> goods <span class="keyword">where</span> <span class="keyword">id</span> = xx ;</span><br><span class="line"></span><br><span class="line">if(num &gt; 0)&#123;</span><br><span class="line">   //实际需要关心这里的返回值，这里不考虑</span><br><span class="line"></span><br><span class="line">   udpate goods <span class="keyword">set</span> available = available - <span class="number">1</span> <span class="keyword">where</span> <span class="keyword">id</span> = xx ;</span><br><span class="line"></span><br><span class="line">   num_afterupdate = <span class="keyword">select</span> available <span class="keyword">from</span> goods <span class="keyword">where</span> <span class="keyword">id</span> = xx ;</span><br><span class="line"></span><br><span class="line">   if(num_afterupdate &lt; 0 )&#123;</span><br><span class="line"></span><br><span class="line">       <span class="keyword">rollback</span> ;</span><br><span class="line"></span><br><span class="line">   &#125;else&#123;</span><br><span class="line"></span><br><span class="line">       <span class="keyword">commit</span> ;</span><br><span class="line"></span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<p>这种解法区分于第一种的办法在于，加了事务、available类型更改、采用了更新后确认的形式，尝试解决问题。</p>
+<p>我们都知道数据库的事务隔离级别有4种：<br><strong>RU，RC，RR，Serializable。</strong><br>我们常见的innodb中RR模式是可以保证可重复读，意思是在同一个事务内部，多次读取的结果是一致的。那么最后一次的读取对于RR隔离级别实际上是无效的。<br>RC模式下，这个代码是可用的，每次请求可以确保自己的进程不会超发。</p>
+<h4 id="解法总结-2"><a href="#解法总结-2" class="headerlink" title="解法总结"></a>解法总结</h4><ul>
+<li>  RR、RC模式下结果不一致.RR下不可保证安全、RC可以。</li>
+<li>  性能不高，一次业务请求到mysql的转化为 1 : 5。</li>
+<li>  这种解法就像老奶奶锁门，总是不放心自己到底锁了没有，走了几步再回来看看，实际上有些时候是徒劳。</li>
+</ul>
+<h2 id="update语句增加available查询条件"><a href="#update语句增加available查询条件" class="headerlink" title="update语句增加available查询条件"></a>update语句增加available查询条件</h2><h4 id="解法释义-3"><a href="#解法释义-3" class="headerlink" title="解法释义"></a>解法释义</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">udpate goods <span class="keyword">set</span> available = available - <span class="number">1</span> <span class="keyword">where</span> <span class="keyword">id</span> = xx<span class="string">` `</span><span class="keyword">and</span><span class="string">` `</span>available - <span class="number">1</span> &gt;= <span class="number">0</span> ;</span><br></pre></td></tr></table></figure>
+
+
+<p>大家有的另一个误区是单条语句不是事务，实际上单条sql也是一个事务。-<br>问题的关键就集中在怎么证明这句的安全性的。-<br>我们都知道update操作对于id为主键索引的情况下，是会对数据加行锁。-<br>其实update操作在mysql内部也是一个先查后改的过程，这个过程如果是原子的，那么可以保证update语句是串行的，那我们就来看一下update语句在mysql内部的执行过程。-</p>
+<p>那么对于上面这个语句，一样遵循两段锁协议。-<br>update执行的过程，会去查询满足条件的行并加锁，这个加锁是innodb做的，那么就可以保证别的事务必须等到该事务执行完了之后才能获得锁，此时拿到最新数据。</p>
+<h4 id="解法总结-3"><a href="#解法总结-3" class="headerlink" title="解法总结"></a>解法总结</h4><ul>
+<li>  语句安全、效率最优（我的认知里）</li>
+</ul>
+<h2 id="采用设置库存而不是扣减库存"><a href="#采用设置库存而不是扣减库存" class="headerlink" title="采用设置库存而不是扣减库存"></a>采用设置库存而不是扣减库存</h2><p>这几天我把类似的文章几乎翻了一遍，唯一看到批评我的上一条做法的是我的那个做法是不具备幂等性的。</p>
+<blockquote>
+<ul>
+<li>  所谓幂等性就是，同一个用户对同一连接的访问不会产生副作用。比如上一条的方案，如果记录用户的操作和扣减库存不是原子操作的话，就有可能出现的问题是，库存扣减成功了，但是用户记录失败了，那么用户重复请求，就会出现多次减库存的问题。</li>
+</ul>
+</blockquote>
+<p>那么他们的解法是这样的，采用设置而不是扣减，代码如下：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">num_old = <span class="keyword">select</span> available <span class="keyword">from</span> goods <span class="keyword">where</span> <span class="keyword">id</span> = xx<span class="string">` `</span><span class="keyword">and</span><span class="string">` `</span>available &gt;= <span class="number">1</span> ;</span><br><span class="line">num_new = num_old - 1 ;</span><br><span class="line"><span class="keyword">update</span> goods <span class="keyword">set</span> <span class="keyword">num</span>=num_new <span class="keyword">where</span> <span class="keyword">id</span>=xx<span class="string">` `</span><span class="keyword">and</span><span class="string">` `</span><span class="keyword">num</span>=num_old ;</span><br></pre></td></tr></table></figure>
+
+<p>这段代码也是安全的，采用的是乐观锁的理念来完成的操作。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ul>
+<li>  上面的做法，最后两个是相对安全的，但是你的库存字段还是要设置为无符号，关于是否幂等，要看结合请求看，不是单个扣减块代码。</li>
+</ul>
+<h2 id="引用"><a href="#引用" class="headerlink" title="引用"></a>引用</h2><ul>
+<li>  <a target="_blank" rel="noopener" href="http://hedengcheng.com/?p=771">何登成的技术博客</a>mysql udpate流程学习</li>
+<li>  <a target="_blank" rel="noopener" href="http://www.10tiao.com/html/249/201706/2651960197/1.html">幂等性做法来源</a>使用设置库存代替库存扣减</li>
+<li>  <a target="_blank" rel="noopener" href="http://www.cnblogs.com/blankqdb/archive/2012/11/03/blank_qdb.html">mysql 无符号问题</a></li>
+</ul>
+</div>
+    <aside class="post-rail">
+      <span class="post-rail__line"></span>
+      <span>LESLIE / WRITING</span>
+    </aside>
+  </div>
+
+  <footer class="post-footer shell">
+    <div><h2>如果这篇文章帮到了你，<br>也许下一篇会更有意思。</h2></div>
+    <a class="button button--primary" href="/writing/">继续阅读 →</a>
+  </footer>
+</article>
+</main>
+    <footer class="site-footer">
+  <div class="footer-grid">
+    <div>
+      <p class="footer-kicker">Leslie Zhang</p>
+      <p class="footer-statement">流水不争先，<br>争的是滔滔不绝。</p>
+    </div>
+    <div class="footer-links">
+      <a href="https://github.com/leslieAIbin" target="_blank" rel="noreferrer">GitHub ↗</a>
+      <a href="https://www.instagram.com/leslieaibin/" target="_blank" rel="noreferrer">Instagram ↗</a>
+      <button type="button" data-wechat-open>微信 / WeChat</button>
+      <a href="mailto:aibinzhangleslie@gmail.com">Email ↗</a>
+      <a href="/atom.xml">RSS ↗</a>
+    </div>
+    <div class="footer-meta">
+      <span>© 2026 Leslie Zhang</span>
+      <span>Writing, research and working systems.</span>
+    </div>
+  </div>
+</footer>
+
+    <dialog class="ask-dialog" id="ask-leslie" aria-labelledby="ask-title">
+  <div class="ask-dialog__shell">
+    <div class="ask-dialog__topbar">
+      <div>
+        <h2 id="ask-title">Ask Leslie</h2>
+      </div>
+      <button class="icon-button" type="button" data-ask-close aria-label="关闭">×</button>
+    </div>
+    <p class="ask-dialog__intro">从本站公开文章中寻找答案。当前版本在浏览器本地检索，不上传问题，也不会编造不存在的经历。</p>
+    <form class="ask-form" data-ask-form>
+      <label class="sr-only" for="ask-query">输入问题</label>
+      <textarea id="ask-query" rows="2" placeholder="例如：Agent Runtime 应该怎么设计？" data-ask-input></textarea>
+      <button type="submit">检索知识库 <span aria-hidden="true">↗</span></button>
+    </form>
+    <div class="ask-suggestions" aria-label="推荐问题">
+      
+        <button type="button" data-ask-suggestion="Agent Runtime 应该怎么设计？">Agent Runtime 应该怎么设计？</button>
+      
+        <button type="button" data-ask-suggestion="如何让 AI 操控真实世界设备？">如何让 AI 操控真实世界设备？</button>
+      
+        <button type="button" data-ask-suggestion="Leslie 最近在研究什么？">Leslie 最近在研究什么？</button>
+      
+    </div>
+    <div class="ask-results" data-ask-results aria-live="polite">
+      <div class="ask-empty">
+        <p>输入一个问题，我会把你带到 Leslie 写过的相关内容。</p>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+    <dialog class="wechat-dialog" id="wechat-leslie" aria-labelledby="wechat-title">
+  <div class="wechat-dialog__shell">
+    <header>
+      <div>
+        <p class="section-label">WeChat</p>
+        <h2 id="wechat-title">微信联系</h2>
+      </div>
+      <button class="icon-button" type="button" data-wechat-close aria-label="关闭微信二维码">×</button>
+    </header>
+    <img src="/images/contact/wechat-leslie.png" alt="Leslie Zhang 的微信二维码" loading="lazy">
+    <p>扫码添加 Leslie，建议备注你的名字与来意。</p>
+  </div>
+</dialog>
+
+    <script>window.ORBITAL_ROOT = '/';</script>
+    <script src="/js/orbital.js" defer></script>
+  </body>
+</html>

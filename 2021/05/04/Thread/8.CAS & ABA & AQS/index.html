@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+  <head>
+
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#050b18">
+<meta name="color-scheme" content="dark light">
+<title>8.CAS &amp; ABA &amp; AQS | Leslie Zhang</title>
+<meta name="description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta name="author" content="Leslie Zhang">
+<link rel="canonical" href="https://leslieaibin.github.io/2021/05/04/Thread/8.CAS%20&amp;%20ABA%20&amp;%20AQS/">
+<link rel="icon" href="/imgs/01.jpg">
+<link rel="alternate" type="application/atom+xml" title="Leslie Zhang" href="/atom.xml">
+<meta property="og:type" content="article">
+<meta property="og:title" content="8.CAS &amp; ABA &amp; AQS | Leslie Zhang">
+<meta property="og:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta property="og:url" content="https://leslieaibin.github.io/2021/05/04/Thread/8.CAS%20&amp;%20ABA%20&amp;%20AQS/">
+<meta property="og:image" content="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/33.jpg?raw=true">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="8.CAS &amp; ABA &amp; AQS | Leslie Zhang">
+<meta name="twitter:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta name="twitter:image" content="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/33.jpg?raw=true">
+<script>
+  (function () {
+    var saved = localStorage.getItem('orbital-theme');
+    var theme = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    document.documentElement.dataset.theme = theme;
+  })();
+</script>
+<link rel="stylesheet" href="/css/orbital.css">
+<meta name="generator" content="Hexo 5.2.0"></head>
+  <body class="page-post">
+    <a class="skip-link" href="#main-content">跳到主要内容</a>
+    <div class="reading-progress" data-reading-progress></div>
+    <header class="site-header" data-header>
+  <div class="nav-shell">
+    <a class="brand" href="/" aria-label="返回首页">
+      <span class="brand-mark" aria-hidden="true"><img src="/images/brand/leslie-mythos-avatar.webp" alt="" width="512" height="512"></span>
+      <span class="brand-copy">
+        <strong>LESLIE</strong>
+        <small>REAL-WORLD AGENTS</small>
+      </span>
+    </a>
+
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav" data-nav-toggle>
+      <span></span><span></span>
+      <span class="sr-only">打开导航</span>
+    </button>
+
+    <nav class="main-nav" id="main-nav" aria-label="主导航" data-nav>
+      
+        <a href="/" class="">首页</a>
+      
+        <a href="/writing/" class="">写作</a>
+      
+        <a href="/projects/" class="">项目</a>
+      
+        <a href="/about/" class="">关于</a>
+      
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换明暗主题">
+        <span class="theme-toggle__sun" aria-hidden="true">☼</span>
+        <span class="theme-toggle__moon" aria-hidden="true">◐</span>
+      </button>
+      <button class="ask-nav" type="button" data-ask-open>ASK LESLIE</button>
+    </nav>
+  </div>
+</header>
+
+    <main id="main-content"><article class="post-shell">
+  <header class="post-hero shell">
+    <a class="post-back" href="/writing/">← 返回写作</a>
+    <div class="post-hero__meta">
+      <time datetime="2021-05-04">2021 年 05 月 04 日</time>
+      <span>5 分钟阅读</span>
+    </div>
+    <h1>8.CAS &amp; ABA &amp; AQS</h1>
+    
+    <div class="chip-row"><a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E4%B8%8E%E5%B9%B6%E5%8F%91/">多线程与并发</a></div>
+  </header>
+
+  <div class="post-cover shell"><img src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/33.jpg?raw=true" alt="8.CAS &amp; ABA &amp; AQS"></div>
+
+  <div class="post-layout shell">
+    <aside class="post-toc" aria-label="文章目录">
+      <span class="aside-title">目录</span>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFCAS"><span class="toc-text">什么是CAS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CAS%E7%9A%84%E7%89%B9%E6%80%A7%EF%BC%9A%E4%B9%90%E8%A7%82%E9%94%81"><span class="toc-text">CAS的特性：乐观锁</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CAS%E8%87%AA%E6%97%8B%E7%AD%89%E5%BE%85"><span class="toc-text">CAS自旋等待</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#AQS%E7%9A%84%E5%8E%9F%E7%90%86"><span class="toc-text">AQS的原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#state%EF%BC%9A%E7%8A%B6%E6%80%81"><span class="toc-text">state：状态</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#AQS%E5%85%B1%E4%BA%AB%E8%B5%84%E6%BA%90%E7%9A%84%E6%96%B9%E5%BC%8F%EF%BC%9A%E7%8B%AC%E5%8D%A0%E5%BC%8F%E5%92%8C%E5%85%B1%E4%BA%AB%E5%BC%8F"><span class="toc-text">AQS共享资源的方式：独占式和共享式</span></a></li></ol>
+    </aside>
+    <div class="article-content"><h1 id="CAS"><a href="#CAS" class="headerlink" title="CAS"></a>CAS</h1><h2 id="什么是CAS"><a href="#什么是CAS" class="headerlink" title="什么是CAS"></a>什么是CAS</h2><p><code>CAS（Compare And Swap）</code>指比较并交换。CAS算法CAS(V,E, N)包含3个参数，V表示要更新的变量，E表示预期的值，N表示新值。在且仅在V值等于 E值时，才会将V值设为 N，如果 V值和 E值不同，则说明已经有其他线程做了更新，当前线程什么都不做。最后，CAS返回当前V的真实值。</p>
+<h2 id="CAS的特性：乐观锁"><a href="#CAS的特性：乐观锁" class="headerlink" title="CAS的特性：乐观锁"></a>CAS的特性：乐观锁</h2><p>CAS操作采用了乐观锁的思想，总是认为自己可以成功完成操作。在有多个线程同时使用CAS操作一个变量时，只有一个会胜出并成功更新，其余均会失败。失败的线程不会被挂起，仅被告知失败，并且允许再次尝试，当然，也允许失败的线程放弃操作。基于这样的原理，CAS操作即使没有锁，也可以发现其他线程对当前线程的干扰，并进行恰当的处理。</p>
+<h2 id="CAS自旋等待"><a href="#CAS自旋等待" class="headerlink" title="CAS自旋等待"></a>CAS自旋等待</h2><p>在JDK的原子包<code>java.util.concurrent.atomic</code>里面提供了一组原子类，这些原子类的基本特性就是在多线程环境下，在有多个线程同时执行这些类的实例包含的方法时，会有排他性。其内部便是基于CAS算法实现的，即在某个线程进入方法中执行其中的指令时，不会被其他线程打断；而别的线程就像自旋锁一样，一直等到该方法执行完成才由JVM从等待的队列中选择另一个线程进入。</p>
+<p>相对于synchronized阻塞算法，CAS是非阻塞算法的一种常见实现。由于CPU的切换比CPU指令集的操作更加耗时，所以CAS的自旋操作在性能上有了很大的提升。</p>
+<h1 id="ABA"><a href="#ABA" class="headerlink" title="ABA"></a>ABA</h1><p>对CAS算法的实现有一个重要的前提：需要取出内存中某时刻的数据，然后在下一时刻进行比较、替换，在这个时间差内可能数据已经发生了变化，导致产生ABA问题。</p>
+<p>ABA问题指第1个线程从内存的V位置取出A，这时第2个线程也从内存中取出A，并将V位置的数据首先修改为B，接着又将V位置的数据修改为A，这时第1个线程在进行CAS操作时会发现在内存中仍然是A，然后第1个线程操作成功。尽管从第1个线程的角度来说，CAS操作是成功的，但在该过程中其实V位置的数据发生了变化，只是第1个线程没有感知到罢了，这在某些应用场景下可能出现过程数据不一致的问题。</p>
+<p>部分乐观锁是通过<code>版本号（version）</code>来解决ABA问题的，具体的操作是乐观锁每次在执行数据的修改操作时都会带上一个版本号，在预期的版本号和数据的版本号一致时就可以执行修改操作，并对版本号执行加1操作，否则执行失败。因为每次操作的版本号都会随之增加，所以不会出现ABA问题，因为<strong>版本号只会增加，不会减少</strong>。</p>
+<h1 id="AQS"><a href="#AQS" class="headerlink" title="AQS"></a>AQS</h1><p><code>AQS(Abstract Aueued Synchronizer)</code>是一个抽象的队列同步器，通过维护一个共享资源状态（Volatile Int State) 和一个先进先出（FIFO）的线程等待队列来实现一个多线程访问共享资源的同步框架。</p>
+<h2 id="AQS的原理"><a href="#AQS的原理" class="headerlink" title="AQS的原理"></a>AQS的原理</h2><p>AQS为每个共享资源都设置一个共享资源锁，线程在需要访问共享资源时首先需要获取共享资源锁，如果获取到了共享资源锁，便可以在当前线程中使用该共享资源，如果获取不到，则将该线程放入线程等待队列，等待下一次资源调度。许多同步类的实现都依赖于AQS，例如常用的ReentrantLock、Semaphore和CountDownLatch。</p>
+<p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/image-20210504160648860.png" alt="image-20210504160648860"></p>
+<h2 id="state：状态"><a href="#state：状态" class="headerlink" title="state：状态"></a>state：状态</h2><p>Abstract Queued Synchronizer维护了一个volatile int类型的变量，用于表示当前的同步状态。Volatile虽然不能保证操作的原子性，但是能保证当前变量state的可见性。state的访问方式有三种：<code>getState()、setState()和compareAndSetState()</code>，均是原子操作，其中，compareAndSetState的实现依赖于Unsafe的compareAndSwapInt()。</p>
+<h2 id="AQS共享资源的方式：独占式和共享式"><a href="#AQS共享资源的方式：独占式和共享式" class="headerlink" title="AQS共享资源的方式：独占式和共享式"></a>AQS共享资源的方式：独占式和共享式</h2><p>AQS定义了两种资源共享方式：<code>独占式（Exclusive）和共享式（Share）</code>。</p>
+<ul>
+<li>独占式：只有一个线程能执行，具体的Java实现有ReentrantLock。</li>
+<li>共享式：多个线程可同时执行，具体的Java实现有Semaphore和CountDownLatch。</li>
+</ul>
+<p>AQS只是一个框架，只定义了一个接口，具体资源的获取、释放都交由自定义同步器去实现。不同的自定义同步器争用共享资源的方式也不同，自定义同步器在实现时只需实现共享资源state的获取与释放方式即可，至于具体线程等待队列的维护，如获取资源失败入队、唤醒出队等，AQS已经在顶层实现好，不需要具体的同步器再做处理。</p>
+<p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/image-20210504161124244.png" alt="image-20210504161124244"></p>
+<p>同步器的实现是AQS的核心内存。ReentrantLock对AQS的独占方式实现为：ReentrantLock中的state初始值为0时表示无锁状态。在线程执行tryAcquire()获取该锁后ReentrantLock中的state+1，这时该线程独占ReentrantLock锁，其他线程在通过tryAcquire()获取锁时均会失败，直到该线程释放锁后state再次为0，其他线程才有机会获取该锁。该线程在释放锁之前可以重复获取此锁，每获取一次便会执行一次state+1，因此ReentrantLock也属于可重入锁。但获取多少次锁就要释放多少次锁，这样才能保证state最终为0。如果获取锁的次数多于释放锁的次数，则会出现该线程一直持有该锁的情况；如果获取锁的次数少于释放锁的次数，则运行中的程序会报锁异常。</p>
+<p>CountDownLatch对AQS的共享方式实现为：CountDownLatch将任务分为N个子线程去执行，将state也初始化为N, N与线程的个数一致，N个子线程是并行执行的，每个子线程都在执行完成后countDown()一次，state会执行CAS操作并减1。在所有子线程都执行完成（state=0）时会unpark()主线程，然后主线程会从await()返回，继续执行后续的动作。</p>
+<p>一般来说，自定义同步器要么采用独占方式，要么采用共享方式，实现类只需实现tryAcquire、tryRelease或tryAcquireShared、tryReleaseShared中的一组即可。但AQS也支持自定义同步器同时实现独占和共享两种方式，例如ReentrantReadWriteLock在读取时采用了共享方式，在写入时采用了独占方式。</p>
+</div>
+    <aside class="post-rail">
+      <span class="post-rail__line"></span>
+      <span>LESLIE / WRITING</span>
+    </aside>
+  </div>
+
+  <footer class="post-footer shell">
+    <div><h2>如果这篇文章帮到了你，<br>也许下一篇会更有意思。</h2></div>
+    <a class="button button--primary" href="/writing/">继续阅读 →</a>
+  </footer>
+</article>
+</main>
+    <footer class="site-footer">
+  <div class="footer-grid">
+    <div>
+      <p class="footer-kicker">Leslie Zhang</p>
+      <p class="footer-statement">流水不争先，<br>争的是滔滔不绝。</p>
+    </div>
+    <div class="footer-links">
+      <a href="https://github.com/leslieAIbin" target="_blank" rel="noreferrer">GitHub ↗</a>
+      <a href="https://www.instagram.com/leslieaibin/" target="_blank" rel="noreferrer">Instagram ↗</a>
+      <button type="button" data-wechat-open>微信 / WeChat</button>
+      <a href="mailto:aibinzhangleslie@gmail.com">Email ↗</a>
+      <a href="/atom.xml">RSS ↗</a>
+    </div>
+    <div class="footer-meta">
+      <span>© 2026 Leslie Zhang</span>
+      <span>Writing, research and working systems.</span>
+    </div>
+  </div>
+</footer>
+
+    <dialog class="ask-dialog" id="ask-leslie" aria-labelledby="ask-title">
+  <div class="ask-dialog__shell">
+    <div class="ask-dialog__topbar">
+      <div>
+        <h2 id="ask-title">Ask Leslie</h2>
+      </div>
+      <button class="icon-button" type="button" data-ask-close aria-label="关闭">×</button>
+    </div>
+    <p class="ask-dialog__intro">从本站公开文章中寻找答案。当前版本在浏览器本地检索，不上传问题，也不会编造不存在的经历。</p>
+    <form class="ask-form" data-ask-form>
+      <label class="sr-only" for="ask-query">输入问题</label>
+      <textarea id="ask-query" rows="2" placeholder="例如：Agent Runtime 应该怎么设计？" data-ask-input></textarea>
+      <button type="submit">检索知识库 <span aria-hidden="true">↗</span></button>
+    </form>
+    <div class="ask-suggestions" aria-label="推荐问题">
+      
+        <button type="button" data-ask-suggestion="Agent Runtime 应该怎么设计？">Agent Runtime 应该怎么设计？</button>
+      
+        <button type="button" data-ask-suggestion="如何让 AI 操控真实世界设备？">如何让 AI 操控真实世界设备？</button>
+      
+        <button type="button" data-ask-suggestion="Leslie 最近在研究什么？">Leslie 最近在研究什么？</button>
+      
+    </div>
+    <div class="ask-results" data-ask-results aria-live="polite">
+      <div class="ask-empty">
+        <p>输入一个问题，我会把你带到 Leslie 写过的相关内容。</p>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+    <dialog class="wechat-dialog" id="wechat-leslie" aria-labelledby="wechat-title">
+  <div class="wechat-dialog__shell">
+    <header>
+      <div>
+        <p class="section-label">WeChat</p>
+        <h2 id="wechat-title">微信联系</h2>
+      </div>
+      <button class="icon-button" type="button" data-wechat-close aria-label="关闭微信二维码">×</button>
+    </header>
+    <img src="/images/contact/wechat-leslie.png" alt="Leslie Zhang 的微信二维码" loading="lazy">
+    <p>扫码添加 Leslie，建议备注你的名字与来意。</p>
+  </div>
+</dialog>
+
+    <script>window.ORBITAL_ROOT = '/';</script>
+    <script src="/js/orbital.js" defer></script>
+  </body>
+</html>

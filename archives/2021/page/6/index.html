@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+  <head>
+
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#050b18">
+<meta name="color-scheme" content="dark light">
+<title>Leslie Zhang | AI Agent &amp; Agent Infra Engineer</title>
+<meta name="description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta name="author" content="Leslie Zhang">
+<link rel="canonical" href="https://leslieaibin.github.io/archives/2021/page/6/index.html">
+<link rel="icon" href="/imgs/01.jpg">
+<link rel="alternate" type="application/atom+xml" title="Leslie Zhang" href="/atom.xml">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Leslie Zhang | AI Agent &amp; Agent Infra Engineer">
+<meta property="og:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta property="og:url" content="https://leslieaibin.github.io/archives/2021/page/6/index.html">
+<meta property="og:image" content="https://leslieaibin.github.io/og-blue.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Leslie Zhang | AI Agent &amp; Agent Infra Engineer">
+<meta name="twitter:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta name="twitter:image" content="https://leslieaibin.github.io/og-blue.png">
+<script>
+  (function () {
+    var saved = localStorage.getItem('orbital-theme');
+    var theme = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    document.documentElement.dataset.theme = theme;
+  })();
+</script>
+<link rel="stylesheet" href="/css/orbital.css">
+<meta name="generator" content="Hexo 5.2.0"></head>
+  <body class="page-index">
+    <a class="skip-link" href="#main-content">跳到主要内容</a>
+    <div class="reading-progress" data-reading-progress></div>
+    <header class="site-header" data-header>
+  <div class="nav-shell">
+    <a class="brand" href="/" aria-label="返回首页">
+      <span class="brand-mark" aria-hidden="true"><img src="/images/brand/leslie-mythos-avatar.webp" alt="" width="512" height="512"></span>
+      <span class="brand-copy">
+        <strong>LESLIE</strong>
+        <small>REAL-WORLD AGENTS</small>
+      </span>
+    </a>
+
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav" data-nav-toggle>
+      <span></span><span></span>
+      <span class="sr-only">打开导航</span>
+    </button>
+
+    <nav class="main-nav" id="main-nav" aria-label="主导航" data-nav>
+      
+        <a href="/" class="">首页</a>
+      
+        <a href="/writing/" class="">写作</a>
+      
+        <a href="/projects/" class="">项目</a>
+      
+        <a href="/about/" class="">关于</a>
+      
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换明暗主题">
+        <span class="theme-toggle__sun" aria-hidden="true">☼</span>
+        <span class="theme-toggle__moon" aria-hidden="true">◐</span>
+      </button>
+      <button class="ask-nav" type="button" data-ask-open>ASK LESLIE</button>
+    </nav>
+  </div>
+</header>
+
+    <main id="main-content"><section class="page-hero shell">
+  <p class="page-kicker">Writing archive</p>
+  <h1>全部归档</h1>
+  <p>按时间回看，理解是怎样一层层长出来的。</p>
+</section>
+<section class="section shell"><div class="writing-list" data-writing-list>
+  
+    <article class="writing-row reveal" data-writing-item data-search="redis基础 redis 概述 什么是redis redis是一个使用c语言写成，凯源的高性能key-value非关系缓存数据库。他支持存储的value类型比较多，包括string(字符串)、list(集合)、set(集合)、zset(sorted-set–有序集合) 和 hash (哈希类型）。redis都是基于缓存的，所以很快，每秒都可以处理10万读写操作，是一直性能最好的key-value db。redis也可以实现数据写入磁盘中，保证了数据的安全不丢失，而且redis的操作时原子性的 redi…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-09-01">2021.09.01</time><span>17 MIN</span></div>
+        <h2><a href="/2021/09/01/Redis/Redis%E5%9F%BA%E7%A1%80%EF%BC%881%EF%BC%89/">Redis基础</a></h2>
+        <p>概述 什么是Redis Redis是一个使用C语言写成，凯源的高性能key-value非关系缓存数据库。他支持存储的value类型比较多，包括String(字符串)、list(集合)、set(集合)、zset(sorted-set–有序集合) 和 hash (哈希类型）。Redis都是基于缓存的，所…</p>
+        <div class="chip-row"><span>Redis</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/09/01/Redis/Redis%E5%9F%BA%E7%A1%80%EF%BC%881%EF%BC%89/" aria-label="阅读《Redis基础》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="17.锁升级和锁状态 jvm 前言 锁的状态总共有四种，级别由低到高依次为：无锁、偏向锁、轻量级锁、重量级锁，这四种锁状态分别代表什么，为什么会有锁升级。在jdk1.6之前，synchronized还是一个重量级锁，是一个效率比较低下的锁，但在jdk1.6后，jvm为了提高锁的获取与释放效率(sychronized) 进行了优化，引入了偏向锁和轻量级锁，从此以后锁的状态就有四种（无锁， 偏向锁， 轻量级锁，重量级锁），并且四种状态会随着竞争的情况逐渐升级，而且是不可逆的过程，即不可降级，也就是说只能进行锁…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-08-30">2021.08.30</time><span>11 MIN</span></div>
+        <h2><a href="/2021/08/30/JVM/17.%E9%94%81%E5%8D%87%E7%BA%A7%E5%92%8C%E9%94%81%E7%8A%B6%E6%80%81/">17.锁升级和锁状态</a></h2>
+        <p>前言 锁的状态总共有四种，级别由低到高依次为：无锁、偏向锁、轻量级锁、重量级锁，这四种锁状态分别代表什么，为什么会有锁升级。在JDK1.6之前，synchronized还是一个重量级锁，是一个效率比较低下的锁，但在JDK1.6后，JVM为了提高锁的获取与释放效率(sychronized) 进行了优化…</p>
+        <div class="chip-row"><span>JVM</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/08/30/JVM/17.%E9%94%81%E5%8D%87%E7%BA%A7%E5%92%8C%E9%94%81%E7%8A%B6%E6%80%81/" aria-label="阅读《17.锁升级和锁状态》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="java异常  java把异常作为一类，当做对象来处理。所有异常类的基类是throwable类，两大子类分别是error 和 exception。 系统错误由java虚拟机抛出，用error类表示，error类描述的是内部系统错误，例如java虚拟机崩溃。这种情况仅凭程序自身是无法处理的，在程序中也不会对error异常进行捕捉和抛出。 异常（exception）又分为runtimeexception（运行时异常）和 checkedexception（检查时异常），两者区别如下： runtim…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-08-30">2021.08.30</time><span>5 MIN</span></div>
+        <h2><a href="/2021/08/30/java%E5%9F%BA%E7%A1%80/java%E5%BC%82%E5%B8%B8%E4%BD%93%E7%B3%BB/">java异常</a></h2>
+        <p>java把异常作为一类，当做对象来处理。所有异常类的基类是Throwable类，两大子类分别是Error 和 Exception。 系统错误由Java虚拟机抛出，用Error类表示，Error类描述的是内部系统错误，例如Java虚拟机崩溃。这种情况仅凭程序自身是无法处理的，在程序中也不会对Error…</p>
+        <div class="chip-row"></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/08/30/java%E5%9F%BA%E7%A1%80/java%E5%BC%82%E5%B8%B8%E4%BD%93%E7%B3%BB/" aria-label="阅读《java异常》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="10.threadlocal 多线程与并发 threadlocal介绍 官方介绍 从java官方文档中描述：threadlocal类用来提供线程内部局部变量，这种变量在多线程环境下访问（通过get 和set 方法访问）时能保证各个线程的变量相对于独立于其他线程内的变量。threadlocal实例通常来说都是private static类型的，用于关联线程和线程上下文 可以得知threadlocal作用是：提供线程内部的局部变量，不同的线程之间不会相互干扰，这种变量在线程声明周期内其作用，减少同一个线程内多个函数或组件之…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-08-29">2021.08.29</time><span>8 MIN</span></div>
+        <h2><a href="/2021/08/29/Thread/10.ThreadLocal/">10.ThreadLocal</a></h2>
+        <p>ThreadLocal介绍 官方介绍 从Java官方文档中描述：ThreadLocal类用来提供线程内部局部变量，这种变量在多线程环境下访问（通过get 和set 方法访问）时能保证各个线程的变量相对于独立于其他线程内的变量。ThreadLocal实例通常来说都是private static类型的，…</p>
+        <div class="chip-row"><span>多线程与并发</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/08/29/Thread/10.ThreadLocal/" aria-label="阅读《10.ThreadLocal》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="平衡二叉树、b 树、b+树 二叉树 平衡二叉树 平衡二叉树是基于二分法的策略提高数据的查找速度的二叉树的数据结构 特点： 平衡二叉树是采用二分法思维把数据按规则组装成一个树型结构的数据，用这个树形结构的数据减少无关数据的检索，大大的提升了数据检索的速度；平衡二叉树的数据结构组装过程有以下规则： 非叶子节点只能允许最多两个子节点存在 每一个非叶子检点数据分布规则按照左边的子节点小于当前节点的值，右边的子节点大于当前节点的值（这里的值是基于自己的算法规则而定的，比如hash值） 平衡树的层级结构：因为平衡二叉树查询…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-08-29">2021.08.29</time><span>7 MIN</span></div>
+        <h2><a href="/2021/08/29/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%A0%91/%E5%B9%B3%E8%A1%A1%E4%BA%8C%E5%8F%89%E6%A0%91%E3%80%81B%20%E6%A0%91%E3%80%81B+%E6%A0%91/">平衡二叉树、B 树、B+树</a></h2>
+        <p>平衡二叉树 平衡二叉树是基于二分法的策略提高数据的查找速度的二叉树的数据结构 特点： 平衡二叉树是采用二分法思维把数据按规则组装成一个树型结构的数据，用这个树形结构的数据减少无关数据的检索，大大的提升了数据检索的速度；平衡二叉树的数据结构组装过程有以下规则： 非叶子节点只能允许最多两个子节点存在 每…</p>
+        <div class="chip-row"><span>二叉树</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/08/29/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%A0%91/%E5%B9%B3%E8%A1%A1%E4%BA%8C%E5%8F%89%E6%A0%91%E3%80%81B%20%E6%A0%91%E3%80%81B+%E6%A0%91/" aria-label="阅读《平衡二叉树、B 树、B+树》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="如何保证消息队列的可靠性传输 消息队列 rabbitmq如何保证消息队列的可靠性传输 生产者弄丢数据 生产者将数据发送到rabbitmq的时候，可能数据就在半路丢失。此时rabbitmq提供事务功能，就是生产者发送数据之前开启rabbitmq事务channel.txselect，然后发送消息，如果消息没有成功被rabbitmq接受到，那么生产者就会异常报错，此时回滚事务channel.txrollback，然后重发消息，如果收到消息就可以提交事务channel.txcommit 但是问题是，rabbitmq 事务机…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-08-26">2021.08.26</time><span>3 MIN</span></div>
+        <h2><a href="/2021/08/26/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/%E5%A6%82%E4%BD%95%E4%BF%9D%E8%AF%81%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E7%9A%84%E5%8F%AF%E9%9D%A0%E6%80%A7%E4%BC%A0%E8%BE%93/">如何保证消息队列的可靠性传输</a></h2>
+        <p>RabbitMQ如何保证消息队列的可靠性传输 生产者弄丢数据 生产者将数据发送到RabbitMQ的时候，可能数据就在半路丢失。此时RabbitMQ提供事务功能，就是生产者发送数据之前开启RabbitMQ事务channel.txSelect，然后发送消息，如果消息没有成功被RabbitMQ接受到，那么…</p>
+        <div class="chip-row"><span>消息队列</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/08/26/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/%E5%A6%82%E4%BD%95%E4%BF%9D%E8%AF%81%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E7%9A%84%E5%8F%AF%E9%9D%A0%E6%80%A7%E4%BC%A0%E8%BE%93/" aria-label="阅读《如何保证消息队列的可靠性传输》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="9.synchronized、lock、volatile 多线程与并发 概述 java的内存模型 每个线程都有自己的本地内存空间（java栈中的帧），线程执行时，先把变量从内存读到线程自己的本地内存空间，然后对变量进行操作 对该变量操作完成后，在某个时间再把变量刷新回主内存 锁提供的两种特性： 互斥（mutual exclusion） 和可见性（visibility） 互斥：互斥即一次只允许一个线程持有某个特定的锁，因此可使用该特性实现对共享数据的协调访问协议，这样一次只有一个线程能够使用该共享数据 可见性：简单来说就是一个线程修改了变量，其他线…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-08-25">2021.08.25</time><span>10 MIN</span></div>
+        <h2><a href="/2021/08/25/Thread/9.synchronized%E3%80%81Lock%E3%80%81volatile/">9.synchronized、Lock、volatile</a></h2>
+        <p>概述 java的内存模型 每个线程都有自己的本地内存空间（java栈中的帧），线程执行时，先把变量从内存读到线程自己的本地内存空间，然后对变量进行操作 对该变量操作完成后，在某个时间再把变量刷新回主内存 锁提供的两种特性： 互斥（mutual exclusion） 和可见性（visibility）…</p>
+        <div class="chip-row"><span>多线程与并发</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/08/25/Thread/9.synchronized%E3%80%81Lock%E3%80%81volatile/" aria-label="阅读《9.synchronized、Lock、volatile》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="3.hashmap、concurrenthashmap、hashtable collection hashmap、concurrenthashmap、hashtable的区别 hashmap vs concurrenthashmap 引入concurrenthashmap是为了同步集合hashtable之间有更好的选择，hashtable与hashmap,concurrenthashmap主要区别于hashmap不是同步的，线程不安全的和不适合应用于多线程并发环境下，而concurrenthashmap是线程安全的集合容器，特别是在多线程和并发环境中，通常作为map的主要…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-08-24">2021.08.24</time><span>6 MIN</span></div>
+        <h2><a href="/2021/08/24/Collection/3.java%E9%9B%86%E5%90%88%5B3%5D--HashMap%E3%80%81ConcurrentHashMap%E3%80%81HashTable%E7%9A%84%E5%8C%BA%E5%88%AB/">3.HashMap、ConcurrentHashMap、HashTable</a></h2>
+        <p>HashMap、ConcurrentHashMap、HashTable的区别 HashMap vs ConcurrentHashMap 引入ConcurrentHashMap是为了同步集合HashTable之间有更好的选择，HashTable与HashMap,ConcurrentHashMap主要区…</p>
+        <div class="chip-row"><span>Collection</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/08/24/Collection/3.java%E9%9B%86%E5%90%88%5B3%5D--HashMap%E3%80%81ConcurrentHashMap%E3%80%81HashTable%E7%9A%84%E5%8C%BA%E5%88%AB/" aria-label="阅读《3.HashMap、ConcurrentHashMap、HashTable》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="2.java集合 collection 集合容器概述 什么是集合 集合就是一个放数据的容器，准确的说是放数据对象引用的容器 集合类存放的都是对象的引用，而不是对象的本身 集合类型主要有三种： set(集)、list(列表) 和 map(映射) 集合的特点 集合用于存储对象的容器，对象是用来封装数据，对象多了也需要存储集中式管理 和数组对比对象的大小是不确定的，集合的长度是可变的，数组需要提前定义大小 集合和数组的区别 数组是 固定长度的，集合可变长度的 数组可以存储基本数据类型，也可以存储引用数据类型，集合只能存储…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-08-20">2021.08.20</time><span>28 MIN</span></div>
+        <h2><a href="/2021/08/20/Collection/2.%E9%9B%86%E5%90%88%5B2%5D/">2.Java集合</a></h2>
+        <p>集合容器概述 什么是集合 集合就是一个放数据的容器，准确的说是放数据对象引用的容器 集合类存放的都是对象的引用，而不是对象的本身 集合类型主要有三种： set(集)、list(列表) 和 map(映射) 集合的特点 集合用于存储对象的容器，对象是用来封装数据，对象多了也需要存储集中式管理 和数组对比…</p>
+        <div class="chip-row"><span>Collection</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/08/20/Collection/2.%E9%9B%86%E5%90%88%5B2%5D/" aria-label="阅读《2.Java集合》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="04.spring-bean spring bean的作用域 一般情况下，我们书写在ioc容器中的配置信息，会在我们的ioc容器运行时被创建，这就导致我们通过ioc容器获取到bean对象的时候，往往都是获取到了单例的bean对象。 这样就意味着无论我们使用多少个 getbean()方法，获取到的同一个 javabean 都是同一个对象，这就是单实例 bean，整个项目都会共享这一个 bean 对象。 在 spring 中，可以在元素的 scope 属性里设置 bean 的作用域，以决定这个 bean 是单实例的还是多实…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-08-07">2021.08.07</time><span>5 MIN</span></div>
+        <h2><a href="/2021/08/07/Spring/04.Spring-Bean/">04.Spring-Bean</a></h2>
+        <p>Bean的作用域 一般情况下，我们书写在IOC容器中的配置信息，会在我们的IOC容器运行时被创建，这就导致我们通过IOC容器获取到bean对象的时候，往往都是获取到了单例的Bean对象。 这样就意味着无论我们使用多少个 getBean()方法，获取到的同一个 JavaBean 都是同一个对象，这就是…</p>
+        <div class="chip-row"><span>Spring</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/08/07/Spring/04.Spring-Bean/" aria-label="阅读《04.Spring-Bean》">↗</a>
+    </article>
+  
+</div>
+<a class="extend prev" rel="prev" href="/archives/2021/page/5/">Prev</a><a class="page-number" href="/archives/2021/">1</a><span class="space">&hellip;</span><a class="page-number" href="/archives/2021/page/4/">4</a><a class="page-number" href="/archives/2021/page/5/">5</a><span class="page-number current">6</span><a class="page-number" href="/archives/2021/page/7/">7</a><a class="page-number" href="/archives/2021/page/8/">8</a><span class="space">&hellip;</span><a class="page-number" href="/archives/2021/page/10/">10</a><a class="extend next" rel="next" href="/archives/2021/page/7/">Next</a></section>
+</main>
+    <footer class="site-footer">
+  <div class="footer-grid">
+    <div>
+      <p class="footer-kicker">Leslie Zhang</p>
+      <p class="footer-statement">流水不争先，<br>争的是滔滔不绝。</p>
+    </div>
+    <div class="footer-links">
+      <a href="https://github.com/leslieAIbin" target="_blank" rel="noreferrer">GitHub ↗</a>
+      <a href="https://www.instagram.com/leslieaibin/" target="_blank" rel="noreferrer">Instagram ↗</a>
+      <button type="button" data-wechat-open>微信 / WeChat</button>
+      <a href="mailto:aibinzhangleslie@gmail.com">Email ↗</a>
+      <a href="/atom.xml">RSS ↗</a>
+    </div>
+    <div class="footer-meta">
+      <span>© 2026 Leslie Zhang</span>
+      <span>Writing, research and working systems.</span>
+    </div>
+  </div>
+</footer>
+
+    <dialog class="ask-dialog" id="ask-leslie" aria-labelledby="ask-title">
+  <div class="ask-dialog__shell">
+    <div class="ask-dialog__topbar">
+      <div>
+        <h2 id="ask-title">Ask Leslie</h2>
+      </div>
+      <button class="icon-button" type="button" data-ask-close aria-label="关闭">×</button>
+    </div>
+    <p class="ask-dialog__intro">从本站公开文章中寻找答案。当前版本在浏览器本地检索，不上传问题，也不会编造不存在的经历。</p>
+    <form class="ask-form" data-ask-form>
+      <label class="sr-only" for="ask-query">输入问题</label>
+      <textarea id="ask-query" rows="2" placeholder="例如：Agent Runtime 应该怎么设计？" data-ask-input></textarea>
+      <button type="submit">检索知识库 <span aria-hidden="true">↗</span></button>
+    </form>
+    <div class="ask-suggestions" aria-label="推荐问题">
+      
+        <button type="button" data-ask-suggestion="Agent Runtime 应该怎么设计？">Agent Runtime 应该怎么设计？</button>
+      
+        <button type="button" data-ask-suggestion="如何让 AI 操控真实世界设备？">如何让 AI 操控真实世界设备？</button>
+      
+        <button type="button" data-ask-suggestion="Leslie 最近在研究什么？">Leslie 最近在研究什么？</button>
+      
+    </div>
+    <div class="ask-results" data-ask-results aria-live="polite">
+      <div class="ask-empty">
+        <p>输入一个问题，我会把你带到 Leslie 写过的相关内容。</p>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+    <dialog class="wechat-dialog" id="wechat-leslie" aria-labelledby="wechat-title">
+  <div class="wechat-dialog__shell">
+    <header>
+      <div>
+        <p class="section-label">WeChat</p>
+        <h2 id="wechat-title">微信联系</h2>
+      </div>
+      <button class="icon-button" type="button" data-wechat-close aria-label="关闭微信二维码">×</button>
+    </header>
+    <img src="/images/contact/wechat-leslie.png" alt="Leslie Zhang 的微信二维码" loading="lazy">
+    <p>扫码添加 Leslie，建议备注你的名字与来意。</p>
+  </div>
+</dialog>
+
+    <script>window.ORBITAL_ROOT = '/';</script>
+    <script src="/js/orbital.js" defer></script>
+  </body>
+</html>

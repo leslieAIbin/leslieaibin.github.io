@@ -1,0 +1,641 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+  <head>
+
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#050b18">
+<meta name="color-scheme" content="dark light">
+<title>Multi-Agent 的两种解法：拆解 Claude Code 与 Codex | Leslie Zhang</title>
+<meta name="description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta name="author" content="Leslie Zhang">
+<link rel="canonical" href="https://leslieaibin.github.io/2026/05/09/attention-field/Multi-Agent%E7%9A%84%E4%B8%A4%E7%A7%8D%E8%A7%A3%E6%B3%95-ClaudeCode%E4%B8%8ECodex%E6%8B%86%E8%A7%A3/">
+<link rel="icon" href="/imgs/01.jpg">
+<link rel="alternate" type="application/atom+xml" title="Leslie Zhang" href="/atom.xml">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Multi-Agent 的两种解法：拆解 Claude Code 与 Codex | Leslie Zhang">
+<meta property="og:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta property="og:url" content="https://leslieaibin.github.io/2026/05/09/attention-field/Multi-Agent%E7%9A%84%E4%B8%A4%E7%A7%8D%E8%A7%A3%E6%B3%95-ClaudeCode%E4%B8%8ECodex%E6%8B%86%E8%A7%A3/">
+<meta property="og:image" content="https://leslieaibin.github.io/2026/05/09/attention-field/Multi-Agent%E7%9A%84%E4%B8%A4%E7%A7%8D%E8%A7%A3%E6%B3%95-ClaudeCode%E4%B8%8ECodex%E6%8B%86%E8%A7%A3/illustrations/M1-%E5%8D%95agent%E5%A4%A9%E8%8A%B1%E6%9D%BF%E4%B8%8Emulti-agent%E8%A7%A3%E6%B3%95.webp">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Multi-Agent 的两种解法：拆解 Claude Code 与 Codex | Leslie Zhang">
+<meta name="twitter:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta name="twitter:image" content="https://leslieaibin.github.io/2026/05/09/attention-field/Multi-Agent%E7%9A%84%E4%B8%A4%E7%A7%8D%E8%A7%A3%E6%B3%95-ClaudeCode%E4%B8%8ECodex%E6%8B%86%E8%A7%A3/illustrations/M1-%E5%8D%95agent%E5%A4%A9%E8%8A%B1%E6%9D%BF%E4%B8%8Emulti-agent%E8%A7%A3%E6%B3%95.webp">
+<script>
+  (function () {
+    var saved = localStorage.getItem('orbital-theme');
+    var theme = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    document.documentElement.dataset.theme = theme;
+  })();
+</script>
+<link rel="stylesheet" href="/css/orbital.css">
+<meta name="generator" content="Hexo 5.2.0"></head>
+  <body class="page-post">
+    <a class="skip-link" href="#main-content">跳到主要内容</a>
+    <div class="reading-progress" data-reading-progress></div>
+    <header class="site-header" data-header>
+  <div class="nav-shell">
+    <a class="brand" href="/" aria-label="返回首页">
+      <span class="brand-mark" aria-hidden="true"><img src="/images/brand/leslie-mythos-avatar.webp" alt="" width="512" height="512"></span>
+      <span class="brand-copy">
+        <strong>LESLIE</strong>
+        <small>REAL-WORLD AGENTS</small>
+      </span>
+    </a>
+
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav" data-nav-toggle>
+      <span></span><span></span>
+      <span class="sr-only">打开导航</span>
+    </button>
+
+    <nav class="main-nav" id="main-nav" aria-label="主导航" data-nav>
+      
+        <a href="/" class="">首页</a>
+      
+        <a href="/writing/" class="">写作</a>
+      
+        <a href="/projects/" class="">项目</a>
+      
+        <a href="/about/" class="">关于</a>
+      
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换明暗主题">
+        <span class="theme-toggle__sun" aria-hidden="true">☼</span>
+        <span class="theme-toggle__moon" aria-hidden="true">◐</span>
+      </button>
+      <button class="ask-nav" type="button" data-ask-open>ASK LESLIE</button>
+    </nav>
+  </div>
+</header>
+
+    <main id="main-content"><article class="post-shell">
+  <header class="post-hero shell">
+    <a class="post-back" href="/writing/">← 返回写作</a>
+    <div class="post-hero__meta">
+      <time datetime="2026-05-09">2026 年 05 月 09 日</time>
+      <span>13 分钟阅读</span>
+    </div>
+    <h1>Multi-Agent 的两种解法：拆解 Claude Code 与 Codex</h1>
+    
+    <div class="chip-row"><a href="/tags/Architecture/">Architecture</a><a href="/tags/ClaudeCode/">ClaudeCode</a><a href="/tags/Codex/">Codex</a><a href="/tags/LLM-Agent/">LLM-Agent</a><a href="/tags/Multi-Agent/">Multi-Agent</a><a href="/tags/Subagent/">Subagent</a><a href="/tags/Thread/">Thread</a><a href="/tags/Collaboration/">Collaboration</a></div>
+  </header>
+
+  <div class="post-cover shell"><img src="/2026/05/09/attention-field/Multi-Agent%E7%9A%84%E4%B8%A4%E7%A7%8D%E8%A7%A3%E6%B3%95-ClaudeCode%E4%B8%8ECodex%E6%8B%86%E8%A7%A3/illustrations/M1-%E5%8D%95agent%E5%A4%A9%E8%8A%B1%E6%9D%BF%E4%B8%8Emulti-agent%E8%A7%A3%E6%B3%95.webp" alt="Multi-Agent 的两种解法：拆解 Claude Code 与 Codex"></div>
+
+  <div class="post-layout shell">
+    <aside class="post-toc" aria-label="文章目录">
+      <span class="aside-title">目录</span>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BC%95%E8%A8%80%EF%BC%9A%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E5%8D%95-agent-%E4%B8%8D%E5%A4%9F%E7%94%A8%E4%BA%86"><span class="toc-text">引言：什么时候单 agent 不够用了</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%85%88%E8%AF%B4%E6%B8%85%E6%A5%9A%EF%BC%9A%E4%BB%80%E4%B9%88%E6%98%AF-Multi-Agent%EF%BC%9F"><span class="toc-text">1. 先说清楚：什么是 Multi-Agent？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-Claude-Code%EF%BC%9ASubagent-Team-%E7%9A%84%E5%A7%94%E6%B4%BE%E6%A8%A1%E5%BC%8F"><span class="toc-text">2. Claude Code：Subagent + Team 的委派模式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-Agent-%E5%B7%A5%E5%85%B7%EF%BC%9A%E4%B8%80%E6%AC%A1%E6%80%A7-Subagent"><span class="toc-text">2.1 Agent 工具：一次性 Subagent</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-Subagent-%E7%B1%BB%E5%9E%8B%EF%BC%9A%E5%B7%A5%E5%85%B7%E9%9B%86%E9%9A%94%E7%A6%BB"><span class="toc-text">2.2 Subagent 类型：工具集隔离</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-Team%EF%BC%9A%E6%8C%81%E4%B9%85%E5%8C%96-Teammate-%E5%85%B1%E4%BA%AB-TaskList"><span class="toc-text">2.3 Team：持久化 Teammate + 共享 TaskList</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-4-%E5%90%8C%E6%AD%A5-vs-%E5%90%8E%E5%8F%B0"><span class="toc-text">2.4 同步 vs 后台</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-Codex%EF%BC%9AThread-Graph-%E7%9A%84%E5%9B%BE%E6%A8%A1%E5%BC%8F"><span class="toc-text">3. Codex：Thread + Graph 的图模式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-Thread%EF%BC%9A%E5%9F%BA%E6%9C%AC%E5%8D%95%E5%85%83"><span class="toc-text">3.1 Thread：基本单元</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-AgentControl-%E5%B7%A5%E5%85%B7%EF%BC%9Aspawn-interact-wait-close-resume"><span class="toc-text">3.2 AgentControl 工具：spawn &#x2F; interact &#x2F; wait &#x2F; close &#x2F; resume</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-%E7%88%B6%E5%AD%90%E4%B8%8A%E4%B8%8B%E6%96%87%E6%80%8E%E4%B9%88%E4%BC%A0%EF%BC%9A%E6%B6%88%E6%81%AF-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F"><span class="toc-text">3.3 父子上下文怎么传：消息 + 文件系统</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-4-AgentGraphStore%EF%BC%9Aspawn-%E5%85%B3%E7%B3%BB%E6%8C%81%E4%B9%85%E5%8C%96"><span class="toc-text">3.4 AgentGraphStore：spawn 关系持久化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-5-AgentIdentity%EF%BC%9A%E6%AF%8F%E4%B8%AA-agent-%E4%B8%80%E6%8A%8A-ed25519-%E7%A7%81%E9%92%A5"><span class="toc-text">3.5 AgentIdentity：每个 agent 一把 ed25519 私钥</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-6-4-%E7%A7%8D-Collaboration-Mode%EF%BC%88%E4%B8%8D%E6%98%AF-multi-agent%EF%BC%8C%E4%BD%86%E7%9B%B8%E5%85%B3%EF%BC%89"><span class="toc-text">3.6 4 种 Collaboration Mode（不是 multi-agent，但相关）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-11-%E7%BB%B4%E5%BA%A6%E5%AF%B9%E6%AF%94"><span class="toc-text">4. 11 维度对比</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-%E4%B8%80%E5%8F%A5%E8%AF%9D%E5%93%B2%E5%AD%A6%E5%B7%AE%E5%BC%82"><span class="toc-text">4.1 一句话哲学差异</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-%E5%93%AA%E7%A7%8D%E6%9B%B4%E2%80%9D%E5%AF%B9%E2%80%9D%EF%BC%9F"><span class="toc-text">4.2 哪种更”对”？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E5%87%A0%E4%B8%AA%E4%B8%8D%E7%9B%B4%E8%A7%82%E7%9A%84%E8%AE%BE%E8%AE%A1%E5%8F%96%E8%88%8D"><span class="toc-text">5. 几个不直观的设计取舍</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#5-1-%E5%A7%94%E6%B4%BE%E6%A8%A1%E5%BC%8F%E4%B8%BA%E4%BB%80%E4%B9%88%E9%BB%98%E8%AE%A4%E6%98%AF%E5%90%8C%E6%AD%A5%E7%9A%84"><span class="toc-text">5.1 委派模式为什么默认是同步的</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-2-%E5%9B%BE%E6%A8%A1%E5%BC%8F%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81-ed25519-%E9%89%B4%E6%9D%83"><span class="toc-text">5.2 图模式为什么需要 ed25519 鉴权</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-3-Token-%E7%BB%8F%E6%B5%8E%E7%9A%84%E9%9A%90%E6%80%A7%E6%88%90%E6%9C%AC"><span class="toc-text">5.3 Token 经济的隐性成本</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E4%BD%A0%E5%BA%94%E8%AF%A5%E9%80%89%E5%93%AA%E4%B8%AA%EF%BC%9A%E5%86%B3%E7%AD%96%E6%A0%91"><span class="toc-text">6. 你应该选哪个：决策树</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-%E6%80%BB%E7%BB%93%EF%BC%9A%E4%B8%A4%E7%A7%8D%E5%B7%A5%E5%85%B7%E5%AF%B9%E5%BA%94%E4%B8%A4%E7%A7%8D%E4%BA%A7%E5%93%81%E5%BD%A2%E6%80%81"><span class="toc-text">7. 总结：两种工具对应两种产品形态</span></a></li></ol>
+    </aside>
+    <div class="article-content"><h1 id="Multi-Agent-的两种解法：拆解-Claude-Code-与-Codex"><a href="#Multi-Agent-的两种解法：拆解-Claude-Code-与-Codex" class="headerlink" title="Multi-Agent 的两种解法：拆解 Claude Code 与 Codex"></a>Multi-Agent 的两种解法：拆解 Claude Code 与 Codex</h1><h2 id="引言：什么时候单-agent-不够用了"><a href="#引言：什么时候单-agent-不够用了" class="headerlink" title="引言：什么时候单 agent 不够用了"></a>引言：什么时候单 agent 不够用了</h2><p>你给 Claude Code 一个任务：”帮我把这个 React 项目从 Webpack 迁到 Vite，所有相关配置都改一下，跑通测试再提个 PR。”</p>
+<p>它接活、读文件、改代码、跑测试、再改、再跑，半小时后回你一句”搞定，PR 已提”。这是<strong>单 agent</strong> 模式 —— 一个 AI 进程从头干到尾。</p>
+<p>但你换个任务：”帮我调研 5 个开源 vector DB（Qdrant / Milvus / Weaviate / pgvector / Chroma），各做一个 100 万向量的 benchmark，最后出一份对比报告。”</p>
+<p>单 agent 立刻就崩了：</p>
+<ul>
+<li><strong>Context 装不下</strong> 5 个项目的源码 + 5 份 benchmark log + 1 份报告，加起来轻松 50 万 token，超过任何模型的 context window</li>
+<li><strong>没法并行</strong> 5 个 benchmark 串行跑要 5 倍时间</li>
+<li><strong>角色混乱</strong> 同一个 AI 既要做调研、又要写代码、又要分析数据、又要写报告，在不同思维模式之间频繁切换，质量普遍下降</li>
+</ul>
+<p>这种任务的解法是 <strong>Multi-Agent</strong> —— 把任务拆成多个子任务，每个交给一个独立的 AI 子进程跑，主 agent 负责协调。</p>
+<p>业界两个最有影响力的开源 / 半开源 AI CLI 工具 —— <strong>Anthropic 的 Claude Code</strong> 和 <strong>OpenAI 的 Codex</strong> —— 都做了 multi-agent 能力。但<strong>思路完全不同</strong>：</p>
+<ul>
+<li><strong>Claude Code</strong> 走 “<strong>委派 (delegation)</strong>“ 路线：主 agent 像项目经理，把任务派给小弟（subagent），小弟干完返回结果。轻量、同进程、一次性。</li>
+<li><strong>Codex</strong> 走 “<strong>图 (graph)</strong>“ 路线：每个 agent 是图中的节点，spawn 关系是边，父 agent 可以多次和子 agent 来回交互、暂停、恢复。重量级、有持久化、有签名鉴权。</li>
+</ul>
+<p>这篇文章把两种做法都拆开看。读完你能：</p>
+<ul>
+<li>理解什么时候<strong>真</strong>需要 multi-agent（很多人没必要的也搞）</li>
+<li>看懂这两种 CLI 工具的源码 / 工具描述里关于 agent 的部分</li>
+<li>在自己做 AI agent 项目时知道该选哪种模型</li>
+</ul>
+<hr>
+<h2 id="1-先说清楚：什么是-Multi-Agent？"><a href="#1-先说清楚：什么是-Multi-Agent？" class="headerlink" title="1. 先说清楚：什么是 Multi-Agent？"></a>1. 先说清楚：什么是 Multi-Agent？</h2><p>把这个词拆开很简单：<strong>Multi（多个）+ Agent（自主的 AI 进程）</strong>。多个 AI 进程协作完成一个任务。</p>
+<p>但魔鬼在细节里。”协作”分很多档：</p>
+<p><img src="illustrations/M1-%E5%8D%95agent%E5%A4%A9%E8%8A%B1%E6%9D%BF%E4%B8%8Emulti-agent%E8%A7%A3%E6%B3%95.webp" alt="单 agent 三个天花板（context / 并行 / 角色），multi-agent 用三种思路对应破解"></p>
+<table>
+<thead>
+<tr>
+<th>协作档位</th>
+<th>例子</th>
+<th>是不是 multi-agent</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>同一个 agent 串行做几件事</strong></td>
+<td>主 agent 先读文件、再改代码、再跑测试</td>
+<td>❌ 单 agent，只是 multi-step</td>
+</tr>
+<tr>
+<td><strong>同一个 agent 在不同模式间切换</strong></td>
+<td>Codex 的 Plan / Execute / Pair Programming 模式</td>
+<td>❌ 还是单 agent，只是换了 system prompt</td>
+</tr>
+<tr>
+<td><strong>主 agent 派一次性任务给 subagent</strong></td>
+<td>“帮我去搜 X” → subagent 搜完返回</td>
+<td>✅ Multi-agent · 委派模式</td>
+</tr>
+<tr>
+<td><strong>多个 agent 并发跑独立任务</strong></td>
+<td>5 个 agent 同时调研 5 个数据库</td>
+<td>✅ Multi-agent · 并行</td>
+</tr>
+<tr>
+<td><strong>多个 agent 长期协作有共享状态</strong></td>
+<td>PM agent / Dev agent / Test agent 流水线</td>
+<td>✅ Multi-agent · 长程协作</td>
+</tr>
+</tbody></table>
+<p>后面三种是真正的 multi-agent。它们都解决同一类<strong>单 agent 解不了的问题</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>单 agent 的天花板</th>
+<th>解释</th>
+<th>Multi-agent 怎么破</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Context 溢出</strong></td>
+<td>一个 agent 的对话历史 + 工具输出超过 200K token，模型记不住</td>
+<td>每个 sub-agent 有独立 context，主 agent 只看 sub-agent 的最终结果（高度压缩）</td>
+</tr>
+<tr>
+<td><strong>没法并行</strong></td>
+<td>一个 agent 同一时刻只能干一件事</td>
+<td>多个 sub-agent 并发跑，墙钟时间砍到 1/N</td>
+</tr>
+<tr>
+<td><strong>角色专精弱</strong></td>
+<td>一个通用 agent 既写代码又做 review，不专</td>
+<td>不同 sub-agent 用不同 system prompt + 不同工具集，各司其职</td>
+</tr>
+</tbody></table>
+<p>理解了这三个核心动机，你就能判断”我这个任务真的需要 multi-agent 吗” —— 如果你的任务 context 装得下、不需要并行、单一角色就够，<strong>不要上 multi-agent</strong>。它会让你的系统复杂十倍而收益接近零。</p>
+<hr>
+<h2 id="2-Claude-Code：Subagent-Team-的委派模式"><a href="#2-Claude-Code：Subagent-Team-的委派模式" class="headerlink" title="2. Claude Code：Subagent + Team 的委派模式"></a>2. Claude Code：Subagent + Team 的委派模式</h2><p>Anthropic 的 Claude Code 把 multi-agent 做得<strong>特别轻量</strong>。一个工具就是一切的入口：<code>Agent</code>。</p>
+<p><img src="illustrations/M2-ClaudeCode-Subagent-Team%E6%9E%B6%E6%9E%84.webp" alt="Claude Code 的两层 multi-agent：Agent 工具（一次性 subagent） + Team（持久 teammate）"></p>
+<h3 id="2-1-Agent-工具：一次性-Subagent"><a href="#2-1-Agent-工具：一次性-Subagent" class="headerlink" title="2.1 Agent 工具：一次性 Subagent"></a>2.1 Agent 工具：一次性 Subagent</h3><p>你只需要调用一个工具：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Claude Code 的 Agent 工具调用（伪代码）</span></span><br><span class="line">Agent(&#123;</span><br><span class="line">  description: <span class="string">&quot;Search codebase for auth flow&quot;</span>,</span><br><span class="line">  prompt: <span class="string">&quot;...具体任务详细 brief...&quot;</span>,</span><br><span class="line">  subagent_type: <span class="string">&quot;Explore&quot;</span>,      <span class="comment">// ← 选 subagent 类型</span></span><br><span class="line">  model: <span class="string">&quot;haiku&quot;</span>,                <span class="comment">// 可选：用更便宜的模型</span></span><br><span class="line">  run_in_background: <span class="literal">false</span>       <span class="comment">// 同步等结果 / 后台跑</span></span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>主 agent 调一次这个工具，Claude Code 在背后做这些事：</p>
+<ol>
+<li><strong>fork 一个新的 AI 进程</strong> —— 独立的 conversation、独立的 context window、独立的 token 预算</li>
+<li><strong>按 <code>subagent_type</code> 限定工具集</strong> —— Explore 只有读和搜索的能力，不能写文件；general-purpose 有全部工具；自定义的 subagent 按其 <code>.claude/agents/</code> 文件定义</li>
+<li><strong>把 <code>prompt</code> 作为初始消息</strong> —— subagent 看不到主 agent 的对话历史，只看到这条 brief</li>
+<li><strong>subagent 自己跑</strong> —— 调它能用的工具，最后产出一条最终消息</li>
+<li><strong>结果返回主 agent</strong> —— 主 agent 看到的是一段文本（subagent 的最终消息），整个 subagent 的中间过程<strong>不污染主 context</strong></li>
+</ol>
+<p>这就是”委派”的精髓：<strong>一个一次性的小弟，干完活把结果丢回来就消失</strong>。</p>
+<h3 id="2-2-Subagent-类型：工具集隔离"><a href="#2-2-Subagent-类型：工具集隔离" class="headerlink" title="2.2 Subagent 类型：工具集隔离"></a>2.2 Subagent 类型：工具集隔离</h3><p>Claude Code 的 <code>subagent_type</code> 是一个非常聪明的设计点。它不是简单的”角色 prompt”，而是<strong>绑定了工具集合</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>Subagent 类型</th>
+<th>能用的工具</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Explore</strong></td>
+<td>Read / Grep / Glob / Bash 等只读工具</td>
+<td>代码搜索、定位、调研</td>
+</tr>
+<tr>
+<td><strong>Plan</strong></td>
+<td>同上 + 不能 Edit/Write</td>
+<td>设计实现方案</td>
+</tr>
+<tr>
+<td><strong>general-purpose</strong></td>
+<td>全部工具</td>
+<td>复杂多步任务</td>
+</tr>
+<tr>
+<td><strong>claude-code-guide</strong></td>
+<td>Bash / Read / WebFetch / WebSearch</td>
+<td>回答 Claude Code 自身的使用问题</td>
+</tr>
+<tr>
+<td><strong>code-reviewer</strong></td>
+<td>全部工具</td>
+<td>已完成代码的 review</td>
+</tr>
+<tr>
+<td><strong><code>.claude/agents/*.md</code> 自定义</strong></td>
+<td>用户自定义</td>
+<td>任意</td>
+</tr>
+</tbody></table>
+<p>工具集隔离的好处：<strong>主 agent 不需要”提醒”subagent “你不能写文件”，根本就给不了它写文件的工具</strong>。这是从架构层面执行的最小权限原则。</p>
+<h3 id="2-3-Team：持久化-Teammate-共享-TaskList"><a href="#2-3-Team：持久化-Teammate-共享-TaskList" class="headerlink" title="2.3 Team：持久化 Teammate + 共享 TaskList"></a>2.3 Team：持久化 Teammate + 共享 TaskList</h3><p>Agent 工具适合一次性任务。如果你需要<strong>多个 agent 长期共存、互相通信</strong>，Claude Code 还有 <strong>Team</strong> 模式：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 1. 创建 team（同时创建一个共享的 TaskList）</span></span><br><span class="line">TeamCreate(&#123; <span class="attr">team_name</span>: <span class="string">&quot;auth-refactor&quot;</span>, <span class="attr">description</span>: <span class="string">&quot;重构鉴权模块&quot;</span> &#125;)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 2. spawn 几个 named teammate</span></span><br><span class="line">Agent(&#123; <span class="attr">subagent_type</span>: <span class="string">&quot;general-purpose&quot;</span>, <span class="attr">team_name</span>: <span class="string">&quot;auth-refactor&quot;</span>, <span class="attr">name</span>: <span class="string">&quot;backend-dev&quot;</span>, <span class="attr">prompt</span>: <span class="string">&quot;...&quot;</span> &#125;)</span><br><span class="line">Agent(&#123; <span class="attr">subagent_type</span>: <span class="string">&quot;general-purpose&quot;</span>, <span class="attr">team_name</span>: <span class="string">&quot;auth-refactor&quot;</span>, <span class="attr">name</span>: <span class="string">&quot;frontend-dev&quot;</span>, <span class="attr">prompt</span>: <span class="string">&quot;...&quot;</span> &#125;)</span><br><span class="line">Agent(&#123; <span class="attr">subagent_type</span>: <span class="string">&quot;code-reviewer&quot;</span>,   <span class="attr">team_name</span>: <span class="string">&quot;auth-refactor&quot;</span>, <span class="attr">name</span>: <span class="string">&quot;reviewer&quot;</span>,    <span class="attr">prompt</span>: <span class="string">&quot;...&quot;</span> &#125;)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 3. 主 agent 给 teammate 派活</span></span><br><span class="line">TaskCreate(&#123; <span class="attr">subject</span>: <span class="string">&quot;重构 backend 鉴权&quot;</span>, <span class="attr">description</span>: <span class="string">&quot;...&quot;</span> &#125;)</span><br><span class="line">TaskUpdate(&#123; <span class="attr">taskId</span>: <span class="string">&quot;1&quot;</span>, <span class="attr">owner</span>: <span class="string">&quot;backend-dev&quot;</span> &#125;)  <span class="comment">// 派给 backend-dev</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 4. teammate 之间互相通信</span></span><br><span class="line">SendMessage(&#123; <span class="attr">to</span>: <span class="string">&quot;frontend-dev&quot;</span>, <span class="attr">message</span>: <span class="string">&quot;我把 /auth/v2 上线了，你那边对接一下&quot;</span> &#125;)</span><br></pre></td></tr></table></figure>
+
+<p>Team 模式的关键设计：</p>
+<ul>
+<li><strong>Team = TaskList</strong>：1:1 对应。team 内所有 teammate 共享同一份任务列表，谁都能 claim、update、create</li>
+<li><strong>Named teammate</strong>：通过 <code>name</code> 寻址（不是 UUID），适合跨 turn 持续协作</li>
+<li><strong>idle 状态</strong>：teammate 完成一个 turn 后自动 idle，发消息会 wake-up</li>
+<li><strong>Peer-to-peer 消息</strong>：任何 teammate 给任何 teammate 发 SendMessage，不必经过主 agent</li>
+</ul>
+<h3 id="2-4-同步-vs-后台"><a href="#2-4-同步-vs-后台" class="headerlink" title="2.4 同步 vs 后台"></a>2.4 同步 vs 后台</h3><p><code>run_in_background: true</code> 让 subagent 后台跑，主 agent 不阻塞，可以继续干别的。后台 subagent 完成时主 agent 收到通知，用 <code>TaskOutput</code> 拿结果。</p>
+<p>这一组合（Agent + run_in_background + Team）足够支撑大部分 multi-agent 场景：</p>
+<ul>
+<li>“并行调研 5 个东西” → 5 个 background Agent 并行</li>
+<li>“PM/Dev/Test 流水线” → Team + 角色化 teammate</li>
+<li>“深度搜索某个问题” → Agent 单次派出 Explore subagent</li>
+</ul>
+<p>整个 multi-agent 系统<strong>没有持久化</strong>：进程结束 team 就没了。也<strong>没有跨 session 状态</strong>：下次 Claude Code 启动 team 不存在。这是它”轻”的代价 —— 也是它能保持简单的关键。</p>
+<hr>
+<h2 id="3-Codex：Thread-Graph-的图模式"><a href="#3-Codex：Thread-Graph-的图模式" class="headerlink" title="3. Codex：Thread + Graph 的图模式"></a>3. Codex：Thread + Graph 的图模式</h2><p>OpenAI 的 Codex 走的是另一条路。理解 Codex 的 multi-agent 要先理解一个核心抽象：<strong>Thread</strong>。</p>
+<p><img src="illustrations/M3-Codex-Thread%E5%9B%BE%E6%9E%B6%E6%9E%84.webp" alt="Codex 的 Thread 图：每个 agent 是一个 thread，spawn 关系成 DAG，状态持久化到 AgentGraphStore"></p>
+<h3 id="3-1-Thread：基本单元"><a href="#3-1-Thread：基本单元" class="headerlink" title="3.1 Thread：基本单元"></a>3.1 Thread：基本单元</h3><p>在 Codex 里，<strong>Thread = 一个 AI 会话</strong>。它有：</p>
+<ul>
+<li>独立的 <code>thread_id</code></li>
+<li>独立的 model（可以不同）</li>
+<li>独立的 reasoning_effort（推理深度）</li>
+<li>独立的 cwd / permissions / sandbox</li>
+<li>独立的 conversation history（<code>history</code>）</li>
+<li>独立的 ed25519 keypair（<strong>身份</strong>，下面细说）</li>
+</ul>
+<p>Thread 由 <code>ThreadManager</code> 管理：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// codex-rs/thread-manager-sample/src/main.rs（简化）</span></span><br><span class="line"><span class="keyword">let</span> thread_manager = ThreadManager::new(...);</span><br><span class="line"><span class="keyword">let</span> NewThread &#123; thread_id, thread, .. &#125; = thread_manager</span><br><span class="line">    .start_thread(config)</span><br><span class="line">    .<span class="keyword">await</span>?;</span><br><span class="line">thread.submit(Op::UserInput &#123; items: <span class="built_in">vec!</span>[UserInput::Text &#123; text: prompt, .. &#125;] &#125;).<span class="keyword">await</span>?;</span><br><span class="line"><span class="keyword">loop</span> &#123;</span><br><span class="line">    <span class="keyword">let</span> event = thread.next_event().<span class="keyword">await</span>?;</span><br><span class="line">    <span class="comment">// ...处理事件</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>ThreadManager 的配置里有 4 个跟 multi-agent 直接相关的参数（<code>codex-rs/core/src/config.rs</code>）：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">agent_max_threads: <span class="literal">Some</span>(<span class="number">6</span>),        <span class="comment">// 同时存活的 agent thread 上限</span></span><br><span class="line">agent_max_depth: <span class="number">1</span>,                <span class="comment">// 子 agent spawn 子 agent 的最大深度</span></span><br><span class="line">agent_job_max_runtime_seconds: ..., <span class="comment">// 单个 agent 最大运行时间</span></span><br><span class="line">agent_roles: BTreeMap::new(),      <span class="comment">// 预定义的 agent 角色</span></span><br></pre></td></tr></table></figure>
+
+<p>这就是 Codex 的”团队规模 + 层级深度”硬上限。默认最多 6 个 agent、最大 1 层（即主 agent 可以 spawn 子 agent，子 agent 不能再 spawn 孙 agent）。</p>
+<h3 id="3-2-AgentControl-工具：spawn-interact-wait-close-resume"><a href="#3-2-AgentControl-工具：spawn-interact-wait-close-resume" class="headerlink" title="3.2 AgentControl 工具：spawn / interact / wait / close / resume"></a>3.2 AgentControl 工具：spawn / interact / wait / close / resume</h3><p>主 agent 通过一个内置的 <code>AgentControl</code> 工具控制子 agent。背后有 5 类事件（<code>codex-rs/protocol/src/protocol.rs</code>）：</p>
+<table>
+<thead>
+<tr>
+<th>事件对</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>CollabAgentSpawnBegin/End</code></td>
+<td>创建一个新子 agent thread，传入初始 prompt + model + reasoning_effort</td>
+</tr>
+<tr>
+<td><code>CollabAgentInteractionBegin/End</code></td>
+<td>父 agent 给子 agent 发新消息（注意：是<strong>多次</strong>对话，不是一次性派任务）</td>
+</tr>
+<tr>
+<td><code>CollabWaitingBegin/End</code></td>
+<td>父 agent 等待子 agent 完成当前 turn</td>
+</tr>
+<tr>
+<td><code>CollabCloseBegin/End</code></td>
+<td>关闭一个子 agent（结束 thread）</td>
+</tr>
+<tr>
+<td><code>CollabResumeBegin/End</code></td>
+<td>恢复一个已 close 的子 agent（继续之前的 conversation）</td>
+</tr>
+</tbody></table>
+<p>注意 <code>Interaction</code> 这一层：<strong>父子 agent 不是”派一次任务”的关系，是”持续多轮对话”的关系</strong>。父 agent 可以给同一个子 agent 多次 prompt：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">spawn(role&#x3D;&quot;researcher&quot;, prompt&#x3D;&quot;调研 vector DB 选型&quot;)</span><br><span class="line">  ↓ 子 agent 跑了一圈，返回中间结果</span><br><span class="line">interact(receiver&#x3D;researcher, prompt&#x3D;&quot;重点对比 Qdrant 和 Milvus 的写入吞吐&quot;)</span><br><span class="line">  ↓ 子 agent 继续干</span><br><span class="line">interact(receiver&#x3D;researcher, prompt&#x3D;&quot;补充一下分布式部署的复杂度对比&quot;)</span><br><span class="line">  ↓</span><br><span class="line">close(receiver&#x3D;researcher)</span><br></pre></td></tr></table></figure>
+
+<p>这种”多轮对话”模式对应到 sub-agent 端是这样的事件序列：</p>
+<p><img src="illustrations/M5-CollabAgent%E4%BA%8B%E4%BB%B6%E6%B5%81%E5%BA%8F%E5%88%97.webp" alt="CollabAgent 5 类事件的序列示意：Spawn → Interaction × N → Wait → Close（可 Resume）"></p>
+<h3 id="3-3-父子上下文怎么传：消息-文件系统"><a href="#3-3-父子上下文怎么传：消息-文件系统" class="headerlink" title="3.3 父子上下文怎么传：消息 + 文件系统"></a>3.3 父子上下文怎么传：消息 + 文件系统</h3><p>看完上面的事件序列，下一个自然的问题是：父子 agent 各自有独立 thread、独立 history，**”上下文”到底怎么传**？子 agent 怎么知道父在说什么？父怎么拿到子的中间结果？</p>
+<p>核心结论先放：<strong>没有”共享 context window”这种东西。两边各管各的 history，靠两条窄通道交换信息。</strong></p>
+<h4 id="通道一：显式消息（Interaction-的-prompt-response-文本）"><a href="#通道一：显式消息（Interaction-的-prompt-response-文本）" class="headerlink" title="通道一：显式消息（Interaction 的 prompt / response 文本）"></a>通道一：显式消息（Interaction 的 prompt / response 文本）</h4><p>父 agent 调用 <code>AgentControl.interact</code> 时，在它自己的 history 里就是一次<strong>普通的工具调用</strong>——发出 <code>tool_call</code>，拿回 <code>tool_result</code>，那段 <code>tool_result</code> 就是子 agent 这一轮的最终回复文本。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">父 agent.history:</span><br><span class="line">  [user: 帮我选个 vector DB]</span><br><span class="line">  [assistant: 我让 researcher 查一下]</span><br><span class="line">  [tool_call: spawn(role&#x3D;researcher, prompt&#x3D;&quot;调研 vector DB 选型&quot;)]</span><br><span class="line">  [tool_result: &quot;对比了 5 个，推荐 Qdrant 和 Milvus...&quot;]      ← child 的最终输出</span><br><span class="line">  [assistant: 写入吞吐还得细看]</span><br><span class="line">  [tool_call: interact(receiver&#x3D;researcher, prompt&#x3D;&quot;重点对比写入吞吐&quot;)]</span><br><span class="line">  [tool_result: &quot;Qdrant 单机 ~50k&#x2F;s, Milvus ~80k&#x2F;s...&quot;]</span><br><span class="line">  ...</span><br><span class="line"></span><br><span class="line">researcher.history (完全独立的另一份):</span><br><span class="line">  [system: 你是 researcher...]</span><br><span class="line">  [user: 调研 vector DB 选型]                  ← 父发来的第一段 prompt</span><br><span class="line">  [tool_call: WebSearch ...]</span><br><span class="line">  [tool_result: ...]</span><br><span class="line">  [assistant: 对比了 5 个，推荐 Qdrant 和 Milvus...]</span><br><span class="line">  [user: 重点对比写入吞吐]                      ← 父发来的第二段 prompt</span><br><span class="line">  [assistant: ...]</span><br></pre></td></tr></table></figure>
+
+<p>两个关键点：</p>
+<ul>
+<li>子 agent 那一堆 WebSearch、读文档的中间步骤，<strong>完全不进父的 context</strong>——这就是 §1 表里”Context 溢出”那行说的”主 agent 只看 sub-agent 的高度压缩结果”。</li>
+<li>父第二次问”重点对比写入吞吐”时，<strong>子 agent 还记得自己上一轮做了什么</strong>（同一个 thread，history 累积）。这就是”持续多轮对话”的来源——父不用每次重讲”我们在聊什么”。</li>
+</ul>
+<h4 id="通道二：隐式文件系统（共享-cwd）"><a href="#通道二：隐式文件系统（共享-cwd）" class="headerlink" title="通道二：隐式文件系统（共享 cwd）"></a>通道二：隐式文件系统（共享 cwd）</h4><p>子 agent 默认继承父的 <code>cwd</code> 和 <code>sandbox</code>，所以它写出的文件父能直接读。这是一条”宽通道”——一份 5000 字的调研报告塞进 message 文本会污染父 context，写到 <code>./reports/qdrant.md</code> 然后只回”已写到 xxx，核心结论是 yyy”则不会。</p>
+<h4 id="两条通道的分工"><a href="#两条通道的分工" class="headerlink" title="两条通道的分工"></a>两条通道的分工</h4><table>
+<thead>
+<tr>
+<th>通道</th>
+<th>带宽</th>
+<th>是否进 history</th>
+<th>适合</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Interaction message</td>
+<td>窄</td>
+<td>✅ 双方都进</td>
+<td>摘要、决策、下一步指令</td>
+</tr>
+<tr>
+<td>文件系统 / 工作目录</td>
+<td>宽</td>
+<td>❌ 不进</td>
+<td>详细报告、生成的代码、长数据</td>
+</tr>
+</tbody></table>
+<h4 id="到底”共享”了什么"><a href="#到底”共享”了什么" class="headerlink" title="到底”共享”了什么"></a>到底”共享”了什么</h4><table>
+<thead>
+<tr>
+<th>类型</th>
+<th>是否共享</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>history</code>（对话历史）</td>
+<td>❌</td>
+<td>各自独立 thread</td>
+</tr>
+<tr>
+<td><code>cwd</code>（工作目录）</td>
+<td>✅ 默认继承</td>
+<td>看得到同一份代码</td>
+</tr>
+<tr>
+<td><code>sandbox</code> / <code>permissions</code></td>
+<td>✅ 继承（可收紧）</td>
+<td>子可以更受限，不能突破父</td>
+</tr>
+<tr>
+<td>文件系统状态</td>
+<td>✅ 隐式</td>
+<td>子改了文件，父再读才能看到（无自动通知）</td>
+</tr>
+<tr>
+<td><code>model</code> / <code>reasoning_effort</code></td>
+<td>❌</td>
+<td>spawn 时各自指定</td>
+</tr>
+<tr>
+<td><code>agent_identity</code>（ed25519）</td>
+<td>❌</td>
+<td>每个 thread 一把私钥（§3.5）</td>
+</tr>
+</tbody></table>
+<h4 id="实战教训"><a href="#实战教训" class="headerlink" title="实战教训"></a>实战教训</h4><p>子 agent 的 final message 不要是”全文报告”，应该是”摘要 + 文件路径”。把宽内容走文件系统、窄内容走 message——multi-agent 节省 context 的优势才能真正兑现。否则 5 个 sub-agent 各回 5000 字，父 context 立刻爆炸，multi-agent 的核心收益就没了。</p>
+<p>记忆口诀：<strong>Codex 的 multi-agent 不靠”共享内存”通信，而是靠”显式消息 + 隐式文件系统”。</strong></p>
+<hr>
+<h3 id="3-4-AgentGraphStore：spawn-关系持久化"><a href="#3-4-AgentGraphStore：spawn-关系持久化" class="headerlink" title="3.4 AgentGraphStore：spawn 关系持久化"></a>3.4 AgentGraphStore：spawn 关系持久化</h3><p>每次 spawn 一个子 thread，Codex 在 <code>AgentGraphStore</code> 里记录一条父子边：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// codex-rs/agent-graph-store/src/store.rs</span></span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">fn</span> <span class="title">upsert_thread_spawn_edge</span></span>(</span><br><span class="line">    &amp;<span class="keyword">self</span>,</span><br><span class="line">    parent_thread_id: ThreadId,</span><br><span class="line">    child_thread_id: ThreadId,</span><br><span class="line">    status: ThreadSpawnEdgeStatus,  <span class="comment">// Open / Closed</span></span><br><span class="line">) -&gt; AgentGraphStoreResult&lt;()&gt;;</span><br></pre></td></tr></table></figure>
+
+<p>这意味着 Codex 知道<strong>整个 agent 拓扑图</strong>：哪个 agent spawn 了哪些子 agent，哪些边是 Open（活跃）的，哪些是 Closed。这个图是<strong>持久化的</strong>（落 SQLite），重启 Codex 之后还能恢复出来 —— 你能 resume 一个昨天 close 掉的 agent，继续上次的对话。</p>
+<p>接口提供 BFS 遍历：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">fn</span> <span class="title">list_thread_spawn_descendants</span></span>(</span><br><span class="line">    &amp;<span class="keyword">self</span>,</span><br><span class="line">    root_thread_id: ThreadId,</span><br><span class="line">    status_filter: <span class="built_in">Option</span>&lt;ThreadSpawnEdgeStatus&gt;,</span><br><span class="line">) -&gt; AgentGraphStoreResult&lt;<span class="built_in">Vec</span>&lt;ThreadId&gt;&gt;;</span><br></pre></td></tr></table></figure>
+
+<p>这是 Codex multi-agent 区别于 Claude Code 的最大特征：<strong>整个 agent 关系图是一等公民、有持久化、可遍历</strong>。</p>
+<h3 id="3-5-AgentIdentity：每个-agent-一把-ed25519-私钥"><a href="#3-5-AgentIdentity：每个-agent-一把-ed25519-私钥" class="headerlink" title="3.5 AgentIdentity：每个 agent 一把 ed25519 私钥"></a>3.5 AgentIdentity：每个 agent 一把 ed25519 私钥</h3><p>Codex 把每个 agent 当成一个<strong>独立的认证主体</strong>对待。每个 agent 有：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// codex-rs/agent-identity/src/lib.rs</span></span><br><span class="line"><span class="keyword">pub</span> <span class="class"><span class="keyword">struct</span> <span class="title">GeneratedAgentKeyMaterial</span></span> &#123;</span><br><span class="line">    <span class="keyword">pub</span> private_key_pkcs8_base64: <span class="built_in">String</span>,  <span class="comment">// ed25519 私钥</span></span><br><span class="line">    <span class="keyword">pub</span> public_key_ssh: <span class="built_in">String</span>,            <span class="comment">// 对应公钥</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>调用 ChatGPT 后端 API 时，agent 用自己的私钥签一段 <code>AgentAssertion</code>：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 签名内容: &quot;&#123;agent_runtime_id&#125;:&#123;task_id&#125;:&#123;timestamp&#125;&quot;</span></span><br><span class="line"><span class="function"><span class="keyword">fn</span> <span class="title">sign_agent_assertion_payload</span></span>(...) -&gt; <span class="built_in">Result</span>&lt;<span class="built_in">String</span>&gt;</span><br></pre></td></tr></table></figure>
+
+<p>服务端通过 JWKS 验证签名 + JWT 鉴权（<code>AGENT_IDENTITY_JWT_AUDIENCE = &quot;codex-app-server&quot;</code>，<code>AGENT_IDENTITY_JWT_ISSUER = &quot;https://chatgpt.com/codex-backend/agent-identity&quot;</code>）。每个 agent 调用 LLM 时都带着自己的身份，<strong>后端能精确知道是哪个 agent 在调用</strong>。</p>
+<p>为什么要这么重？因为 Codex 设计为可以跑在云上 / 跨进程 / 跨机器的 agent 系统。当你的 multi-agent 跑在企业 K8s 集群里时，每个 agent 一把私钥就是必需的安全机制 —— 一个 agent 被攻破不能伪装成另一个 agent。</p>
+<p>这也是 Claude Code 不需要的：Claude Code 的所有 subagent 都在同一个本地进程里，互信，不需要互相鉴权。</p>
+<h3 id="3-6-4-种-Collaboration-Mode（不是-multi-agent，但相关）"><a href="#3-6-4-种-Collaboration-Mode（不是-multi-agent，但相关）" class="headerlink" title="3.6 4 种 Collaboration Mode（不是 multi-agent，但相关）"></a>3.6 4 种 Collaboration Mode（不是 multi-agent，但相关）</h3><p>Codex 还有一个容易和 multi-agent 混淆的概念：<strong>Collaboration Mode</strong>。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">codex-rs&#x2F;collaboration-mode-templates&#x2F;templates&#x2F;</span><br><span class="line">├── plan.md              # Plan Mode：只规划不执行</span><br><span class="line">├── default.md           # Default Mode：平衡</span><br><span class="line">├── execute.md           # Execute Mode：自主执行不问</span><br><span class="line">└── pair_programming.md  # Pair Programming Mode：实时对齐</span><br></pre></td></tr></table></figure>
+
+<p>这 4 个<strong>不是</strong> multi-agent —— 它们是<strong>同一个 agent 的 4 种工作风格</strong>，由 system prompt 切换。但在 multi-agent 场景下你可以混用：spawn 一个 sub-agent 时给它 Plan mode 的 prompt 让它专心规划，spawn 另一个给 Execute mode 让它专心干活。</p>
+<hr>
+<h2 id="4-11-维度对比"><a href="#4-11-维度对比" class="headerlink" title="4. 11 维度对比"></a>4. 11 维度对比</h2><p>把上面两种模式放在一张表里：</p>
+<p><img src="illustrations/M4-%E5%A7%94%E6%B4%BEvs%E5%9B%BE%E6%9C%AC%E8%B4%A8%E5%B7%AE%E5%BC%82.webp" alt="委派模式 vs 图模式：两种 multi-agent 哲学的本质差异"></p>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>Claude Code (委派)</th>
+<th>Codex (图)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>基本单元</strong></td>
+<td>Subagent（一次性） + Teammate（持久）</td>
+<td>Thread（DAG 节点）</td>
+</tr>
+<tr>
+<td><strong>创建方式</strong></td>
+<td><code>Agent</code> 工具调用</td>
+<td><code>AgentControl</code> 工具的 spawn 事件</td>
+</tr>
+<tr>
+<td><strong>角色定义</strong></td>
+<td><code>subagent_type</code>（绑定工具集）</td>
+<td><code>agent_roles</code> 配置（按 role 分发 system prompt）</td>
+</tr>
+<tr>
+<td><strong>父子通信</strong></td>
+<td>Subagent 一次性返回；Team 用 SendMessage 任意 peer</td>
+<td>父子多轮 Interaction 事件</td>
+</tr>
+<tr>
+<td><strong>共享状态</strong></td>
+<td>Team 共享 TaskList</td>
+<td>父子共享 cwd / sandbox / 部分 context（按需）</td>
+</tr>
+<tr>
+<td><strong>生命周期</strong></td>
+<td>Subagent: spawn → run → 结果返回 → 销毁</td>
+<td>Thread: spawn → interact × N → wait → close → (可 resume)</td>
+</tr>
+<tr>
+<td><strong>隔离机制</strong></td>
+<td>独立 conversation + 工具集白名单</td>
+<td>独立 thread_id / model / reasoning_effort / sandbox</td>
+</tr>
+<tr>
+<td><strong>可观测性</strong></td>
+<td>主 agent 看消息流；team 有 idle notification</td>
+<td><code>CollabAgent*</code> 事件流，每个事件带 timestamp + thread_id</td>
+</tr>
+<tr>
+<td><strong>持久化</strong></td>
+<td>无（除 TaskList 在 session 内）</td>
+<td><code>AgentGraphStore</code> 持久化 spawn 图（重启可恢复）</td>
+</tr>
+<tr>
+<td><strong>认证</strong></td>
+<td>无（同进程互信）</td>
+<td>每个 agent 一把 ed25519 私钥 + JWT 签名</td>
+</tr>
+<tr>
+<td><strong>典型规模</strong></td>
+<td>2-10 个 subagent</td>
+<td>默认 <code>agent_max_threads: 6, agent_max_depth: 1</code></td>
+</tr>
+<tr>
+<td><strong>后台执行</strong></td>
+<td><code>run_in_background: true</code> 显式开</td>
+<td>默认就是异步 / 事件驱动</td>
+</tr>
+<tr>
+<td><strong>跨 session</strong></td>
+<td>不支持</td>
+<td>支持（持久化 + resume）</td>
+</tr>
+<tr>
+<td><strong>架构定位</strong></td>
+<td>CLI 内的 in-process delegation</td>
+<td>可云化 / 可跨节点的 agent runtime</td>
+</tr>
+</tbody></table>
+<h3 id="4-1-一句话哲学差异"><a href="#4-1-一句话哲学差异" class="headerlink" title="4.1 一句话哲学差异"></a>4.1 一句话哲学差异</h3><ul>
+<li><strong>Claude Code: “Project manager + interns”</strong> —— 主 agent 是 PM，subagent 是临时实习生，干完活就走，不留痕</li>
+<li><strong>Codex: “DAG of agents”</strong> —— 每个 agent 是图中长寿的节点，关系持久、可观测、可恢复</li>
+</ul>
+<h3 id="4-2-哪种更”对”？"><a href="#4-2-哪种更”对”？" class="headerlink" title="4.2 哪种更”对”？"></a>4.2 哪种更”对”？</h3><p>都对。<strong>两种模式对应两种使用场景</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>你的场景</th>
+<th>选哪个</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>一次性研究任务（”调研 X / 搜索 Y”）</td>
+<td>Claude Code Agent (委派)</td>
+</tr>
+<tr>
+<td>一次性长任务（”重构整个模块”）</td>
+<td>Claude Code Agent + Team</td>
+</tr>
+<tr>
+<td>多个工程师 / 多个任务长期共享一个 AI 团队</td>
+<td>Codex (持久 + 鉴权 + 跨 session)</td>
+</tr>
+<tr>
+<td>跑在 K8s 集群里给 300 工程师服务</td>
+<td>Codex (天然适合分布式)</td>
+</tr>
+<tr>
+<td>想内嵌进 CI/CD 流水线、每次启动新 agent</td>
+<td>Claude Code Agent run_in_background</td>
+</tr>
+<tr>
+<td>想让用户能”resume 上次没干完的活”</td>
+<td>Codex (有 thread_id 持久化)</td>
+</tr>
+<tr>
+<td>想审计”哪个 agent 在哪一步干了什么”</td>
+<td>Codex (CollabAgent 事件流)</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="5-几个不直观的设计取舍"><a href="#5-几个不直观的设计取舍" class="headerlink" title="5. 几个不直观的设计取舍"></a>5. 几个不直观的设计取舍</h2><h3 id="5-1-委派模式为什么默认是同步的"><a href="#5-1-委派模式为什么默认是同步的" class="headerlink" title="5.1 委派模式为什么默认是同步的"></a>5.1 委派模式为什么默认是同步的</h3><p>Claude Code 的 <code>Agent</code> 工具默认是同步的（主 agent 阻塞等结果），后台是 opt-in。这反直觉 —— 直觉上 multi-agent 应该并发啊。</p>
+<p>但仔细想：大部分单次 subagent 任务（”搜代码”、”写一个组件”）几秒到几十秒结束，主 agent 等一下没什么。<strong>真正需要并发</strong>的场景（5 个 benchmark / 多个 PR review）才显式开 <code>run_in_background</code>。</p>
+<p>这种”默认同步、并发是 opt-in”的设计减少了用户犯错的机会 —— 不开背景任务，就不会有”多个 subagent 互相竞争资源 / 主 agent 忘了取结果”这类 bug。<strong>默认走最安全的路径</strong>是优秀 API 设计的标志。</p>
+<h3 id="5-2-图模式为什么需要-ed25519-鉴权"><a href="#5-2-图模式为什么需要-ed25519-鉴权" class="headerlink" title="5.2 图模式为什么需要 ed25519 鉴权"></a>5.2 图模式为什么需要 ed25519 鉴权</h3><p>直觉上同进程的 agent 没必要互相鉴权 —— 都在一个 binary 里跑，互信就行。</p>
+<p>但 Codex 的 multi-agent 设计目标是<strong>云化</strong>：agent 可能跑在不同进程、不同机器、甚至不同 K8s pod 里。这种场景下，”agent A 给 backend 发请求” 和 “攻击者伪装成 agent A 给 backend 发请求” 必须能区分。每个 agent 一把私钥就是这个区分的来源。</p>
+<p>这是 Codex 把”同进程 multi-agent”和”分布式 multi-agent”用<strong>同一套抽象</strong>实现的代价 —— 即使你的 agent 都在同一个进程里，也得走签名流程。复杂度提升换来的是规模化的可能性。</p>
+<h3 id="5-3-Token-经济的隐性成本"><a href="#5-3-Token-经济的隐性成本" class="headerlink" title="5.3 Token 经济的隐性成本"></a>5.3 Token 经济的隐性成本</h3><p>无论哪种模式，<strong>每个 sub-agent 都在烧 token</strong>。看起来 multi-agent 让你”并行做 5 件事”，但 token 花费也是 5 倍 —— 而且每个 sub-agent 的 system prompt + 工具描述都是独立的开销，单算下来比单 agent 跑同样工作量贵 30-50%。</p>
+<p><strong>实战教训</strong>：Multi-agent 的真正价值不是省时间（虽然墙钟时间砍了），是<strong>做单 agent 做不了的事</strong>（context 装不下 / 角色冲突 / 长程任务）。把它当 “AI 加速器” 用一定亏。</p>
+<hr>
+<h2 id="6-你应该选哪个：决策树"><a href="#6-你应该选哪个：决策树" class="headerlink" title="6. 你应该选哪个：决策树"></a>6. 你应该选哪个：决策树</h2><p><img src="illustrations/M6-Multi-Agent%E9%80%89%E5%9E%8B%E5%86%B3%E7%AD%96%E6%A0%91.webp" alt="Multi-Agent 选型决策树：从&quot;任务复杂度&quot;到&quot;是否需要持久化&quot;逐层判断"></p>
+<p>简化版：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">你的任务 &#x2F; 系统是 ……</span><br><span class="line"></span><br><span class="line">├── 单次任务 + 短上下文</span><br><span class="line">│       → 不要 multi-agent，单 agent 够</span><br><span class="line">│</span><br><span class="line">├── 单次任务 + 大量并行调研 &#x2F; 处理</span><br><span class="line">│       → Claude Code Agent + run_in_background</span><br><span class="line">│</span><br><span class="line">├── 单次复杂任务 + 多角色协作</span><br><span class="line">│       → Claude Code Team</span><br><span class="line">│</span><br><span class="line">├── 长期 &#x2F; 跨 session &#x2F; 多用户 AI 平台</span><br><span class="line">│       → Codex Multi-Agent</span><br><span class="line">│</span><br><span class="line">├── 内嵌 CI&#x2F;CD &#x2F; 自动化流水线</span><br><span class="line">│       → Claude Code Agent (轻量 fits CI 短生命周期)</span><br><span class="line">│</span><br><span class="line">└── 企业级 &#x2F; 跨 K8s pod &#x2F; 需要审计</span><br><span class="line">        → Codex Multi-Agent + 第 23 篇的&quot;多 Agent 并发&quot;场景</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="7-总结：两种工具对应两种产品形态"><a href="#7-总结：两种工具对应两种产品形态" class="headerlink" title="7. 总结：两种工具对应两种产品形态"></a>7. 总结：两种工具对应两种产品形态</h2><p>回过头看 Claude Code 和 Codex 在 multi-agent 上的不同选择，本质反映了两家公司对”AI agent 是什么”的不同定位：</p>
+<p>**Anthropic 把 Claude Code 定位为”程序员的本地 CLI 助手”**。所以 multi-agent 是轻量的、同进程的、一次性的、用完即弃的。它的 sweet spot 是”你坐在终端前指挥 AI”。</p>
+<p>**OpenAI 把 Codex 定位为”可云化的 AI agent runtime”**（看 codex-rs 那 90+ crates 的体量就知道），multi-agent 是重量的、有持久化、有签名鉴权、可分布式的。它的 sweet spot 是”AI agent 团队跑在你公司的 K8s 集群里给所有工程师服务”。</p>
+<p><strong>这两个定位都对</strong>，没有谁优于谁。理解定位差异，你才能在做自己的 AI 产品时做出对的选择：</p>
+<ul>
+<li>想做”开发者本地工具”？学 Claude Code 的轻量委派模式</li>
+<li>想做”企业级 AI 平台”？学 Codex 的图 + 鉴权 + 持久化模式</li>
+<li><strong>千万别在轻量 CLI 里搞重量级图模型</strong>（用户体验会崩）</li>
+<li><strong>也别在企业级平台里搞轻量委派</strong>（持久化 / 审计 / 鉴权全没了）</li>
+</ul>
+<p>下一篇我们换个角度，聊聊 multi-agent 系统真正落地时最容易踩的几个坑：token 经济失控、消息总线选型、人工 approval 的边界、级联错误的可观测性。这些是”知道 API 怎么用”之后真正会咬你的问题。</p>
+<hr>
+<blockquote>
+<p>参考资料</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://docs.claude.com/en/docs/claude-code">Claude Code 官方文档</a> —— Agent 工具 / Team 工具的官方说明</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/openai/codex/tree/main/codex-rs/thread-store">Codex 源码：thread-store</a> —— Thread 抽象的具体实现</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/openai/codex/tree/main/codex-rs/agent-graph-store">Codex 源码：agent-graph-store</a> —— spawn 图的持久化层</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/openai/codex/tree/main/codex-rs/agent-identity">Codex 源码：agent-identity</a> —— ed25519 + JWT 鉴权</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/openai/codex/tree/main/codex-rs/collaboration-mode-templates">Codex 源码：collaboration-mode-templates</a> —— 4 种工作风格的 system prompt</li>
+<li><a href="../23.Codex%E4%BC%81%E4%B8%9A%E7%BA%A7%E8%90%BD%E5%9C%B0-%E4%B8%8B-4%E4%B8%AA%E7%94%9F%E4%BA%A7%E5%9C%BA%E6%99%AF%E7%9A%84%E7%9C%9F%E5%AE%9E%E8%90%BD%E5%9C%B0/Codex%E4%BC%81%E4%B8%9A%E7%BA%A7%E8%90%BD%E5%9C%B0-%E4%B8%8B-4%E4%B8%AA%E7%94%9F%E4%BA%A7%E5%9C%BA%E6%99%AF%E7%9A%84%E7%9C%9F%E5%AE%9E%E8%90%BD%E5%9C%B0.md">本系列 23 篇 · 多 Agent 并发场景</a></li>
+</ul>
+</blockquote>
+</div>
+    <aside class="post-rail">
+      <span class="post-rail__line"></span>
+      <span>LESLIE / WRITING</span>
+    </aside>
+  </div>
+
+  <footer class="post-footer shell">
+    <div><h2>如果这篇文章帮到了你，<br>也许下一篇会更有意思。</h2></div>
+    <a class="button button--primary" href="/writing/">继续阅读 →</a>
+  </footer>
+</article>
+</main>
+    <footer class="site-footer">
+  <div class="footer-grid">
+    <div>
+      <p class="footer-kicker">Leslie Zhang</p>
+      <p class="footer-statement">流水不争先，<br>争的是滔滔不绝。</p>
+    </div>
+    <div class="footer-links">
+      <a href="https://github.com/leslieAIbin" target="_blank" rel="noreferrer">GitHub ↗</a>
+      <a href="https://www.instagram.com/leslieaibin/" target="_blank" rel="noreferrer">Instagram ↗</a>
+      <button type="button" data-wechat-open>微信 / WeChat</button>
+      <a href="mailto:aibinzhangleslie@gmail.com">Email ↗</a>
+      <a href="/atom.xml">RSS ↗</a>
+    </div>
+    <div class="footer-meta">
+      <span>© 2026 Leslie Zhang</span>
+      <span>Writing, research and working systems.</span>
+    </div>
+  </div>
+</footer>
+
+    <dialog class="ask-dialog" id="ask-leslie" aria-labelledby="ask-title">
+  <div class="ask-dialog__shell">
+    <div class="ask-dialog__topbar">
+      <div>
+        <h2 id="ask-title">Ask Leslie</h2>
+      </div>
+      <button class="icon-button" type="button" data-ask-close aria-label="关闭">×</button>
+    </div>
+    <p class="ask-dialog__intro">从本站公开文章中寻找答案。当前版本在浏览器本地检索，不上传问题，也不会编造不存在的经历。</p>
+    <form class="ask-form" data-ask-form>
+      <label class="sr-only" for="ask-query">输入问题</label>
+      <textarea id="ask-query" rows="2" placeholder="例如：Agent Runtime 应该怎么设计？" data-ask-input></textarea>
+      <button type="submit">检索知识库 <span aria-hidden="true">↗</span></button>
+    </form>
+    <div class="ask-suggestions" aria-label="推荐问题">
+      
+        <button type="button" data-ask-suggestion="Agent Runtime 应该怎么设计？">Agent Runtime 应该怎么设计？</button>
+      
+        <button type="button" data-ask-suggestion="如何让 AI 操控真实世界设备？">如何让 AI 操控真实世界设备？</button>
+      
+        <button type="button" data-ask-suggestion="Leslie 最近在研究什么？">Leslie 最近在研究什么？</button>
+      
+    </div>
+    <div class="ask-results" data-ask-results aria-live="polite">
+      <div class="ask-empty">
+        <p>输入一个问题，我会把你带到 Leslie 写过的相关内容。</p>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+    <dialog class="wechat-dialog" id="wechat-leslie" aria-labelledby="wechat-title">
+  <div class="wechat-dialog__shell">
+    <header>
+      <div>
+        <p class="section-label">WeChat</p>
+        <h2 id="wechat-title">微信联系</h2>
+      </div>
+      <button class="icon-button" type="button" data-wechat-close aria-label="关闭微信二维码">×</button>
+    </header>
+    <img src="/images/contact/wechat-leslie.png" alt="Leslie Zhang 的微信二维码" loading="lazy">
+    <p>扫码添加 Leslie，建议备注你的名字与来意。</p>
+  </div>
+</dialog>
+
+    <script>window.ORBITAL_ROOT = '/';</script>
+    <script src="/js/orbital.js" defer></script>
+  </body>
+</html>

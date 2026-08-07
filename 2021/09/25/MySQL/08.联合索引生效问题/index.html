@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+  <head>
+
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#050b18">
+<meta name="color-scheme" content="dark light">
+<title>08.ABC联合索引生效问题 | Leslie Zhang</title>
+<meta name="description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta name="author" content="Leslie Zhang">
+<link rel="canonical" href="https://leslieaibin.github.io/2021/09/25/MySQL/08.%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E7%94%9F%E6%95%88%E9%97%AE%E9%A2%98/">
+<link rel="icon" href="/imgs/01.jpg">
+<link rel="alternate" type="application/atom+xml" title="Leslie Zhang" href="/atom.xml">
+<meta property="og:type" content="article">
+<meta property="og:title" content="08.ABC联合索引生效问题 | Leslie Zhang">
+<meta property="og:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta property="og:url" content="https://leslieaibin.github.io/2021/09/25/MySQL/08.%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E7%94%9F%E6%95%88%E9%97%AE%E9%A2%98/">
+<meta property="og:image" content="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/24.jpg?raw=true">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="08.ABC联合索引生效问题 | Leslie Zhang">
+<meta name="twitter:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta name="twitter:image" content="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/24.jpg?raw=true">
+<script>
+  (function () {
+    var saved = localStorage.getItem('orbital-theme');
+    var theme = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    document.documentElement.dataset.theme = theme;
+  })();
+</script>
+<link rel="stylesheet" href="/css/orbital.css">
+<meta name="generator" content="Hexo 5.2.0"></head>
+  <body class="page-post">
+    <a class="skip-link" href="#main-content">跳到主要内容</a>
+    <div class="reading-progress" data-reading-progress></div>
+    <header class="site-header" data-header>
+  <div class="nav-shell">
+    <a class="brand" href="/" aria-label="返回首页">
+      <span class="brand-mark" aria-hidden="true"><img src="/images/brand/leslie-mythos-avatar.webp" alt="" width="512" height="512"></span>
+      <span class="brand-copy">
+        <strong>LESLIE</strong>
+        <small>REAL-WORLD AGENTS</small>
+      </span>
+    </a>
+
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav" data-nav-toggle>
+      <span></span><span></span>
+      <span class="sr-only">打开导航</span>
+    </button>
+
+    <nav class="main-nav" id="main-nav" aria-label="主导航" data-nav>
+      
+        <a href="/" class="">首页</a>
+      
+        <a href="/writing/" class="">写作</a>
+      
+        <a href="/projects/" class="">项目</a>
+      
+        <a href="/about/" class="">关于</a>
+      
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换明暗主题">
+        <span class="theme-toggle__sun" aria-hidden="true">☼</span>
+        <span class="theme-toggle__moon" aria-hidden="true">◐</span>
+      </button>
+      <button class="ask-nav" type="button" data-ask-open>ASK LESLIE</button>
+    </nav>
+  </div>
+</header>
+
+    <main id="main-content"><article class="post-shell">
+  <header class="post-hero shell">
+    <a class="post-back" href="/writing/">← 返回写作</a>
+    <div class="post-hero__meta">
+      <time datetime="2021-09-25">2021 年 09 月 25 日</time>
+      <span>2 分钟阅读</span>
+    </div>
+    <h1>08.ABC联合索引生效问题</h1>
+    
+    <div class="chip-row"><a href="/tags/MySQL/">MySQL</a></div>
+  </header>
+
+  <div class="post-cover shell"><img src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/24.jpg?raw=true" alt="08.ABC联合索引生效问题"></div>
+
+  <div class="post-layout shell">
+    <aside class="post-toc" aria-label="文章目录">
+      <span class="aside-title">目录</span>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%A5%E4%B8%8B%E6%9D%A1%E4%BB%B6%E4%BC%9A%E5%AF%BC%E8%87%B4%E7%B4%A2%E5%BC%95%E5%A4%B1%E6%95%88"><span class="toc-text">以下条件会导致索引失效:</span></a></li></ol>
+    </aside>
+    <div class="article-content"><h1 id="ABC联合索引生效问题"><a href="#ABC联合索引生效问题" class="headerlink" title="ABC联合索引生效问题"></a>ABC联合索引生效问题</h1><p>对于复合索引：Mysql从左到右的使用索引中的字段，一个查询可以只使用索引中的一部份，但只能是最左侧部分。例如索引是key index （a,b,c）。 可以支持<strong>a | a,b| a,b,c</strong> 3种组合进行查找，但不支持 b,c进行查找 .当最左侧字段是常量引用时，索引就十分有效。</p>
+<p>以下是一些<strong>例子：</strong></p>
+<ul>
+<li><pre><code class="sql">select * from myTest where a=3 and b=5 and c=4; 
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">  **abc顺序**</span><br><span class="line">  abc三个索引都在where条件里面用到了，而且**都发挥了作用**</span><br><span class="line"></span><br><span class="line">- &#96;&#96;&#96;sql</span><br><span class="line">  select * from myTest where c&#x3D;4 and b&#x3D;6 and a&#x3D;3</span><br></pre></td></tr></table></figure>
+
+**abc顺序**
+where里面的条件顺序在查询之前会被mysql自动优化，**效果跟上一句一样**</code></pre>
+</li>
+<li><pre><code class="sql">select * from myTest where a=3 and c=7
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">  索引abc_index:(a,b,c)，只会在where条件中带有(a)、(a,b)、(a,b,c)的三种类型的查询中使用。其实这里说的有一点歧义，其实当where条件只有(a,c)时也会走，但是只走a字段索引，不会走c字段。</span><br><span class="line"></span><br><span class="line">- &#96;&#96;&#96;sql</span><br><span class="line">  select * from myTest where a&#x3D;3 and b&gt;7 and c&#x3D;3</span><br></pre></td></tr></table></figure>
+
+ b范围值，断点，阻塞了c的索引a用到了，b也用到了，c没有用到，这个地方**b是范围值，也算断点，只不过自身用到了索引**</code></pre>
+</li>
+<li><pre><code class="sql">select * from myTest where b=3 and c=4
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">  联合索引必须按照顺序使用，并且需要全部使用**因为a索引没有使用，所以这里 bc都没有用上索引效果**</span><br><span class="line"></span><br><span class="line">- select \* from myTest where a&gt;4 and b&#x3D;7 and c&#x3D;9;-</span><br><span class="line">  **a用到了** b没有使用，c没有使用（a用了范围所以，相当于断点，之后的b，c都没有用到索引）</span><br><span class="line"></span><br><span class="line">- &#96;&#96;&#96;sql</span><br><span class="line">  select * from myTest where a&#x3D;3 order by b</span><br></pre></td></tr></table></figure>
+
+a用到了索引，b在结果排序中也用到了索引的效果，a下面任意一段的b是排好序的</code></pre>
+</li>
+<li><pre><code class="sql">select * from myTest where a=3 order by c
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">  a用到了索引，但是这个地方c没有发挥排序效果，因为中间断点了，使用 explain 可以看到 filesort</span><br><span class="line"></span><br><span class="line">- &#96;&#96;&#96;sql</span><br><span class="line">  select * from mytable where b&#x3D;3 order by a</span><br></pre></td></tr></table></figure>
+
+b没有用到索引，排序中a也没有发挥索引效果
+</code></pre>
+</li>
+</ul>
+<h2 id="以下条件会导致索引失效"><a href="#以下条件会导致索引失效" class="headerlink" title="以下条件会导致索引失效:"></a>以下条件会导致索引失效:</h2><ul>
+<li>不在索引列上做任何操作（计算、函数、（自动or手动）类型转换），会导致索引失效而转向全表扫描-</li>
+<li>存储引擎不能使用索引范围条件右边的列（例如 只用到b ， c）</li>
+<li>尽量使用覆盖索引（<strong>只访问索引的查询</strong>（索引列和查询列一致）），**减少select **</li>
+<li><strong>mysql在</strong>使用不等于（！=或者&lt;&gt;）的时候**无法使用索引会导致全表扫描</li>
+<li>is null,is not null也无法使用索引</li>
+<li>ike以通配符开头（’%abc…’）mysql索引失效会变成全表扫描的操作。问题：解决like‘%字符串%’时索引不被使用的方法-<br><img src="https://cubox.pro/c/filters:no_upscale()?imageUrl=https://img-blog.csdnimg.cn/20190724194210412.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQyNjMwODg3,size_16,color_FFFFFF,t_70"></li>
+<li>字符串不加单引号索引失效</li>
+</ul>
+<p><strong>建议：</strong></p>
+<ol>
+<li><p> 对于单键索引，尽量选择针对当前query过滤性更好的索引</p>
+</li>
+<li><p> 在选择组合索引的时候，当前Query中过滤性最好的字段在索引字段顺序中，位置越靠前越好。</p>
+</li>
+<li><p> . 在选择组合索引的时候，尽量选择可以能够包含当前query中的where子句中更多字段的索引</p>
+</li>
+<li><p> . 在选择组合索引的时候，尽量选择可以能够包含当前query中的where子句中更多字段的索引</p>
+</li>
+<li><p> 尽可能通过分析统计信息和调整query的写法来达到选择合适索引的目的</p>
+</li>
+</ol>
+</div>
+    <aside class="post-rail">
+      <span class="post-rail__line"></span>
+      <span>LESLIE / WRITING</span>
+    </aside>
+  </div>
+
+  <footer class="post-footer shell">
+    <div><h2>如果这篇文章帮到了你，<br>也许下一篇会更有意思。</h2></div>
+    <a class="button button--primary" href="/writing/">继续阅读 →</a>
+  </footer>
+</article>
+</main>
+    <footer class="site-footer">
+  <div class="footer-grid">
+    <div>
+      <p class="footer-kicker">Leslie Zhang</p>
+      <p class="footer-statement">流水不争先，<br>争的是滔滔不绝。</p>
+    </div>
+    <div class="footer-links">
+      <a href="https://github.com/leslieAIbin" target="_blank" rel="noreferrer">GitHub ↗</a>
+      <a href="https://www.instagram.com/leslieaibin/" target="_blank" rel="noreferrer">Instagram ↗</a>
+      <button type="button" data-wechat-open>微信 / WeChat</button>
+      <a href="mailto:aibinzhangleslie@gmail.com">Email ↗</a>
+      <a href="/atom.xml">RSS ↗</a>
+    </div>
+    <div class="footer-meta">
+      <span>© 2026 Leslie Zhang</span>
+      <span>Writing, research and working systems.</span>
+    </div>
+  </div>
+</footer>
+
+    <dialog class="ask-dialog" id="ask-leslie" aria-labelledby="ask-title">
+  <div class="ask-dialog__shell">
+    <div class="ask-dialog__topbar">
+      <div>
+        <h2 id="ask-title">Ask Leslie</h2>
+      </div>
+      <button class="icon-button" type="button" data-ask-close aria-label="关闭">×</button>
+    </div>
+    <p class="ask-dialog__intro">从本站公开文章中寻找答案。当前版本在浏览器本地检索，不上传问题，也不会编造不存在的经历。</p>
+    <form class="ask-form" data-ask-form>
+      <label class="sr-only" for="ask-query">输入问题</label>
+      <textarea id="ask-query" rows="2" placeholder="例如：Agent Runtime 应该怎么设计？" data-ask-input></textarea>
+      <button type="submit">检索知识库 <span aria-hidden="true">↗</span></button>
+    </form>
+    <div class="ask-suggestions" aria-label="推荐问题">
+      
+        <button type="button" data-ask-suggestion="Agent Runtime 应该怎么设计？">Agent Runtime 应该怎么设计？</button>
+      
+        <button type="button" data-ask-suggestion="如何让 AI 操控真实世界设备？">如何让 AI 操控真实世界设备？</button>
+      
+        <button type="button" data-ask-suggestion="Leslie 最近在研究什么？">Leslie 最近在研究什么？</button>
+      
+    </div>
+    <div class="ask-results" data-ask-results aria-live="polite">
+      <div class="ask-empty">
+        <p>输入一个问题，我会把你带到 Leslie 写过的相关内容。</p>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+    <dialog class="wechat-dialog" id="wechat-leslie" aria-labelledby="wechat-title">
+  <div class="wechat-dialog__shell">
+    <header>
+      <div>
+        <p class="section-label">WeChat</p>
+        <h2 id="wechat-title">微信联系</h2>
+      </div>
+      <button class="icon-button" type="button" data-wechat-close aria-label="关闭微信二维码">×</button>
+    </header>
+    <img src="/images/contact/wechat-leslie.png" alt="Leslie Zhang 的微信二维码" loading="lazy">
+    <p>扫码添加 Leslie，建议备注你的名字与来意。</p>
+  </div>
+</dialog>
+
+    <script>window.ORBITAL_ROOT = '/';</script>
+    <script src="/js/orbital.js" defer></script>
+  </body>
+</html>

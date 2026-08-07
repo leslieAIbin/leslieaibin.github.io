@@ -1,0 +1,137 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">AI 平台算法包发布架构</title>
+  <desc id="desc">算法代码经过发布编排、构建执行、质量校验和制品版本管理后，灰度发布到 AI 平台运行环境，并由日志、指标、诊断和回滚形成反馈闭环。</desc>
+  <defs>
+    <linearGradient id="topWash" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f7fbff" stop-opacity=".98"/>
+      <stop offset="1" stop-color="#f7fbff" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="bottomWash" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#eff7ff" stop-opacity="0"/>
+      <stop offset=".42" stop-color="#eff7ff" stop-opacity=".88"/>
+      <stop offset="1" stop-color="#e8f3ff" stop-opacity="1"/>
+    </linearGradient>
+    <linearGradient id="feedbackRail" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#0d63d7"/>
+      <stop offset=".5" stop-color="#00a3ff"/>
+      <stop offset="1" stop-color="#0d63d7"/>
+    </linearGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="180%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#0b4f9c" flood-opacity=".14"/>
+    </filter>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0 0L10 5L0 10Z" fill="#0d72e7"/>
+    </marker>
+    <style>
+      .sans { font-family: Inter, Avenir Next, PingFang SC, Microsoft YaHei, sans-serif; }
+      .mono { font-family: SFMono-Regular, Menlo, Consolas, monospace; }
+      .stage { fill: rgba(255,255,255,.86); stroke: rgba(22,103,191,.24); stroke-width: 1.5; }
+      .stage-no { fill: #0d72e7; font-size: 14px; font-weight: 750; letter-spacing: .08em; }
+      .stage-title { fill: #082b4c; font-size: 22px; font-weight: 760; letter-spacing: -.02em; }
+      .stage-sub { fill: #54728f; font-size: 13px; font-weight: 520; }
+      .feedback-title { fill: #0d72e7; font-size: 13px; font-weight: 760; letter-spacing: .08em; }
+      .feedback-copy { fill: #173b5c; font-size: 17px; font-weight: 700; }
+    </style>
+  </defs>
+
+  <image x="0" y="0" width="1600" height="900" preserveAspectRatio="xMidYMid slice" xlink:href="ai-platform-background.png"/>
+  <rect width="1600" height="280" fill="url(#topWash)"/>
+  <rect y="570" width="1600" height="330" fill="url(#bottomWash)"/>
+
+  <g class="sans">
+    <text x="72" y="66" fill="#0d72e7" font-size="14" font-weight="800" letter-spacing=".14em">AI PLATFORM / DELIVERY SYSTEM</text>
+    <text x="72" y="111" fill="#062d50" font-size="36" font-weight="800" letter-spacing="-.035em">算法包发布平台</text>
+    <text x="72" y="145" fill="#5b7690" font-size="16" font-weight="520">让代码、依赖与配置成为可验证、可追踪、可回滚的版本化制品</text>
+    <g transform="translate(1311 63)">
+      <rect width="217" height="46" rx="23" fill="#ffffff" fill-opacity=".76" stroke="#94bce3" stroke-opacity=".55"/>
+      <circle cx="25" cy="23" r="5" fill="#0d72e7"/>
+      <text x="43" y="28" fill="#345b7d" font-size="13" font-weight="680">PROJECT CAPABILITY MAP</text>
+    </g>
+  </g>
+
+  <path d="M144 326H1456" fill="none" stroke="#0d72e7" stroke-width="2" stroke-opacity=".48" marker-end="url(#arrow)"/>
+
+  <g class="sans" filter="url(#shadow)">
+    <g transform="translate(72 194)">
+      <rect class="stage" width="186" height="106" rx="12"/>
+      <text class="stage-no mono" x="17" y="26">01</text>
+      <text class="stage-title" x="17" y="57">算法仓库</text>
+      <text class="stage-sub" x="17" y="83">代码 / 配置 / 依赖</text>
+      <path d="M93 106V132" stroke="#0d72e7" stroke-opacity=".38"/>
+    </g>
+    <g transform="translate(284 194)">
+      <rect class="stage" width="186" height="106" rx="12"/>
+      <text class="stage-no mono" x="17" y="26">02</text>
+      <text class="stage-title" x="17" y="57">发布编排</text>
+      <text class="stage-sub" x="17" y="83">模板 / 凭证 / 触发</text>
+      <path d="M93 106V132" stroke="#0d72e7" stroke-opacity=".38"/>
+    </g>
+    <g transform="translate(496 194)">
+      <rect class="stage" width="186" height="106" rx="12"/>
+      <text class="stage-no mono" x="17" y="26">03</text>
+      <text class="stage-title" x="17" y="57">构建执行</text>
+      <text class="stage-sub" x="17" y="83">Worker / 环境调度</text>
+      <path d="M93 106V132" stroke="#0d72e7" stroke-opacity=".38"/>
+    </g>
+    <g transform="translate(708 194)">
+      <rect class="stage" width="186" height="106" rx="12"/>
+      <text class="stage-no mono" x="17" y="26">04</text>
+      <text class="stage-title" x="17" y="57">质量门禁</text>
+      <text class="stage-sub" x="17" y="83">测试 / 扫描 / 校验</text>
+      <path d="M93 106V132" stroke="#0d72e7" stroke-opacity=".38"/>
+    </g>
+    <g transform="translate(920 194)">
+      <rect class="stage" width="186" height="106" rx="12"/>
+      <text class="stage-no mono" x="17" y="26">05</text>
+      <text class="stage-title" x="17" y="57">制品中心</text>
+      <text class="stage-sub" x="17" y="83">版本 / 元数据 / 晋级</text>
+      <path d="M93 106V132" stroke="#0d72e7" stroke-opacity=".38"/>
+    </g>
+    <g transform="translate(1132 194)">
+      <rect class="stage" width="186" height="106" rx="12"/>
+      <text class="stage-no mono" x="17" y="26">06</text>
+      <text class="stage-title" x="17" y="57">灰度发布</text>
+      <text class="stage-sub" x="17" y="83">审批 / 分发 / 回滚</text>
+      <path d="M93 106V132" stroke="#0d72e7" stroke-opacity=".38"/>
+    </g>
+    <g transform="translate(1344 194)">
+      <rect class="stage" width="184" height="106" rx="12"/>
+      <text class="stage-no mono" x="17" y="26">07</text>
+      <text class="stage-title" x="17" y="57">运行环境</text>
+      <text class="stage-sub" x="17" y="83">AI 平台 / 服务实例</text>
+      <path d="M92 106V132" stroke="#0d72e7" stroke-opacity=".38"/>
+    </g>
+  </g>
+
+  <g class="sans" transform="translate(72 706)">
+    <rect width="1456" height="142" rx="18" fill="#ffffff" fill-opacity=".88" stroke="#8cbbe8" stroke-opacity=".6"/>
+    <rect x="26" y="26" width="5" height="90" rx="2.5" fill="url(#feedbackRail)"/>
+    <text x="54" y="52" class="feedback-title mono">DELIVERY FEEDBACK LOOP</text>
+    <text x="54" y="87" fill="#092f52" font-size="24" font-weight="790">运行结果持续返回发布链路</text>
+    <text x="54" y="112" fill="#607b94" font-size="14">一次发布不是终点，状态必须能被观察、诊断和恢复</text>
+
+    <g transform="translate(548 33)">
+      <rect width="190" height="76" rx="12" fill="#eef6ff" stroke="#b4d3ef"/>
+      <text class="feedback-title mono" x="17" y="25">01 / OBSERVE</text>
+      <text class="feedback-copy" x="17" y="53">构建日志</text>
+    </g>
+    <path d="M744 71H776" stroke="#0d72e7" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <g transform="translate(786 33)">
+      <rect width="190" height="76" rx="12" fill="#eef6ff" stroke="#b4d3ef"/>
+      <text class="feedback-title mono" x="17" y="25">02 / MEASURE</text>
+      <text class="feedback-copy" x="17" y="53">运行指标</text>
+    </g>
+    <path d="M982 71H1014" stroke="#0d72e7" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <g transform="translate(1024 33)">
+      <rect width="190" height="76" rx="12" fill="#eef6ff" stroke="#b4d3ef"/>
+      <text class="feedback-title mono" x="17" y="25">03 / DIAGNOSE</text>
+      <text class="feedback-copy" x="17" y="53">失败诊断</text>
+    </g>
+    <path d="M1220 71H1252" stroke="#0d72e7" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <g transform="translate(1262 33)">
+      <rect width="166" height="76" rx="12" fill="#0d72e7"/>
+      <text x="17" y="25" fill="#bfe2ff" font-size="13" font-weight="760" letter-spacing=".08em" class="mono">04 / RECOVER</text>
+      <text x="17" y="53" fill="#ffffff" font-size="17" font-weight="750">版本回滚</text>
+    </g>
+  </g>
+</svg>

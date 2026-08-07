@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+  <head>
+
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#050b18">
+<meta name="color-scheme" content="dark light">
+<title>Leslie Zhang | AI Agent &amp; Agent Infra Engineer</title>
+<meta name="description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta name="author" content="Leslie Zhang">
+<link rel="canonical" href="https://leslieaibin.github.io/categories/JVM/index.html">
+<link rel="icon" href="/imgs/01.jpg">
+<link rel="alternate" type="application/atom+xml" title="Leslie Zhang" href="/atom.xml">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Leslie Zhang | AI Agent &amp; Agent Infra Engineer">
+<meta property="og:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta property="og:url" content="https://leslieaibin.github.io/categories/JVM/index.html">
+<meta property="og:image" content="https://leslieaibin.github.io/og-blue.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Leslie Zhang | AI Agent &amp; Agent Infra Engineer">
+<meta name="twitter:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta name="twitter:image" content="https://leslieaibin.github.io/og-blue.png">
+<script>
+  (function () {
+    var saved = localStorage.getItem('orbital-theme');
+    var theme = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    document.documentElement.dataset.theme = theme;
+  })();
+</script>
+<link rel="stylesheet" href="/css/orbital.css">
+<meta name="generator" content="Hexo 5.2.0"></head>
+  <body class="page-index">
+    <a class="skip-link" href="#main-content">跳到主要内容</a>
+    <div class="reading-progress" data-reading-progress></div>
+    <header class="site-header" data-header>
+  <div class="nav-shell">
+    <a class="brand" href="/" aria-label="返回首页">
+      <span class="brand-mark" aria-hidden="true"><img src="/images/brand/leslie-mythos-avatar.webp" alt="" width="512" height="512"></span>
+      <span class="brand-copy">
+        <strong>LESLIE</strong>
+        <small>REAL-WORLD AGENTS</small>
+      </span>
+    </a>
+
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav" data-nav-toggle>
+      <span></span><span></span>
+      <span class="sr-only">打开导航</span>
+    </button>
+
+    <nav class="main-nav" id="main-nav" aria-label="主导航" data-nav>
+      
+        <a href="/" class="">首页</a>
+      
+        <a href="/writing/" class="">写作</a>
+      
+        <a href="/projects/" class="">项目</a>
+      
+        <a href="/about/" class="">关于</a>
+      
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换明暗主题">
+        <span class="theme-toggle__sun" aria-hidden="true">☼</span>
+        <span class="theme-toggle__moon" aria-hidden="true">◐</span>
+      </button>
+      <button class="ask-nav" type="button" data-ask-open>ASK LESLIE</button>
+    </nav>
+  </div>
+</header>
+
+    <main id="main-content"><section class="page-hero shell"><p class="page-kicker">Writing category</p><h1>JVM</h1><p>同一主题，在不同时间留下的答案。</p></section>
+<section class="section shell"><div class="writing-list" data-writing-list>
+  
+    <article class="writing-row reveal" data-writing-item data-search="20.双亲委派 jvm java双亲委派模型 一、前言 平时做业务开发比较少接触类加载器，但是如果想深入学习tomcat、spring等开源项目，或者从事底层架构的开发，了解甚至熟悉类加载的原理是必不可少的。 java的类加载器有哪些？什么是双亲委派？为什么要双亲委派？如何打破它？多多少少对这些概念了解一些，甚至因为应付面试背过这些知识点，但是再深入一些细节，却知之甚少。 二、类加载器 类加载器，顾名思义就是一个可以将java字节码加载为 实例的工具。这个过程包括，读取字节数组、验证、解析、初始化等…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-10-11">2021.10.11</time><span>9 MIN</span></div>
+        <h2><a href="/2021/10/11/JVM/20.%E5%8F%8C%E4%BA%B2%E5%A7%94%E6%B4%BE/">20.双亲委派</a></h2>
+        <p>Java双亲委派模型 一、前言 平时做业务开发比较少接触类加载器，但是如果想深入学习Tomcat、Spring等开源项目，或者从事底层架构的开发，了解甚至熟悉类加载的原理是必不可少的。 java的类加载器有哪些？什么是双亲委派？为什么要双亲委派？如何打破它？多多少少对这些概念了解一些，甚至因为应付面…</p>
+        <div class="chip-row"><span>JVM</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/10/11/JVM/20.%E5%8F%8C%E4%BA%B2%E5%A7%94%E6%B4%BE/" aria-label="阅读《20.双亲委派》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="18.字符串常量池 jvm jvm——字符串常量池详解 引言 在java开发中不管是前后端交互的json串，还是数据库中的数据存储，我们常常需要使用到string类型的字符串。作为最常用也是最基础的引用数据类型，jvm为string提供了字符串常量池来提高性能，本篇文章我们一起从底层jvm中认识并学习字符串常量池的概念和设计原理。 字符串常量池由来 在日常开发过程中，字符串的创建是比较频繁的，而字符串的分配和其他对象的分配是类似的，需要耗费大量的时间和空间，从而影响程序的运行性能，所以作为最基础最常用的…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-09-11">2021.09.11</time><span>6 MIN</span></div>
+        <h2><a href="/2021/09/11/JVM/18.%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%B8%B8%E9%87%8F%E6%B1%A0/">18.字符串常量池</a></h2>
+        <p>JVM——字符串常量池详解 引言 在Java开发中不管是前后端交互的JSON串，还是数据库中的数据存储，我们常常需要使用到String类型的字符串。作为最常用也是最基础的引用数据类型，JVM为String提供了字符串常量池来提高性能，本篇文章我们一起从底层JVM中认识并学习字符串常量池的概念和设计原…</p>
+        <div class="chip-row"><span>JVM</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/09/11/JVM/18.%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%B8%B8%E9%87%8F%E6%B1%A0/" aria-label="阅读《18.字符串常量池》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="19.oom排查 jvm 1、使用dmesg命令查看系统日志 dmesg |grep -e ‘kill|oom|out of memory’，可以查看操作系统启动后的系统日志，这里就是查看跟内存溢出相关联的系统日志。- 2、这时候，需要启动项目，使用ps命令查看进程 - ps -aux|grep java 或者是 ps -ef|grep java 命令查看一下你的java进程，就可以找到你的java进程的进程id。- 3、接着使用top命令 top命令显示的结果列表中，会看到%mem这一列，这里可以看…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-09-11">2021.09.11</time><span>5 MIN</span></div>
+        <h2><a href="/2021/09/11/JVM/19.oom%E6%8E%92%E6%9F%A5/">19.oom排查</a></h2>
+        <p>1、使用dmesg命令查看系统日志 dmesg |grep -E ‘kill|oom|out of memory’，可以查看操作系统启动后的系统日志，这里就是查看跟内存溢出相关联的系统日志。- 2、这时候，需要启动项目，使用ps命令查看进程 - ps -aux|grep java 或者是 ps -e…</p>
+        <div class="chip-row"><span>JVM</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/09/11/JVM/19.oom%E6%8E%92%E6%9F%A5/" aria-label="阅读《19.oom排查》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="17.锁升级和锁状态 jvm 前言 锁的状态总共有四种，级别由低到高依次为：无锁、偏向锁、轻量级锁、重量级锁，这四种锁状态分别代表什么，为什么会有锁升级。在jdk1.6之前，synchronized还是一个重量级锁，是一个效率比较低下的锁，但在jdk1.6后，jvm为了提高锁的获取与释放效率(sychronized) 进行了优化，引入了偏向锁和轻量级锁，从此以后锁的状态就有四种（无锁， 偏向锁， 轻量级锁，重量级锁），并且四种状态会随着竞争的情况逐渐升级，而且是不可逆的过程，即不可降级，也就是说只能进行锁…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-08-30">2021.08.30</time><span>11 MIN</span></div>
+        <h2><a href="/2021/08/30/JVM/17.%E9%94%81%E5%8D%87%E7%BA%A7%E5%92%8C%E9%94%81%E7%8A%B6%E6%80%81/">17.锁升级和锁状态</a></h2>
+        <p>前言 锁的状态总共有四种，级别由低到高依次为：无锁、偏向锁、轻量级锁、重量级锁，这四种锁状态分别代表什么，为什么会有锁升级。在JDK1.6之前，synchronized还是一个重量级锁，是一个效率比较低下的锁，但在JDK1.6后，JVM为了提高锁的获取与释放效率(sychronized) 进行了优化…</p>
+        <div class="chip-row"><span>JVM</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/08/30/JVM/17.%E9%94%81%E5%8D%87%E7%BA%A7%E5%92%8C%E9%94%81%E7%8A%B6%E6%80%81/" aria-label="阅读《17.锁升级和锁状态》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="16.jvm —— 垃圾回收器 jvm 垃圾回收器 gc分类与性能指标 垃圾收集器没有在规范中进行过多的规定，可以由不同的厂商，不用版本的jvm来实现。 由于jdk的版本处于高速迭代过程中，因此java发展至今已经衍生了众多的gc版本。 从不同角度分析垃圾收集器，可以将gc分为不同的类型。 java不同版本新特性 语法层面：lambda表达式、switch、自动拆箱装箱、enum api层面：stream api、新的日期时间、optional、string、集合框架 底层优化：jvm优化、gc的变化、元空间、静态…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-06-05">2021.06.05</time><span>40 MIN</span></div>
+        <h2><a href="/2021/06/05/JVM/16.%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E5%99%A8/">16.JVM —— 垃圾回收器</a></h2>
+        <p>垃圾回收器 GC分类与性能指标 垃圾收集器没有在规范中进行过多的规定，可以由不同的厂商，不用版本的JVM来实现。 由于JDK的版本处于高速迭代过程中，因此Java发展至今已经衍生了众多的GC版本。 从不同角度分析垃圾收集器，可以将GC分为不同的类型。 Java不同版本新特性 语法层面：Lambda表…</p>
+        <div class="chip-row"><span>JVM</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/06/05/JVM/16.%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E5%99%A8/" aria-label="阅读《16.JVM —— 垃圾回收器》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="15.jvm —— 垃圾回收概述 jvm 垃圾回收概述 概念 内存的分配与回收 什么是垃圾 在提到什么是垃圾之前，我们先看下面一张图 从上图可以看到，java和c++的区别，就在于垃圾收集技术和内存动态分配上，c语言没有垃圾收集技术，需要我们手动的收集 垃圾收集 不是java的伴生物，早在1960年，第一门开始使用内存动态分配和垃圾收集的lisp语言诞生 关于垃圾收集的三个经典问题： 那些内存需要回收 什么时候回收 如何回收 垃圾收集机制是java的招牌能力，极大的提高了开发效率。如今，垃圾收集几乎成为现代语言的标配…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-05-25">2021.05.25</time><span>37 MIN</span></div>
+        <h2><a href="/2021/05/25/JVM/15.%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E6%A6%82%E8%BF%B0/">15.JVM —— 垃圾回收概述</a></h2>
+        <p>垃圾回收概述 概念 内存的分配与回收 什么是垃圾 在提到什么是垃圾之前，我们先看下面一张图 从上图可以看到，Java和C++的区别，就在于垃圾收集技术和内存动态分配上，C语言没有垃圾收集技术，需要我们手动的收集 垃圾收集 不是Java的伴生物，早在1960年，第一门开始使用内存动态分配和垃圾收集的L…</p>
+        <div class="chip-row"><span>JVM</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/05/25/JVM/15.%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E6%A6%82%E8%BF%B0/" aria-label="阅读《15.JVM —— 垃圾回收概述》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="14.jvm —— stringtable jvm stringtable string的基本特性 string：字符串，使用一对””引起来表示 string s1 = “mogublog”； // 字面量的定义方式 创建一个对象 或者不创建对象 string s2 = new string(“moxi”)； //创建一个或者两个对象 s2 为新创建的 string声明为final 的，不可被继承 string实现了serializable接口：表示字符串是支持序列化的。实现了comparable接口：表示string 可以比…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-05-17">2021.05.17</time><span>11 MIN</span></div>
+        <h2><a href="/2021/05/17/JVM/14.StringTable/">14.JVM —— StringTable</a></h2>
+        <p>StringTable String的基本特性 String：字符串，使用一对””引起来表示 String s1 = “mogublog”； // 字面量的定义方式 创建一个对象 或者不创建对象 String s2 = new String(“moxi”)； //创建一个或者两个对象 s2 为新创建…</p>
+        <div class="chip-row"><span>JVM</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/05/17/JVM/14.StringTable/" aria-label="阅读《14.JVM —— StringTable》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="13.jvm —— 执行引擎 jvm 执行引擎 执行引擎概述 执行引擎属于jvm的下层，里面包括 执行引擎是java虚拟核心的组成部分之一。”虚拟机”是一个相对于”物理机”的概念，这两种都有代码执行能力，其区别是物理机的执行引擎是直接建立在处理器、缓存、指令集和操作系统层面上的，而虚拟机的执行引擎则是由软件自行实现的，因此可以不受物理条件制约的定制指令集与执行引擎的结构体系，能够执行那些不被硬件直接支持的指令集格式 jvm的主要任务是负责装在字节码到其内部，但字节码并不能够直接运行在操作系统之上，因为字节码指令并…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-05-15">2021.05.15</time><span>17 MIN</span></div>
+        <h2><a href="/2021/05/15/JVM/13.%E6%89%A7%E8%A1%8C%E5%BC%95%E6%93%8E/">13.JVM —— 执行引擎</a></h2>
+        <p>执行引擎 执行引擎概述 执行引擎属于JVM的下层，里面包括 执行引擎是Java虚拟核心的组成部分之一。”虚拟机”是一个相对于”物理机”的概念，这两种都有代码执行能力，其区别是物理机的执行引擎是直接建立在处理器、缓存、指令集和操作系统层面上的，而虚拟机的执行引擎则是由软件自行实现的，因此可以不受物理条…</p>
+        <div class="chip-row"><span>JVM</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/05/15/JVM/13.%E6%89%A7%E8%A1%8C%E5%BC%95%E6%93%8E/" aria-label="阅读《13.JVM —— 执行引擎》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="12.jvm —— 直接内存 jvm 直接内存direct memory 不是虚拟机运行数据区的一部分，也不是《java虚拟机规范》中定义的内存区域 直接内存是在java堆外的，直接想系统申请的内存区间 ，是一种同步非阻塞的i/o模型，也是i/o多路复用的基础 来源于nio，通过存在堆中的 操作 通常，访问直接内存的速度优于java堆内存，即读写性能高 因此出于性能考虑，读写频繁的场合可能会考虑使用直接内存 java的nio库允许java程序使用直接内存，用于数据缓冲区 使用下面代码，直接分配本地内存空间 非直接…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-05-15">2021.05.15</time><span>1 MIN</span></div>
+        <h2><a href="/2021/05/15/JVM/12.%E7%9B%B4%E6%8E%A5%E5%86%85%E5%AD%98Direct%20Memory/">12.JVM —— 直接内存</a></h2>
+        <p>直接内存Direct Memory 不是虚拟机运行数据区的一部分，也不是《Java虚拟机规范》中定义的内存区域 直接内存是在Java堆外的，直接想系统申请的内存区间 ，是一种同步非阻塞的I/O模型，也是I/O多路复用的基础 来源于NIO，通过存在堆中的 操作 通常，访问直接内存的速度优于Java堆内…</p>
+        <div class="chip-row"><span>JVM</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/05/15/JVM/12.%E7%9B%B4%E6%8E%A5%E5%86%85%E5%AD%98Direct%20Memory/" aria-label="阅读《12.JVM —— 直接内存》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="11.jvm —— 对象实例化内存布局与访问定位 jvm 对象实例化内存布局与访问定位 对象实例化 面试题 对象在jvm是怎样存储的？ 对象头信息里面有哪些东西？ java对象头有什么？ 从对象创建的方式 和 步骤开始说 对象创建方式 new : 最常见的方式、单例类中调用getinstance的静态方法，xxxfactory的静态方法 class的newinstance方法：在jdk9里面被标记为过时方法，因为只能调用空参构造器 constructor的newinstance（xxx）：反射的方式，可以调用空参的，或者代参的构造器…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-05-14">2021.05.14</time><span>5 MIN</span></div>
+        <h2><a href="/2021/05/14/JVM/11.%E5%AF%B9%E8%B1%A1%E5%AE%9E%E4%BE%8B%E5%8C%96%E5%86%85%E5%AD%98%E5%B8%83%E5%B1%80%E4%B8%8E%E8%AE%BF%E9%97%AE%E5%AE%9A%E4%BD%8D/">11.JVM —— 对象实例化内存布局与访问定位</a></h2>
+        <p>对象实例化内存布局与访问定位 对象实例化 面试题 对象在JVM是怎样存储的？ 对象头信息里面有哪些东西？ Java对象头有什么？ 从对象创建的方式 和 步骤开始说 对象创建方式 new : 最常见的方式、单例类中调用getInstance的静态方法，xxxFactory的静态方法 Class的new…</p>
+        <div class="chip-row"><span>JVM</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/05/14/JVM/11.%E5%AF%B9%E8%B1%A1%E5%AE%9E%E4%BE%8B%E5%8C%96%E5%86%85%E5%AD%98%E5%B8%83%E5%B1%80%E4%B8%8E%E8%AE%BF%E9%97%AE%E5%AE%9A%E4%BD%8D/" aria-label="阅读《11.JVM —— 对象实例化内存布局与访问定位》">↗</a>
+    </article>
+  
+</div>
+<span class="page-number current">1</span><a class="page-number" href="/categories/JVM/page/2/">2</a><a class="page-number" href="/categories/JVM/page/3/">3</a><a class="extend next" rel="next" href="/categories/JVM/page/2/">Next</a></section>
+</main>
+    <footer class="site-footer">
+  <div class="footer-grid">
+    <div>
+      <p class="footer-kicker">Leslie Zhang</p>
+      <p class="footer-statement">流水不争先，<br>争的是滔滔不绝。</p>
+    </div>
+    <div class="footer-links">
+      <a href="https://github.com/leslieAIbin" target="_blank" rel="noreferrer">GitHub ↗</a>
+      <a href="https://www.instagram.com/leslieaibin/" target="_blank" rel="noreferrer">Instagram ↗</a>
+      <button type="button" data-wechat-open>微信 / WeChat</button>
+      <a href="mailto:aibinzhangleslie@gmail.com">Email ↗</a>
+      <a href="/atom.xml">RSS ↗</a>
+    </div>
+    <div class="footer-meta">
+      <span>© 2026 Leslie Zhang</span>
+      <span>Writing, research and working systems.</span>
+    </div>
+  </div>
+</footer>
+
+    <dialog class="ask-dialog" id="ask-leslie" aria-labelledby="ask-title">
+  <div class="ask-dialog__shell">
+    <div class="ask-dialog__topbar">
+      <div>
+        <h2 id="ask-title">Ask Leslie</h2>
+      </div>
+      <button class="icon-button" type="button" data-ask-close aria-label="关闭">×</button>
+    </div>
+    <p class="ask-dialog__intro">从本站公开文章中寻找答案。当前版本在浏览器本地检索，不上传问题，也不会编造不存在的经历。</p>
+    <form class="ask-form" data-ask-form>
+      <label class="sr-only" for="ask-query">输入问题</label>
+      <textarea id="ask-query" rows="2" placeholder="例如：Agent Runtime 应该怎么设计？" data-ask-input></textarea>
+      <button type="submit">检索知识库 <span aria-hidden="true">↗</span></button>
+    </form>
+    <div class="ask-suggestions" aria-label="推荐问题">
+      
+        <button type="button" data-ask-suggestion="Agent Runtime 应该怎么设计？">Agent Runtime 应该怎么设计？</button>
+      
+        <button type="button" data-ask-suggestion="如何让 AI 操控真实世界设备？">如何让 AI 操控真实世界设备？</button>
+      
+        <button type="button" data-ask-suggestion="Leslie 最近在研究什么？">Leslie 最近在研究什么？</button>
+      
+    </div>
+    <div class="ask-results" data-ask-results aria-live="polite">
+      <div class="ask-empty">
+        <p>输入一个问题，我会把你带到 Leslie 写过的相关内容。</p>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+    <dialog class="wechat-dialog" id="wechat-leslie" aria-labelledby="wechat-title">
+  <div class="wechat-dialog__shell">
+    <header>
+      <div>
+        <p class="section-label">WeChat</p>
+        <h2 id="wechat-title">微信联系</h2>
+      </div>
+      <button class="icon-button" type="button" data-wechat-close aria-label="关闭微信二维码">×</button>
+    </header>
+    <img src="/images/contact/wechat-leslie.png" alt="Leslie Zhang 的微信二维码" loading="lazy">
+    <p>扫码添加 Leslie，建议备注你的名字与来意。</p>
+  </div>
+</dialog>
+
+    <script>window.ORBITAL_ROOT = '/';</script>
+    <script src="/js/orbital.js" defer></script>
+  </body>
+</html>

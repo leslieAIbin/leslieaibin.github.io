@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+  <head>
+
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#050b18">
+<meta name="color-scheme" content="dark light">
+<title>3.JVM —— 类文件结构 | Leslie Zhang</title>
+<meta name="description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta name="author" content="Leslie Zhang">
+<link rel="canonical" href="https://leslieaibin.github.io/2020/11/15/JVM/3.%E7%B1%BB%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/">
+<link rel="icon" href="/imgs/01.jpg">
+<link rel="alternate" type="application/atom+xml" title="Leslie Zhang" href="/atom.xml">
+<meta property="og:type" content="article">
+<meta property="og:title" content="3.JVM —— 类文件结构 | Leslie Zhang">
+<meta property="og:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta property="og:url" content="https://leslieaibin.github.io/2020/11/15/JVM/3.%E7%B1%BB%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/">
+<meta property="og:image" content="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/20.jpg?raw=true">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="3.JVM —— 类文件结构 | Leslie Zhang">
+<meta name="twitter:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta name="twitter:image" content="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/20.jpg?raw=true">
+<script>
+  (function () {
+    var saved = localStorage.getItem('orbital-theme');
+    var theme = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    document.documentElement.dataset.theme = theme;
+  })();
+</script>
+<link rel="stylesheet" href="/css/orbital.css">
+<meta name="generator" content="Hexo 5.2.0"></head>
+  <body class="page-post">
+    <a class="skip-link" href="#main-content">跳到主要内容</a>
+    <div class="reading-progress" data-reading-progress></div>
+    <header class="site-header" data-header>
+  <div class="nav-shell">
+    <a class="brand" href="/" aria-label="返回首页">
+      <span class="brand-mark" aria-hidden="true"><img src="/images/brand/leslie-mythos-avatar.webp" alt="" width="512" height="512"></span>
+      <span class="brand-copy">
+        <strong>LESLIE</strong>
+        <small>REAL-WORLD AGENTS</small>
+      </span>
+    </a>
+
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav" data-nav-toggle>
+      <span></span><span></span>
+      <span class="sr-only">打开导航</span>
+    </button>
+
+    <nav class="main-nav" id="main-nav" aria-label="主导航" data-nav>
+      
+        <a href="/" class="">首页</a>
+      
+        <a href="/writing/" class="">写作</a>
+      
+        <a href="/projects/" class="">项目</a>
+      
+        <a href="/about/" class="">关于</a>
+      
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换明暗主题">
+        <span class="theme-toggle__sun" aria-hidden="true">☼</span>
+        <span class="theme-toggle__moon" aria-hidden="true">◐</span>
+      </button>
+      <button class="ask-nav" type="button" data-ask-open>ASK LESLIE</button>
+    </nav>
+  </div>
+</header>
+
+    <main id="main-content"><article class="post-shell">
+  <header class="post-hero shell">
+    <a class="post-back" href="/writing/">← 返回写作</a>
+    <div class="post-hero__meta">
+      <time datetime="2020-11-15">2020 年 11 月 15 日</time>
+      <span>6 分钟阅读</span>
+    </div>
+    <h1>3.JVM —— 类文件结构</h1>
+    
+    <div class="chip-row"><a href="/tags/JVM/">JVM</a></div>
+  </header>
+
+  <div class="post-cover shell"><img src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/20.jpg?raw=true" alt="3.JVM —— 类文件结构"></div>
+
+  <div class="post-layout shell">
+    <aside class="post-toc" aria-label="文章目录">
+      <span class="aside-title">目录</span>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A6%82%E8%BF%B0"><span class="toc-text">概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Class-%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E6%80%BB%E7%BB%93"><span class="toc-text">Class 文件结构总结</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%AD%94%E6%95%B0"><span class="toc-text">魔数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Class-%E6%96%87%E4%BB%B6%E7%89%88%E6%9C%AC"><span class="toc-text">Class 文件版本</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%B8%E9%87%8F%E6%B1%A0"><span class="toc-text">常量池</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%BF%E9%97%AE%E6%A0%87%E5%BF%97"><span class="toc-text">访问标志</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BD%93%E5%89%8D%E7%B1%BB%E7%B4%A2%E5%BC%95-%E7%88%B6%E7%B1%BB%E7%B4%A2%E5%BC%95%E4%B8%8E%E6%8E%A5%E5%8F%A3%E7%B4%A2%E5%BC%95%E9%9B%86%E5%90%88"><span class="toc-text">当前类索引,父类索引与接口索引集合</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AD%97%E6%AE%B5%E8%A1%A8%E9%9B%86%E5%90%88"><span class="toc-text">字段表集合</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B9%E6%B3%95%E8%A1%A8%E9%9B%86%E5%90%88"><span class="toc-text">方法表集合</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B1%9E%E6%80%A7%E8%A1%A8%E9%9B%86%E5%90%88"><span class="toc-text">属性表集合</span></a></li></ol></li></ol>
+    </aside>
+    <div class="article-content"><h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>在 Java 中，JVM 可以理解的代码就叫做<code>字节码</code>（即扩展名为 <code>.class</code> 的文件），它不面向任何特定的处理器，只面向虚拟机。Java 语言通过字节码的方式，在一定程度上解决了传统解释型语言执行效率低的问题，同时又保留了解释型语言可移植的特点。所以 Java 程序运行时比较高效，而且，由于字节码并不针对一种特定的机器，因此，Java 程序无须重新编译便可在多种不同操作系统的计算机上运行。</p>
+<p>Clojure（Lisp 语言的一种方言）、Groovy、Scala 等语言都是运行在 Java 虚拟机之上。下图展示了不同的语言被不同的编译器编译成<code>.class</code>文件最终运行在 Java 虚拟机之上。<code>.class</code>文件的二进制格式可以使用 <a target="_blank" rel="noopener" href="https://www.x-ways.net/winhex/">WinHex</a> 查看。</p>
+<p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/image-20201115230551749.png" alt="image-20201115230551749"></p>
+<p><strong>可以说<code>.class</code>文件是不同的语言在 Java 虚拟机之间的重要桥梁，同时也是支持 Java 跨平台很重要的一个原因。</strong></p>
+<h2 id="Class-文件结构总结"><a href="#Class-文件结构总结" class="headerlink" title="Class 文件结构总结"></a>Class 文件结构总结</h2><p>根据 Java 虚拟机规范，类文件由单个 ClassFile 结构组成：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">ClassFile &#123;</span><br><span class="line">    u4             magic; <span class="comment">//Class 文件的标志</span></span><br><span class="line">    u2             minor_version;<span class="comment">//Class 的小版本号</span></span><br><span class="line">    u2             major_version;<span class="comment">//Class 的大版本号</span></span><br><span class="line">    u2             constant_pool_count;<span class="comment">//常量池的数量</span></span><br><span class="line">    cp_info        constant_pool[constant_pool_count-<span class="number">1</span>];<span class="comment">//常量池</span></span><br><span class="line">    u2             access_flags;<span class="comment">//Class 的访问标记</span></span><br><span class="line">    u2             this_class;<span class="comment">//当前类</span></span><br><span class="line">    u2             super_class;<span class="comment">//父类</span></span><br><span class="line">    u2             interfaces_count;<span class="comment">//接口</span></span><br><span class="line">    u2             interfaces[interfaces_count];<span class="comment">//一个类可以实现多个接口</span></span><br><span class="line">    u2             fields_count;<span class="comment">//Class 文件的字段属性</span></span><br><span class="line">    field_info     fields[fields_count];<span class="comment">//一个类会可以有多个字段</span></span><br><span class="line">    u2             methods_count;<span class="comment">//Class 文件的方法数量</span></span><br><span class="line">    method_info    methods[methods_count];<span class="comment">//一个类可以有个多个方法</span></span><br><span class="line">    u2             attributes_count;<span class="comment">//此类的属性表中的属性数</span></span><br><span class="line">    attribute_info attributes[attributes_count];<span class="comment">//属性表集合</span></span><br><span class="line">&#125;Copy to clipboardErrorCopied</span><br></pre></td></tr></table></figure>
+
+<p>下面详细介绍一下 Class 文件结构涉及到的一些组件。</p>
+<p><strong>Class文件字节码结构组织示意图</strong> （之前在网上保存的，非常不错，原出处不明）：</p>
+<p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/image-20201115230948289.png" alt="image-20201115230948289"></p>
+<h3 id="魔数"><a href="#魔数" class="headerlink" title="魔数"></a>魔数</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">u4             magic; <span class="comment">//Class 文件的标志Copy to clipboardErrorCopied</span></span><br></pre></td></tr></table></figure>
+
+<p>每个 Class 文件的头四个字节称为魔数（Magic Number）,它的唯一作用是<strong>确定这个文件是否为一个能被虚拟机接收的 Class 文件</strong>。</p>
+<p>程序设计者很多时候都喜欢用一些特殊的数字表示固定的文件类型或者其它特殊的含义。</p>
+<h3 id="Class-文件版本"><a href="#Class-文件版本" class="headerlink" title="Class 文件版本"></a>Class 文件版本</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">u2             minor_version;<span class="comment">//Class 的小版本号</span></span><br><span class="line">u2             major_version;<span class="comment">//Class 的大版本号Copy to clipboardErrorCopied</span></span><br></pre></td></tr></table></figure>
+
+<p>紧接着魔数的四个字节存储的是 Class 文件的版本号：第五和第六是<strong>次版本号</strong>，第七和第八是<strong>主版本号</strong>。</p>
+<p>高版本的 Java 虚拟机可以执行低版本编译器生成的 Class 文件，但是低版本的 Java 虚拟机不能执行高版本编译器生成的 Class 文件。所以，我们在实际开发的时候要确保开发的的 JDK 版本和生产环境的 JDK 版本保持一致。</p>
+<h3 id="常量池"><a href="#常量池" class="headerlink" title="常量池"></a>常量池</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">u2             constant_pool_count;<span class="comment">//常量池的数量</span></span><br><span class="line">cp_info        constant_pool[constant_pool_count-<span class="number">1</span>];<span class="comment">//常量池Copy to clipboardErrorCopied</span></span><br></pre></td></tr></table></figure>
+
+<p>紧接着主次版本号之后的是常量池，常量池的数量是 constant_pool_count-1（<strong>常量池计数器是从1开始计数的，将第0项常量空出来是有特殊考虑的，索引值为0代表“不引用任何一个常量池项”</strong>）。</p>
+<p>常量池主要存放两大常量：字面量和符号引用。字面量比较接近于 Java 语言层面的的常量概念，如文本字符串、声明为 final 的常量值等。而符号引用则属于编译原理方面的概念。包括下面三类常量：</p>
+<ul>
+<li>类和接口的全限定名</li>
+<li>字段的名称和描述符</li>
+<li>方法的名称和描述符</li>
+</ul>
+<p>常量池中每一项常量都是一个表，这14种表有一个共同的特点：<strong>开始的第一位是一个 u1 类型的标志位 -tag 来标识常量的类型，代表当前这个常量属于哪种常量类型．</strong></p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>标志（tag）</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>CONSTANT_utf8_info</td>
+<td>1</td>
+<td>UTF-8编码的字符串</td>
+</tr>
+<tr>
+<td>CONSTANT_Integer_info</td>
+<td>3</td>
+<td>整形字面量</td>
+</tr>
+<tr>
+<td>CONSTANT_Float_info</td>
+<td>4</td>
+<td>浮点型字面量</td>
+</tr>
+<tr>
+<td>CONSTANT_Long_info</td>
+<td>５</td>
+<td>长整型字面量</td>
+</tr>
+<tr>
+<td>CONSTANT_Double_info</td>
+<td>６</td>
+<td>双精度浮点型字面量</td>
+</tr>
+<tr>
+<td>CONSTANT_Class_info</td>
+<td>７</td>
+<td>类或接口的符号引用</td>
+</tr>
+<tr>
+<td>CONSTANT_String_info</td>
+<td>８</td>
+<td>字符串类型字面量</td>
+</tr>
+<tr>
+<td>CONSTANT_Fieldref_info</td>
+<td>９</td>
+<td>字段的符号引用</td>
+</tr>
+<tr>
+<td>CONSTANT_Methodref_info</td>
+<td>10</td>
+<td>类中方法的符号引用</td>
+</tr>
+<tr>
+<td>CONSTANT_InterfaceMethodref_info</td>
+<td>11</td>
+<td>接口中方法的符号引用</td>
+</tr>
+<tr>
+<td>CONSTANT_NameAndType_info</td>
+<td>12</td>
+<td>字段或方法的符号引用</td>
+</tr>
+<tr>
+<td>CONSTANT_MothodType_info</td>
+<td>16</td>
+<td>标志方法类型</td>
+</tr>
+<tr>
+<td>CONSTANT_MethodHandle_info</td>
+<td>15</td>
+<td>表示方法句柄</td>
+</tr>
+<tr>
+<td>CONSTANT_InvokeDynamic_info</td>
+<td>18</td>
+<td>表示一个动态方法调用点</td>
+</tr>
+</tbody></table>
+<p><code>.class</code> 文件可以通过<code>javap -v class类名</code> 指令来看一下其常量池中的信息(<code>javap -v  class类名-&gt; temp.txt</code> ：将结果输出到 temp.txt 文件)。</p>
+<h3 id="访问标志"><a href="#访问标志" class="headerlink" title="访问标志"></a>访问标志</h3><p>在常量池结束之后，紧接着的两个字节代表访问标志，这个标志用于识别一些类或者接口层次的访问信息，包括：这个 Class 是类还是接口，是否为 public 或者 abstract 类型，如果是类的话是否声明为 final 等等。</p>
+<p>类访问和属性修饰符:</p>
+<p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/image-20201115231234370.png" alt="image-20201115231234370"></p>
+<p>我们定义了一个 Employee 类</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> top.snailclimb.bean;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Employee</span> </span>&#123;</span><br><span class="line">   ...</span><br><span class="line">&#125;Copy to clipboardErrorCopied</span><br></pre></td></tr></table></figure>
+
+<p>通过<code>javap -v class类名</code> 指令来看一下类的访问标志。</p>
+<p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/image-20201115231213318.png" alt="image-20201115231213318"></p>
+<h3 id="当前类索引-父类索引与接口索引集合"><a href="#当前类索引-父类索引与接口索引集合" class="headerlink" title="当前类索引,父类索引与接口索引集合"></a>当前类索引,父类索引与接口索引集合</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">u2             this_class;<span class="comment">//当前类</span></span><br><span class="line">u2             super_class;<span class="comment">//父类</span></span><br><span class="line">u2             interfaces_count;<span class="comment">//接口</span></span><br><span class="line">u2             interfaces[interfaces_count];<span class="comment">//一个类可以实现多个接口Copy to clipboardErrorCopied</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>类索引用于确定这个类的全限定名，父类索引用于确定这个类的父类的全限定名，由于 Java 语言的单继承，所以父类索引只有一个，除了 <code>java.lang.Object</code> 之外，所有的 java 类都有父类，因此除了 <code>java.lang.Object</code> 外，所有 Java 类的父类索引都不为 0。</strong></p>
+<p><strong>接口索引集合用来描述这个类实现了那些接口，这些被实现的接口将按 <code>implements</code> (如果这个类本身是接口的话则是<code>extends</code>) 后的接口顺序从左到右排列在接口索引集合中。</strong></p>
+<h3 id="字段表集合"><a href="#字段表集合" class="headerlink" title="字段表集合"></a>字段表集合</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">u2             fields_count;<span class="comment">//Class 文件的字段的个数</span></span><br><span class="line">field_info     fields[fields_count];<span class="comment">//一个类会可以有个字段Copy to clipboardErrorCopied</span></span><br></pre></td></tr></table></figure>
+
+<p>字段表（field info）用于描述接口或类中声明的变量。字段包括类级变量以及实例变量，但不包括在方法内部声明的局部变量。</p>
+<p><strong>field info(字段表) 的结构:</strong></p>
+<p><img src="https://my-blog-to-use.oss-cn-beijing.aliyuncs.com/2019-6/%E5%AD%97%E6%AE%B5%E8%A1%A8%E7%9A%84%E7%BB%93%E6%9E%84.png" alt="字段表的结构 "></p>
+<ul>
+<li><strong>access_flags:</strong> 字段的作用域（<code>public</code> ,<code>private</code>,<code>protected</code>修饰符），是实例变量还是类变量（<code>static</code>修饰符）,可否被序列化（transient 修饰符）,可变性（final）,可见性（volatile 修饰符，是否强制从主内存读写）。</li>
+<li><strong>name_index:</strong> 对常量池的引用，表示的字段的名称；</li>
+<li><strong>descriptor_index:</strong> 对常量池的引用，表示字段和方法的描述符；</li>
+<li><strong>attributes_count:</strong> 一个字段还会拥有一些额外的属性，attributes_count 存放属性的个数；</li>
+<li><strong>attributes[attributes_count]:</strong> 存放具体属性具体内容。</li>
+</ul>
+<p>上述这些信息中，各个修饰符都是布尔值，要么有某个修饰符，要么没有，很适合使用标志位来表示。而字段叫什么名字、字段被定义为什么数据类型这些都是无法固定的，只能引用常量池中常量来描述。</p>
+<p><strong>字段的 access_flag 的取值:</strong></p>
+<p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/image-20201115231147414.png" alt="image-20201115231147414"></p>
+<h3 id="方法表集合"><a href="#方法表集合" class="headerlink" title="方法表集合"></a>方法表集合</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">u2             methods_count;<span class="comment">//Class 文件的方法的数量</span></span><br><span class="line">method_info    methods[methods_count];<span class="comment">//一个类可以有个多个方法Copy to clipboardErrorCopied</span></span><br></pre></td></tr></table></figure>
+
+<p>methods_count 表示方法的数量，而 method_info 表示的方法表。</p>
+<p>Class 文件存储格式中对方法的描述与对字段的描述几乎采用了完全一致的方式。方法表的结构如同字段表一样，依次包括了访问标志、名称索引、描述符索引、属性表集合几项。</p>
+<p><strong>method_info(方法表的) 结构:</strong></p>
+<p><img src="https://my-blog-to-use.oss-cn-beijing.aliyuncs.com/2019-6/%E6%96%B9%E6%B3%95%E8%A1%A8%E7%9A%84%E7%BB%93%E6%9E%84.png" alt="方法表的结构"></p>
+<p><strong>方法表的 access_flag 取值：</strong></p>
+<p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/image-20201115231123298.png" alt="image-20201115231123298"></p>
+<p>注意：因为<code>volatile</code>修饰符和<code>transient</code>修饰符不可以修饰方法，所以方法表的访问标志中没有这两个对应的标志，但是增加了<code>synchronized</code>、<code>native</code>、<code>abstract</code>等关键字修饰方法，所以也就多了这些关键字对应的标志。</p>
+<h3 id="属性表集合"><a href="#属性表集合" class="headerlink" title="属性表集合"></a>属性表集合</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">u2             attributes_count;<span class="comment">//此类的属性表中的属性数</span></span><br><span class="line">attribute_info attributes[attributes_count];<span class="comment">//属性表集合Copy to clipboardErrorCopied</span></span><br></pre></td></tr></table></figure>
+
+<p>在 Class 文件，字段表，方法表中都可以携带自己的属性表集合，以用于描述某些场景专有的信息。与 Class 文件中其它的数据项目要求的顺序、长度和内容不同，属性表集合的限制稍微宽松一些，不再要求各个属性表具有严格的顺序，并且只要不与已有的属性名重复，任何人实现的编译器都可以向属性表中写 入自己定义的属性信息，Java 虚拟机运行时会忽略掉它不认识的属性。</p>
+</div>
+    <aside class="post-rail">
+      <span class="post-rail__line"></span>
+      <span>LESLIE / WRITING</span>
+    </aside>
+  </div>
+
+  <footer class="post-footer shell">
+    <div><h2>如果这篇文章帮到了你，<br>也许下一篇会更有意思。</h2></div>
+    <a class="button button--primary" href="/writing/">继续阅读 →</a>
+  </footer>
+</article>
+</main>
+    <footer class="site-footer">
+  <div class="footer-grid">
+    <div>
+      <p class="footer-kicker">Leslie Zhang</p>
+      <p class="footer-statement">流水不争先，<br>争的是滔滔不绝。</p>
+    </div>
+    <div class="footer-links">
+      <a href="https://github.com/leslieAIbin" target="_blank" rel="noreferrer">GitHub ↗</a>
+      <a href="https://www.instagram.com/leslieaibin/" target="_blank" rel="noreferrer">Instagram ↗</a>
+      <button type="button" data-wechat-open>微信 / WeChat</button>
+      <a href="mailto:aibinzhangleslie@gmail.com">Email ↗</a>
+      <a href="/atom.xml">RSS ↗</a>
+    </div>
+    <div class="footer-meta">
+      <span>© 2026 Leslie Zhang</span>
+      <span>Writing, research and working systems.</span>
+    </div>
+  </div>
+</footer>
+
+    <dialog class="ask-dialog" id="ask-leslie" aria-labelledby="ask-title">
+  <div class="ask-dialog__shell">
+    <div class="ask-dialog__topbar">
+      <div>
+        <h2 id="ask-title">Ask Leslie</h2>
+      </div>
+      <button class="icon-button" type="button" data-ask-close aria-label="关闭">×</button>
+    </div>
+    <p class="ask-dialog__intro">从本站公开文章中寻找答案。当前版本在浏览器本地检索，不上传问题，也不会编造不存在的经历。</p>
+    <form class="ask-form" data-ask-form>
+      <label class="sr-only" for="ask-query">输入问题</label>
+      <textarea id="ask-query" rows="2" placeholder="例如：Agent Runtime 应该怎么设计？" data-ask-input></textarea>
+      <button type="submit">检索知识库 <span aria-hidden="true">↗</span></button>
+    </form>
+    <div class="ask-suggestions" aria-label="推荐问题">
+      
+        <button type="button" data-ask-suggestion="Agent Runtime 应该怎么设计？">Agent Runtime 应该怎么设计？</button>
+      
+        <button type="button" data-ask-suggestion="如何让 AI 操控真实世界设备？">如何让 AI 操控真实世界设备？</button>
+      
+        <button type="button" data-ask-suggestion="Leslie 最近在研究什么？">Leslie 最近在研究什么？</button>
+      
+    </div>
+    <div class="ask-results" data-ask-results aria-live="polite">
+      <div class="ask-empty">
+        <p>输入一个问题，我会把你带到 Leslie 写过的相关内容。</p>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+    <dialog class="wechat-dialog" id="wechat-leslie" aria-labelledby="wechat-title">
+  <div class="wechat-dialog__shell">
+    <header>
+      <div>
+        <p class="section-label">WeChat</p>
+        <h2 id="wechat-title">微信联系</h2>
+      </div>
+      <button class="icon-button" type="button" data-wechat-close aria-label="关闭微信二维码">×</button>
+    </header>
+    <img src="/images/contact/wechat-leslie.png" alt="Leslie Zhang 的微信二维码" loading="lazy">
+    <p>扫码添加 Leslie，建议备注你的名字与来意。</p>
+  </div>
+</dialog>
+
+    <script>window.ORBITAL_ROOT = '/';</script>
+    <script src="/js/orbital.js" defer></script>
+  </body>
+</html>

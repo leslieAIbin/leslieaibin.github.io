@@ -1,0 +1,498 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+  <head>
+
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#050b18">
+<meta name="color-scheme" content="dark light">
+<title>从你按下回车到大模型吐出第一个字：TTFT 全链路拆解 | Leslie Zhang</title>
+<meta name="description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta name="author" content="Leslie Zhang">
+<link rel="canonical" href="https://leslieaibin.github.io/2026/04/21/attention-field/%E4%BB%8E%E4%BD%A0%E6%8C%89%E4%B8%8B%E5%9B%9E%E8%BD%A6%E5%88%B0%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%90%90%E5%87%BA%E7%AC%AC%E4%B8%80%E4%B8%AA%E5%AD%97/">
+<link rel="icon" href="/imgs/01.jpg">
+<link rel="alternate" type="application/atom+xml" title="Leslie Zhang" href="/atom.xml">
+<meta property="og:type" content="article">
+<meta property="og:title" content="从你按下回车到大模型吐出第一个字：TTFT 全链路拆解 | Leslie Zhang">
+<meta property="og:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta property="og:url" content="https://leslieaibin.github.io/2026/04/21/attention-field/%E4%BB%8E%E4%BD%A0%E6%8C%89%E4%B8%8B%E5%9B%9E%E8%BD%A6%E5%88%B0%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%90%90%E5%87%BA%E7%AC%AC%E4%B8%80%E4%B8%AA%E5%AD%97/">
+<meta property="og:image" content="https://leslieaibin.github.io/2026/04/21/attention-field/%E4%BB%8E%E4%BD%A0%E6%8C%89%E4%B8%8B%E5%9B%9E%E8%BD%A6%E5%88%B0%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%90%90%E5%87%BA%E7%AC%AC%E4%B8%80%E4%B8%AA%E5%AD%97/illustrations/ttft-pipeline/01-infographic-seven-layers-overview.webp">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="从你按下回车到大模型吐出第一个字：TTFT 全链路拆解 | Leslie Zhang">
+<meta name="twitter:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta name="twitter:image" content="https://leslieaibin.github.io/2026/04/21/attention-field/%E4%BB%8E%E4%BD%A0%E6%8C%89%E4%B8%8B%E5%9B%9E%E8%BD%A6%E5%88%B0%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%90%90%E5%87%BA%E7%AC%AC%E4%B8%80%E4%B8%AA%E5%AD%97/illustrations/ttft-pipeline/01-infographic-seven-layers-overview.webp">
+<script>
+  (function () {
+    var saved = localStorage.getItem('orbital-theme');
+    var theme = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    document.documentElement.dataset.theme = theme;
+  })();
+</script>
+<link rel="stylesheet" href="/css/orbital.css">
+<meta name="generator" content="Hexo 5.2.0"></head>
+  <body class="page-post">
+    <a class="skip-link" href="#main-content">跳到主要内容</a>
+    <div class="reading-progress" data-reading-progress></div>
+    <header class="site-header" data-header>
+  <div class="nav-shell">
+    <a class="brand" href="/" aria-label="返回首页">
+      <span class="brand-mark" aria-hidden="true"><img src="/images/brand/leslie-mythos-avatar.webp" alt="" width="512" height="512"></span>
+      <span class="brand-copy">
+        <strong>LESLIE</strong>
+        <small>REAL-WORLD AGENTS</small>
+      </span>
+    </a>
+
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav" data-nav-toggle>
+      <span></span><span></span>
+      <span class="sr-only">打开导航</span>
+    </button>
+
+    <nav class="main-nav" id="main-nav" aria-label="主导航" data-nav>
+      
+        <a href="/" class="">首页</a>
+      
+        <a href="/writing/" class="">写作</a>
+      
+        <a href="/projects/" class="">项目</a>
+      
+        <a href="/about/" class="">关于</a>
+      
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换明暗主题">
+        <span class="theme-toggle__sun" aria-hidden="true">☼</span>
+        <span class="theme-toggle__moon" aria-hidden="true">◐</span>
+      </button>
+      <button class="ask-nav" type="button" data-ask-open>ASK LESLIE</button>
+    </nav>
+  </div>
+</header>
+
+    <main id="main-content"><article class="post-shell">
+  <header class="post-hero shell">
+    <a class="post-back" href="/writing/">← 返回写作</a>
+    <div class="post-hero__meta">
+      <time datetime="2026-04-21">2026 年 04 月 21 日</time>
+      <span>14 分钟阅读</span>
+    </div>
+    <h1>从你按下回车到大模型吐出第一个字：TTFT 全链路拆解</h1>
+    
+    <div class="chip-row"><a href="/tags/LLM/">LLM</a><a href="/tags/Inference/">Inference</a><a href="/tags/KV-Cache/">KV-Cache</a><a href="/tags/TTFT/">TTFT</a><a href="/tags/Prefill/">Prefill</a><a href="/tags/Tokenization/">Tokenization</a><a href="/tags/Streaming/">Streaming</a></div>
+  </header>
+
+  <div class="post-cover shell"><img src="/2026/04/21/attention-field/%E4%BB%8E%E4%BD%A0%E6%8C%89%E4%B8%8B%E5%9B%9E%E8%BD%A6%E5%88%B0%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%90%90%E5%87%BA%E7%AC%AC%E4%B8%80%E4%B8%AA%E5%AD%97/illustrations/ttft-pipeline/01-infographic-seven-layers-overview.webp" alt="从你按下回车到大模型吐出第一个字：TTFT 全链路拆解"></div>
+
+  <div class="post-layout shell">
+    <aside class="post-toc" aria-label="文章目录">
+      <span class="aside-title">目录</span>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BC%95%E8%A8%80"><span class="toc-text">引言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%AE%A2%E6%88%B7%E7%AB%AF%EF%BC%9A%E4%BB%8E%E6%8C%89%E9%94%AE%E5%88%B0-HTTP-%E8%AF%B7%E6%B1%82%E5%87%BA%E9%97%A8"><span class="toc-text">1. 客户端：从按键到 HTTP 请求出门</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E6%8E%A5%E5%85%A5%E4%B8%8E%E8%B0%83%E5%BA%A6%EF%BC%9A%E4%BB%8E%E5%85%AC%E7%BD%91%E5%88%B0-GPU-%E7%9A%84%E6%9C%80%E5%90%8E%E4%B8%80%E5%85%AC%E9%87%8C"><span class="toc-text">2. 接入与调度：从公网到 GPU 的最后一公里</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-Tokenize%EF%BC%9A%E8%A2%AB%E4%B8%A5%E9%87%8D%E4%BD%8E%E4%BC%B0%E7%9A%84-CPU-%E7%93%B6%E9%A2%88"><span class="toc-text">3. Tokenize：被严重低估的 CPU 瓶颈</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-Prefill%EF%BC%9ATTFT-%E7%9A%84%E7%9C%9F%E6%AD%A3%E5%A4%A7%E5%A4%B4"><span class="toc-text">4. Prefill：TTFT 的真正大头</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E9%87%87%E6%A0%B7%EF%BC%9A%E4%BB%8E-logits-%E5%88%B0%E7%AC%AC%E4%B8%80%E4%B8%AA-token"><span class="toc-text">5. 采样：从 logits 到第一个 token</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-Detokenize-%E4%B8%8E-SSE-%E5%9B%9E%E4%BC%A0"><span class="toc-text">6. Detokenize 与 SSE 回传</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-%E5%86%B7%E5%90%AF%E5%8A%A8-vs-%E7%83%AD%E8%AF%B7%E6%B1%82%EF%BC%9A%E5%90%8C%E4%B8%80%E6%9D%A1%E9%93%BE%E8%B7%AF%E7%9A%84%E4%B8%A4%E7%A7%8D%E5%91%BD%E8%BF%90"><span class="toc-text">7. 冷启动 vs 热请求：同一条链路的两种命运</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93%EF%BC%9ATTFT-%E6%98%AF%E6%80%8E%E4%B9%88%E8%A2%AB%E4%B8%80%E6%AF%AB%E7%A7%92%E4%B8%80%E6%AF%AB%E7%A7%92%E6%8A%A0%E5%87%BA%E6%9D%A5%E7%9A%84"><span class="toc-text">总结：TTFT 是怎么被一毫秒一毫秒抠出来的</span></a></li></ol>
+    </aside>
+    <div class="article-content"><h1 id="从你按下回车到大模型吐出第一个字：TTFT-全链路拆解"><a href="#从你按下回车到大模型吐出第一个字：TTFT-全链路拆解" class="headerlink" title="从你按下回车到大模型吐出第一个字：TTFT 全链路拆解"></a>从你按下回车到大模型吐出第一个字：TTFT 全链路拆解</h1><h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p><img src="illustrations/ttft-pipeline/01-infographic-seven-layers-overview.webp" alt="TTFT 七层全链路总览"></p>
+<p>你在 ChatGPT 输入框敲下「帮我写一段代码」，按下回车。光标停了 200~800 毫秒，第一个字「好」缓缓蹦出来。这段静默期工程上有个专门的名字，叫 <strong>TTFT</strong>（Time To First Token，首字延迟，从客户端发出请求到收到第一个生成 token 的时间）。</p>
+<p>很多人把 TTFT 简单理解为「网络延迟 + 一次模型推理」。但其实从你按键到屏幕亮起，请求至少穿过了七层系统，每一层都有自己要处理的事：</p>
+<table>
+<thead>
+<tr>
+<th>阶段</th>
+<th>工作</th>
+<th>主导成本</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1. 客户端</td>
+<td>键入、组装请求、TLS 出门</td>
+<td>网络往返（RTT）</td>
+</tr>
+<tr>
+<td>2. 接入与调度</td>
+<td>网关鉴权、限流、路由到推理节点</td>
+<td>队列等待</td>
+</tr>
+<tr>
+<td>3. Tokenize</td>
+<td>字符串切成 token id 序列</td>
+<td>CPU</td>
+</tr>
+<tr>
+<td>4. Prefill</td>
+<td>输入 token 一次性过模型，写 KV cache</td>
+<td>GPU 算力</td>
+</tr>
+<tr>
+<td>5. 采样</td>
+<td>从 logits 选出第一个 token</td>
+<td>GPU（很短）</td>
+</tr>
+<tr>
+<td>6. Detokenize &amp; 流式回传</td>
+<td>token id 还原成 UTF-8 字符，SSE 推回</td>
+<td>网络回程</td>
+</tr>
+<tr>
+<td>7. 客户端渲染</td>
+<td>浏览器收到 chunk，DOM 更新出字</td>
+<td>UI 线程</td>
+</tr>
+</tbody></table>
+<p>这篇文章把这七层逐个拆开。读完你会知道：你看到的那个「好」字，是怎么从一次按键事件，变成 GPU 上的一次矩阵乘法，再变回 SSE 流里的一个字符的。</p>
+<hr>
+<h2 id="1-客户端：从按键到-HTTP-请求出门"><a href="#1-客户端：从按键到-HTTP-请求出门" class="headerlink" title="1. 客户端：从按键到 HTTP 请求出门"></a>1. 客户端：从按键到 HTTP 请求出门</h2><p><img src="illustrations/ttft-pipeline/02-infographic-client-request-flow.webp" alt="客户端发起请求的四步"></p>
+<p>链路的起点其实不是按键本身，而是<strong>输入法</strong>（IME，Input Method Editor，负责把键盘扫描码转成文字字符）。中文输入法会先把拼音缓冲在自己的窗口里，按空格才把候选词提交给宿主输入框。这一步对延迟没影响，但解释了为什么中文用户的「按下回车」往往比英文用户晚几百毫秒。</p>
+<p>文字进入输入框后，前端框架（React、Vue 之类）通过受控组件维护一个 state，按下「发送」时会做四件事：</p>
+<ol>
+<li><strong>打包消息</strong>：把当前输入和<strong>对话历史</strong>（context）拼成一个数组，结构通常是 <code>[&#123;role: &quot;system&quot;&#125;, &#123;role: &quot;user&quot;&#125;, &#123;role: &quot;assistant&quot;&#125;, ...]</code>，符合 OpenAI/Anthropic 的 Chat API 协议。</li>
+<li><strong>DNS 解析</strong>：把 <code>api.openai.com</code> 之类的域名解析成 IP。浏览器、操作系统、本地路由器层层缓存，命中缓存时延接近 0；冷查询要走递归解析，可能 20~100ms。</li>
+<li><strong>TCP/TLS 握手</strong>：TLS（Transport Layer Security，传输层安全协议，HTTPS 的 S）的完整握手要 1~2 个 RTT（Round Trip Time，一次网络往返时间）。<strong>会话复用</strong>（Session Resumption）和 <strong>TLS 1.3 的 0-RTT</strong> 能省掉这部分。生产 SDK 几乎都开了 HTTP/2 的连接池，单条 TCP 上多路复用多个请求，握手成本被摊销到接近零。</li>
+<li><strong>写请求体</strong>：通常带一个 <code>stream: true</code> 字段，告诉服务端要走 <strong>SSE</strong>（Server-Sent Events，一种基于 HTTP 长连接的单向流式协议，服务端逐块 push 数据，客户端按 <code>\n\n</code> 分隔事件），而不是一次性返回完整响应。</li>
+</ol>
+<p>第一个字之前，客户端能影响的延迟其实就两块：地理距离决定的 RTT（北京到 us-east-1 大约 180ms）和连接是否复用。其他几乎全在服务端。</p>
+<hr>
+<h2 id="2-接入与调度：从公网到-GPU-的最后一公里"><a href="#2-接入与调度：从公网到-GPU-的最后一公里" class="headerlink" title="2. 接入与调度：从公网到 GPU 的最后一公里"></a>2. 接入与调度：从公网到 GPU 的最后一公里</h2><p><img src="illustrations/ttft-pipeline/03-infographic-gateway-scheduler-stack.webp" alt="从 CDN 边缘到推理调度器的三层架构"></p>
+<p>请求落地后，先经过一段「外围基础设施」才到推理引擎。</p>
+<p><strong>边缘网关</strong>（Edge Gateway，部署在 CDN 节点上的反向代理，比如 Cloudflare、AWS CloudFront）做三件事：</p>
+<ul>
+<li><strong>TLS 终止</strong>（TLS Termination，在边缘就解开 HTTPS，回源用明文 HTTP，节省后端 CPU）。</li>
+<li><strong>WAF</strong>（Web Application Firewall，Web 应用防火墙，过滤 SQL 注入、XSS、prompt injection 黑名单等）。</li>
+<li><strong>就近接入</strong>（Anycast 路由，让客户端 TCP 直接连到最近的 PoP 节点，把长距离 RTT 转移到 CDN 内部的优化骨干网）。</li>
+</ul>
+<p>然后到 <strong>API Gateway</strong>（API 网关，平台层入口，负责鉴权、配额、路由）：</p>
+<table>
+<thead>
+<tr>
+<th>检查项</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>鉴权</td>
+<td>校验 <code>Authorization: Bearer sk-...</code> 的 API Key 是否有效、未过期</td>
+</tr>
+<tr>
+<td>限流（Rate Limiting）</td>
+<td>用令牌桶（Token Bucket）或漏桶（Leaky Bucket）算法控制 QPS（Queries Per Second，每秒请求数）和 TPM（Tokens Per Minute，每分钟 token 数）</td>
+</tr>
+<tr>
+<td>配额（Quota）</td>
+<td>当月预付费用是否还够</td>
+</tr>
+<tr>
+<td>请求校验</td>
+<td>模型名是否合法、消息体大小是否超 context window（上下文窗口）</td>
+</tr>
+</tbody></table>
+<p>通过之后，请求进入 <strong>推理调度器</strong>（Inference Scheduler）。主流开源实现是 <strong>vLLM</strong>（UC Berkeley 开源，PagedAttention 论文的参考实现）和 <strong>SGLang</strong>，闭源云厂商一般有自研。调度器的任务是把请求塞进 GPU 上跑的某个 <strong>inference engine</strong>（推理引擎进程）的批次里。</p>
+<p>这里有几个对 TTFT 影响极大的概念。</p>
+<p><strong>连续批处理</strong>（Continuous Batching，又叫 in-flight batching）。传统<strong>静态批处理</strong>（Static Batching）要等齐一个 batch 才一起跑，最后一个请求要等前面所有请求都生成完。连续批处理在每一步迭代结束后立刻把已完成的请求踢出、把新进来的请求塞进去，新请求平均只等半个 decode 步（10~30ms），不是半个完整生成。</p>
+<p><img src="illustrations/ttft-pipeline/04-infographic-continuous-batching.webp" alt="静态批处理 vs 连续批处理"></p>
+<p><strong>前缀缓存</strong>（Prefix Caching，又叫 Automatic Prompt Caching）。不同请求的 system prompt 往往相同，对应的 KV cache（下文详解）可以复用。vLLM 用前缀的 sha256 在内存中查表，命中就跳过这段的 prefill。Anthropic 的 prompt caching 把命中部分的输入价格打到 1/10，本质就是这个。</p>
+<p><strong>PD 分离</strong>（Prefill-Decode Disaggregation，prefill 和 decode 跑在不同 GPU 节点）。Prefill 是算力密集（compute-bound），decode 是显存带宽密集（memory-bound），混在一起会互相抢资源。PD 分离把两类负载放到不同硬件上，prefill 节点甚至可以用更便宜的算力卡。代价是 KV cache 要在节点间传输，这又催生了 <strong>NVLink</strong>（NVIDIA 的卡间高速互连，900GB/s 量级）和 <strong>RDMA</strong>（Remote Direct Memory Access，绕过 CPU 直接访问远程内存）成为标配。</p>
+<p><img src="illustrations/ttft-pipeline/05-infographic-pd-disaggregation.webp" alt="Prefill-Decode 分离架构"></p>
+<p>到这一步，请求才真正落到一张特定的 GPU 上，准备开始算。前面这几层加起来通常占 TTFT 的 30~80ms。大型平台的尾延迟（P99）主要就卡在调度排队上。</p>
+<hr>
+<h2 id="3-Tokenize：被严重低估的-CPU-瓶颈"><a href="#3-Tokenize：被严重低估的-CPU-瓶颈" class="headerlink" title="3. Tokenize：被严重低估的 CPU 瓶颈"></a>3. Tokenize：被严重低估的 CPU 瓶颈</h2><p><img src="illustrations/ttft-pipeline/06-infographic-tokenize-flow.webp" alt="Tokenize 把字符串切成 token id 序列"></p>
+<p>模型不认识文字，只认识数字。<strong>Tokenizer</strong>（分词器）的作用就是把字符串切成一串整数 ID。</p>
+<p>主流的两个算法：</p>
+<p><strong>BPE</strong>（Byte Pair Encoding，字节对编码）。从单字符开始，统计训练语料中频率最高的相邻字符对，合并成新 token，重复几万次。GPT 系列用的是 BPE 的字节级变种（<strong>Byte-level BPE</strong>，先把字符串编码成 UTF-8 字节再 BPE，词表里没有「未知字」）。</p>
+<p><strong>SentencePiece</strong>。Google 提出，把空格也当作一个普通字符（用 <code>▁</code> 表示），适合空格不分词的语言（中文、日文）。LLaMA、Gemma 用的是它。</p>
+<p>每个 token 在词表里有一个固定 ID（比如 GPT-4o 的词表大小约 20 万），tokenize 的输出就是一个 <code>int32[]</code>。</p>
+<p>这一步有三个常被忽略的工程细节。</p>
+<p><strong>中文 token 密度高。</strong> 英文平均 4 个字符 1 个 token，中文 1<del>2 个字符 1 个 token。同样长度的字符串，中文 prompt 的 token 数大约是英文的 2</del>3 倍，直接放大 prefill 时间和 API 费用。如果你按英文的经验估算 token 数和成本，中文场景下会偏差 2~3 倍。</p>
+<p><strong>Tokenize 是 CPU 工作，会成为瓶颈。</strong> 长 prompt（10 万 token 量级）做一次 BPE 在 Python 里要几百毫秒。HuggingFace 的 <code>tokenizers</code> 库（Rust 实现）能压到几十毫秒，所以生产推理引擎全部用 Rust 或 C++ 的 tokenizer，绝不在 Python 主线程里跑。</p>
+<p><strong>特殊 token 注入。</strong> Chat 模型在 tokenize 时不是直接把 messages 拼起来，而是用 <strong>chat template</strong>（一段 Jinja2 模板）把对话格式化成单一字符串，再插入 <code>&lt;|im_start|&gt;</code>、<code>&lt;|im_end|&gt;</code>、<code>&lt;|begin_of_text|&gt;</code> 这些<strong>特殊 token</strong>（special token，词表中保留的、用于结构化对话的标记）。不同模型的特殊 token 不一样，用错 template 模型会胡言乱语。这是开源模型部署最常见的坑。</p>
+<p>Tokenize 完成后，调度器把 token id 数组送到 GPU。一段几千 token 的 prompt 在数据传输上几乎可以忽略（PCIe 4.0 的 32GB/s 带宽），真正花时间的是接下来的 prefill。</p>
+<hr>
+<h2 id="4-Prefill：TTFT-的真正大头"><a href="#4-Prefill：TTFT-的真正大头" class="headerlink" title="4. Prefill：TTFT 的真正大头"></a>4. Prefill：TTFT 的真正大头</h2><p><img src="illustrations/ttft-pipeline/07-infographic-transformer-token-path.webp" alt="单个 token 在 Transformer 中的完整路径"></p>
+<p><strong>Prefill</strong>（预填充阶段）是把整段输入 token 一次性过一遍 Transformer 模型，目的是为后续 decode 准备好 <strong>KV cache</strong>。这是 TTFT 中最重的一步。</p>
+<p>为了讲清楚 prefill 在干嘛，先快速过一遍 Transformer 推理时一个 token 经历了什么：</p>
+<ol>
+<li><strong>Embedding</strong>：token id 通过 embedding 矩阵（一个 <code>[vocab_size, hidden_size]</code> 的查表）变成一个稠密向量。</li>
+<li><strong>N 层 Transformer block</strong>：每层包含 <strong>self-attention</strong>（自注意力）和 <strong>FFN</strong>（Feed-Forward Network，前馈网络）。Self-attention 内部为每个 token 算出三个向量 <strong>Q</strong>（Query，查询）、<strong>K</strong>（Key，键）、<strong>V</strong>（Value，值），然后做 <code>softmax(QK^T / √d) · V</code> 把当前 token 和所有历史 token 的信息加权融合。</li>
+<li><strong>LM Head</strong>：最后一层输出再过一个线性层映射回 <code>[vocab_size]</code> 大小的 <strong>logits</strong>（未归一化的分数向量）。</li>
+</ol>
+<p><strong>KV cache</strong>（键值缓存）是关键优化。每个 token 在每层都会算出 K 和 V 向量，decode 阶段每生成一个新 token 时，新 token 的 Q 要和所有历史 token 的 K、V 做注意力。如果每步都重新算所有历史 token 的 K、V，复杂度是 O(N²)；把历史 K、V 缓存下来，每步只需要算新 token 的 K、V，复杂度降到 O(N)。代价是显存：KV cache 大小 ≈ <code>2 × num_layers × num_heads × head_dim × seq_len × batch_size × dtype_bytes</code>，一个 70B 模型在 8K 上下文 + batch 32 下，KV cache 就要十几 GB。</p>
+<p><img src="illustrations/ttft-pipeline/08-infographic-kv-cache-principle.webp" alt="KV cache 把 O(N²) 砍到 O(N)"></p>
+<p>Prefill 阶段在干的就是「为输入的每个 token 在每一层都算出 K 和 V，并写入 KV cache」。N 个输入 token 一次性 forward，矩阵乘法的形状是 <code>[N, hidden] × [hidden, hidden]</code>，N 很大时这是个算力密集（compute-bound）操作，GPU 的 Tensor Core 利用率能压到 50%+。</p>
+<p>Prefill 时间近似线性于输入 token 数。实测在 H100 上跑 70B 模型，每千个输入 token 大约 30<del>80ms。所以一个 8K token 的长上下文请求，光 prefill 就要 240</del>640ms。这就是 TTFT 里最大的那块。</p>
+<p>围绕 prefill 的优化主要有四种。</p>
+<p><strong>Prompt Caching（前缀复用）。</strong> 上一节提过，前缀如果命中过往请求的 KV cache，这部分 prefill 直接跳过。多轮对话场景下，第二轮请求的 system prompt + 第一轮历史全是缓存命中，TTFT 能从几百 ms 降到几十 ms。Anthropic、OpenAI、Google 都已经把这个能力对外开放。</p>
+<p><strong>Chunked Prefill（分块预填充）。</strong> 把超长 prompt 切成多个小块（比如每块 512 token），混在 decode 批次里跑。好处是不会因为一个长 prompt 卡住整个 GPU，让其他请求的 decode 持续推进，降低尾延迟。代价是单个 prefill 的 wall-clock 时间略增。vLLM 默认开启。</p>
+<p><strong>Speculative Decoding（投机采样）。</strong> 用一个小模型（draft model）先快速生成几个候选 token，大模型一次性验证。这个主要降的是 ITL（Inter-Token Latency，token 间延迟），对 TTFT 几乎没影响。TTFT 看的是第一个 token 出来之前的所有耗时，投机采样作用在 decode 阶段。</p>
+<p><strong>FlashAttention / PagedAttention。</strong> 前者是 attention 计算的内存访问优化，把中间结果留在 SRAM 里不写回 HBM（HBM 即 High Bandwidth Memory，GPU 的高带宽显存）；后者是 KV cache 的分页管理，类似操作系统虚拟内存，避免大块连续显存碎片化。两者都能直接缩短 prefill 时间，是现代推理引擎的标配。</p>
+<p><img src="illustrations/ttft-pipeline/09-infographic-prefill-optimizations.webp" alt="Prefill 的四种优化手段"></p>
+<hr>
+<h2 id="5-采样：从-logits-到第一个-token"><a href="#5-采样：从-logits-到第一个-token" class="headerlink" title="5. 采样：从 logits 到第一个 token"></a>5. 采样：从 logits 到第一个 token</h2><p><img src="illustrations/ttft-pipeline/10-infographic-sampling-pipeline.webp" alt="从 logits 到 token id 的采样链路"></p>
+<p>Prefill 跑完，模型给出最后一个输入 token 位置的 logits,一个长度等于词表大小的浮点数组（GPT-4o 大约 20 万维），每一维代表「下一个 token 是这个 ID 的未归一化分数」。</p>
+<p>把 logits 变成「一个具体的 token id」叫采样（Sampling）。常见参数：</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Temperature</strong></td>
+<td>温度系数。先做 <code>logits / T</code>，T &lt; 1 让分布变尖（更确定），T &gt; 1 变平（更随机），T = 0 等价于贪心</td>
+</tr>
+<tr>
+<td><strong>Top-k</strong></td>
+<td>只保留分数最高的 k 个 token，其他置 -∞，再 softmax 采样</td>
+</tr>
+<tr>
+<td><strong>Top-p</strong>（Nucleus Sampling）</td>
+<td>按概率从高到低累加，累计达 p（比如 0.9）就截断，剩下的 token 重新归一化后采样</td>
+</tr>
+<tr>
+<td><strong>Repetition Penalty</strong></td>
+<td>已生成过的 token 分数打折，抑制重复</td>
+</tr>
+<tr>
+<td><strong>Greedy / Argmax</strong></td>
+<td>直接取 logits 最大的那个，等价于 T=0、top-k=1</td>
+</tr>
+</tbody></table>
+<p><strong>Softmax</strong>（归一化指数函数，把任意实数向量映射到「和为 1 的概率分布」）在采样链路里至少调用一次。</p>
+<p>采样本身很便宜，一次 softmax 加一次按概率抽样，单 token 在 GPU 上是微秒级。但 logit processor（logits 处理链,可以插入 grammar 约束、禁止 token、JSON Schema 强制格式等）如果开了复杂的语法约束（比如 outlines、xgrammar），会显著增加延迟。</p>
+<p>采样出来的 token id 就是「第一个 token」。但它还不是「第一个字」,因为 token 不一定对应一个完整的可显示字符。</p>
+<hr>
+<h2 id="6-Detokenize-与-SSE-回传"><a href="#6-Detokenize-与-SSE-回传" class="headerlink" title="6. Detokenize 与 SSE 回传"></a>6. Detokenize 与 SSE 回传</h2><p><img src="illustrations/ttft-pipeline/11-infographic-incremental-detokenize.webp" alt="增量 detokenize 的字节缓冲机制"></p>
+<p>Token id 要变回字符串，这一步叫 detokenize（反分词）。看起来是查表的反向操作，实际上有个非常烦人的细节:单个 token 不一定对应一个完整的 UTF-8 字符。</p>
+<p>字节级 BPE 的词表里，单个 token 可能只是「半个汉字」。「你」这个字 UTF-8 编码是 <code>E4 BD A0</code> 三个字节，可能被切成两个 token：<code>E4 BD</code> + <code>A0</code>。如果 detokenize 后立刻 SSE 推送 <code>E4 BD</code>，客户端拿到一个残缺的多字节序列，要么显示乱码,要么前端 UTF-8 解码报错。</p>
+<p>所以推理引擎的 detokenize 是增量（incremental）的:维护一个待提交的字节缓冲区，每生成一个新 token，先尝试解码累积的字节序列；只有当解出合法的 UTF-8 字符时,才把这部分字符串推到 SSE 里。这意味着第一个 token 不一定立刻能变成第一个屏幕上的字符,有时候要等到第二、第三个 token 一起来才能拼出一个汉字。</p>
+<p>SSE 协议本身很简单。HTTP 响应头里 <code>Content-Type: text/event-stream</code>、<code>Cache-Control: no-cache</code>，body 部分逐块发送，每一块是 <code>data: &#123;...&#125;\n\n</code> 格式。OpenAI/Anthropic 的实现里，每个 event 的 data 字段是一个 JSON 字符串，包含 <code>delta</code>（增量内容）、<code>finish_reason</code>（结束原因，<code>stop</code>/<code>length</code>/<code>tool_use</code>/<code>content_filter</code> 等）等字段。最后一个 event 是 <code>data: [DONE]\n\n</code>。</p>
+<p>回程的物理路径和入口几乎对称：inference engine 写入响应队列 → API Gateway 透传（注意网关不能缓存 SSE，否则会破坏流式语义）→ CDN edge 转发 → 客户端 TCP 接收。</p>
+<p>这一段还有几个常见的工程坑。</p>
+<p>中间层缓冲是最容易踩的一个。Nginx 默认开启 <code>proxy_buffering on</code>，会把后端的 SSE 流缓冲一定量再下发，直接破坏流式效果，第一个字可能要等几秒才出来。生产配置必须显式 <code>proxy_buffering off</code> 并且 <code>proxy_http_version 1.1; proxy_set_header Connection &quot;&quot;</code> 保持长连接。</p>
+<p>HTTP/2 在丢包场景下还有 head-of-line blocking（队头阻塞，TCP 层一个包丢了,整个连接的所有 stream 都卡住）。HTTP/3 基于 QUIC（运行在 UDP 上的传输协议）解决了这个问题，对移动网络下的 TTFT 有明显改善。</p>
+<p>最后一公里在浏览器里。浏览器收到 SSE chunk 后还要触发 React/Vue 的 state 更新和 DOM 重排，高频更新（每 token 一次）会让 UI 线程卡顿。生产前端通常用 <code>requestAnimationFrame</code> 把多个 chunk 合并到一帧渲染，60fps 下大概 16ms 合一次。</p>
+<p>第一个字到了你眼前，TTFT 才算结束。</p>
+<hr>
+<h2 id="7-冷启动-vs-热请求：同一条链路的两种命运"><a href="#7-冷启动-vs-热请求：同一条链路的两种命运" class="headerlink" title="7. 冷启动 vs 热请求：同一条链路的两种命运"></a>7. 冷启动 vs 热请求：同一条链路的两种命运</h2><p><img src="illustrations/ttft-pipeline/12-infographic-cold-vs-hot-request.webp" alt="冷请求 vs 热请求的 TTFT 对比"></p>
+<p>同一段链路，有没有命中前缀缓存，TTFT 可以差一个数量级。下面是一个具体场景，方便你建立量级感。</p>
+<p>场景是这样:8K token 的 system prompt + 一段几百 token 的对话历史，用户提一个新问题（200 token 左右）。模型用 70B Decoder-Only（解码器架构,目前主流大模型的形态），部署在 H100 上，PD 分离 + chunked prefill 已开。</p>
+<p>冷请求（首次提问，缓存全 miss）：</p>
+<table>
+<thead>
+<tr>
+<th>阶段</th>
+<th>估算</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>客户端 + 跨区 TLS 出门</td>
+<td>80ms（连接复用，无完整握手）</td>
+</tr>
+<tr>
+<td>网关鉴权 + 调度器排队</td>
+<td>30ms</td>
+</tr>
+<tr>
+<td>Tokenize 8K+ token</td>
+<td>20ms</td>
+</tr>
+<tr>
+<td><strong>Prefill 8.2K token</strong></td>
+<td><strong>≈ 500ms</strong>（每千 token ~60ms）</td>
+</tr>
+<tr>
+<td>采样 + detokenize 第一个字符</td>
+<td>10ms</td>
+</tr>
+<tr>
+<td>SSE 第一帧回到浏览器</td>
+<td>70ms</td>
+</tr>
+<tr>
+<td><strong>TTFT 合计</strong></td>
+<td><strong>≈ 710ms</strong></td>
+</tr>
+</tbody></table>
+<p>热请求（同一会话第二轮，前 8K + 历史已是缓存前缀）：</p>
+<table>
+<thead>
+<tr>
+<th>阶段</th>
+<th>估算</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>客户端 + 跨区 TLS 出门</td>
+<td>80ms</td>
+</tr>
+<tr>
+<td>网关鉴权 + 调度器排队</td>
+<td>30ms</td>
+</tr>
+<tr>
+<td>Tokenize 200 token 增量</td>
+<td>2ms</td>
+</tr>
+<tr>
+<td><strong>Prefill 200 个新 token</strong>（前 8K 缓存命中跳过）</td>
+<td><strong>≈ 15ms</strong></td>
+</tr>
+<tr>
+<td>采样 + detokenize 第一个字符</td>
+<td>10ms</td>
+</tr>
+<tr>
+<td>SSE 第一帧回到浏览器</td>
+<td>70ms</td>
+</tr>
+<tr>
+<td><strong>TTFT 合计</strong></td>
+<td><strong>≈ 207ms</strong></td>
+</tr>
+</tbody></table>
+<p>差距来自 prefill 从 500ms 降到 15ms，省下来的 485ms 全是 GPU 上的浮点运算。</p>
+<p>注意一个反直觉的细节:网络往返反而成了热请求的瓶颈。冷请求里 prefill 占了 70%，网络只占 20%；热请求里网络占了 70%+，prefill 几乎可忽略。这意味着热路径上继续优化 prefill 收益递减，下一步该优化的是就近接入和长连接保持。</p>
+<p>所以大厂都在做 regional inference（按地区部署推理集群）和 edge inference（把小模型推到边缘节点）。当 prefill 已经被 prompt caching 砍到地板上，网络延迟才是 P99 TTFT 的天花板。</p>
+<hr>
+<h2 id="总结：TTFT-是怎么被一毫秒一毫秒抠出来的"><a href="#总结：TTFT-是怎么被一毫秒一毫秒抠出来的" class="headerlink" title="总结：TTFT 是怎么被一毫秒一毫秒抠出来的"></a>总结：TTFT 是怎么被一毫秒一毫秒抠出来的</h2><p>把上面七层串起来，一个冷启动（无 prompt cache 命中）的请求典型耗时分布：</p>
+<table>
+<thead>
+<tr>
+<th>阶段</th>
+<th>典型耗时</th>
+<th>优化手段</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>客户端 + 网络出门</td>
+<td>30~200ms</td>
+<td>TLS 1.3 0-RTT、HTTP/2 连接复用、就近接入</td>
+</tr>
+<tr>
+<td>网关鉴权与排队</td>
+<td>10~80ms</td>
+<td>限流前置、连续批处理</td>
+</tr>
+<tr>
+<td>Tokenize</td>
+<td>5~50ms</td>
+<td>Rust/C++ 实现的 tokenizer</td>
+</tr>
+<tr>
+<td>Prefill</td>
+<td>50~600ms</td>
+<td>Prompt caching、chunked prefill、PagedAttention</td>
+</tr>
+<tr>
+<td>采样</td>
+<td>&lt; 5ms</td>
+<td>logit processor 简化</td>
+</tr>
+<tr>
+<td>Detokenize + SSE 第一帧</td>
+<td>5~30ms</td>
+<td>增量 detokenize、关闭中间层 buffer</td>
+</tr>
+<tr>
+<td>客户端渲染第一字</td>
+<td>&lt; 16ms</td>
+<td>rAF 节流</td>
+</tr>
+</tbody></table>
+<p>数字加起来，冷请求 TTFT 通常落在 200ms ~ 1.5s 之间；命中前缀缓存的热请求可以压到 100ms 以内。</p>
+<p>回头看，Prompt Caching 是收益最大的一颗银弹，它直接把 prefill 那块大头砍掉。这也是为什么所有大厂都在 2024~2025 年密集上线这个能力，对延迟和成本同时降一个数量级，几乎没有副作用。</p>
+<p>紧随其后的是 PD 分离、连续批处理、PagedAttention 这套组合拳。它们解决的是同一个问题:让 GPU 永远不闲。Prefill 算力密集时 decode 不要抢、decode 显存密集时 KV cache 不要碎、有空位就立刻塞新请求进来。</p>
+<p>再往后才是网络层。把模型推到离用户最近的 PoP，HTTP/3 取代 HTTP/2，TLS 1.3 取代 1.2。每一项单独看只省几十 ms，加起来对 P99 尾延迟的影响相当可观。</p>
+<p>还有一点容易被忽略:TTFT 的优化方向和 ITL（token 间延迟）的优化方向并不一致。Speculative Decoding、MoE（Mixture of Experts，专家混合，每次只激活部分参数）这些主要降的是 ITL；prompt caching、chunked prefill 主要降的是 TTFT。生产系统调优时要分清楚,P99 用户抱怨的是「半天不出字」（TTFT 高）还是「字蹦得太慢」（ITL 高），优化路径完全不同。</p>
+<hr>
+<p>回到最开始那个问题：你按下回车，到屏幕上出现第一个「好」字，中间发生了什么？</p>
+<p>一次 TLS 握手（也可能复用）、一次 DNS 查询（也可能命中缓存）、一次跨大洋的 TCP 往返、一次网关鉴权、一次调度器排队、一次 Rust tokenizer 的 BPE 切分、一次几百亿次浮点运算的 prefill、一次 softmax 采样、一次 UTF-8 字节缓冲、一次 SSE chunk 推送、一次浏览器 DOM 更新。</p>
+<p>每一步看起来都不复杂，但加在一起就是一场和延迟较劲的硬仗。下次再看到「第一个字慢」，你大概知道它卡在哪一层了。</p>
+<hr>
+<blockquote>
+<p>参考资料</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://docs.vllm.ai/">vLLM Documentation</a> PagedAttention、Continuous Batching 的参考实现</li>
+<li><a target="_blank" rel="noopener" href="https://docs.anthropic.com/en/docs/build-with-claude/prompt-caching">Anthropic Prompt Caching</a> 前缀缓存的官方文档</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/sgl-project/sglang">SGLang</a> 另一个开源推理引擎，RadixAttention 论文</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/Dao-AILab/flash-attention">FlashAttention</a> Tri Dao 的开山之作</li>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2311.18677">Splitwise</a> 微软关于 PD 分离的论文</li>
+</ul>
+</blockquote>
+</div>
+    <aside class="post-rail">
+      <span class="post-rail__line"></span>
+      <span>LESLIE / WRITING</span>
+    </aside>
+  </div>
+
+  <footer class="post-footer shell">
+    <div><h2>如果这篇文章帮到了你，<br>也许下一篇会更有意思。</h2></div>
+    <a class="button button--primary" href="/writing/">继续阅读 →</a>
+  </footer>
+</article>
+</main>
+    <footer class="site-footer">
+  <div class="footer-grid">
+    <div>
+      <p class="footer-kicker">Leslie Zhang</p>
+      <p class="footer-statement">流水不争先，<br>争的是滔滔不绝。</p>
+    </div>
+    <div class="footer-links">
+      <a href="https://github.com/leslieAIbin" target="_blank" rel="noreferrer">GitHub ↗</a>
+      <a href="https://www.instagram.com/leslieaibin/" target="_blank" rel="noreferrer">Instagram ↗</a>
+      <button type="button" data-wechat-open>微信 / WeChat</button>
+      <a href="mailto:aibinzhangleslie@gmail.com">Email ↗</a>
+      <a href="/atom.xml">RSS ↗</a>
+    </div>
+    <div class="footer-meta">
+      <span>© 2026 Leslie Zhang</span>
+      <span>Writing, research and working systems.</span>
+    </div>
+  </div>
+</footer>
+
+    <dialog class="ask-dialog" id="ask-leslie" aria-labelledby="ask-title">
+  <div class="ask-dialog__shell">
+    <div class="ask-dialog__topbar">
+      <div>
+        <h2 id="ask-title">Ask Leslie</h2>
+      </div>
+      <button class="icon-button" type="button" data-ask-close aria-label="关闭">×</button>
+    </div>
+    <p class="ask-dialog__intro">从本站公开文章中寻找答案。当前版本在浏览器本地检索，不上传问题，也不会编造不存在的经历。</p>
+    <form class="ask-form" data-ask-form>
+      <label class="sr-only" for="ask-query">输入问题</label>
+      <textarea id="ask-query" rows="2" placeholder="例如：Agent Runtime 应该怎么设计？" data-ask-input></textarea>
+      <button type="submit">检索知识库 <span aria-hidden="true">↗</span></button>
+    </form>
+    <div class="ask-suggestions" aria-label="推荐问题">
+      
+        <button type="button" data-ask-suggestion="Agent Runtime 应该怎么设计？">Agent Runtime 应该怎么设计？</button>
+      
+        <button type="button" data-ask-suggestion="如何让 AI 操控真实世界设备？">如何让 AI 操控真实世界设备？</button>
+      
+        <button type="button" data-ask-suggestion="Leslie 最近在研究什么？">Leslie 最近在研究什么？</button>
+      
+    </div>
+    <div class="ask-results" data-ask-results aria-live="polite">
+      <div class="ask-empty">
+        <p>输入一个问题，我会把你带到 Leslie 写过的相关内容。</p>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+    <dialog class="wechat-dialog" id="wechat-leslie" aria-labelledby="wechat-title">
+  <div class="wechat-dialog__shell">
+    <header>
+      <div>
+        <p class="section-label">WeChat</p>
+        <h2 id="wechat-title">微信联系</h2>
+      </div>
+      <button class="icon-button" type="button" data-wechat-close aria-label="关闭微信二维码">×</button>
+    </header>
+    <img src="/images/contact/wechat-leslie.png" alt="Leslie Zhang 的微信二维码" loading="lazy">
+    <p>扫码添加 Leslie，建议备注你的名字与来意。</p>
+  </div>
+</dialog>
+
+    <script>window.ORBITAL_ROOT = '/';</script>
+    <script src="/js/orbital.js" defer></script>
+  </body>
+</html>

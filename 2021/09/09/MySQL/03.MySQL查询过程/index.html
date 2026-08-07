@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+  <head>
+
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#050b18">
+<meta name="color-scheme" content="dark light">
+<title>03.一条SQL查询语句如何执行 | Leslie Zhang</title>
+<meta name="description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta name="author" content="Leslie Zhang">
+<link rel="canonical" href="https://leslieaibin.github.io/2021/09/09/MySQL/03.MySQL%E6%9F%A5%E8%AF%A2%E8%BF%87%E7%A8%8B/">
+<link rel="icon" href="/imgs/01.jpg">
+<link rel="alternate" type="application/atom+xml" title="Leslie Zhang" href="/atom.xml">
+<meta property="og:type" content="article">
+<meta property="og:title" content="03.一条SQL查询语句如何执行 | Leslie Zhang">
+<meta property="og:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta property="og:url" content="https://leslieaibin.github.io/2021/09/09/MySQL/03.MySQL%E6%9F%A5%E8%AF%A2%E8%BF%87%E7%A8%8B/">
+<meta property="og:image" content="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/37.jpg?raw=true">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="03.一条SQL查询语句如何执行 | Leslie Zhang">
+<meta name="twitter:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta name="twitter:image" content="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/37.jpg?raw=true">
+<script>
+  (function () {
+    var saved = localStorage.getItem('orbital-theme');
+    var theme = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    document.documentElement.dataset.theme = theme;
+  })();
+</script>
+<link rel="stylesheet" href="/css/orbital.css">
+<meta name="generator" content="Hexo 5.2.0"></head>
+  <body class="page-post">
+    <a class="skip-link" href="#main-content">跳到主要内容</a>
+    <div class="reading-progress" data-reading-progress></div>
+    <header class="site-header" data-header>
+  <div class="nav-shell">
+    <a class="brand" href="/" aria-label="返回首页">
+      <span class="brand-mark" aria-hidden="true"><img src="/images/brand/leslie-mythos-avatar.webp" alt="" width="512" height="512"></span>
+      <span class="brand-copy">
+        <strong>LESLIE</strong>
+        <small>REAL-WORLD AGENTS</small>
+      </span>
+    </a>
+
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav" data-nav-toggle>
+      <span></span><span></span>
+      <span class="sr-only">打开导航</span>
+    </button>
+
+    <nav class="main-nav" id="main-nav" aria-label="主导航" data-nav>
+      
+        <a href="/" class="">首页</a>
+      
+        <a href="/writing/" class="">写作</a>
+      
+        <a href="/projects/" class="">项目</a>
+      
+        <a href="/about/" class="">关于</a>
+      
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换明暗主题">
+        <span class="theme-toggle__sun" aria-hidden="true">☼</span>
+        <span class="theme-toggle__moon" aria-hidden="true">◐</span>
+      </button>
+      <button class="ask-nav" type="button" data-ask-open>ASK LESLIE</button>
+    </nav>
+  </div>
+</header>
+
+    <main id="main-content"><article class="post-shell">
+  <header class="post-hero shell">
+    <a class="post-back" href="/writing/">← 返回写作</a>
+    <div class="post-hero__meta">
+      <time datetime="2021-09-09">2021 年 09 月 09 日</time>
+      <span>7 分钟阅读</span>
+    </div>
+    <h1>03.一条SQL查询语句如何执行</h1>
+    
+    <div class="chip-row"><a href="/tags/MySQL/">MySQL</a></div>
+  </header>
+
+  <div class="post-cover shell"><img src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/37.jpg?raw=true" alt="03.一条SQL查询语句如何执行"></div>
+
+  <div class="post-layout shell">
+    <aside class="post-toc" aria-label="文章目录">
+      <span class="aside-title">目录</span>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%9E%E6%8E%A5%E5%99%A8"><span class="toc-text">连接器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9F%A5%E8%AF%A2%E7%BC%93%E5%AD%98"><span class="toc-text">查询缓存</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%86%E6%9E%90%E5%99%A8"><span class="toc-text">分析器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BC%98%E5%8C%96%E5%99%A8"><span class="toc-text">优化器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%89%A7%E8%A1%8C%E5%99%A8"><span class="toc-text">执行器</span></a></li></ol>
+    </aside>
+    <div class="article-content"><h1 id="一条SQL查询语句如何执行"><a href="#一条SQL查询语句如何执行" class="headerlink" title="一条SQL查询语句如何执行"></a>一条SQL查询语句如何执行</h1><p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/image-20210910095617441.png" alt="image-20210910095617441"></p>
+<p>MySQL可以分为Server层和存储引擎层两部分</p>
+<p>Server层包括 <strong>连接器、查询缓存、分析器、优化器、执行器</strong>等，涵盖了MySQL的大多数核心功能，以及所有的内置函数（如日期、时间、数学和加密函数等），所有跨存储引擎的功能都在这一层实现，比如存储过程，触发器，视图等。</p>
+<p>而存储引擎层负责数据的存储和提取。其架构模式是插件式的，支持InnoDB、MyISAM、Memory等多个存储引擎。现在最常用的存储引擎InnoDB，它从MySQL5.5.5版本开始成为默认存储引擎。</p>
+<p>也就是说，你执行create table建表的时候，如果不执行搜索引擎，默认的是innodb，不过，你也可以通过执行存储引擎的类型来选择别的引擎，比如在create table 语句中使用 engine=memory，来执行使用内存引擎创建表。不同存储引擎的表数据存取方式不同，支持的功能也不同。</p>
+<h2 id="连接器"><a href="#连接器" class="headerlink" title="连接器"></a>连接器</h2><p>第一步，你会先连接到这数据库上，这时候接待你的就是连接器。连接器负责跟客户端建立连接，获取权限，位置和管理连接。连接命令一般是这么写的：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql -h$ip -P$port -u$user -p</span><br></pre></td></tr></table></figure>
+
+<p>输完命令后，你就需要在交互对话里面输入密码。虽然密码也可以直接在-p后面卸载命令行中，但这样可能会导致你的密码泄露。</p>
+<ul>
+<li>如果用户名或密码不对，你就会收到一个”Access denied for user的错误，然后客户端程序结束执行。</li>
+<li>如果用户名密码认证通过，连接器会到权限表里面查出你拥有的权限。之后，这个连接里面的权限判断逻辑，都将依赖于此时读到的权限。</li>
+</ul>
+<p>这就意味着，一个用户成功建立连接后，即使你用管理员账号对这个用户的权限做了修改，也不会影响已经存在连接的权限。修改完成后，只有再新建的连接才会使用新的权限设置。<br>连接完成后，如果你没有后续的动作，这个连接就处于空闲状态，你可以在 show processlist令中看到它。文本中这个图是 show processlist的结果，其中的 Command列显示为Sleep的这一行，就表示现在系统里面有一个空闲连接</p>
+<p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/image-20210910103606002.png" alt="image-20210910103606002"></p>
+<p>客户端如果太长时间没动静，连接器就会自动将它断开。这个时间是由参数 wait timeout控制的，默认值是8小时。</p>
+<p>如果在连接被断开之后，客户端再次发送请求的话，就会收到一个错误提醒：Lost connection to MySQL server during query.这时候如果你要继续，就需要重连，然后再执行请求了数据库里面，长连接是指连接成功后，如果客户端持续有请求，则一直使用同一个连接。短连接则是指每次执行完很少的几次查询就断连接，下次查询再重新建立一个</p>
+<h2 id="查询缓存"><a href="#查询缓存" class="headerlink" title="查询缓存"></a>查询缓存</h2><p>连接建立完成后，你就可以执行 select语句了执行逻辑就会来到第二步：查询缓存MySQL拿到一个查询请求后，会先到查询缓存看看，之前是不是执行过这条语句。之前执行过的语句及其结果可能会以key- -value对的形式，被直接缓存在内存中。key是查询的语句， value是查询的结果。如果你的查询能够直接在这个缓存中找到key.那么这个 value就会被直接返回给客户端。<br>如果语句不在查询缓存中，就会继续后面的执行阶段执行完成后，执行结果会被存入查询缓存中。你可以看到，如果查询命中缓存， MySQ不需要执行后面的复杂操作，就可以直接返回结果，这个效率会很高。</p>
+<p>但是大多数情况下我会建议你不要使用查询缓存，为什么呢？因为查询缓存往往弊大于利。<br>查询缓存的失效非常频繁，只要有对一个表的更新，这个表上所有的查询缓存都会被清空。因此很可能你费劲地把结果存起来，还没使用呢，就被一个更新全清空了。对于更新压力大的数据库来说，查询缓存的命中率会非常低。除非你的业务就是有一张静态表，很长时间才会史新一次。</p>
+<p>比如，一个系统配置表，那这张表上的查询才适合使用查询缓存。<br>好在MSQL也提供了这种“按需使用”的方式。你可以将参数query cache_type设置成DEMAND，这样对于默认的SQL语句都不使用查询缓存。而对于你确定要使用查询缓存的语句，可以用 SQL CACHE显式指定，像下面这个语句一样：</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select SQL_CACHE from T where ID&#x3D;10：</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>需要注意的是， MySQL8.0版本直接将查询缓存的整块功能删掉了，也就是说8.0开始彻底没有这个功能了。</strong></p>
+<h2 id="分析器"><a href="#分析器" class="headerlink" title="分析器"></a>分析器</h2><p>如果没有命中查询缓存，就要开始真正执行语句了。首先，MQL需要知道你要做什么，因此需要对SQL语句做解析。</p>
+<p>分析器先会做“词法分析”。你输入的是由多个字符串和空格组成的一条SQL语句， MySQL需要识别出里面的字符串分别是什么，代表什么</p>
+<p>MySQL从你输入的”select这个关键字识别出来，这是一个查询语句。它也要把字符串“T识别成“名T，把字符串识别成列D做完了这些识别以后，就要做“语法分析”。根据词法分析的结果，语法分析器会根据语法规则，判断你输入的这个SQL语句是否满足MSQL语法</p>
+<p>如果你的语句不对，就会收到You have an error in your SQL syntax的错误提醒，比如下面这个语句 select少打了开头的字母s”。</p>
+<h2 id="优化器"><a href="#优化器" class="headerlink" title="优化器"></a>优化器</h2><p>经过了分析器，MySQL就知道你要做什么，在开始执行之前，要经过优化器的处理</p>
+<p>优化器是在表里面有多个索引的时候，决定使用哪个索引，或者在一个语句有多表关联（join）的时候，决定各个表的连接顺序。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select * <span class="function">from t1 join t2 <span class="title">using</span><span class="params">(ID)</span> where t1.c</span>=<span class="number">10</span> and t2.d = <span class="number">20</span>;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>既可以先从表t1里面取出 c = 10的记录的ID值，在根据ID关联到表t2，再判断t2里面d的值是否等于20</li>
+<li>也可以先从表t2里面取出d=20的记录的id值，在根据ID值关联到t1，在判断t1里面c的值是否等于10</li>
+</ul>
+<p>这两种执行方法的逻辑结果是一样的，但执行的效率会有不同，而优化器的作用是决定选择使用哪个方案</p>
+<h2 id="执行器"><a href="#执行器" class="headerlink" title="执行器"></a>执行器</h2><p>MSQL通过分析器知道了你要做什么，通过优化器知道了该怎么做，于是就进入了执行器阶段，开始执行语句。</p>
+<p>开始执行的时候，要先判断一下你对这个表T有没有执行查询的权限，如果没有，就会返回没有权限的错误，如下所示</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select * from where ID=<span class="number">10</span>;</span><br></pre></td></tr></table></figure>
+
+<p>如果有权限，就打开表继续执行，打开表的时候，执行器就会根据表的引擎定义，去使用这个引擎提供的接口</p>
+<p>比如我们这个例子中的表T中，D字段没有索引那么执行器的执行流程是这样的：</p>
+<ul>
+<li>调用InnoDB引擎接口取这个表的第一行，判断D值是不是10，如果不是则跳过，如果是则将这行存在结果集中</li>
+<li>调用引擎接口取“下一行”，重复相同的判断逻辑，直到取到这个表的最后一行。</li>
+<li>执行器将上述遍历过程中所有满足条件的行组成的记录集作为结果集返回给客户端至此，这个语句就执行完成了。</li>
+</ul>
+<p>对于有索引的表，执行的逻辑也差不多。第一次调用的是“取满足条件的第一行”这个接口，之后循环取“满足条件的下一行”这个接口，这些接口都是引擎中已经定义好的你会在数据库的慢查询日志中看到一个 rows examined的字段，表示这个语句执行过程中扫描了多少行。这个值就是在执行器每次调用引擎获取数据行的时候累加的。</p>
+<p>在有些场景下，执行器调用一次，在引擎内部则扫描了多行，因此引擎扫描行数跟rowsexamined并不是完全相同的。我们后面会专门有一篇文章来讲存储引擎的内部机制，里面会有详细的说明。</p>
+</div>
+    <aside class="post-rail">
+      <span class="post-rail__line"></span>
+      <span>LESLIE / WRITING</span>
+    </aside>
+  </div>
+
+  <footer class="post-footer shell">
+    <div><h2>如果这篇文章帮到了你，<br>也许下一篇会更有意思。</h2></div>
+    <a class="button button--primary" href="/writing/">继续阅读 →</a>
+  </footer>
+</article>
+</main>
+    <footer class="site-footer">
+  <div class="footer-grid">
+    <div>
+      <p class="footer-kicker">Leslie Zhang</p>
+      <p class="footer-statement">流水不争先，<br>争的是滔滔不绝。</p>
+    </div>
+    <div class="footer-links">
+      <a href="https://github.com/leslieAIbin" target="_blank" rel="noreferrer">GitHub ↗</a>
+      <a href="https://www.instagram.com/leslieaibin/" target="_blank" rel="noreferrer">Instagram ↗</a>
+      <button type="button" data-wechat-open>微信 / WeChat</button>
+      <a href="mailto:aibinzhangleslie@gmail.com">Email ↗</a>
+      <a href="/atom.xml">RSS ↗</a>
+    </div>
+    <div class="footer-meta">
+      <span>© 2026 Leslie Zhang</span>
+      <span>Writing, research and working systems.</span>
+    </div>
+  </div>
+</footer>
+
+    <dialog class="ask-dialog" id="ask-leslie" aria-labelledby="ask-title">
+  <div class="ask-dialog__shell">
+    <div class="ask-dialog__topbar">
+      <div>
+        <h2 id="ask-title">Ask Leslie</h2>
+      </div>
+      <button class="icon-button" type="button" data-ask-close aria-label="关闭">×</button>
+    </div>
+    <p class="ask-dialog__intro">从本站公开文章中寻找答案。当前版本在浏览器本地检索，不上传问题，也不会编造不存在的经历。</p>
+    <form class="ask-form" data-ask-form>
+      <label class="sr-only" for="ask-query">输入问题</label>
+      <textarea id="ask-query" rows="2" placeholder="例如：Agent Runtime 应该怎么设计？" data-ask-input></textarea>
+      <button type="submit">检索知识库 <span aria-hidden="true">↗</span></button>
+    </form>
+    <div class="ask-suggestions" aria-label="推荐问题">
+      
+        <button type="button" data-ask-suggestion="Agent Runtime 应该怎么设计？">Agent Runtime 应该怎么设计？</button>
+      
+        <button type="button" data-ask-suggestion="如何让 AI 操控真实世界设备？">如何让 AI 操控真实世界设备？</button>
+      
+        <button type="button" data-ask-suggestion="Leslie 最近在研究什么？">Leslie 最近在研究什么？</button>
+      
+    </div>
+    <div class="ask-results" data-ask-results aria-live="polite">
+      <div class="ask-empty">
+        <p>输入一个问题，我会把你带到 Leslie 写过的相关内容。</p>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+    <dialog class="wechat-dialog" id="wechat-leslie" aria-labelledby="wechat-title">
+  <div class="wechat-dialog__shell">
+    <header>
+      <div>
+        <p class="section-label">WeChat</p>
+        <h2 id="wechat-title">微信联系</h2>
+      </div>
+      <button class="icon-button" type="button" data-wechat-close aria-label="关闭微信二维码">×</button>
+    </header>
+    <img src="/images/contact/wechat-leslie.png" alt="Leslie Zhang 的微信二维码" loading="lazy">
+    <p>扫码添加 Leslie，建议备注你的名字与来意。</p>
+  </div>
+</dialog>
+
+    <script>window.ORBITAL_ROOT = '/';</script>
+    <script src="/js/orbital.js" defer></script>
+  </body>
+</html>

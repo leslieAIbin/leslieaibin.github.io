@@ -1,0 +1,483 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+  <head>
+
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#050b18">
+<meta name="color-scheme" content="dark light">
+<title>Agent CLI 的事件循环与中断模型：当用户中途按下回车 | Leslie Zhang</title>
+<meta name="description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta name="author" content="Leslie Zhang">
+<link rel="canonical" href="https://leslieaibin.github.io/2026/05/09/attention-field/Agent-CLI-%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%E4%B8%8E%E4%B8%AD%E6%96%AD%E6%A8%A1%E5%9E%8B/">
+<link rel="icon" href="/imgs/01.jpg">
+<link rel="alternate" type="application/atom+xml" title="Leslie Zhang" href="/atom.xml">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Agent CLI 的事件循环与中断模型：当用户中途按下回车 | Leslie Zhang">
+<meta property="og:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta property="og:url" content="https://leslieaibin.github.io/2026/05/09/attention-field/Agent-CLI-%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%E4%B8%8E%E4%B8%AD%E6%96%AD%E6%A8%A1%E5%9E%8B/">
+<meta property="og:image" content="https://leslieaibin.github.io/2026/05/09/attention-field/Agent-CLI-%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%E4%B8%8E%E4%B8%AD%E6%96%AD%E6%A8%A1%E5%9E%8B/illustrations/L1-LLM%E4%B8%89%E4%B8%AA%E4%B8%8D%E5%8F%AF%E4%B8%AD%E6%96%AD%E7%82%B9.webp">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Agent CLI 的事件循环与中断模型：当用户中途按下回车 | Leslie Zhang">
+<meta name="twitter:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta name="twitter:image" content="https://leslieaibin.github.io/2026/05/09/attention-field/Agent-CLI-%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%E4%B8%8E%E4%B8%AD%E6%96%AD%E6%A8%A1%E5%9E%8B/illustrations/L1-LLM%E4%B8%89%E4%B8%AA%E4%B8%8D%E5%8F%AF%E4%B8%AD%E6%96%AD%E7%82%B9.webp">
+<script>
+  (function () {
+    var saved = localStorage.getItem('orbital-theme');
+    var theme = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    document.documentElement.dataset.theme = theme;
+  })();
+</script>
+<link rel="stylesheet" href="/css/orbital.css">
+<meta name="generator" content="Hexo 5.2.0"></head>
+  <body class="page-post">
+    <a class="skip-link" href="#main-content">跳到主要内容</a>
+    <div class="reading-progress" data-reading-progress></div>
+    <header class="site-header" data-header>
+  <div class="nav-shell">
+    <a class="brand" href="/" aria-label="返回首页">
+      <span class="brand-mark" aria-hidden="true"><img src="/images/brand/leslie-mythos-avatar.webp" alt="" width="512" height="512"></span>
+      <span class="brand-copy">
+        <strong>LESLIE</strong>
+        <small>REAL-WORLD AGENTS</small>
+      </span>
+    </a>
+
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav" data-nav-toggle>
+      <span></span><span></span>
+      <span class="sr-only">打开导航</span>
+    </button>
+
+    <nav class="main-nav" id="main-nav" aria-label="主导航" data-nav>
+      
+        <a href="/" class="">首页</a>
+      
+        <a href="/writing/" class="">写作</a>
+      
+        <a href="/projects/" class="">项目</a>
+      
+        <a href="/about/" class="">关于</a>
+      
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换明暗主题">
+        <span class="theme-toggle__sun" aria-hidden="true">☼</span>
+        <span class="theme-toggle__moon" aria-hidden="true">◐</span>
+      </button>
+      <button class="ask-nav" type="button" data-ask-open>ASK LESLIE</button>
+    </nav>
+  </div>
+</header>
+
+    <main id="main-content"><article class="post-shell">
+  <header class="post-hero shell">
+    <a class="post-back" href="/writing/">← 返回写作</a>
+    <div class="post-hero__meta">
+      <time datetime="2026-05-09">2026 年 05 月 09 日</time>
+      <span>12 分钟阅读</span>
+    </div>
+    <h1>Agent CLI 的事件循环与中断模型：当用户中途按下回车</h1>
+    
+    <div class="chip-row"><a href="/tags/Agent/">Agent</a><a href="/tags/CLI/">CLI</a><a href="/tags/EventLoop/">EventLoop</a><a href="/tags/Interrupt/">Interrupt</a><a href="/tags/ClaudeCode/">ClaudeCode</a><a href="/tags/Codex/">Codex</a><a href="/tags/TUI/">TUI</a><a href="/tags/Ratatui/">Ratatui</a><a href="/tags/Steer/">Steer</a></div>
+  </header>
+
+  <div class="post-cover shell"><img src="/2026/05/09/attention-field/Agent-CLI-%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%E4%B8%8E%E4%B8%AD%E6%96%AD%E6%A8%A1%E5%9E%8B/illustrations/L1-LLM%E4%B8%89%E4%B8%AA%E4%B8%8D%E5%8F%AF%E4%B8%AD%E6%96%AD%E7%82%B9.webp" alt="Agent CLI 的事件循环与中断模型：当用户中途按下回车"></div>
+
+  <div class="post-layout shell">
+    <aside class="post-toc" aria-label="文章目录">
+      <span class="aside-title">目录</span>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BC%95%E8%A8%80%EF%BC%9A%E4%BD%A0%E6%8C%89%E4%B8%8B%E4%BA%86-Enter%EF%BC%8Cagent-%E8%BF%98%E6%B2%A1%E8%AF%B4%E5%AE%8C"><span class="toc-text">引言：你按下了 Enter，agent 还没说完</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E9%9A%BE%E9%A2%98%EF%BC%9ALLM-%E5%93%AA%E9%87%8C%E4%B8%8D%E5%8F%AF%E4%B8%AD%E6%96%AD%EF%BC%9F"><span class="toc-text">1. 难题：LLM 哪里不可中断？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E9%80%9A%E7%94%A8%E8%A7%A3%E6%B3%95%EF%BC%9A%E5%8F%8C-loop-%E5%A4%9A%E7%BA%A7-queue"><span class="toc-text">2. 通用解法：双 loop + 多级 queue</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-Codex-%E7%9A%84%E5%AE%9E%E7%8E%B0%EF%BC%9A%E4%BB%8E%E6%BA%90%E7%A0%81%E6%8C%96%E5%87%BA%E6%9D%A5%E7%9A%84%E7%9C%9F%E5%AE%9E%E7%BB%86%E8%8A%82"><span class="toc-text">3. Codex 的实现：从源码挖出来的真实细节</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E4%B8%80%E4%B8%AA%E5%85%B3%E9%94%AE%E6%9C%AF%E8%AF%AD%EF%BC%9ASteer"><span class="toc-text">3.1 一个关键术语：Steer</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-InterruptManager%EF%BC%9A%E5%8F%A6%E4%B8%80%E7%B1%BB-queue"><span class="toc-text">3.2 InterruptManager：另一类 queue</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-Op-Interrupt%EF%BC%9A%E7%A1%AC%E4%B8%AD%E6%96%AD%E8%B5%B0%E5%8F%A6%E4%B8%80%E6%9D%A1%E8%B7%AF"><span class="toc-text">3.3 Op::Interrupt：硬中断走另一条路</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-4-ChatComposer%EF%BC%9A%E5%BA%95%E9%83%A8%E8%BE%93%E5%85%A5%E6%A1%86"><span class="toc-text">3.4 ChatComposer：底部输入框</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-Claude-Code-%E7%9A%84%E5%AE%9E%E7%8E%B0%EF%BC%9A%E7%9B%B8%E5%AF%B9%E8%BD%BB%E9%87%8F"><span class="toc-text">4. Claude Code 的实现：相对轻量</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-%E8%BE%93%E5%85%A5%E6%8E%92%E9%98%9F%E7%9A%84%E5%8F%AF%E8%A7%81%E4%BF%A1%E5%8F%B7"><span class="toc-text">4.1 输入排队的可见信号</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-Esc-Ctrl-C-%E7%9A%84%E8%AF%AD%E4%B9%89"><span class="toc-text">4.2 Esc &#x2F; Ctrl+C 的语义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-3-%E5%90%8E%E5%8F%B0%E4%BB%BB%E5%8A%A1%E7%9A%84%E2%80%9D%E7%A4%BC%E8%B2%8C%E6%89%93%E6%96%AD%E2%80%9D"><span class="toc-text">4.3 后台任务的”礼貌打断”</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-4-%E4%B8%80%E4%B8%AA-Claude-Code-%E6%B2%A1%E6%9A%B4%E9%9C%B2%E4%BD%86%E6%9C%89%E7%9A%84%E6%9C%BA%E5%88%B6%EF%BC%9ACancellation-Token"><span class="toc-text">4.4 一个 Claude Code 没暴露但有的机制：Cancellation Token</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E4%B8%89%E7%A7%8D%E2%80%9D%E6%89%93%E6%96%AD%E2%80%9D%E8%AF%AD%E4%B9%89%E5%AF%B9%E6%AF%94"><span class="toc-text">5. 三种”打断”语义对比</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#5-1-%E4%B8%80%E4%B8%AA%E5%BE%AE%E5%A6%99%E7%9A%84%E5%8C%BA%E5%88%AB%EF%BC%9Asteer-vs-interrupt-then-input"><span class="toc-text">5.1 一个微妙的区别：steer vs interrupt-then-input</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E4%B8%89%E4%B8%AA%E6%9C%89%E6%84%8F%E6%80%9D%E7%9A%84%E8%BE%B9%E7%95%8C-case"><span class="toc-text">6. 三个有意思的边界 case</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#6-1-%E7%94%A8%E6%88%B7%E8%BF%9E%E5%8F%91-3-%E6%9D%A1%E6%80%8E%E4%B9%88%E5%8A%9E"><span class="toc-text">6.1 用户连发 3 条怎么办</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-2-%E2%80%9C%E8%A1%A5%E5%85%85%E4%BF%A1%E6%81%AF%E2%80%9D-vs-%E2%80%9C%E5%8F%96%E6%B6%88%E4%BB%BB%E5%8A%A1%E2%80%9D%E2%80%94%E2%80%94agent-%E6%80%8E%E4%B9%88%E5%88%A4%E6%96%AD%EF%BC%9F"><span class="toc-text">6.2 “补充信息” vs “取消任务”——agent 怎么判断？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-3-%E5%90%8E%E5%8F%B0-subagent-%E5%AE%8C%E6%88%90%E6%97%B6%E5%A6%82%E4%BD%95%E2%80%9D%E7%A4%BC%E8%B2%8C%E2%80%9D%E6%89%93%E6%96%AD%E4%B8%BB-agent"><span class="toc-text">6.3 后台 subagent 完成时如何”礼貌”打断主 agent</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99%E6%80%BB%E7%BB%93"><span class="toc-text">7. 设计原则总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-%E8%87%AA%E5%B7%B1%E5%81%9A-agent-CLI-%E6%97%B6%E7%9A%84-checklist"><span class="toc-text">8. 自己做 agent CLI 时的 checklist</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%93%E8%AF%AD%EF%BC%9A%E5%A5%BD%E7%9A%84%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%E8%AE%A9%E7%94%A8%E6%88%B7%E6%84%9F%E8%A7%89%E4%B8%8D%E5%88%B0%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF"><span class="toc-text">结语：好的事件循环让用户感觉不到事件循环</span></a></li></ol>
+    </aside>
+    <div class="article-content"><h1 id="Agent-CLI-的事件循环与中断模型：当用户中途按下回车"><a href="#Agent-CLI-的事件循环与中断模型：当用户中途按下回车" class="headerlink" title="Agent CLI 的事件循环与中断模型：当用户中途按下回车"></a>Agent CLI 的事件循环与中断模型：当用户中途按下回车</h1><h2 id="引言：你按下了-Enter，agent-还没说完"><a href="#引言：你按下了-Enter，agent-还没说完" class="headerlink" title="引言：你按下了 Enter，agent 还没说完"></a>引言：你按下了 Enter，agent 还没说完</h2><p>你给 Claude Code 一个任务：「重构鉴权模块」。它读了几个文件、改了一段代码、正在跑单测的第 3 秒，你突然想起来一件事：</p>
+<blockquote>
+<p>“等一下，<strong>先用 Vite 而不是 Webpack</strong>，这点先告诉它”</p>
+</blockquote>
+<p>你噼里啪啦敲完这句话按下回车 —— <strong>agent 还在跑，屏幕在不停滚动，你的输入怎么被它”看到”？</strong></p>
+<p>如果你试过这个动作，你会发现 Claude Code 和 Codex 都有一个有意思的行为：</p>
+<ul>
+<li>你输入的内容<strong>不会立刻打断 agent</strong></li>
+<li>但底部会出现一个 “Queued” 之类的提示（Codex 里这叫 <strong>steer</strong>）</li>
+<li>agent 当前 step 跑完会”看到”你的新消息，作为下一轮 input 处理</li>
+<li>你想立刻打断，按 <strong>Esc</strong> 就好；想退出，<strong>双击 Ctrl+C</strong></li>
+</ul>
+<p>整个体验非常自然。但这套自然背后是一个<strong>精心设计的事件循环 + 多层消息队列 + 中断状态机</strong>。这篇文章把它全部拆开。</p>
+<p>读完你会理解：</p>
+<ul>
+<li>为什么 LLM stream 在”哲学上”不可中断</li>
+<li>为什么这套系统至少需要<strong>两个独立的 loop + 五种 queue 状态</strong></li>
+<li>Claude Code 和 Codex 各自怎么实现的（带源码引用）</li>
+<li>自己做 AI agent CLI 时这套要怎么搭</li>
+</ul>
+<hr>
+<h2 id="1-难题：LLM-哪里不可中断？"><a href="#1-难题：LLM-哪里不可中断？" class="headerlink" title="1. 难题：LLM 哪里不可中断？"></a>1. 难题：LLM 哪里不可中断？</h2><p>直觉上 “中断”是简单的事 —— Ctrl+C 一下杀掉就行。但 LLM agent 有三个层次的”不可中断点”，理解了它们才能理解后面的设计：</p>
+<p><img src="illustrations/L1-LLM%E4%B8%89%E4%B8%AA%E4%B8%8D%E5%8F%AF%E4%B8%AD%E6%96%AD%E7%82%B9.webp" alt="LLM agent 的三个不可中断层次：HTTP stream / tool exec / 已完成的副作用"></p>
+<table>
+<thead>
+<tr>
+<th>层次</th>
+<th>内容</th>
+<th>能不能中断</th>
+<th>中断的代价</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>1. LLM HTTP stream</strong></td>
+<td>模型在按 token 流式输出</td>
+<td>可以（abort HTTP 连接）</td>
+<td>已生成的 token <strong>照样计费</strong></td>
+</tr>
+<tr>
+<td><strong>2. Tool call 执行</strong></td>
+<td>比如在跑 <code>npm install</code></td>
+<td>可以（SIGTERM 进程）</td>
+<td>已经下载的包不会撤回；进程可能留 zombie</td>
+</tr>
+<tr>
+<td><strong>3. 已完成的副作用</strong></td>
+<td>比如已经写完的 <code>package.json</code></td>
+<td><strong>不能</strong></td>
+<td>文件已落盘，git diff 看得到</td>
+</tr>
+</tbody></table>
+<p><strong>核心原则</strong>：**LLM agent 的”中断”只能是”停止下一步”，不能”撤销已经发生的”**。这件事在做产品设计时必须明示给用户 —— 你按 Esc 中断，已经写的代码、已经 push 的 commit、已经发的请求都不会回滚。</p>
+<p>第三层是 OS / 业务问题，agent CLI 管不到。第一、二层 agent CLI 必须管，而管法决定了用户体验的好坏。</p>
+<hr>
+<h2 id="2-通用解法：双-loop-多级-queue"><a href="#2-通用解法：双-loop-多级-queue" class="headerlink" title="2. 通用解法：双 loop + 多级 queue"></a>2. 通用解法：双 loop + 多级 queue</h2><p>任何能让用户<strong>在 agent 干活时正常输入</strong>的 CLI 工具，都长成这样：</p>
+<p><img src="illustrations/L2-%E5%8F%8Cloop%E5%A4%9A%E7%BA%A7queue%E6%9E%B6%E6%9E%84.webp" alt="Agent CLI 通用架构：UI Loop 与 Agent Loop 通过多级 channel 解耦"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">┌────────────────────────────┐                ┌──────────────────────────────┐</span><br><span class="line">│  UI Loop (主线程)           │                │  Agent Loop (worker 线程)     │</span><br><span class="line">│  ─────────────────         │                │  ───────────────────         │</span><br><span class="line">│                            │                │                              │</span><br><span class="line">│  ratatui event::read()     │                │  loop &#123;                      │</span><br><span class="line">│   ↓                        │                │    ① stream LLM tokens       │</span><br><span class="line">│  键盘事件                  │   submit       │       (可 abort 但已扣费)      │</span><br><span class="line">│   ↓                        │ ─────────────→ │    ② call tools              │</span><br><span class="line">│  TextArea (composer)       │   (channel)    │       (可 SIGTERM)            │</span><br><span class="line">│   ↓                        │                │    ③ check queue ◀───────── │</span><br><span class="line">│  Enter &#x2F; Esc &#x2F; Ctrl+C      │                │       drain steers           │</span><br><span class="line">│   ↓                        │   interrupt    │       handle interrupts      │</span><br><span class="line">│  app_event_sender ─────────│ ─────────────→ │    ④ next step or end        │</span><br><span class="line">│                            │   (op queue)   │  &#125;                           │</span><br><span class="line">└────────────────────────────┘                └──────────────────────────────┘</span><br><span class="line">       ↑ 永远不阻塞                                ↑ 阻塞但有&quot;检查点&quot;</span><br><span class="line">       用户随时能打字                              在每个 step 边界 drain queue</span><br></pre></td></tr></table></figure>
+
+<p>三个不可绕开的设计要点：</p>
+<p><strong>1. UI 线程和 agent 线程必须分离</strong>。不分离的话用户键盘输入会被阻塞 —— agent 在 LLM stream 的 30 秒里你按什么都不响应，体验崩。</p>
+<p><strong>2. 通过 channel / queue 解耦</strong>。Rust 用 <code>tokio::sync::mpsc</code>，Go 用 <code>chan</code>，Node 用 EventEmitter。本质都是 producer-consumer 模型。</p>
+<p><strong>3. drain queue 的时机必须在 step 边界</strong>。LLM 流式输出中间不能 drain（会破坏对话连贯性），tool call 执行中也不能（会破坏调用语义）。<strong>只能在每个 LLM turn 完成后、或每个 tool call 返回后</strong>这两类边界点检查 queue。</p>
+<p>但这只是骨架。真正复杂的是中间的 queue —— 它不是一个简单的 FIFO，而是<strong>多级状态机</strong>。</p>
+<hr>
+<h2 id="3-Codex-的实现：从源码挖出来的真实细节"><a href="#3-Codex-的实现：从源码挖出来的真实细节" class="headerlink" title="3. Codex 的实现：从源码挖出来的真实细节"></a>3. Codex 的实现：从源码挖出来的真实细节</h2><p>OpenAI 的 Codex（<code>codex-rs/</code>）在这块做得最复杂、最完整。我把它的设计完整拆开，你能看到工业级实现长什么样。</p>
+<h3 id="3-1-一个关键术语：Steer"><a href="#3-1-一个关键术语：Steer" class="headerlink" title="3.1 一个关键术语：Steer"></a>3.1 一个关键术语：Steer</h3><p>源码里有个专门的词叫 <strong>steer</strong>（”引导”），定义是：</p>
+<blockquote>
+<p><strong>Steer = 用户在 agent 还在跑当前 turn 的时候输入的新消息</strong></p>
+</blockquote>
+<p>为什么不叫 “interrupt”？因为 interrupt 是要”中断”，而 steer 是要”引导” —— 用户不想终止 agent 的工作，只是想给它新的方向。命名透露了设计意图。</p>
+<p>源码里 grep <code>pending_steers</code> 能看到一连串相关概念（<code>codex-rs/tui/src/chatwidget.rs</code>）：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 用户输入但 turn 还没开始的（已 queue，未 send）</span></span><br><span class="line">queued_user_messages: VecDeque&lt;QueuedUserMessage&gt;,</span><br><span class="line"></span><br><span class="line"><span class="comment">// User messages that tried to steer a non-regular turn and must be retried first.</span></span><br><span class="line">rejected_steers_queue: VecDeque&lt;UserMessage&gt;,</span><br><span class="line"></span><br><span class="line"><span class="comment">// Steers already submitted to core but not yet committed into history.</span></span><br><span class="line">pending_steers: VecDeque&lt;PendingSteer&gt;,</span><br><span class="line"></span><br><span class="line"><span class="comment">// 中断后的标志：要立刻把 pending steers 作为新 turn 重提，</span></span><br><span class="line"><span class="comment">// 还是回到 composer 让用户继续编辑</span></span><br><span class="line">submit_pending_steers_after_interrupt: <span class="built_in">bool</span>,</span><br></pre></td></tr></table></figure>
+
+<p>Codex 的 steer 至少有 <strong>3 个状态</strong>，加上正常的 queued / committed，组成一个 5 状态的状态机：</p>
+<p><img src="illustrations/L3-Steer5%E7%8A%B6%E6%80%81%E6%9C%BA.webp" alt="Codex Steer 的 5 状态生命周期：queued → pending → committed / rejected"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">                          [Composer 输入]</span><br><span class="line">                                 │</span><br><span class="line">                  不在 turn 中    │   在 turn 中</span><br><span class="line">                           ┌────┴────┐</span><br><span class="line">                           ▼         ▼</span><br><span class="line">                ┌─────────────┐  ┌─────────────────┐</span><br><span class="line">状态 ①          │  queued_user │  │  pending_steers  │  状态 ③</span><br><span class="line">                │  _messages   │  │                 │</span><br><span class="line">                │  (等 turn)   │  │  (已发 core，   │</span><br><span class="line">                └──────┬──────┘  │   未 commit)    │</span><br><span class="line">                       │          └────┬────────────┘</span><br><span class="line">             turn 开始 │               │</span><br><span class="line">                       ▼               │  turn complete</span><br><span class="line">                ┌─────────────┐        ▼</span><br><span class="line">状态 ②          │  in flight  │  ┌─────────────────┐</span><br><span class="line">                │  (正在执行) │  │  committed       │  状态 ④</span><br><span class="line">                └─────────────┘  │  history.append() │</span><br><span class="line">                                 └─────────────────┘</span><br><span class="line"></span><br><span class="line">                非 regular turn 拒绝 ↘</span><br><span class="line">                                    ┌─────────────────┐</span><br><span class="line">                                    │  rejected_steers │  状态 ⑤</span><br><span class="line">                                    │  _queue          │</span><br><span class="line">                                    │  (等下一个 regular</span><br><span class="line">                                    │   turn 重试)     │</span><br><span class="line">                                    └─────────────────┘</span><br></pre></td></tr></table></figure>
+
+<p><strong><code>rejected_steers_queue</code></strong> 是一个非常聪明的设计 —— 不是所有 turn 都接受 steer。比如 review turn / plan turn 这种”严肃模式”下用户的 steer 会被暂存，等下一个普通 turn 才重提。<strong>这避免了 steer 污染严肃任务的上下文</strong>。</p>
+<h3 id="3-2-InterruptManager：另一类-queue"><a href="#3-2-InterruptManager：另一类-queue" class="headerlink" title="3.2 InterruptManager：另一类 queue"></a>3.2 InterruptManager：另一类 queue</h3><p>Codex 还有一个<strong>独立的</strong> queue 叫 <code>InterruptManager</code>（<code>codex-rs/tui/src/chatwidget/interrupts.rs</code>）：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">pub</span>(<span class="keyword">crate</span>) <span class="class"><span class="keyword">enum</span> <span class="title">QueuedInterrupt</span></span> &#123;</span><br><span class="line">    ExecApproval(ExecApprovalRequestEvent),</span><br><span class="line">    ApplyPatchApproval(ApplyPatchApprovalRequestEvent),</span><br><span class="line">    Elicitation &#123; request_id, params &#125;,</span><br><span class="line">    RequestPermissions(RequestPermissionsEvent),</span><br><span class="line">    RequestUserInput(ToolRequestUserInputParams),</span><br><span class="line">    ItemStarted(ThreadItem),</span><br><span class="line">    ItemCompleted(ThreadItem),</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">pub</span>(<span class="keyword">crate</span>) <span class="class"><span class="keyword">struct</span> <span class="title">InterruptManager</span></span> &#123;</span><br><span class="line">    queue: VecDeque&lt;QueuedInterrupt&gt;,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个 queue 缓存的不是用户输入，而是**”agent 想打断用户却需要暂存的事件”** —— 比如执行命令需要批准、apply patch 需要批准、MCP 需要 elicit 输入等等。</p>
+<p>为什么要单独排队？文件开头注释写得明明白白：</p>
+<blockquote>
+<p>Queue prompt overlays and deferred tool activity while another interrupt is visible.</p>
+</blockquote>
+<p>意思是：<strong>如果当前已经有一个弹窗（比如另一个 approval 正在等用户点）了，新的 approval 不能直接弹出来盖住它，而是排队等前一个处理完</strong>。这避免了 UI 上多个对话框互相覆盖、用户搞不清在同意什么的混乱。</p>
+<h3 id="3-3-Op-Interrupt：硬中断走另一条路"><a href="#3-3-Op-Interrupt：硬中断走另一条路" class="headerlink" title="3.3 Op::Interrupt：硬中断走另一条路"></a>3.3 Op::Interrupt：硬中断走另一条路</h3><p>用户按 Esc / Ctrl+C 走的是<strong>完全不同的通道</strong>。这是协议级别的一个独立 Op：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// codex-rs/protocol/src/protocol.rs</span></span><br><span class="line"><span class="keyword">pub</span> <span class="class"><span class="keyword">enum</span> <span class="title">Op</span></span> &#123;</span><br><span class="line">    <span class="comment">/// Abort current task without terminating background terminal processes.</span></span><br><span class="line">    <span class="comment">/// This server sends [`EventMsg::TurnAborted`] in response.</span></span><br><span class="line">    Interrupt,</span><br><span class="line"></span><br><span class="line">    <span class="comment">/// Terminate all running background terminal processes for this thread.</span></span><br><span class="line">    <span class="comment">/// Use this when callers intentionally want to stop long-lived background shells.</span></span><br><span class="line">    CleanBackgroundTerminals,</span><br><span class="line"></span><br><span class="line">    UserInput &#123; items: <span class="built_in">Vec</span>&lt;UserInput&gt;, ... &#125;,</span><br><span class="line">    UserTurn &#123; ... &#125;,</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>注意两个细节：</p>
+<ul>
+<li><strong><code>Op::Interrupt</code> 不杀后台 terminal 进程</strong>。如果你之前让 agent 起了个 <code>npm run dev</code> 跑后台，Esc 中断当前 turn 不会杀掉它。要清理需要显式 <code>Op::CleanBackgroundTerminals</code>。</li>
+<li>**响应是 <code>EventMsg::TurnAborted</code>**。这是一个事件，TUI 收到后调 <code>on_interrupted_turn(reason)</code>，根据 <code>submit_pending_steers_after_interrupt</code> 标志位决定下一步：<ul>
+<li>如果是 true（用户先 steer 后 Esc），把 pending steers 作为一个新 turn 自动 submit，外加一条 history note：”Model interrupted to submit steer instructions.”</li>
+<li>如果是 false（用户直接 Esc），保留 pending steers 在 composer 里让用户继续编辑</li>
+</ul>
+</li>
+</ul>
+<h3 id="3-4-ChatComposer：底部输入框"><a href="#3-4-ChatComposer：底部输入框" class="headerlink" title="3.4 ChatComposer：底部输入框"></a>3.4 ChatComposer：底部输入框</h3><p>底部那个输入框叫 <code>ChatComposer</code>（<code>codex-rs/tui/src/bottom_pane/chat_composer.rs</code>），核心是一个 ratatui <code>TextArea</code>：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">pub</span>(<span class="keyword">crate</span>) <span class="class"><span class="keyword">struct</span> <span class="title">ChatComposer</span></span> &#123;</span><br><span class="line">    textarea: TextArea,</span><br><span class="line">    textarea_state: RefCell&lt;TextAreaState&gt;,</span><br><span class="line">    is_bash_mode: <span class="built_in">bool</span>,</span><br><span class="line">    active_popup: ActivePopup,</span><br><span class="line">    app_event_tx: AppEventSender,</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>它的职责注释也很明确：</p>
+<blockquote>
+<ul>
+<li>Editing the input buffer (a [<code>TextArea</code>])</li>
+<li>Routing keys to the active popup (slash commands, file search, skill mentions)</li>
+<li>Promoting typed slash commands into atomic elements</li>
+<li><strong>Handling submit vs newline on Enter</strong></li>
+</ul>
+</blockquote>
+<p>最后一条很关键：<strong>Enter 键的歧义性</strong> —— 是提交还是换行？大部分 CLI 工具的策略：单 Enter 提交，Shift+Enter 换行（或反过来，可配置）。Codex 用 keymap 系统（<code>tui/src/keymap.rs</code>）让用户自定义。</p>
+<hr>
+<h2 id="4-Claude-Code-的实现：相对轻量"><a href="#4-Claude-Code-的实现：相对轻量" class="headerlink" title="4. Claude Code 的实现：相对轻量"></a>4. Claude Code 的实现：相对轻量</h2><p>Claude Code 没开源到这种程度，但从用户视角和文档能推断出它的实现框架。</p>
+<p><img src="illustrations/L4-ClaudeCode-vs-Codex%E5%AE%9E%E7%8E%B0%E5%AF%B9%E6%AF%94.webp" alt="Claude Code（轻量）vs Codex（精细）的中断模型对比"></p>
+<h3 id="4-1-输入排队的可见信号"><a href="#4-1-输入排队的可见信号" class="headerlink" title="4.1 输入排队的可见信号"></a>4.1 输入排队的可见信号</h3><p>你在 Claude Code agent 跑的时候输入并回车，底部会出现类似这样的提示：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt; 等一下，先用 Vite 不要 Webpack</span><br><span class="line">  (queued — will be sent after current turn)</span><br></pre></td></tr></table></figure>
+
+<p>这告诉你：消息已经入队，会在当前 turn 结束后作为新 turn 发送。</p>
+<p>如果你<strong>在排队期间继续输入</strong>，新消息会<strong>追加</strong>到 queue（不会替换上一条），这点和 Codex 一致。</p>
+<h3 id="4-2-Esc-Ctrl-C-的语义"><a href="#4-2-Esc-Ctrl-C-的语义" class="headerlink" title="4.2 Esc / Ctrl+C 的语义"></a>4.2 Esc / Ctrl+C 的语义</h3><table>
+<thead>
+<tr>
+<th>按键</th>
+<th>行为</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Esc</strong>（一次）</td>
+<td>中断当前 LLM stream，turn 标 aborted，对话保留。等价于 Codex 的 <code>Op::Interrupt</code></td>
+</tr>
+<tr>
+<td><strong>Ctrl+C</strong>（一次）</td>
+<td>同上 + 提示 “Press Ctrl+C again to exit”</td>
+</tr>
+<tr>
+<td><strong>Ctrl+C</strong>（再一次）</td>
+<td>退出整个进程</td>
+</tr>
+</tbody></table>
+<p>这种”双击退出”的设计是 vim、less、tmux 这些经典 CLI 的标准做法，避免误操作丢失对话状态。</p>
+<h3 id="4-3-后台任务的”礼貌打断”"><a href="#4-3-后台任务的”礼貌打断”" class="headerlink" title="4.3 后台任务的”礼貌打断”"></a>4.3 后台任务的”礼貌打断”</h3><p>Claude Code 还有一个细节：当后台 subagent 完成 / 后台 bash 命令产生输出时，<strong>不会立刻打断主 agent</strong>，而是用 <code>&lt;task-notification&gt;</code> 信封把通知留到主 agent 下一个自然的 step 边界：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;task-notification&gt;</span><br><span class="line">&lt;task-id&gt;byfhr211c&lt;&#x2F;task-id&gt;</span><br><span class="line">&lt;status&gt;completed&lt;&#x2F;status&gt;</span><br><span class="line">&lt;summary&gt;Background command &quot;...&quot; completed (exit code 0)&lt;&#x2F;summary&gt;</span><br><span class="line">&lt;&#x2F;task-notification&gt;</span><br></pre></td></tr></table></figure>
+
+<p>主 agent 在自己的 LLM 一段说完后（不是 stream 中间）才会读到这个事件。这就是”礼貌打断” —— 不打断 agent 当前的思维链，等它自然停下来再插话。</p>
+<h3 id="4-4-一个-Claude-Code-没暴露但有的机制：Cancellation-Token"><a href="#4-4-一个-Claude-Code-没暴露但有的机制：Cancellation-Token" class="headerlink" title="4.4 一个 Claude Code 没暴露但有的机制：Cancellation Token"></a>4.4 一个 Claude Code 没暴露但有的机制：Cancellation Token</h3><p>虽然源码看不到，但行为可以推断：当用户 Esc 后，Claude Code 内部一定有一个 cancellation token / abort signal，被多处尊重：</p>
+<ul>
+<li>LLM HTTP stream 检查到 token cancelled → abort 连接</li>
+<li>Tool call 还在跑的话 → SIGTERM 子进程</li>
+<li>后续 step 不再执行</li>
+</ul>
+<p>这是 Rust <code>tokio::select!</code> + <code>CancellationToken</code> 或 Node <code>AbortController</code> 的标准用法，每个做这类系统的人都得自己搭一遍。</p>
+<hr>
+<h2 id="5-三种”打断”语义对比"><a href="#5-三种”打断”语义对比" class="headerlink" title="5. 三种”打断”语义对比"></a>5. 三种”打断”语义对比</h2><p>把上面所有概念归纳成一张表，你能看清”打断”在 agent CLI 里到底有几种含义：</p>
+<p><img src="illustrations/L5-%E4%B8%89%E7%A7%8D%E6%89%93%E6%96%AD%E8%AF%AD%E4%B9%89%E5%AF%B9%E6%AF%94.webp" alt="Steer / Hard Interrupt / Exit 三种打断语义的层级对比"></p>
+<table>
+<thead>
+<tr>
+<th>用户操作</th>
+<th>通用术语</th>
+<th>Codex 术语</th>
+<th>UI 表现</th>
+<th>内部机制</th>
+<th>副作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>回车提交新消息</strong></td>
+<td>软中断 / 排队</td>
+<td><strong>steer</strong></td>
+<td>“Queued” 提示</td>
+<td>入 <code>pending_steers</code> queue，下个 step 边界 drain</td>
+<td>0（不打断当前 turn）</td>
+</tr>
+<tr>
+<td><strong>Esc / 单 Ctrl+C</strong></td>
+<td>硬中断</td>
+<td><code>Op::Interrupt</code></td>
+<td>“Interrupting…”</td>
+<td><code>TurnAborted</code> 事件 + cancellation token + LLM stream abort</td>
+<td>已生成 token 计费，已写文件保留</td>
+</tr>
+<tr>
+<td><strong>双 Ctrl+C</strong></td>
+<td>退出</td>
+<td>SIGINT</td>
+<td>进程退出</td>
+<td>OS-level signal</td>
+<td>整个会话需要重新加载</td>
+</tr>
+<tr>
+<td><strong>/clear / /exit 等命令</strong></td>
+<td>显式重置 / 关闭</td>
+<td>slash command</td>
+<td>命令执行</td>
+<td>走 composer 的特殊路径，不进 LLM</td>
+<td>看具体命令</td>
+</tr>
+</tbody></table>
+<h3 id="5-1-一个微妙的区别：steer-vs-interrupt-then-input"><a href="#5-1-一个微妙的区别：steer-vs-interrupt-then-input" class="headerlink" title="5.1 一个微妙的区别：steer vs interrupt-then-input"></a>5.1 一个微妙的区别：steer vs interrupt-then-input</h3><p>用户的两种操作流程结果可以<strong>完全不同</strong>：</p>
+<p><strong>流程 A</strong>（pure steer）：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">agent 在跑 → 用户输入 &quot;用 Vite&quot; → 回车 → 等 agent 自然结束当前 turn → 用户输入作为新 turn 处理</span><br></pre></td></tr></table></figure>
+
+<p><strong>流程 B</strong>（interrupt + input）：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">agent 在跑 → 用户输入 &quot;用 Vite&quot; → 按 Esc → agent 立刻 abort → 用户输入作为新 turn 处理</span><br></pre></td></tr></table></figure>
+
+<p>A 等了几秒到几分钟；B 立刻打断。哪个更好？取决于场景：</p>
+<ul>
+<li>如果你只是补充信息（agent 当前思路没问题），用 A</li>
+<li>如果你想换方向（agent 当前思路完全错），用 B</li>
+</ul>
+<p>Codex 的 <code>submit_pending_steers_after_interrupt</code> 标志位就是为了让 B 这种”先输入再 Esc”的连贯操作更顺 —— 用户按 Esc 时如果 pending_steers 不空，自动把它们打包提交，不需要再按一次回车。这是一个非常贴心的细节。</p>
+<hr>
+<h2 id="6-三个有意思的边界-case"><a href="#6-三个有意思的边界-case" class="headerlink" title="6. 三个有意思的边界 case"></a>6. 三个有意思的边界 case</h2><h3 id="6-1-用户连发-3-条怎么办"><a href="#6-1-用户连发-3-条怎么办" class="headerlink" title="6.1 用户连发 3 条怎么办"></a>6.1 用户连发 3 条怎么办</h3><p>用户着急时会按多次回车。处理策略主要有三种：</p>
+<table>
+<thead>
+<tr>
+<th>策略</th>
+<th>谁这么做</th>
+<th>优缺点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>全部排队，按顺序处理</strong></td>
+<td>Claude Code、Codex</td>
+<td>不丢消息，但用户多次按回车会让 agent 多跑几个 turn</td>
+</tr>
+<tr>
+<td><strong>合并成一条提交</strong></td>
+<td>部分轻量 CLI</td>
+<td>节省 token，但合并语义可能错乱</td>
+</tr>
+<tr>
+<td><strong>只取最后一条</strong></td>
+<td>一些聊天产品</td>
+<td>简单但前面消息丢了，用户困惑</td>
+</tr>
+</tbody></table>
+<p><strong>Codex 选了第一个</strong>，看 <code>pending_steers: VecDeque&lt;PendingSteer&gt;</code> 的实现就知道是顺序队列。<strong>Claude Code 也是第一个</strong>。这是更”诚实”的做法 —— 用户输入了什么都给 agent 看，让 agent 自己判断。</p>
+<p>但 Codex 在中断后做了<strong>合并优化</strong>：<code>submit_pending_steers_after_interrupt</code> 触发时，多个 pending steer 是<strong>作为一个新 turn</strong>一起提交，不是 N 个 turn。这避免了用户因连发而被多收 N 倍 token 费。</p>
+<h3 id="6-2-“补充信息”-vs-“取消任务”——agent-怎么判断？"><a href="#6-2-“补充信息”-vs-“取消任务”——agent-怎么判断？" class="headerlink" title="6.2 “补充信息” vs “取消任务”——agent 怎么判断？"></a>6.2 “补充信息” vs “取消任务”——agent 怎么判断？</h3><p>这是个困难的问题。用户说 “用 Vite” 可能是：</p>
+<ul>
+<li><strong>补充</strong>：”还在做迁移，但请用 Vite” → 继续上个任务</li>
+<li><strong>取消并改方向</strong>：”不要做 Webpack 了，用 Vite 重新来” → 抛弃之前的工作</li>
+</ul>
+<p>Agent CLI 工具本身<strong>判断不了</strong>，只能依赖 LLM 自己理解。两家工具的策略：</p>
+<ul>
+<li><strong>Claude Code</strong>：在系统 prompt 里训练 / 引导，让 LLM 看到新 user message 时优先判断意图。如果 ambiguous，会问一句澄清。</li>
+<li><strong>Codex</strong>：类似。但 collaboration mode 不同表现也不同 —— Plan mode 下 LLM 倾向把新输入当”补充计划要求”，Execute mode 下倾向”调整执行方向”。</li>
+</ul>
+<p>这部分是 LLM 工程的范畴，不是 CLI 工程能解决的。<strong>好的设计是让用户能看到 agent 的判断并随时纠正</strong>（Codex 的 InterruptedTurnNoticeMode 就是干这个，给一行提示告诉用户”我在执行你新的引导消息”）。</p>
+<h3 id="6-3-后台-subagent-完成时如何”礼貌”打断主-agent"><a href="#6-3-后台-subagent-完成时如何”礼貌”打断主-agent" class="headerlink" title="6.3 后台 subagent 完成时如何”礼貌”打断主 agent"></a>6.3 后台 subagent 完成时如何”礼貌”打断主 agent</h3><p>这是 multi-agent 场景下的特有问题（参考 <a href="../24.Multi-Agent%E7%9A%84%E4%B8%A4%E7%A7%8D%E8%A7%A3%E6%B3%95-ClaudeCode%E4%B8%8ECodex%E6%8B%86%E8%A7%A3/Multi-Agent%E7%9A%84%E4%B8%A4%E7%A7%8D%E8%A7%A3%E6%B3%95-ClaudeCode%E4%B8%8ECodex%E6%8B%86%E8%A7%A3.md">24 篇 Multi-Agent 拆解</a>）。</p>
+<p>主 agent 在 LLM stream 中间，后台 subagent 完成了任务想报告结果。两种处理：</p>
+<p><strong>粗暴打断</strong>：subagent 完成立刻给主 agent 发新消息 → 中断主 agent stream → 让它去看 subagent 结果。<strong>问题</strong>：主 agent 思路被打断，可能写出来的东西支离破碎。</p>
+<p><strong>礼貌打断</strong>：subagent 完成时把通知<strong>入 queue</strong>，主 agent 当前 step 自然结束后才看到。<strong>优点</strong>：主 agent 思维连贯，subagent 结果作为下一轮输入处理。<strong>两家工具都选了这个</strong>。</p>
+<p>Codex 的 <code>InterruptManager</code> 队列里有 <code>ItemStarted / ItemCompleted</code> 这两种事件，就是为这个场景准备的 —— 不是马上插入 UI，等当前写入周期结束再批量处理。</p>
+<hr>
+<h2 id="7-设计原则总结"><a href="#7-设计原则总结" class="headerlink" title="7. 设计原则总结"></a>7. 设计原则总结</h2><p>把上面所有细节抽象出来，做 agent CLI 的人能学到这些原则：</p>
+<p><strong>1. UI 和 agent 必须双 loop</strong>。同一个 loop 里跑 LLM 调用 + 处理键盘事件，必崩。Rust 用 tokio task / Go 用 goroutine / Node 用 worker thread / Python 用 asyncio task 都行，关键是分开。</p>
+<p><strong>2. Queue 不是一层，而是多层状态机</strong>。至少要分清 “user 提交了但 turn 没起” / “已发到 core 但未 commit” / “已 reject 等重试” 这几个状态。简单的 <code>VecDeque&lt;Message&gt;</code> 在生产场景下会出 bug。</p>
+<p><strong>3. Drain 时机必须在自然边界</strong>。LLM stream 中间不 drain、tool call 中间不 drain，<strong>只在 step 边界 drain</strong>。这是保证对话连贯的核心约束。</p>
+<p><strong>4. Hard interrupt 是独立通道</strong>。不要用”特殊 user message”模拟中断，要用专门的 <code>Op::Interrupt</code> + cancellation token。两条通道语义不一样，混在一起一定混乱。</p>
+<p><strong>5. UI 中断也要排队</strong>。不仅用户输入要排队，agent 想弹给用户的 approval / permission 请求也要排队。同时只能展示一个对话框给用户看。</p>
+<p><strong>6. 起一个有意义的术语</strong>。Codex 给 “用户中途插话” 起名 <strong>steer</strong>（引导）而不是 interrupt（中断），是一个非常成熟的产品决定 —— 命名定义了行为。在你做 agent CLI 时，这种概念清晰度非常重要。</p>
+<p><strong>7. 礼貌优于及时</strong>。后台事件（subagent 完成、文件变化、网络回调）默认应该等到主 agent 自然边界再插入，不要每次有事就打断。打断成本高于延迟成本。</p>
+<p><strong>8. 副作用不可逆，要明示用户</strong>。Esc 不会撤销已写的代码、已发的请求、已计费的 token。这个事实必须在 UI 上让用户感知到，否则用户会按 Esc 然后期待”什么都没发生”。</p>
+<hr>
+<h2 id="8-自己做-agent-CLI-时的-checklist"><a href="#8-自己做-agent-CLI-时的-checklist" class="headerlink" title="8. 自己做 agent CLI 时的 checklist"></a>8. 自己做 agent CLI 时的 checklist</h2><p>如果你打算做一个 agent CLI 工具（哪怕是内部工具），这套机制不是 nice-to-have，是 <strong>must-have</strong>。从最小到完整的清单：</p>
+<table>
+<thead>
+<tr>
+<th>阶段</th>
+<th>必须实现</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>MVP</strong></td>
+<td>双 loop（UI + agent）+ 单 channel + Ctrl+C 退出</td>
+</tr>
+<tr>
+<td><strong>Beta</strong></td>
+<td>软中断（steer queue）+ 硬中断（cancellation token）+ “queued” UI 提示</td>
+</tr>
+<tr>
+<td><strong>生产</strong></td>
+<td>多状态 queue（queued / pending / committed / rejected）+ InterruptManager（UI 事件排队）+ 双击退出 + steer 后 Esc 自动 submit</td>
+</tr>
+<tr>
+<td><strong>企业级</strong></td>
+<td>后台事件礼貌打断 + 跨 turn 类型的 steer 路由（regular / plan / review）+ slash command 独立通道 + 完整 audit log</td>
+</tr>
+</tbody></table>
+<p>少一层都会让用户体验崩在某个具体场景里 —— 而那种”用 5 分钟就出 bug”的体验，会让你的工具被用户立刻弃用。</p>
+<hr>
+<h2 id="结语：好的事件循环让用户感觉不到事件循环"><a href="#结语：好的事件循环让用户感觉不到事件循环" class="headerlink" title="结语：好的事件循环让用户感觉不到事件循环"></a>结语：好的事件循环让用户感觉不到事件循环</h2><p>回到文章开头那个场景：你在 agent 干活时按下回车输入”用 Vite 不要 Webpack”。</p>
+<p>如果工具做对了，你的体验是：<strong>输入立刻显示在底部、agent 没有被你打断继续干当前的事、几秒后 agent 自然停下来 acknowledge 你的引导、按你新意图继续</strong>。整个过程你不需要思考”要不要按 Esc / 我的输入会不会丢 / agent 会不会乱”。</p>
+<p>如果工具做错了，你会遇到：<strong>输入卡住等 agent 结束才显示 / agent 写到一半被你打断输出错乱 / 你按 Ctrl+C 整个会话没了 / 多次输入只生效最后一条</strong>。每个 bug 单独看都不致命，加起来用户就走了。</p>
+<p>事件循环和中断模型是 agent CLI 的”地基” —— 用户感受不到它的存在，但它崩了一切都崩。Claude Code 和 Codex 这两家把它做到接近零摩擦的水平，背后是大量的状态机设计、队列分级、边界处理。理解了这些，你才能做出同样不让用户感到”啊好烦”的工具。</p>
+<hr>
+<blockquote>
+<p>参考资料</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/openai/codex/blob/main/codex-rs/tui/src/chatwidget.rs">Codex 源码：tui/src/chatwidget.rs</a> —— <code>pending_steers / rejected_steers_queue / submit_pending_steers_after_interrupt</code></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/openai/codex/blob/main/codex-rs/tui/src/chatwidget/interrupts.rs">Codex 源码：tui/src/chatwidget/interrupts.rs</a> —— <code>InterruptManager / QueuedInterrupt</code></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/openai/codex/blob/main/codex-rs/tui/src/bottom_pane/chat_composer.rs">Codex 源码：tui/src/bottom_pane/chat_composer.rs</a> —— <code>ChatComposer / TextArea</code></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/openai/codex/blob/main/codex-rs/protocol/src/protocol.rs">Codex 协议：Op enum</a> —— <code>Op::Interrupt / Op::CleanBackgroundTerminals</code></li>
+<li><a target="_blank" rel="noopener" href="https://ratatui.rs/">Ratatui 文档</a> —— Rust TUI 框架，Codex / atuin / yazi 等都用</li>
+<li><a target="_blank" rel="noopener" href="https://docs.rs/tokio-util/latest/tokio_util/sync/struct.CancellationToken.html">Tokio CancellationToken</a> —— Rust 异步取消的标准做法</li>
+<li><a href="../24.Multi-Agent%E7%9A%84%E4%B8%A4%E7%A7%8D%E8%A7%A3%E6%B3%95-ClaudeCode%E4%B8%8ECodex%E6%8B%86%E8%A7%A3/Multi-Agent%E7%9A%84%E4%B8%A4%E7%A7%8D%E8%A7%A3%E6%B3%95-ClaudeCode%E4%B8%8ECodex%E6%8B%86%E8%A7%A3.md">本系列 24 篇 · Multi-Agent 拆解</a></li>
+</ul>
+</blockquote>
+</div>
+    <aside class="post-rail">
+      <span class="post-rail__line"></span>
+      <span>LESLIE / WRITING</span>
+    </aside>
+  </div>
+
+  <footer class="post-footer shell">
+    <div><h2>如果这篇文章帮到了你，<br>也许下一篇会更有意思。</h2></div>
+    <a class="button button--primary" href="/writing/">继续阅读 →</a>
+  </footer>
+</article>
+</main>
+    <footer class="site-footer">
+  <div class="footer-grid">
+    <div>
+      <p class="footer-kicker">Leslie Zhang</p>
+      <p class="footer-statement">流水不争先，<br>争的是滔滔不绝。</p>
+    </div>
+    <div class="footer-links">
+      <a href="https://github.com/leslieAIbin" target="_blank" rel="noreferrer">GitHub ↗</a>
+      <a href="https://www.instagram.com/leslieaibin/" target="_blank" rel="noreferrer">Instagram ↗</a>
+      <button type="button" data-wechat-open>微信 / WeChat</button>
+      <a href="mailto:aibinzhangleslie@gmail.com">Email ↗</a>
+      <a href="/atom.xml">RSS ↗</a>
+    </div>
+    <div class="footer-meta">
+      <span>© 2026 Leslie Zhang</span>
+      <span>Writing, research and working systems.</span>
+    </div>
+  </div>
+</footer>
+
+    <dialog class="ask-dialog" id="ask-leslie" aria-labelledby="ask-title">
+  <div class="ask-dialog__shell">
+    <div class="ask-dialog__topbar">
+      <div>
+        <h2 id="ask-title">Ask Leslie</h2>
+      </div>
+      <button class="icon-button" type="button" data-ask-close aria-label="关闭">×</button>
+    </div>
+    <p class="ask-dialog__intro">从本站公开文章中寻找答案。当前版本在浏览器本地检索，不上传问题，也不会编造不存在的经历。</p>
+    <form class="ask-form" data-ask-form>
+      <label class="sr-only" for="ask-query">输入问题</label>
+      <textarea id="ask-query" rows="2" placeholder="例如：Agent Runtime 应该怎么设计？" data-ask-input></textarea>
+      <button type="submit">检索知识库 <span aria-hidden="true">↗</span></button>
+    </form>
+    <div class="ask-suggestions" aria-label="推荐问题">
+      
+        <button type="button" data-ask-suggestion="Agent Runtime 应该怎么设计？">Agent Runtime 应该怎么设计？</button>
+      
+        <button type="button" data-ask-suggestion="如何让 AI 操控真实世界设备？">如何让 AI 操控真实世界设备？</button>
+      
+        <button type="button" data-ask-suggestion="Leslie 最近在研究什么？">Leslie 最近在研究什么？</button>
+      
+    </div>
+    <div class="ask-results" data-ask-results aria-live="polite">
+      <div class="ask-empty">
+        <p>输入一个问题，我会把你带到 Leslie 写过的相关内容。</p>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+    <dialog class="wechat-dialog" id="wechat-leslie" aria-labelledby="wechat-title">
+  <div class="wechat-dialog__shell">
+    <header>
+      <div>
+        <p class="section-label">WeChat</p>
+        <h2 id="wechat-title">微信联系</h2>
+      </div>
+      <button class="icon-button" type="button" data-wechat-close aria-label="关闭微信二维码">×</button>
+    </header>
+    <img src="/images/contact/wechat-leslie.png" alt="Leslie Zhang 的微信二维码" loading="lazy">
+    <p>扫码添加 Leslie，建议备注你的名字与来意。</p>
+  </div>
+</dialog>
+
+    <script>window.ORBITAL_ROOT = '/';</script>
+    <script src="/js/orbital.js" defer></script>
+  </body>
+</html>

@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+  <head>
+
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#050b18">
+<meta name="color-scheme" content="dark light">
+<title>远程控制权限链路：手机审批如何控制桌面端Agent | Leslie Zhang</title>
+<meta name="description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta name="author" content="Leslie Zhang">
+<link rel="canonical" href="https://leslieaibin.github.io/2026/06/07/attention-field/%E8%BF%9C%E7%A8%8B%E6%8E%A7%E5%88%B6%E6%9D%83%E9%99%90%E9%93%BE%E8%B7%AF/">
+<link rel="icon" href="/imgs/01.jpg">
+<link rel="alternate" type="application/atom+xml" title="Leslie Zhang" href="/atom.xml">
+<meta property="og:type" content="article">
+<meta property="og:title" content="远程控制权限链路：手机审批如何控制桌面端Agent | Leslie Zhang">
+<meta property="og:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta property="og:url" content="https://leslieaibin.github.io/2026/06/07/attention-field/%E8%BF%9C%E7%A8%8B%E6%8E%A7%E5%88%B6%E6%9D%83%E9%99%90%E9%93%BE%E8%B7%AF/">
+<meta property="og:image" content="https://leslieaibin.github.io/2026/06/07/attention-field/%E8%BF%9C%E7%A8%8B%E6%8E%A7%E5%88%B6%E6%9D%83%E9%99%90%E9%93%BE%E8%B7%AF/imgs/01-architecture.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="远程控制权限链路：手机审批如何控制桌面端Agent | Leslie Zhang">
+<meta name="twitter:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta name="twitter:image" content="https://leslieaibin.github.io/2026/06/07/attention-field/%E8%BF%9C%E7%A8%8B%E6%8E%A7%E5%88%B6%E6%9D%83%E9%99%90%E9%93%BE%E8%B7%AF/imgs/01-architecture.png">
+<script>
+  (function () {
+    var saved = localStorage.getItem('orbital-theme');
+    var theme = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    document.documentElement.dataset.theme = theme;
+  })();
+</script>
+<link rel="stylesheet" href="/css/orbital.css">
+<meta name="generator" content="Hexo 5.2.0"></head>
+  <body class="page-post">
+    <a class="skip-link" href="#main-content">跳到主要内容</a>
+    <div class="reading-progress" data-reading-progress></div>
+    <header class="site-header" data-header>
+  <div class="nav-shell">
+    <a class="brand" href="/" aria-label="返回首页">
+      <span class="brand-mark" aria-hidden="true"><img src="/images/brand/leslie-mythos-avatar.webp" alt="" width="512" height="512"></span>
+      <span class="brand-copy">
+        <strong>LESLIE</strong>
+        <small>REAL-WORLD AGENTS</small>
+      </span>
+    </a>
+
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav" data-nav-toggle>
+      <span></span><span></span>
+      <span class="sr-only">打开导航</span>
+    </button>
+
+    <nav class="main-nav" id="main-nav" aria-label="主导航" data-nav>
+      
+        <a href="/" class="">首页</a>
+      
+        <a href="/writing/" class="">写作</a>
+      
+        <a href="/projects/" class="">项目</a>
+      
+        <a href="/about/" class="">关于</a>
+      
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换明暗主题">
+        <span class="theme-toggle__sun" aria-hidden="true">☼</span>
+        <span class="theme-toggle__moon" aria-hidden="true">◐</span>
+      </button>
+      <button class="ask-nav" type="button" data-ask-open>ASK LESLIE</button>
+    </nav>
+  </div>
+</header>
+
+    <main id="main-content"><article class="post-shell">
+  <header class="post-hero shell">
+    <a class="post-back" href="/writing/">← 返回写作</a>
+    <div class="post-hero__meta">
+      <time datetime="2026-06-07">2026 年 06 月 07 日</time>
+      <span>6 分钟阅读</span>
+    </div>
+    <h1>远程控制权限链路：手机审批如何控制桌面端Agent</h1>
+    
+    <div class="chip-row"><a href="/tags/Agent/">Agent</a><a href="/tags/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/">系统设计</a><a href="/tags/%E6%9D%83%E9%99%90%E7%B3%BB%E7%BB%9F/">权限系统</a><a href="/tags/%E8%BF%9C%E7%A8%8B%E6%8E%A7%E5%88%B6/">远程控制</a></div>
+  </header>
+
+  <div class="post-cover shell"><img src="/2026/06/07/attention-field/%E8%BF%9C%E7%A8%8B%E6%8E%A7%E5%88%B6%E6%9D%83%E9%99%90%E9%93%BE%E8%B7%AF/imgs/01-architecture.png" alt="远程控制权限链路：手机审批如何控制桌面端Agent"></div>
+
+  <div class="post-layout shell">
+    <aside class="post-toc" aria-label="文章目录">
+      <span class="aside-title">目录</span>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%97%AE%E9%A2%98%E5%AE%9A%E4%B9%89"><span class="toc-text">问题定义</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1"><span class="toc-text">架构设计</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E8%83%BD%E6%A1%8C%E9%9D%A2%E7%9B%B4%E8%BF%9E%E6%89%8B%E6%9C%BA"><span class="toc-text">为什么不能桌面直连手机</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E7%94%A8WebSocket%E8%80%8C%E4%B8%8D%E6%98%AF%E8%BD%AE%E8%AF%A2"><span class="toc-text">为什么用WebSocket而不是轮询</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%A1%E6%89%B9%E7%8A%B6%E6%80%81%E6%9C%BA"><span class="toc-text">审批状态机</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E9%94%AE%E8%AE%BE%E8%AE%A1%E5%86%B3%E7%AD%96"><span class="toc-text">关键设计决策</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A3%8E%E9%99%A9%E5%88%86%E7%BA%A7"><span class="toc-text">风险分级</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A6%BB%E7%BA%BF%E4%B8%8E%E5%BC%B1%E7%BD%91%E5%A4%84%E7%90%86"><span class="toc-text">离线与弱网处理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%89%8B%E6%9C%BA%E7%A6%BB%E7%BA%BF"><span class="toc-text">手机离线</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A1%8C%E9%9D%A2%E7%AB%AF%E6%96%AD%E8%BF%9E"><span class="toc-text">桌面端断连</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BC%B1%E7%BD%91%E5%9C%BA%E6%99%AF"><span class="toc-text">弱网场景</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%89%E5%85%A8%E8%80%83%E9%87%8F"><span class="toc-text">安全考量</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B6%88%E6%81%AF%E7%AD%BE%E5%90%8D"><span class="toc-text">消息签名</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%98%B2%E9%87%8D%E6%94%BE%E6%94%BB%E5%87%BB"><span class="toc-text">防重放攻击</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%A1%E8%AE%A1%E6%97%A5%E5%BF%97"><span class="toc-text">审计日志</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E5%8F%A5%E8%AF%9D%E6%80%BB%E7%BB%93"><span class="toc-text">一句话总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="toc-text">参考资料</span></a></li></ol>
+    </aside>
+    <div class="article-content"><h1 id="远程控制权限链路：手机审批如何控制桌面端Agent"><a href="#远程控制权限链路：手机审批如何控制桌面端Agent" class="headerlink" title="远程控制权限链路：手机审批如何控制桌面端Agent"></a>远程控制权限链路：手机审批如何控制桌面端Agent</h1><p>很多人觉得远程控制就是”加个WebSocket”。手机发指令，电脑执行，完成。</p>
+<p>但真正的问题是：<strong>当Agent在桌面端自主执行时，它可能要做危险操作——删文件、执行命令、访问数据库。你不可能让它全自动，但用户又不在电脑前。你需要一个权限审批机制——而且这条链路必须可靠，不能因为网络抖动就挂起整个执行流程。</strong></p>
+<p>这不是一个消息推送问题。这是一个分布式系统的状态同步问题。</p>
+<hr>
+<h2 id="问题定义"><a href="#问题定义" class="headerlink" title="问题定义"></a>问题定义</h2><p>场景很具体：</p>
+<ul>
+<li>Claude Code / Codex / Cursor 在你的电脑上执行代码</li>
+<li>Agent执行到某个步骤，需要你的确认（比如”我要执行 <code>rm -rf /tmp/build</code> ，允许吗？”）</li>
+<li>但你在地铁上，只有手机</li>
+<li>你需要在手机上看到这个请求，点击”允许”或”拒绝”，然后桌面端继续执行</li>
+</ul>
+<p>看起来简单，但实际上有几个关键问题：</p>
+<ol>
+<li><strong>桌面端和手机不在同一个网络</strong>——NAT、防火墙、动态IP，直连不可能</li>
+<li><strong>审批必须可靠</strong>——不能因为手机信号不好就丢消息，也不能因为桌面端重启就丢失审批状态</li>
+<li><strong>超时要有兜底</strong>——用户15分钟没回应，Agent不能一直挂着</li>
+<li><strong>安全</strong>——审批消息不能被篡改，审批结果不能被伪造</li>
+</ol>
+<hr>
+<h2 id="架构设计"><a href="#架构设计" class="headerlink" title="架构设计"></a>架构设计</h2><p>四个角色，缺一不可：</p>
+<p><img src="imgs/01-architecture.png" alt="权限链路架构"></p>
+<h3 id="为什么不能桌面直连手机"><a href="#为什么不能桌面直连手机" class="headerlink" title="为什么不能桌面直连手机"></a>为什么不能桌面直连手机</h3><p>三个原因：</p>
+<table>
+<thead>
+<tr>
+<th>问题</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>NAT穿透</td>
+<td>手机在4G网络，桌面在公司WiFi，两端都没有公网IP</td>
+</tr>
+<tr>
+<td>防火墙</td>
+<td>企业网络通常不允许入站连接</td>
+</tr>
+<tr>
+<td>动态IP</td>
+<td>手机的IP随时在变，桌面端的IP也不固定</td>
+</tr>
+</tbody></table>
+<p>所以必须有一个<strong>云端中继</strong>作为消息的中间人。桌面端和手机都主动连接到云端，云端负责路由消息。</p>
+<h3 id="为什么用WebSocket而不是轮询"><a href="#为什么用WebSocket而不是轮询" class="headerlink" title="为什么用WebSocket而不是轮询"></a>为什么用WebSocket而不是轮询</h3><p>审批请求的延迟很重要。Agent暂停执行等用户确认，每多等1秒都是浪费。</p>
+<ul>
+<li><strong>轮询</strong>：手机每5秒问一次”有新审批吗？” → 平均2.5秒延迟，加上服务器压力</li>
+<li><strong>WebSocket</strong>：云端收到桌面端的审批请求，立即推送给手机 → 毫秒级延迟</li>
+</ul>
+<p>代价是WebSocket需要维护长连接，但云端中继本身就承担了这个职责。</p>
+<hr>
+<h2 id="审批状态机"><a href="#审批状态机" class="headerlink" title="审批状态机"></a>审批状态机</h2><p>这是整个系统的核心。一次审批请求的状态流转：</p>
+<p><img src="imgs/03-state-machine.png" alt="审批状态机"></p>
+<h3 id="关键设计决策"><a href="#关键设计决策" class="headerlink" title="关键设计决策"></a>关键设计决策</h3><p><strong>1. 唯一审批ID</strong></p>
+<p>每次审批请求生成一个UUID，绑定三元组：<code>session_id + run_id + step_id</code>。这保证：</p>
+<ul>
+<li>桌面端能精确匹配”哪个步骤的审批结果回来了”</li>
+<li>不会出现A请求的审批被误用到B请求上</li>
+<li>审计日志可追溯</li>
+</ul>
+<p><strong>2. 超时自动拒绝，不是自动通过</strong></p>
+<p>默认超时5分钟。为什么是拒绝而不是通过？</p>
+<p>安全第一原则。宁可让用户重新执行一次任务，也不能因为超时就自动放行一个可能危险的操作。这是一个不可逆的决策——一旦你让超时=通过，就有攻击者故意让用户断连来绕过审批。</p>
+<p><strong>3. 幂等性（Idempotency）</strong></p>
+<p>同一个审批ID，无论手机发送多少次”approve”，效果都是一样的。幂等性保证了即使网络重传导致消息重复投递，也不会产生重复处理。</p>
+<hr>
+<h2 id="风险分级"><a href="#风险分级" class="headerlink" title="风险分级"></a>风险分级</h2><p>不是所有操作都需要等手机确认。</p>
+<p><img src="imgs/02-risk-levels.png" alt="风险分级"></p>
+<table>
+<thead>
+<tr>
+<th>风险等级</th>
+<th>操作示例</th>
+<th>审批方式</th>
+<th>典型超时</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Low</strong></td>
+<td>读文件、搜索代码、查看日志</td>
+<td>自动通过</td>
+<td>-</td>
+</tr>
+<tr>
+<td><strong>Medium</strong></td>
+<td>写文件、安装npm包、创建PR</td>
+<td>手机一次确认</td>
+<td>10min</td>
+</tr>
+<tr>
+<td><strong>High</strong></td>
+<td>删除文件、执行shell命令、访问生产数据库</td>
+<td>手机确认+二次验证</td>
+<td>30min</td>
+</tr>
+</tbody></table>
+<p>风险等级怎么定？两个维度：</p>
+<ol>
+<li><strong>操作类型</strong>：读 &lt; 写 &lt; 删除 &lt; 执行命令</li>
+<li><strong>目标资源</strong>：临时文件 &lt; 项目文件 &lt; 系统文件 &lt; 生产环境</li>
+</ol>
+<p>一个简单的规则：<strong>操作是否可逆？</strong> 可逆的操作风险低，不可逆的操作风险高。删除文件不可逆，所以要高等级审批。写文件可逆（可以git revert），所以中等。</p>
+<hr>
+<h2 id="离线与弱网处理"><a href="#离线与弱网处理" class="headerlink" title="离线与弱网处理"></a>离线与弱网处理</h2><p>这是真实场景中最容易出问题的地方。</p>
+<p><img src="imgs/04-offline-handling.png" alt="离线与弱网处理"></p>
+<h3 id="手机离线"><a href="#手机离线" class="headerlink" title="手机离线"></a>手机离线</h3><p>用户手机没信号、关机、或者App被杀了。审批请求怎么办？</p>
+<ol>
+<li>云端中继检测到手机WebSocket连接断开</li>
+<li>走<strong>推送服务</strong>（苹果APNs / 安卓FCM）发送通知</li>
+<li>用户看到通知：”Agent请求执行 <code>rm -rf /tmp/build</code>“</li>
+<li>点击通知 → 唤起App → WebSocket重连 → 完成审批</li>
+</ol>
+<p>关键是：<strong>推送通知是兜底方案，不是主方案。</strong> 推送有延迟（APNs可达几秒到几分钟）、不可靠（用户可能关了通知）、没有双向通信能力。但它能在App不活跃时把用户拉回来。</p>
+<h3 id="桌面端断连"><a href="#桌面端断连" class="headerlink" title="桌面端断连"></a>桌面端断连</h3><p>桌面端网络断了或者崩溃了。审批结果怎么办？</p>
+<ol>
+<li>云端中继把审批结果持久化（数据库/Redis）</li>
+<li>桌面端重连后，拉取所有pending的审批结果</li>
+<li>Agent从断点恢复执行</li>
+</ol>
+<p><strong>审批结果不能丢。</strong> 用户在手机上审批了操作，如果桌面端没收到，等于审批失效。所以至少一次投递（at-least-once delivery）是底线，加上幂等性保证不重复执行。</p>
+<h3 id="弱网场景"><a href="#弱网场景" class="headerlink" title="弱网场景"></a>弱网场景</h3><p>手机在地铁上，信号时断时续：</p>
+<ul>
+<li>消息发送失败 → 本地缓存 → 有网络时重试</li>
+<li>审批结果重复发送 → 幂等处理 → 无副作用</li>
+<li>关键消息（审批创建、审批结果）需要确认（ACK，即接收方收到后回复一个确认信号），不关键的状态更新可以丢弃</li>
+</ul>
+<hr>
+<h2 id="安全考量"><a href="#安全考量" class="headerlink" title="安全考量"></a>安全考量</h2><p>审批链路是Agent系统的安全命脉。如果攻击者能伪造审批结果，等于拿到了系统的完全控制权。</p>
+<h3 id="消息签名"><a href="#消息签名" class="headerlink" title="消息签名"></a>消息签名</h3><p>每条消息都带签名：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">message &#x3D; &#123;</span><br><span class="line">  approval_id: &quot;uuid-xxx&quot;,</span><br><span class="line">  type: &quot;approve&quot;,</span><br><span class="line">  timestamp: 1717756800,</span><br><span class="line">  nonce: &quot;random-string&quot;   &#x2F;&#x2F; 随机数，防止重放攻击</span><br><span class="line">&#125;</span><br><span class="line">signature &#x3D; HMAC-SHA256(secret_key, message)  &#x2F;&#x2F; 基于共享密钥的哈希签名</span><br></pre></td></tr></table></figure>
+
+<p>桌面端收到审批结果后，先验证签名。HMAC-SHA256是一种基于共享密钥的消息认证算法——只有持有密钥的双方才能生成和验证签名。签名不对，直接丢弃。</p>
+<h3 id="防重放攻击"><a href="#防重放攻击" class="headerlink" title="防重放攻击"></a>防重放攻击</h3><p>攻击者截获了一条合法的”approve”消息，然后重复发送。</p>
+<p>防御：每条消息带<code>timestamp</code>和<code>nonce</code>（一次性随机数）。云端中继维护一个已处理nonce的集合（TTL即Time-To-Live，设为超时时间后自动清理），重复的nonce直接拒绝。</p>
+<h3 id="审计日志"><a href="#审计日志" class="headerlink" title="审计日志"></a>审计日志</h3><p>每次审批的完整生命周期都记录：</p>
+<ul>
+<li>审批创建时间、操作描述、风险等级</li>
+<li>通知发送时间、手机接收时间</li>
+<li>用户审批/拒绝时间</li>
+<li>桌面端ACK时间</li>
+</ul>
+<p>这不是可选项。如果你的Agent系统要给企业用，审计日志是合规要求。</p>
+<hr>
+<h2 id="一句话总结"><a href="#一句话总结" class="headerlink" title="一句话总结"></a>一句话总结</h2><p>远程控制权限链路的本质是：<strong>在不可靠的网络上，构建一个可靠的分布式状态同步协议。</strong> 它需要云端中继解决连通性、状态机解决一致性、推送服务解决可用性、签名验证解决安全性。</p>
+<p>任何一个环节出问题，Agent就卡住。这看似简单的需求，背后的工程复杂度往往超出预期。</p>
+<hr>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://code.claude.com/docs/en/permission-modes">Claude Code Permission Modes</a></li>
+<li><a target="_blank" rel="noopener" href="https://datatracker.ietf.org/doc/html/rfc8628">OAuth 2.0 Device Authorization Grant (RFC 8628)</a> — 类似的”设备在一边，用户在另一边”的授权模式</li>
+<li><a target="_blank" rel="noopener" href="https://developer.apple.com/documentation/usernotifications/sending-notification-requests-to-apns">Apple Push Notification Service (APNs)</a></li>
+<li><a target="_blank" rel="noopener" href="https://firebase.google.com/docs/cloud-messaging">Firebase Cloud Messaging (FCM)</a></li>
+</ul>
+</div>
+    <aside class="post-rail">
+      <span class="post-rail__line"></span>
+      <span>LESLIE / WRITING</span>
+    </aside>
+  </div>
+
+  <footer class="post-footer shell">
+    <div><h2>如果这篇文章帮到了你，<br>也许下一篇会更有意思。</h2></div>
+    <a class="button button--primary" href="/writing/">继续阅读 →</a>
+  </footer>
+</article>
+</main>
+    <footer class="site-footer">
+  <div class="footer-grid">
+    <div>
+      <p class="footer-kicker">Leslie Zhang</p>
+      <p class="footer-statement">流水不争先，<br>争的是滔滔不绝。</p>
+    </div>
+    <div class="footer-links">
+      <a href="https://github.com/leslieAIbin" target="_blank" rel="noreferrer">GitHub ↗</a>
+      <a href="https://www.instagram.com/leslieaibin/" target="_blank" rel="noreferrer">Instagram ↗</a>
+      <button type="button" data-wechat-open>微信 / WeChat</button>
+      <a href="mailto:aibinzhangleslie@gmail.com">Email ↗</a>
+      <a href="/atom.xml">RSS ↗</a>
+    </div>
+    <div class="footer-meta">
+      <span>© 2026 Leslie Zhang</span>
+      <span>Writing, research and working systems.</span>
+    </div>
+  </div>
+</footer>
+
+    <dialog class="ask-dialog" id="ask-leslie" aria-labelledby="ask-title">
+  <div class="ask-dialog__shell">
+    <div class="ask-dialog__topbar">
+      <div>
+        <h2 id="ask-title">Ask Leslie</h2>
+      </div>
+      <button class="icon-button" type="button" data-ask-close aria-label="关闭">×</button>
+    </div>
+    <p class="ask-dialog__intro">从本站公开文章中寻找答案。当前版本在浏览器本地检索，不上传问题，也不会编造不存在的经历。</p>
+    <form class="ask-form" data-ask-form>
+      <label class="sr-only" for="ask-query">输入问题</label>
+      <textarea id="ask-query" rows="2" placeholder="例如：Agent Runtime 应该怎么设计？" data-ask-input></textarea>
+      <button type="submit">检索知识库 <span aria-hidden="true">↗</span></button>
+    </form>
+    <div class="ask-suggestions" aria-label="推荐问题">
+      
+        <button type="button" data-ask-suggestion="Agent Runtime 应该怎么设计？">Agent Runtime 应该怎么设计？</button>
+      
+        <button type="button" data-ask-suggestion="如何让 AI 操控真实世界设备？">如何让 AI 操控真实世界设备？</button>
+      
+        <button type="button" data-ask-suggestion="Leslie 最近在研究什么？">Leslie 最近在研究什么？</button>
+      
+    </div>
+    <div class="ask-results" data-ask-results aria-live="polite">
+      <div class="ask-empty">
+        <p>输入一个问题，我会把你带到 Leslie 写过的相关内容。</p>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+    <dialog class="wechat-dialog" id="wechat-leslie" aria-labelledby="wechat-title">
+  <div class="wechat-dialog__shell">
+    <header>
+      <div>
+        <p class="section-label">WeChat</p>
+        <h2 id="wechat-title">微信联系</h2>
+      </div>
+      <button class="icon-button" type="button" data-wechat-close aria-label="关闭微信二维码">×</button>
+    </header>
+    <img src="/images/contact/wechat-leslie.png" alt="Leslie Zhang 的微信二维码" loading="lazy">
+    <p>扫码添加 Leslie，建议备注你的名字与来意。</p>
+  </div>
+</dialog>
+
+    <script>window.ORBITAL_ROOT = '/';</script>
+    <script src="/js/orbital.js" defer></script>
+  </body>
+</html>

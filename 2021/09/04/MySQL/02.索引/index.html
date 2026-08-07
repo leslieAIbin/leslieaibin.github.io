@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+  <head>
+
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#050b18">
+<meta name="color-scheme" content="dark light">
+<title>02.索引 | Leslie Zhang</title>
+<meta name="description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta name="author" content="Leslie Zhang">
+<link rel="canonical" href="https://leslieaibin.github.io/2021/09/04/MySQL/02.%E7%B4%A2%E5%BC%95/">
+<link rel="icon" href="/imgs/01.jpg">
+<link rel="alternate" type="application/atom+xml" title="Leslie Zhang" href="/atom.xml">
+<meta property="og:type" content="article">
+<meta property="og:title" content="02.索引 | Leslie Zhang">
+<meta property="og:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta property="og:url" content="https://leslieaibin.github.io/2021/09/04/MySQL/02.%E7%B4%A2%E5%BC%95/">
+<meta property="og:image" content="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/36.jpg?raw=true">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="02.索引 | Leslie Zhang">
+<meta name="twitter:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta name="twitter:image" content="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/36.jpg?raw=true">
+<script>
+  (function () {
+    var saved = localStorage.getItem('orbital-theme');
+    var theme = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    document.documentElement.dataset.theme = theme;
+  })();
+</script>
+<link rel="stylesheet" href="/css/orbital.css">
+<meta name="generator" content="Hexo 5.2.0"></head>
+  <body class="page-post">
+    <a class="skip-link" href="#main-content">跳到主要内容</a>
+    <div class="reading-progress" data-reading-progress></div>
+    <header class="site-header" data-header>
+  <div class="nav-shell">
+    <a class="brand" href="/" aria-label="返回首页">
+      <span class="brand-mark" aria-hidden="true"><img src="/images/brand/leslie-mythos-avatar.webp" alt="" width="512" height="512"></span>
+      <span class="brand-copy">
+        <strong>LESLIE</strong>
+        <small>REAL-WORLD AGENTS</small>
+      </span>
+    </a>
+
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav" data-nav-toggle>
+      <span></span><span></span>
+      <span class="sr-only">打开导航</span>
+    </button>
+
+    <nav class="main-nav" id="main-nav" aria-label="主导航" data-nav>
+      
+        <a href="/" class="">首页</a>
+      
+        <a href="/writing/" class="">写作</a>
+      
+        <a href="/projects/" class="">项目</a>
+      
+        <a href="/about/" class="">关于</a>
+      
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换明暗主题">
+        <span class="theme-toggle__sun" aria-hidden="true">☼</span>
+        <span class="theme-toggle__moon" aria-hidden="true">◐</span>
+      </button>
+      <button class="ask-nav" type="button" data-ask-open>ASK LESLIE</button>
+    </nav>
+  </div>
+</header>
+
+    <main id="main-content"><article class="post-shell">
+  <header class="post-hero shell">
+    <a class="post-back" href="/writing/">← 返回写作</a>
+    <div class="post-hero__meta">
+      <time datetime="2021-09-04">2021 年 09 月 04 日</time>
+      <span>11 分钟阅读</span>
+    </div>
+    <h1>02.索引</h1>
+    
+    <div class="chip-row"><a href="/tags/MySQL/">MySQL</a></div>
+  </header>
+
+  <div class="post-cover shell"><img src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/36.jpg?raw=true" alt="02.索引"></div>
+
+  <div class="post-layout shell">
+    <aside class="post-toc" aria-label="文章目录">
+      <span class="aside-title">目录</span>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E7%B4%A2%E5%BC%95"><span class="toc-text">什么是索引</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B4%A2%E5%BC%95%E7%9A%84%E5%88%86%E7%B1%BB"><span class="toc-text">索引的分类</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8C%89%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E5%88%86%E7%B1%BB"><span class="toc-text">按数据结构分类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8C%89%E7%85%A7%E7%89%A9%E7%90%86%E5%AD%98%E5%82%A8%E5%88%86%E7%B1%BB"><span class="toc-text">按照物理存储分类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8C%89%E5%AD%97%E6%AE%B5%E7%89%B9%E6%80%A7%E5%88%86%E7%B1%BB"><span class="toc-text">按字段特性分类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8C%89%E7%B4%A2%E5%BC%95%E5%AD%97%E6%AE%B5%E4%B8%AA%E6%95%B0%E5%88%86%E7%B1%BB"><span class="toc-text">按索引字段个数分类</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%81%9A%E7%B0%87%E7%B4%A2%E5%BC%95%E5%92%8C%E9%9D%9E%E8%81%9A%E7%B0%87%E7%B4%A2%E5%BC%95%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB"><span class="toc-text">聚簇索引和非聚簇索引有什么区别</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B4%A2%E5%BC%95%E7%9A%84%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86"><span class="toc-text">索引的实现原理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#MyISAM%E7%B4%A2%E5%BC%95%E5%AE%9E%E7%8E%B0%EF%BC%9A"><span class="toc-text">MyISAM索引实现：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#InnoDB%E7%B4%A2%E5%BC%95%E5%AE%9E%E7%8E%B0%EF%BC%9A"><span class="toc-text">InnoDB索引实现：</span></a></li></ol></li></ol>
+    </aside>
+    <div class="article-content"><h1 id="索引"><a href="#索引" class="headerlink" title="索引"></a>索引</h1><h2 id="什么是索引"><a href="#什么是索引" class="headerlink" title="什么是索引"></a>什么是索引</h2><p>索引是一个单独的，存储在磁盘上的数据结构，包含着对数据表里所有记录的引用指针，使用索引可以快速记录找出在某个或多个列中有一特定值的行，所有MySQL列数据都可以被索引，所有MySQL列类型都可以被索引，对相关列使用时提高查询操作速度的最佳途径。</p>
+<p>索引是在存储引擎中实现的，因此，每种存储引擎的索引都不一定完全相同，并且每种存储引擎也不一定支持所有索引类型。MySQL中索引的存储类型有两种，即BTREE和HASH，具体和表的存储引擎相关。<strong>MyISAM和InnoDB存储引擎只支持BTREE索引；MEMORY/HEAP存储引擎可以支持HASH和BTREE索引。</strong></p>
+<p>优点：</p>
+<ul>
+<li>通过创建唯一索引，可以保证数据库表中每一行数据的唯一性</li>
+<li>可以大大加快数据的查询速度，这也是创建索引的主要原因</li>
+<li>在实现数据的参考完整性方面，可以加速表和表之间的连接</li>
+<li>在使用分组和排序子句进行数据查询时，也可以显著减少查询中分组和排序的时间。</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>创建索引和维护索引需要耗费时间，并且随着数据量的增加所耗费的时间也会增加</li>
+<li>索引需要占磁盘空间，除了数据表占数据空间之外，每一个索引还要占一定的物理空间，如果有大量的索引，索引文件可能比数据文件更快达到最大文件尺寸</li>
+<li>当对表中的数据进行增加、删除和修改的时候，索引也要动态地维护，这样就降低了数据的维护速度。</li>
+</ul>
+<h2 id="索引的分类"><a href="#索引的分类" class="headerlink" title="索引的分类"></a>索引的分类</h2><p>按数据结构分类可分为：<strong>B+tree索引、Hash索引、Full-text索引</strong>。</p>
+<p>按物理存储分类可分为：<strong>聚簇索引、二级索引（辅助索引）</strong>。</p>
+<p>按字段特性分类可分为：<strong>主键索引、普通索引、前缀索引</strong>。</p>
+<p>按字段个数分类可分为：<strong>单列索引、联合索引（复合索引、组合索引）</strong>。</p>
+<h3 id="按数据结构分类"><a href="#按数据结构分类" class="headerlink" title="按数据结构分类"></a>按数据结构分类</h3><p>MySQL索引按数据结构分类可分为：<strong>B+tree索引、Hash索引、Full-text索引</strong>。</p>
+<table>
+<thead>
+<tr>
+<th>-</th>
+<th>InnoDB</th>
+<th>MyISAM</th>
+<th>Memory</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>B+tree索引</td>
+<td>√</td>
+<td>√</td>
+<td>√</td>
+</tr>
+<tr>
+<td>Hash索引</td>
+<td>×</td>
+<td>×</td>
+<td>√</td>
+</tr>
+<tr>
+<td>Full-text索引</td>
+<td>√（MySQL5.6+）</td>
+<td>√</td>
+<td>×</td>
+</tr>
+</tbody></table>
+<p><strong>B+tree</strong> 是MySQL中被存储引擎采用最多的索引类型。<strong>B+tree</strong> 中的 <code>B</code> 代表平衡（balance），而不是二叉（binary），因为 <strong>B+tree</strong> 是从最早的平衡二叉树演化而来的。下面展示B+tree数据结构与其他数据结构的对比。</p>
+<h4 id="B-tree与B-tree的对比"><a href="#B-tree与B-tree的对比" class="headerlink" title="B+tree与B-tree的对比"></a><strong>B+tree与B-tree的对比</strong></h4><p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/1460000037684393" alt="B-tree结构（图片来源于网络）"></p>
+<p><strong>相对于B-tree，B+tree有以下两点不同：</strong></p>
+<ul>
+<li>B+tree 非叶子节点只存储键值信息， 数据记录都存放在叶子节点中。而B-tree的非叶子节点也存储数据。所以B+tree单个节点的数据量更小，在相同的磁盘I/O次数下，能查询更多的节点。</li>
+<li>B+tree 所有叶子节点之间都采用<strong>双向链表</strong>连接。适合MySQL中常见的基于范围的顺序检索场景，而B-tree无法做到这一点。</li>
+</ul>
+<p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/1460000037684392" alt="B+tree结构（图片来源于网络）"></p>
+<h4 id="B-tree与红黑树的对比"><a href="#B-tree与红黑树的对比" class="headerlink" title="B+tree与红黑树的对比"></a>B+tree与红黑树的对比</h4><p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/1460000037684042" alt="红黑树结构（图片来源于网络）"></p>
+<p><strong>红黑树</strong>是一种<strong>弱平衡二叉查找树</strong>。通过对任何一条从根到叶子的路径上各个节点着色的方式的限制，<strong>红黑树确保没有一条路径会比其他路径长出两倍</strong>。</p>
+<p>对于有N个叶子结点的 <strong>B+tree</strong>，其搜索复杂度为 <code>O(logdN)</code> ，其中 <strong>d</strong>(degree) 为 <strong>B+tree</strong> 的度，表示节点允许的最大子节点个数为<strong>d</strong>个，在实际应用当中，<strong>d</strong>值一般是大于100的，即使数据量达到千万级别时<strong>B+tree</strong>的高度依然维持在3-4左右，保证了3-4次磁盘I/O操作就能查询到目标数据。</p>
+<p><strong>红黑树</strong>是二叉树，节点子节点个数为两个，意味着其搜索复杂度为 <code>O(logN)</code>，树的高度也会比 <strong>B+tree</strong> 高出不少，因此<strong>红黑树</strong>检索到目标数据所需经历的磁盘I/O次数更多。</p>
+<h4 id="B-tree与Hash的对比"><a href="#B-tree与Hash的对比" class="headerlink" title="B+tree与Hash的对比"></a>B+tree与Hash的对比</h4><p>Hash 索引结构的特殊性，其检索效率非常高，索引的检索可以一次定位，不像B-Tree 索引需要从根节点到枝节点，最后才能访问到页节点这样多次的IO访问，所以 Hash 索引的查询效率要远高于 B-Tree 索引。虽然 Hash 索引效率高，但是 Hash 索引本身由于其特殊性也带来了很多限制和弊端，主要有以下这些。 Hash 索引仅仅能满足 <code>=</code> , <code>IN</code> 和 <code>&lt;=&gt;</code>(表示NULL安全的等价) 查询，不能使用范围查询。</p>
+<p>由于 Hash 索引比较的是进行 Hash 运算之后的 Hash值，所以它只能用于等值的过滤，不能用于基于范围的过滤，因为经过相应的 Hash算法处理之后的 Hash 值的大小关系，并不能保证和Hash运算前完全一样。</p>
+<ul>
+<li>Hash 索引无法适用数据的排序操作。</li>
+<li>Hash 索引不能利用部分索引键查询</li>
+<li>Hash 索引依然需要回表扫描。</li>
+<li>Hash索引遇到大量Hash值相等的情况后性能并不一定就会比B-Tree索引高。</li>
+</ul>
+<p><strong>由于范围查询是MySQL数据库查询中常见的场景，Hash表不适合做范围查询，它更适合做等值查询。另外Hash表还存在Hash函数选择和Hash值冲突等问题。因此，B+tree索引要比Hash表索引有更广的适用场景。</strong></p>
+<h3 id="按照物理存储分类"><a href="#按照物理存储分类" class="headerlink" title="按照物理存储分类"></a>按照物理存储分类</h3><p>MySQL索引按叶子节点存储的是否为完整表数据分为：<strong>聚簇索引、二级索引（辅助索引）</strong>。全表数据存储在聚簇索引中，聚簇索引以外的其他索引叫做二级索引，也叫辅助索引。</p>
+<h4 id="聚簇索引"><a href="#聚簇索引" class="headerlink" title="聚簇索引"></a>聚簇索引</h4><p>聚簇索引的每个叶子节点存储了一行完整的表数据，叶子节点间按id列递增连接，可以方便地进行顺序检索。</p>
+<p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/1460000037688814" alt="聚簇索引B+tree示意图（图片来源于网络）"><br>（图片来源于网络）</p>
+<p>InnoDB表要求必须有聚簇索引，默认在主键字段上建立聚簇索引，在没有主键字段的情况下，表的第一个非空的唯一索引将被建立为聚簇索引，在前两者都没有的情况下，InnoDB将自动生成一个隐式的自增id列，并在此列上建立聚簇索引。</p>
+<h5 id="以MyISAM为存储引擎的表不存在聚簇索引。"><a href="#以MyISAM为存储引擎的表不存在聚簇索引。" class="headerlink" title="以MyISAM为存储引擎的表不存在聚簇索引。"></a>以MyISAM为存储引擎的表不存在聚簇索引。</h5><p>MyISAM表中的主键索引和非主键索引的结构是一样的，索引的叶子节点不存储表数据，存放的是表数据的地址。所以，MyISAM表可以没有主键。</p>
+<p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/1460000037688815" alt="MyISAM索引B+tree示意图（图片来源于网络）"><br>（图片来源于网络）</p>
+<p>MyISAM表的数据和索引是分开存储的。MyISAM表的主键索引和非主键索引的区别仅在于主键索引的B+tree上的key必须符合主键的限制，非主键索引B+tree上的key只要符合相应字段的特性就可以了。</p>
+<h4 id="二级索引"><a href="#二级索引" class="headerlink" title="二级索引"></a>二级索引</h4><p>二级索引的叶子节点并不存储一行完整的表数据，而是存储了聚簇索引所在列的值。</p>
+<p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/1460000037688816" alt="二级索引B+tree示意图（图片来源于网络）"><br>（图片来源于网络）</p>
+<h5 id="回表查询"><a href="#回表查询" class="headerlink" title="回表查询"></a>回表查询</h5><p>由于二级索引的叶子节点不存储完整的表数据，索引当通过二级索引查询到聚簇索引列值后，还需要回到聚簇索引也就是表数据本身进一步获取数据。</p>
+<p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/1460000037688817" alt="回表查询示意图（图片来源于网络）"><br>（图片来源于网络）</p>
+<p>回表查询 需要额外的 <strong>B+tree</strong> 搜索过程，必然增大查询耗时。</p>
+<p>需要注意的是，<strong>通过二级索引查询时，回表不是必须的过程</strong>，当<strong>SELECT的所有字段在单个二级索引中都能够找到</strong>时，就不需要回表，MySQL称此时的二级索引为<strong>覆盖索引</strong>或触发了<strong>索引覆盖</strong>。<br>可以用Explain命令查看SQL语句的执行计划，执行计划的Extra字段中若出现<strong>Using index</strong>，表示查询触发了<strong>索引覆盖</strong>。</p>
+<h3 id="按字段特性分类"><a href="#按字段特性分类" class="headerlink" title="按字段特性分类"></a>按字段特性分类</h3><p>MySQL索引按字段特性分类可分为：<strong>主键索引、普通索引、前缀索引</strong>。</p>
+<ul>
+<li><strong>主键索引</strong></li>
+</ul>
+<p>建立在主键上的索引被称为<strong>主键索引</strong>，一张数据表只能有一个主键索引，索引列值不允许有空值，通常在创建表时一起创建。</p>
+<ul>
+<li><strong>唯一索引</strong></li>
+</ul>
+<p>建立在UNIQUE字段上的索引被称为<strong>唯一索引</strong>，一张表可以有多个唯一索引，索引列值允许为空，列值中出现多个空值不会发生重复冲突。</p>
+<ul>
+<li><strong>普通索引</strong></li>
+</ul>
+<p>建立在普通字段上的索引被称为<strong>普通索引</strong>。</p>
+<ul>
+<li><strong>前缀索引</strong></li>
+</ul>
+<p><strong>前缀索引</strong>是指对字符类型字段的前几个字符或对二进制类型字段的前几个bytes建立的索引，而不是在整个字段上建索引。前缀索引可以建立在类型为char、varchar、binary、varbinary的列上，可以大大减少索引占用的存储空间，也能提升索引的查询效率。</p>
+<h3 id="按索引字段个数分类"><a href="#按索引字段个数分类" class="headerlink" title="按索引字段个数分类"></a>按索引字段个数分类</h3><p>MySQL索引按字段个数分类可分为：<strong>单列索引、联合索引（复合索引、组合索引）</strong>。</p>
+<ul>
+<li>单列索引</li>
+</ul>
+<p>建立在单个列上的索引被称为单列索引。</p>
+<ul>
+<li>联合索引（复合索引、组合索引）</li>
+</ul>
+<p>建立在多个列上的索引被称为联合索引，又叫复合索引、组合索引。</p>
+<h2 id="聚簇索引和非聚簇索引有什么区别"><a href="#聚簇索引和非聚簇索引有什么区别" class="headerlink" title="聚簇索引和非聚簇索引有什么区别"></a>聚簇索引和非聚簇索引有什么区别</h2><p>在InnoDB存储引擎中，可以将B+树索引分为聚簇索引和辅助索引（非聚簇索引）。无论是何种索引，每个页的大小都为16KB，且不能更改。</p>
+<p>聚簇索引是根据主键创建的一棵B+树，聚簇索引的叶子节点存放了表中的所有记录。辅助索引是根据索引键创建的一棵B+树，与聚簇索引不同的是，其叶子节点仅存放索引键值，以及该索引键值指向的主键。也就是说，如果通过辅助索引来查找数据，那么当找到辅助索引的叶子节点后，很有可能还需要根据主键值查找聚簇索引来得到数据，这种查找方式又被称为书签查找。因为辅助索引不包含行记录的所有数据，这就意味着每页可以存放更多的键值，因此其高度一般都要小于聚簇索引。</p>
+<h2 id="索引的实现原理"><a href="#索引的实现原理" class="headerlink" title="索引的实现原理"></a>索引的实现原理</h2><p>在MySQL中，索引是在存储引擎层实现的，不同存储引擎对索引的实现方式是不同的，下面我们探讨一下MyISAM和InnoDB两个存储引擎的索引实现方式。</p>
+<h3 id="MyISAM索引实现："><a href="#MyISAM索引实现：" class="headerlink" title="MyISAM索引实现："></a>MyISAM索引实现：</h3><p>MyISAM引擎使用B+Tree作为索引结构，叶节点的data域存放的是数据记录的地址，MyISAM索引的原理图如下。这里假设表一共有三列，假设我们以Col1为主键，则上图是一个MyISAM表的主索引（Primary key）示意。可以看出MyISAM的索引文件仅仅保存数据记录的地址。在MyISAM中，主索引和辅助索引（Secondary key）在结构上没有任何区别，只是主索引要求key是唯一的，而辅助索引的key可以重复。</p>
+<p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/index-1.png" alt="img"></p>
+<p>如果我们在Col2上建立一个辅助索引，则此索引的结构如下图所示。同样也是一颗B+Tree，data域保存数据记录的地址。因此，MyISAM中索引检索的算法为首先按照B+Tree搜索算法搜索索引，如果指定的Key存在，则取出其data域的值，然后以data域的值为地址，读取相应数据记录。</p>
+<p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/index-2.png" alt="img"></p>
+<h3 id="InnoDB索引实现："><a href="#InnoDB索引实现：" class="headerlink" title="InnoDB索引实现："></a>InnoDB索引实现：</h3><p>虽然InnoDB也使用B+Tree作为索引结构，但具体实现方式却与MyISAM截然不同。</p>
+<p>第一个重大区别是InnoDB的数据文件本身就是索引文件。从上文知道，MyISAM索引文件和数据文件是分离的，索引文件仅保存数据记录的地址。而在InnoDB中，表数据文件本身就是按B+Tree组织的一个索引结构，这棵树的叶节点data域保存了完整的数据记录。这个索引的key是数据表的主键，因此InnoDB表数据文件本身就是主索引。</p>
+<p>下图是InnoDB主索引（同时也是数据文件）的示意图，可以看到叶节点包含了完整的数据记录。这种索引叫做聚集索引。因为InnoDB的数据文件本身要按主键聚集，所以InnoDB要求表必须有主键（MyISAM可以没有），如果没有显式指定，则MySQL系统会自动选择一个可以唯一标识数据记录的列作为主键，如果不存在这种列，则MySQL自动为InnoDB表生成一个隐含字段作为主键，这个字段长度为6个字节，类型为长整形。</p>
+<p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/index-3.png" alt="img"></p>
+<p>第二个与MyISAM索引的不同是InnoDB的辅助索引data域存储相应记录主键的值而不是地址。换句话说，InnoDB的所有辅助索引都引用主键作为data域。下图为定义在Col3上的一个辅助索引。这里以英文字符的ASCII码作为比较准则。聚集索引这种实现方式使得按主键的搜索十分高效，但是辅助索引搜索需要检索两遍索引：首先检索辅助索引获得主键，然后用主键到主索引中检索获得记录。</p>
+<p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/index-4.png" alt="img"></p>
+<p>了解不同存储引擎的索引实现方式对于正确使用和优化索引都非常有帮助，例如知道了InnoDB的索引实现后，就很容易明白为什么不建议使用过长的字段作为主键，因为所有辅助索引都引用主索引，过长的主索引会令辅助索引变得过大。再例如，用非单调的字段作为主键在InnoDB中不是个好主意，因为InnoDB数据文件本身是一颗B+Tree，非单调的主键会造成在插入新记录时数据文件为了维持B+Tree的特性而频繁的分裂调整，十分低效，而使用自增字段作为主键则是一个很好的选择。</p>
+</div>
+    <aside class="post-rail">
+      <span class="post-rail__line"></span>
+      <span>LESLIE / WRITING</span>
+    </aside>
+  </div>
+
+  <footer class="post-footer shell">
+    <div><h2>如果这篇文章帮到了你，<br>也许下一篇会更有意思。</h2></div>
+    <a class="button button--primary" href="/writing/">继续阅读 →</a>
+  </footer>
+</article>
+</main>
+    <footer class="site-footer">
+  <div class="footer-grid">
+    <div>
+      <p class="footer-kicker">Leslie Zhang</p>
+      <p class="footer-statement">流水不争先，<br>争的是滔滔不绝。</p>
+    </div>
+    <div class="footer-links">
+      <a href="https://github.com/leslieAIbin" target="_blank" rel="noreferrer">GitHub ↗</a>
+      <a href="https://www.instagram.com/leslieaibin/" target="_blank" rel="noreferrer">Instagram ↗</a>
+      <button type="button" data-wechat-open>微信 / WeChat</button>
+      <a href="mailto:aibinzhangleslie@gmail.com">Email ↗</a>
+      <a href="/atom.xml">RSS ↗</a>
+    </div>
+    <div class="footer-meta">
+      <span>© 2026 Leslie Zhang</span>
+      <span>Writing, research and working systems.</span>
+    </div>
+  </div>
+</footer>
+
+    <dialog class="ask-dialog" id="ask-leslie" aria-labelledby="ask-title">
+  <div class="ask-dialog__shell">
+    <div class="ask-dialog__topbar">
+      <div>
+        <h2 id="ask-title">Ask Leslie</h2>
+      </div>
+      <button class="icon-button" type="button" data-ask-close aria-label="关闭">×</button>
+    </div>
+    <p class="ask-dialog__intro">从本站公开文章中寻找答案。当前版本在浏览器本地检索，不上传问题，也不会编造不存在的经历。</p>
+    <form class="ask-form" data-ask-form>
+      <label class="sr-only" for="ask-query">输入问题</label>
+      <textarea id="ask-query" rows="2" placeholder="例如：Agent Runtime 应该怎么设计？" data-ask-input></textarea>
+      <button type="submit">检索知识库 <span aria-hidden="true">↗</span></button>
+    </form>
+    <div class="ask-suggestions" aria-label="推荐问题">
+      
+        <button type="button" data-ask-suggestion="Agent Runtime 应该怎么设计？">Agent Runtime 应该怎么设计？</button>
+      
+        <button type="button" data-ask-suggestion="如何让 AI 操控真实世界设备？">如何让 AI 操控真实世界设备？</button>
+      
+        <button type="button" data-ask-suggestion="Leslie 最近在研究什么？">Leslie 最近在研究什么？</button>
+      
+    </div>
+    <div class="ask-results" data-ask-results aria-live="polite">
+      <div class="ask-empty">
+        <p>输入一个问题，我会把你带到 Leslie 写过的相关内容。</p>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+    <dialog class="wechat-dialog" id="wechat-leslie" aria-labelledby="wechat-title">
+  <div class="wechat-dialog__shell">
+    <header>
+      <div>
+        <p class="section-label">WeChat</p>
+        <h2 id="wechat-title">微信联系</h2>
+      </div>
+      <button class="icon-button" type="button" data-wechat-close aria-label="关闭微信二维码">×</button>
+    </header>
+    <img src="/images/contact/wechat-leslie.png" alt="Leslie Zhang 的微信二维码" loading="lazy">
+    <p>扫码添加 Leslie，建议备注你的名字与来意。</p>
+  </div>
+</dialog>
+
+    <script>window.ORBITAL_ROOT = '/';</script>
+    <script src="/js/orbital.js" defer></script>
+  </body>
+</html>

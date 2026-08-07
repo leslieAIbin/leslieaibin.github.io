@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+  <head>
+
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#050b18">
+<meta name="color-scheme" content="dark light">
+<title>Redis分布式限流 | Leslie Zhang</title>
+<meta name="description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta name="author" content="Leslie Zhang">
+<link rel="canonical" href="https://leslieaibin.github.io/2021/09/30/Redis/Redis%E5%88%86%E5%B8%83%E5%BC%8F%E9%99%90%E6%B5%81/">
+<link rel="icon" href="/imgs/01.jpg">
+<link rel="alternate" type="application/atom+xml" title="Leslie Zhang" href="/atom.xml">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis分布式限流 | Leslie Zhang">
+<meta property="og:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta property="og:url" content="https://leslieaibin.github.io/2021/09/30/Redis/Redis%E5%88%86%E5%B8%83%E5%BC%8F%E9%99%90%E6%B5%81/">
+<meta property="og:image" content="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/37.jpg?raw=true">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Redis分布式限流 | Leslie Zhang">
+<meta name="twitter:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta name="twitter:image" content="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/37.jpg?raw=true">
+<script>
+  (function () {
+    var saved = localStorage.getItem('orbital-theme');
+    var theme = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    document.documentElement.dataset.theme = theme;
+  })();
+</script>
+<link rel="stylesheet" href="/css/orbital.css">
+<meta name="generator" content="Hexo 5.2.0"></head>
+  <body class="page-post">
+    <a class="skip-link" href="#main-content">跳到主要内容</a>
+    <div class="reading-progress" data-reading-progress></div>
+    <header class="site-header" data-header>
+  <div class="nav-shell">
+    <a class="brand" href="/" aria-label="返回首页">
+      <span class="brand-mark" aria-hidden="true"><img src="/images/brand/leslie-mythos-avatar.webp" alt="" width="512" height="512"></span>
+      <span class="brand-copy">
+        <strong>LESLIE</strong>
+        <small>REAL-WORLD AGENTS</small>
+      </span>
+    </a>
+
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav" data-nav-toggle>
+      <span></span><span></span>
+      <span class="sr-only">打开导航</span>
+    </button>
+
+    <nav class="main-nav" id="main-nav" aria-label="主导航" data-nav>
+      
+        <a href="/" class="">首页</a>
+      
+        <a href="/writing/" class="">写作</a>
+      
+        <a href="/projects/" class="">项目</a>
+      
+        <a href="/about/" class="">关于</a>
+      
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换明暗主题">
+        <span class="theme-toggle__sun" aria-hidden="true">☼</span>
+        <span class="theme-toggle__moon" aria-hidden="true">◐</span>
+      </button>
+      <button class="ask-nav" type="button" data-ask-open>ASK LESLIE</button>
+    </nav>
+  </div>
+</header>
+
+    <main id="main-content"><article class="post-shell">
+  <header class="post-hero shell">
+    <a class="post-back" href="/writing/">← 返回写作</a>
+    <div class="post-hero__meta">
+      <time datetime="2021-09-30">2021 年 09 月 30 日</time>
+      <span>3 分钟阅读</span>
+    </div>
+    <h1>Redis分布式限流</h1>
+    
+    <div class="chip-row"><a href="/tags/Redis/">Redis</a></div>
+  </header>
+
+  <div class="post-cover shell"><img src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/37.jpg?raw=true" alt="Redis分布式限流"></div>
+
+  <div class="post-layout shell">
+    <aside class="post-toc" aria-label="文章目录">
+      <span class="aside-title">目录</span>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AE%A1%E6%95%B0%E5%99%A8"><span class="toc-text">计数器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BC%8F%E6%A1%B6%E7%AE%97%E6%B3%95"><span class="toc-text">漏桶算法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%A4%E7%89%8C%E6%A1%B6%E7%AE%97%E6%B3%95"><span class="toc-text">令牌桶算法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redis-Lua"><span class="toc-text">Redis + Lua</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BD%91%E5%85%B3%E5%B1%82%E9%99%90%E6%B5%81"><span class="toc-text">网关层限流</span></a></li></ol>
+    </aside>
+    <div class="article-content"><p>由于互联网公司的流量巨大，系统上线会做一个流量峰值的评估，尤其是像各种秒杀促销活动，为了保证系统不被巨大的流量压垮，会在系统流量到达一定阈值时，拒绝掉一部分流量。</p>
+<p>限流会导致用户在短时间内（这个时间段是毫秒级的）系统不可用，一般我们衡量系统处理能力的指标是每秒的<code>QPS</code>或者<code>TPS</code>，假设系统每秒的流量阈值是1000，理论上一秒内有第1001个请求进来时，那么这个请求就会被限流。</p>
+<h1 id="限流方案"><a href="#限流方案" class="headerlink" title="限流方案"></a>限流方案</h1><h2 id="计数器"><a href="#计数器" class="headerlink" title="计数器"></a>计数器</h2><p>Java内部可以通过原子类计数器<code>AtomicInteger</code>、<code>Semaphore</code>信号量来做简单的限流。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 限流的个数</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">int</span> maxCount = <span class="number">10</span>;</span><br><span class="line"><span class="comment">// 指定时间内</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">long</span> interval = <span class="number">60</span>;</span><br><span class="line"><span class="comment">// 原子类计数器</span></span><br><span class="line"><span class="keyword">private</span> AtomicInteger atomicInteger = <span class="keyword">new</span> AtomicInteger(<span class="number">0</span>);</span><br><span class="line"><span class="comment">// 起始时间</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">long</span> startTime = System.currentTimeMills();</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">limit</span><span class="params">(<span class="keyword">int</span> maxCount, <span class="keyword">int</span> interval)</span> </span>&#123;</span><br><span class="line">    atomicInteger.addAndGet(<span class="number">1</span>);</span><br><span class="line">    <span class="keyword">if</span> (atomicInteger.get() == <span class="number">1</span>) &#123;</span><br><span class="line">        startTime = System.currentTimeMillis();</span><br><span class="line">        atomicInteger.addAndGet(<span class="number">1</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 超过了间隔时间，直接重新开始计数</span></span><br><span class="line">    <span class="keyword">if</span> (System.currentTimeMillis() - startTime &gt; interval * <span class="number">1000</span>) &#123;</span><br><span class="line">        startTime = System.currentTimeMillis();</span><br><span class="line">        atomicInteger.set(<span class="number">1</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 还在间隔时间内,check有没有超过限流的个数</span></span><br><span class="line">    <span class="keyword">if</span> (atomicInteger.get() &gt; maxCount) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="漏桶算法"><a href="#漏桶算法" class="headerlink" title="漏桶算法"></a>漏桶算法</h2><p>漏桶算法思路很简单，我们把水比做请求，漏桶比做是系统处理能力极限，水先进入到漏桶里，漏桶里的水按一定速率流出，当流出速率小于流入的速率时，由于漏桶容量有限，后续进入的水直接溢出（拒绝请求），以此实现限流。</p>
+<p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/image-20210930162736284.png" alt="image-20210930162736284"></p>
+<h2 id="令牌桶算法"><a href="#令牌桶算法" class="headerlink" title="令牌桶算法"></a>令牌桶算法</h2><p>令牌桶算法的原理也比较简单，可以理解成医院的挂号看病，只要拿到号以后才可以进行诊病。</p>
+<p>系统会维护 一个令牌（token）桶，以一个恒定的速度往桶里放入令牌（token），这时如果有请求进来想要被处理，则需要先从桶里获取一个令牌（token）, 当桶里没有令牌（token）可取时，则该请求将被拒绝服务。令牌桶算法通过控制桶的容量，发放令牌的速率，来达到对请求的限制。</p>
+<p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/image-20210930163437254.png" alt="image-20210930163437254"></p>
+<h2 id="Redis-Lua"><a href="#Redis-Lua" class="headerlink" title="Redis + Lua"></a>Redis + Lua</h2><p>个人理解，<code>Lua</code>脚本和 <code>MySQL</code>数据库的存储过程比较相似，他们执行一组命令，所有命令的执行要么全部成功或者失败，以此达到原子性。也可以把<code>Lua</code>脚本理解为，一段具有业务逻辑的代码块。</p>
+<p>而<code>Lua</code>本身就是一种编程语言，虽然<code>redis</code> 官方没有直接提供限流相应的<code>API</code>，但却支持了 <code>Lua</code> 脚本的功能，可以使用它实现复杂的令牌桶或漏桶算法，也是分布式系统中实现限流的主要方式之一。</p>
+<p>相比<code>Redis</code>事务，<code>Lua脚本</code>的优点：</p>
+<ul>
+<li>减少网络开销：使用<code>Lua</code>脚本，无需向<code>Redis</code> 发送多次请求，执行一次即可，减少网络传输</li>
+<li>原子操作：<code>Redis</code> 将整个<code>Lua</code>脚本作为一个命令执行，原子，无需担心并发</li>
+<li>复用：<code>Lua</code>脚本一旦执行，会永久保存 <code>Redis</code> 中,，其他客户端可复用</li>
+</ul>
+<p><code>Lua</code>脚本大致逻辑如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">-- 获取调用脚本时传入的第一个key值（用作限流的 key）</span><br><span class="line">local key = KEYS[<span class="number">1</span>]</span><br><span class="line">-- 获取调用脚本时传入的第一个参数值（限流大小）</span><br><span class="line">local limit = tonumber(ARGV[<span class="number">1</span>])</span><br><span class="line"></span><br><span class="line">-- 获取当前流量大小</span><br><span class="line">local curentLimit = tonumber(redis.call(<span class="string">&#x27;get&#x27;</span>, key) or <span class="string">&quot;0&quot;</span>)</span><br><span class="line"></span><br><span class="line">-- 是否超出限流</span><br><span class="line"><span class="keyword">if</span> curentLimit + <span class="number">1</span> &gt; limit then</span><br><span class="line">    -- 返回(拒绝)</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">    -- 没有超出 value + <span class="number">1</span></span><br><span class="line">    redis.call(<span class="string">&quot;INCRBY&quot;</span>, key, <span class="number">1</span>)</span><br><span class="line">    -- 设置过期时间</span><br><span class="line">    redis.call(<span class="string">&quot;EXPIRE&quot;</span>, key, <span class="number">2</span>)</span><br><span class="line">    -- 返回(放行)</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span></span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>通过<code>KEYS[1]</code> 获取传入的key参数</li>
+<li>通过<code>ARGV[1]</code>获取传入的<code>limit</code>参数</li>
+<li><code>redis.call</code>方法，从缓存中<code>get</code>和<code>key</code>相关的值，如果为<code>null</code>那么就返回0</li>
+<li>接着判断缓存中记录的数值是否会大于限制大小，如果超出表示该被限流，返回0</li>
+<li>如果未超过，那么该key的缓存值+1，并设置过期时间为1秒钟以后，并返回缓存值+1</li>
+</ul>
+<p>这种方式是本文推荐的方案，具体实现会在后边做细说。</p>
+<h2 id="网关层限流"><a href="#网关层限流" class="headerlink" title="网关层限流"></a>网关层限流</h2><p>限流常在网关这一层做，比如<code>Nginx</code>、<code>Openresty</code>、<code>kong</code>、<code>zuul</code>、<code>Spring Cloud Gateway</code>等，而像<code>spring cloud - gateway</code>网关限流底层实现原理，就是基于<code>Redis + Lua</code>，通过内置<code>Lua</code>限流脚本的方式。</p>
+<p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/640" alt="图片"></p>
+</div>
+    <aside class="post-rail">
+      <span class="post-rail__line"></span>
+      <span>LESLIE / WRITING</span>
+    </aside>
+  </div>
+
+  <footer class="post-footer shell">
+    <div><h2>如果这篇文章帮到了你，<br>也许下一篇会更有意思。</h2></div>
+    <a class="button button--primary" href="/writing/">继续阅读 →</a>
+  </footer>
+</article>
+</main>
+    <footer class="site-footer">
+  <div class="footer-grid">
+    <div>
+      <p class="footer-kicker">Leslie Zhang</p>
+      <p class="footer-statement">流水不争先，<br>争的是滔滔不绝。</p>
+    </div>
+    <div class="footer-links">
+      <a href="https://github.com/leslieAIbin" target="_blank" rel="noreferrer">GitHub ↗</a>
+      <a href="https://www.instagram.com/leslieaibin/" target="_blank" rel="noreferrer">Instagram ↗</a>
+      <button type="button" data-wechat-open>微信 / WeChat</button>
+      <a href="mailto:aibinzhangleslie@gmail.com">Email ↗</a>
+      <a href="/atom.xml">RSS ↗</a>
+    </div>
+    <div class="footer-meta">
+      <span>© 2026 Leslie Zhang</span>
+      <span>Writing, research and working systems.</span>
+    </div>
+  </div>
+</footer>
+
+    <dialog class="ask-dialog" id="ask-leslie" aria-labelledby="ask-title">
+  <div class="ask-dialog__shell">
+    <div class="ask-dialog__topbar">
+      <div>
+        <h2 id="ask-title">Ask Leslie</h2>
+      </div>
+      <button class="icon-button" type="button" data-ask-close aria-label="关闭">×</button>
+    </div>
+    <p class="ask-dialog__intro">从本站公开文章中寻找答案。当前版本在浏览器本地检索，不上传问题，也不会编造不存在的经历。</p>
+    <form class="ask-form" data-ask-form>
+      <label class="sr-only" for="ask-query">输入问题</label>
+      <textarea id="ask-query" rows="2" placeholder="例如：Agent Runtime 应该怎么设计？" data-ask-input></textarea>
+      <button type="submit">检索知识库 <span aria-hidden="true">↗</span></button>
+    </form>
+    <div class="ask-suggestions" aria-label="推荐问题">
+      
+        <button type="button" data-ask-suggestion="Agent Runtime 应该怎么设计？">Agent Runtime 应该怎么设计？</button>
+      
+        <button type="button" data-ask-suggestion="如何让 AI 操控真实世界设备？">如何让 AI 操控真实世界设备？</button>
+      
+        <button type="button" data-ask-suggestion="Leslie 最近在研究什么？">Leslie 最近在研究什么？</button>
+      
+    </div>
+    <div class="ask-results" data-ask-results aria-live="polite">
+      <div class="ask-empty">
+        <p>输入一个问题，我会把你带到 Leslie 写过的相关内容。</p>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+    <dialog class="wechat-dialog" id="wechat-leslie" aria-labelledby="wechat-title">
+  <div class="wechat-dialog__shell">
+    <header>
+      <div>
+        <p class="section-label">WeChat</p>
+        <h2 id="wechat-title">微信联系</h2>
+      </div>
+      <button class="icon-button" type="button" data-wechat-close aria-label="关闭微信二维码">×</button>
+    </header>
+    <img src="/images/contact/wechat-leslie.png" alt="Leslie Zhang 的微信二维码" loading="lazy">
+    <p>扫码添加 Leslie，建议备注你的名字与来意。</p>
+  </div>
+</dialog>
+
+    <script>window.ORBITAL_ROOT = '/';</script>
+    <script src="/js/orbital.js" defer></script>
+  </body>
+</html>

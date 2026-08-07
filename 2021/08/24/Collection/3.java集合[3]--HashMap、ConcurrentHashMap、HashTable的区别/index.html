@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+  <head>
+
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#050b18">
+<meta name="color-scheme" content="dark light">
+<title>3.HashMap、ConcurrentHashMap、HashTable | Leslie Zhang</title>
+<meta name="description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta name="author" content="Leslie Zhang">
+<link rel="canonical" href="https://leslieaibin.github.io/2021/08/24/Collection/3.java%E9%9B%86%E5%90%88%5B3%5D--HashMap%E3%80%81ConcurrentHashMap%E3%80%81HashTable%E7%9A%84%E5%8C%BA%E5%88%AB/">
+<link rel="icon" href="/imgs/01.jpg">
+<link rel="alternate" type="application/atom+xml" title="Leslie Zhang" href="/atom.xml">
+<meta property="og:type" content="article">
+<meta property="og:title" content="3.HashMap、ConcurrentHashMap、HashTable | Leslie Zhang">
+<meta property="og:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta property="og:url" content="https://leslieaibin.github.io/2021/08/24/Collection/3.java%E9%9B%86%E5%90%88%5B3%5D--HashMap%E3%80%81ConcurrentHashMap%E3%80%81HashTable%E7%9A%84%E5%8C%BA%E5%88%AB/">
+<meta property="og:image" content="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/26.jpg?raw=true">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="3.HashMap、ConcurrentHashMap、HashTable | Leslie Zhang">
+<meta name="twitter:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta name="twitter:image" content="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/26.jpg?raw=true">
+<script>
+  (function () {
+    var saved = localStorage.getItem('orbital-theme');
+    var theme = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    document.documentElement.dataset.theme = theme;
+  })();
+</script>
+<link rel="stylesheet" href="/css/orbital.css">
+<meta name="generator" content="Hexo 5.2.0"></head>
+  <body class="page-post">
+    <a class="skip-link" href="#main-content">跳到主要内容</a>
+    <div class="reading-progress" data-reading-progress></div>
+    <header class="site-header" data-header>
+  <div class="nav-shell">
+    <a class="brand" href="/" aria-label="返回首页">
+      <span class="brand-mark" aria-hidden="true"><img src="/images/brand/leslie-mythos-avatar.webp" alt="" width="512" height="512"></span>
+      <span class="brand-copy">
+        <strong>LESLIE</strong>
+        <small>REAL-WORLD AGENTS</small>
+      </span>
+    </a>
+
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav" data-nav-toggle>
+      <span></span><span></span>
+      <span class="sr-only">打开导航</span>
+    </button>
+
+    <nav class="main-nav" id="main-nav" aria-label="主导航" data-nav>
+      
+        <a href="/" class="">首页</a>
+      
+        <a href="/writing/" class="">写作</a>
+      
+        <a href="/projects/" class="">项目</a>
+      
+        <a href="/about/" class="">关于</a>
+      
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换明暗主题">
+        <span class="theme-toggle__sun" aria-hidden="true">☼</span>
+        <span class="theme-toggle__moon" aria-hidden="true">◐</span>
+      </button>
+      <button class="ask-nav" type="button" data-ask-open>ASK LESLIE</button>
+    </nav>
+  </div>
+</header>
+
+    <main id="main-content"><article class="post-shell">
+  <header class="post-hero shell">
+    <a class="post-back" href="/writing/">← 返回写作</a>
+    <div class="post-hero__meta">
+      <time datetime="2021-08-24">2021 年 08 月 24 日</time>
+      <span>6 分钟阅读</span>
+    </div>
+    <h1>3.HashMap、ConcurrentHashMap、HashTable</h1>
+    
+    <div class="chip-row"><a href="/tags/Collection/">Collection</a></div>
+  </header>
+
+  <div class="post-cover shell"><img src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/26.jpg?raw=true" alt="3.HashMap、ConcurrentHashMap、HashTable"></div>
+
+  <div class="post-layout shell">
+    <aside class="post-toc" aria-label="文章目录">
+      <span class="aside-title">目录</span>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#HashMap-vs-ConcurrentHashMap"><span class="toc-text">HashMap vs ConcurrentHashMap</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#HashMap%E4%B8%8EConcurrentHashMap%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-text">HashMap与ConcurrentHashMap的区别</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ConcurrentHashMap-vs-Hashtable-vs-Synchronized-Map"><span class="toc-text">ConcurrentHashMap vs Hashtable vs Synchronized Map</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ConcurrentHashMap%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86"><span class="toc-text">ConcurrentHashMap实现原理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#jdk-1-7%E7%9A%84%E5%AE%9E%E7%8E%B0%E5%9F%BA%E4%BA%8E%E5%88%86%E6%AE%B5%E9%94%81%E7%9A%84ConcurrentHashMap"><span class="toc-text">jdk 1.7的实现基于分段锁的ConcurrentHashMap</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#JDK1-8%E7%89%88%E6%9C%AC%E7%9A%84CurrentHashMap%E7%9A%84%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86"><span class="toc-text">JDK1.8版本的CurrentHashMap的实现原理**</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">总结</span></a></li></ol></li></ol>
+    </aside>
+    <div class="article-content"><h1 id="HashMap、ConcurrentHashMap、HashTable的区别"><a href="#HashMap、ConcurrentHashMap、HashTable的区别" class="headerlink" title="HashMap、ConcurrentHashMap、HashTable的区别"></a>HashMap、ConcurrentHashMap、HashTable的区别</h1><h2 id="HashMap-vs-ConcurrentHashMap"><a href="#HashMap-vs-ConcurrentHashMap" class="headerlink" title="HashMap vs ConcurrentHashMap"></a>HashMap vs ConcurrentHashMap</h2><p>引入ConcurrentHashMap是为了同步集合HashTable之间有更好的选择，HashTable与HashMap,ConcurrentHashMap主要区别于HashMap不是同步的，线程不安全的和不适合应用于多线程并发环境下，而ConcurrentHashMap是线程安全的集合容器，特别是在多线程和并发环境中，通常作为Map的主要实现。</p>
+<h2 id="HashMap与ConcurrentHashMap的区别"><a href="#HashMap与ConcurrentHashMap的区别" class="headerlink" title="HashMap与ConcurrentHashMap的区别"></a>HashMap与ConcurrentHashMap的区别</h2><ul>
+<li>ConcurrentHashMap是线程安全的并发环境下不需要额外的同步。虽然它不像Hashtable那样需要同样的同步等级（全表锁），但也有很多实际的用途</li>
+<li>你可以使用Collections.synchronizedMap(HashMap)来包装HashMap作为同步容器，这时它的作用与hashtable一样，当每次对Map做修改操作的时候都会锁住这个Map对象，而ConcurrentHashMap会基于并发的等级来划分整个Map来达到线程安全，它之后锁操作的那一段数据而不是整个Map都上锁</li>
+<li>ConcurrentHashMap有很好的的扩展性，在多线程环境下性能比做同步的HashMap要好，但是在但性能环境下，HashMap会比ConcurrentHashMap好一点</li>
+</ul>
+<p>总结一下以上两者的区别，它们在线程安全、扩展性、同步之间的区别。如果是用于缓存的话，<code>ConcurrentHashMap</code>是一个更好的选择，在Java应用中会经常用到。<code>ConcurrentHashMap</code>在读操作线程数多于写操作线程数的情况下更胜一筹。</p>
+<h2 id="ConcurrentHashMap-vs-Hashtable-vs-Synchronized-Map"><a href="#ConcurrentHashMap-vs-Hashtable-vs-Synchronized-Map" class="headerlink" title="ConcurrentHashMap vs Hashtable vs Synchronized Map"></a>ConcurrentHashMap vs Hashtable vs Synchronized Map</h2><ul>
+<li><p>虽然三个集合类在多线程并发应用中都是线程安全的，但是他们有一个重大的差别，就是他们各自实现线程安全的方式。<code>Hashtable</code>是jdk1的一个遗弃的类，它把所有方法都加上<code>synchronized</code>关键字来实现线程安全。所有的方法都同步这样造成多个线程访问效率特别低。<code>Synchronized Map</code>与<code>HashTable</code>差别不大，也是在并发中作类似的操作，两者的唯一区别就是<code>Synchronized Map</code>没被遗弃，它可以通过使用<code>Collections.synchronizedMap()</code>来包装<code>Map</code>作为同步容器使用。</p>
+</li>
+<li><p>另一方面，<code>ConcurrentHashMap</code>的设计有点特别，表现在多个线程操作上。它不用做外的同步的情况下默认同时允许16个线程读和写这个Map容器。因为其内部的实现剥夺了锁，使它有很好的扩展性。不像<code>HashTable</code>和<code>Synchronized Map</code>，<code>ConcurrentHashMap</code>不需要锁整个Map，相反它划分了多个段(segments)，要操作哪一段才上锁那段数据。</p>
+</li>
+</ul>
+<h2 id="ConcurrentHashMap实现原理"><a href="#ConcurrentHashMap实现原理" class="headerlink" title="ConcurrentHashMap实现原理"></a>ConcurrentHashMap实现原理</h2><p>ConcurrentHashMap在JDK1.7  和 JDK 1.8 的实现有很大的区别</p>
+<p>ConcurrentHashMap底层结构是一个Segment数组，默认大小是16，每个Segment数组又可以看成一个小的HashMap，也就是说Segment数组使用链表加数组实现的。</p>
+<h3 id="jdk-1-7的实现基于分段锁的ConcurrentHashMap"><a href="#jdk-1-7的实现基于分段锁的ConcurrentHashMap" class="headerlink" title="jdk 1.7的实现基于分段锁的ConcurrentHashMap"></a>jdk 1.7的实现基于分段锁的ConcurrentHashMap</h3><p>在JDK1.7中ConcurrentHashMap采用了<strong>数组+Segment+分段锁</strong>的方式实现。</p>
+<ul>
+<li><p>Segment（分段锁）</p>
+<p>ConcurrentHashMap中的<strong>分段锁称为Segment</strong>，它即类似于HashMap的结构，即内部拥有一个Entry数组，数组中的每个元素又是一个链表,同时又是一个ReentrantLock（Segment继承了ReentrantLock）。</p>
+</li>
+<li><p>内部结构</p>
+<p>ConcurrentHashMap使用分段锁技术，将数据分成一段一段的存储，然后给每一段数据配一把锁，当一个线程占用锁访问其中一个段数据的时候，其他段的数据也能被其他线程访问，能够实现真正的并发访问。如下图是ConcurrentHashMap的内部结构图：</p>
+</li>
+</ul>
+<p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/4209232655-5de51f35bf273_articlex" alt="file"></p>
+<p>从上面的结构我们可以了解到，ConcurrentHashMap定位一个元素的过程需要进行两次Hash操作。</p>
+<p><strong>第一次Hash定位到Segment，第二次Hash定位到元素所在的链表的头部。</strong></p>
+<p><strong>坏处</strong></p>
+<p>这一种结构的带来的副作用是Hash的过程要比普通的HashMap要长</p>
+<p><strong>好处</strong></p>
+<p>写操作的时候可以只对元素所在的Segment进行加锁即可，不会影响到其他的Segment，这样，在最理想的情况下，ConcurrentHashMap可以最高同时支持Segment数量大小的写操作（刚好这些写操作都非常平均地分布在所有的Segment上）。</p>
+<p>所以，通过这一种结构，ConcurrentHashMap的并发能力可以大大的提高。</p>
+<h3 id="JDK1-8版本的CurrentHashMap的实现原理"><a href="#JDK1-8版本的CurrentHashMap的实现原理" class="headerlink" title="JDK1.8版本的CurrentHashMap的实现原理**"></a>JDK1.8版本的CurrentHashMap的实现原理**</h3><p>DK8中ConcurrentHashMap参考了JDK8 HashMap的实现，采用了<strong>数组+链表+红黑树</strong>的实现方式来设计，<strong>内部大量采用CAS操作，这里我简要介绍下CAS</strong>。</p>
+<p>CAS是compare and swap的缩写，即我们所说的比较交换。cas是一种基于锁的操作，而且是乐观锁。在java中锁分为乐观锁和悲观锁。悲观锁是将资源锁住，等一个之前获得锁的线程释放锁之后，下一个线程才可以访问。而乐观锁采取了一种宽泛的态度，通过某种方式不加锁来处理资源，比如通过给记录加version来获取数据，性能较悲观锁有很大的提高。</p>
+<p>CAS 操作包含三个操作数 —— 内存位置（V）、预期原值（A）和新值(B)。如果内存地址里面的值和A的值是一样的，那么就将内存里面的值更新成B。CAS是通过无限循环来获取数据的，若果在第一轮循环中，a线程获取地址里面的值被b线程修改了，那么a线程需要自旋，到下次循环才有可能机会执行。</p>
+<p><strong>JDK8中彻底放弃了Segment转而采用的是Node，其设计思想也不再是JDK1.7中的分段锁思想。</strong></p>
+<p><strong>Node：保存key，value及key的hash值的数据结构。其中value和next都用volatile修饰，保证并发的可见性。</strong></p>
+<p><strong>Java8 ConcurrentHashMap结构基本上和Java8的HashMap一样，不过保证线程安全性。</strong></p>
+<p>在JDK8中ConcurrentHashMap的结构，由于引入了红黑树，使得ConcurrentHashMap的实现非常复杂，我们都知道，红黑树是一种性能非常好的二叉查找树，其查找性能为O（logN），但是其实现过程也非常复杂，而且可读性也非常差，Doug<br>Lea的思维能力确实不是一般人能比的，早期完全采用链表结构时Map的查找时间复杂度为O（N），JDK8中ConcurrentHashMap在链表的长度大于某个阈值的时候会将链表转换成红黑树进一步提高其查找性能。</p>
+<p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/1083488536-5de51f3800fc4_articlex" alt="file"></p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a><strong>总结</strong></h3><p>其实可以看出JDK1.8版本的ConcurrentHashMap的数据结构已经接近HashMap，相对而言，ConcurrentHashMap只是增加了同步的操作来控制并发，从JDK1.7版本的ReentrantLock+Segment+HashEntry，到JDK1.8版本中synchronized+CAS+HashEntry+红黑树。</p>
+<p><strong>1.数据结构：</strong>取消了Segment分段锁的数据结构，取而代之的是数组+链表+红黑树的结构。</p>
+<p><strong>2.保证线程安全机制：</strong>JDK1.7采用segment的分段锁机制实现线程安全，其中segment继承自ReentrantLock。JDK1.8采用CAS+Synchronized保证线程安全。</p>
+<p><strong>3.锁的粒度：</strong>原来是对需要进行数据操作的Segment加锁，现调整为对每个数组元素加锁（Node）。</p>
+<p>**4.链表转化为红黑树:**定位结点的hash算法简化会带来弊端,Hash冲突加剧,因此在链表节点数量大于8时，会将链表转化为红黑树进行存储。</p>
+<p><strong>5.查询时间复杂度：</strong>从原来的遍历链表O(n)，变成遍历红黑树O(logN)。</p>
+</div>
+    <aside class="post-rail">
+      <span class="post-rail__line"></span>
+      <span>LESLIE / WRITING</span>
+    </aside>
+  </div>
+
+  <footer class="post-footer shell">
+    <div><h2>如果这篇文章帮到了你，<br>也许下一篇会更有意思。</h2></div>
+    <a class="button button--primary" href="/writing/">继续阅读 →</a>
+  </footer>
+</article>
+</main>
+    <footer class="site-footer">
+  <div class="footer-grid">
+    <div>
+      <p class="footer-kicker">Leslie Zhang</p>
+      <p class="footer-statement">流水不争先，<br>争的是滔滔不绝。</p>
+    </div>
+    <div class="footer-links">
+      <a href="https://github.com/leslieAIbin" target="_blank" rel="noreferrer">GitHub ↗</a>
+      <a href="https://www.instagram.com/leslieaibin/" target="_blank" rel="noreferrer">Instagram ↗</a>
+      <button type="button" data-wechat-open>微信 / WeChat</button>
+      <a href="mailto:aibinzhangleslie@gmail.com">Email ↗</a>
+      <a href="/atom.xml">RSS ↗</a>
+    </div>
+    <div class="footer-meta">
+      <span>© 2026 Leslie Zhang</span>
+      <span>Writing, research and working systems.</span>
+    </div>
+  </div>
+</footer>
+
+    <dialog class="ask-dialog" id="ask-leslie" aria-labelledby="ask-title">
+  <div class="ask-dialog__shell">
+    <div class="ask-dialog__topbar">
+      <div>
+        <h2 id="ask-title">Ask Leslie</h2>
+      </div>
+      <button class="icon-button" type="button" data-ask-close aria-label="关闭">×</button>
+    </div>
+    <p class="ask-dialog__intro">从本站公开文章中寻找答案。当前版本在浏览器本地检索，不上传问题，也不会编造不存在的经历。</p>
+    <form class="ask-form" data-ask-form>
+      <label class="sr-only" for="ask-query">输入问题</label>
+      <textarea id="ask-query" rows="2" placeholder="例如：Agent Runtime 应该怎么设计？" data-ask-input></textarea>
+      <button type="submit">检索知识库 <span aria-hidden="true">↗</span></button>
+    </form>
+    <div class="ask-suggestions" aria-label="推荐问题">
+      
+        <button type="button" data-ask-suggestion="Agent Runtime 应该怎么设计？">Agent Runtime 应该怎么设计？</button>
+      
+        <button type="button" data-ask-suggestion="如何让 AI 操控真实世界设备？">如何让 AI 操控真实世界设备？</button>
+      
+        <button type="button" data-ask-suggestion="Leslie 最近在研究什么？">Leslie 最近在研究什么？</button>
+      
+    </div>
+    <div class="ask-results" data-ask-results aria-live="polite">
+      <div class="ask-empty">
+        <p>输入一个问题，我会把你带到 Leslie 写过的相关内容。</p>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+    <dialog class="wechat-dialog" id="wechat-leslie" aria-labelledby="wechat-title">
+  <div class="wechat-dialog__shell">
+    <header>
+      <div>
+        <p class="section-label">WeChat</p>
+        <h2 id="wechat-title">微信联系</h2>
+      </div>
+      <button class="icon-button" type="button" data-wechat-close aria-label="关闭微信二维码">×</button>
+    </header>
+    <img src="/images/contact/wechat-leslie.png" alt="Leslie Zhang 的微信二维码" loading="lazy">
+    <p>扫码添加 Leslie，建议备注你的名字与来意。</p>
+  </div>
+</dialog>
+
+    <script>window.ORBITAL_ROOT = '/';</script>
+    <script src="/js/orbital.js" defer></script>
+  </body>
+</html>

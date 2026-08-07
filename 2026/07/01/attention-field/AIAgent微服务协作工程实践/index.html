@@ -1,0 +1,367 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+  <head>
+
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#050b18">
+<meta name="color-scheme" content="dark light">
+<title>十几个微服务，怎么让 AI Agent 真正参与系统设计和编码？ | Leslie Zhang</title>
+<meta name="description" content="把十几个微服务放进同一个 workspace，只是 Agent 工程的第一步。真正让它可靠起来的，是高质量上下文、服务边界地图、协议活文档，以及一套能让 Agent 自己跑起来的验证闭环。">
+<meta name="author" content="Leslie Zhang">
+<link rel="canonical" href="https://leslieaibin.github.io/2026/07/01/attention-field/AIAgent%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%8D%8F%E4%BD%9C%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/">
+<link rel="icon" href="/imgs/01.jpg">
+<link rel="alternate" type="application/atom+xml" title="Leslie Zhang" href="/atom.xml">
+<meta property="og:type" content="article">
+<meta property="og:title" content="十几个微服务，怎么让 AI Agent 真正参与系统设计和编码？ | Leslie Zhang">
+<meta property="og:description" content="把十几个微服务放进同一个 workspace，只是 Agent 工程的第一步。真正让它可靠起来的，是高质量上下文、服务边界地图、协议活文档，以及一套能让 Agent 自己跑起来的验证闭环。">
+<meta property="og:url" content="https://leslieaibin.github.io/2026/07/01/attention-field/AIAgent%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%8D%8F%E4%BD%9C%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/">
+<meta property="og:image" content="https://leslieaibin.github.io/2026/07/01/attention-field/AIAgent%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%8D%8F%E4%BD%9C%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/imgs/cover.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="十几个微服务，怎么让 AI Agent 真正参与系统设计和编码？ | Leslie Zhang">
+<meta name="twitter:description" content="把十几个微服务放进同一个 workspace，只是 Agent 工程的第一步。真正让它可靠起来的，是高质量上下文、服务边界地图、协议活文档，以及一套能让 Agent 自己跑起来的验证闭环。">
+<meta name="twitter:image" content="https://leslieaibin.github.io/2026/07/01/attention-field/AIAgent%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%8D%8F%E4%BD%9C%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/imgs/cover.png">
+<script>
+  (function () {
+    var saved = localStorage.getItem('orbital-theme');
+    var theme = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    document.documentElement.dataset.theme = theme;
+  })();
+</script>
+<link rel="stylesheet" href="/css/orbital.css">
+<meta name="generator" content="Hexo 5.2.0"></head>
+  <body class="page-post">
+    <a class="skip-link" href="#main-content">跳到主要内容</a>
+    <div class="reading-progress" data-reading-progress></div>
+    <header class="site-header" data-header>
+  <div class="nav-shell">
+    <a class="brand" href="/" aria-label="返回首页">
+      <span class="brand-mark" aria-hidden="true"><img src="/images/brand/leslie-mythos-avatar.webp" alt="" width="512" height="512"></span>
+      <span class="brand-copy">
+        <strong>LESLIE</strong>
+        <small>REAL-WORLD AGENTS</small>
+      </span>
+    </a>
+
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav" data-nav-toggle>
+      <span></span><span></span>
+      <span class="sr-only">打开导航</span>
+    </button>
+
+    <nav class="main-nav" id="main-nav" aria-label="主导航" data-nav>
+      
+        <a href="/" class="">首页</a>
+      
+        <a href="/writing/" class="">写作</a>
+      
+        <a href="/projects/" class="">项目</a>
+      
+        <a href="/about/" class="">关于</a>
+      
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换明暗主题">
+        <span class="theme-toggle__sun" aria-hidden="true">☼</span>
+        <span class="theme-toggle__moon" aria-hidden="true">◐</span>
+      </button>
+      <button class="ask-nav" type="button" data-ask-open>ASK LESLIE</button>
+    </nav>
+  </div>
+</header>
+
+    <main id="main-content"><article class="post-shell">
+  <header class="post-hero shell">
+    <a class="post-back" href="/writing/">← 返回写作</a>
+    <div class="post-hero__meta">
+      <time datetime="2026-07-01">2026 年 07 月 01 日</time>
+      <span>12 分钟阅读</span>
+    </div>
+    <h1>十几个微服务，怎么让 AI Agent 真正参与系统设计和编码？</h1>
+    <p class="post-hero__summary">把十几个微服务放进同一个 workspace，只是 Agent 工程的第一步。真正让它可靠起来的，是高质量上下文、服务边界地图、协议活文档，以及一套能让 Agent 自己跑起来的验证闭环。</p>
+    <div class="chip-row"><a href="/tags/Context-Engineering/">Context Engineering</a><a href="/tags/AI-Agent/">AI Agent</a><a href="/tags/Microservices/">Microservices</a><a href="/tags/Contract-Testing/">Contract Testing</a><a href="/tags/OpenAPI/">OpenAPI</a><a href="/tags/Pact/">Pact</a></div>
+  </header>
+
+  <div class="post-cover shell"><img src="/2026/07/01/attention-field/AIAgent%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%8D%8F%E4%BD%9C%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/imgs/cover.png" alt="十几个微服务，怎么让 AI Agent 真正参与系统设计和编码？"></div>
+
+  <div class="post-layout shell">
+    <aside class="post-toc" aria-label="文章目录">
+      <span class="aside-title">目录</span>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E4%B8%AA-workspace-%E6%98%AF%E5%BF%85%E8%A6%81%E6%9D%A1%E4%BB%B6%EF%BC%8C%E4%BD%86%E4%B8%8D%E6%98%AF%E5%85%85%E5%88%86%E6%9D%A1%E4%BB%B6"><span class="toc-text">一个 workspace 是必要条件，但不是充分条件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Agent-%E9%9C%80%E8%A6%81%E7%9A%84%E4%B8%8D%E6%98%AF%E6%96%87%E6%A1%A3%E5%A0%86%EF%BC%8C%E8%80%8C%E6%98%AF%E6%9C%8D%E5%8A%A1%E5%9C%B0%E5%9B%BE"><span class="toc-text">Agent 需要的不是文档堆，而是服务地图</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%96%87%E6%A1%A3%E6%9C%80%E5%A4%A7%E7%9A%84%E9%97%AE%E9%A2%98%EF%BC%8C%E6%98%AF%E5%AE%83%E4%BC%9A%E8%80%81"><span class="toc-text">文档最大的问题，是它会老</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9C%9F%E6%AD%A3%E9%9A%BE%E7%9A%84%E6%98%AF%E9%AA%8C%E8%AF%81%EF%BC%8C%E4%B8%8D%E6%98%AF%E7%94%9F%E6%88%90%E4%BB%A3%E7%A0%81"><span class="toc-text">真正难的是验证，不是生成代码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%8D%E8%A6%81%E8%AE%A9-Agent-%E7%9B%B4%E6%8E%A5%E9%9D%A2%E5%AF%B9%E6%95%B4%E4%B8%AA%E7%B3%BB%E7%BB%9F"><span class="toc-text">不要让 Agent 直接面对整个系统</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E4%B8%AA%E6%9B%B4%E9%9D%A0%E8%B0%B1%E7%9A%84%E4%B8%89%E5%B1%82%E6%90%AD%E6%B3%95"><span class="toc-text">一个更靠谱的三层搭法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%99%E5%9C%A8%E6%9C%80%E5%90%8E"><span class="toc-text">写在最后</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="toc-text">参考资料</span></a></li></ol>
+    </aside>
+    <div class="article-content"><h1 id="十几个微服务，怎么让-AI-Agent-真正参与系统设计和编码？"><a href="#十几个微服务，怎么让-AI-Agent-真正参与系统设计和编码？" class="headerlink" title="十几个微服务，怎么让 AI Agent 真正参与系统设计和编码？"></a>十几个微服务，怎么让 AI Agent 真正参与系统设计和编码？</h1><p>前两天看到一张图，讲怎么在很多微服务之间使用 AI Agent。</p>
+<p>里面有个问题很典型。</p>
+<p>一个公司有十几个微服务，现在想让开发用 Agent 来做系统设计和编码。但一个 user story 经常不是改一个服务就结束了，它可能从前端进来，穿过用户服务、订单服务、库存服务、支付服务，最后还要落到消息队列和异步任务里。</p>
+<p>这时候你把任务丢给 Agent，它要理解的就不是某一段代码。</p>
+<p>它要理解边界。</p>
+<p>哪个服务拥有用户状态，哪个服务只是缓存一份投影；哪个字段是外部合同，哪个字段只是内部实现；哪段逻辑能改，哪段逻辑一改就会影响下游对账。</p>
+<p>问题就在这里。</p>
+<p>单体应用里，Agent 至少还能在一个代码树里一路 grep 下去。微服务系统里，真正麻烦的是那些没有写在一个文件里的知识：职责边界、业务概念、调用约定、历史债、异常语义、重试策略、幂等规则。</p>
+<p>所以很多团队的第一反应是，把所有微服务放到一个 workspace 下面，每个服务配自己的文档，让 AI 自己读。</p>
+<p>这个方向对吗？</p>
+<p>我自己的判断是：对，但远远不够。</p>
+<p>把仓库放在一起，只是把门打开了。Agent 能不能真的干活，取决于你有没有给它一张地图，以及它改完以后能不能自己验证。</p>
+<p><img src="imgs/01-workspace-map.png" alt="一张微服务地图，多个服务仓库放在同一个 workspace 中，根目录 AGENTS.md 像导航台一样指向各服务文档、OpenAPI spec 和 contract tests"></p>
+<h2 id="一个-workspace-是必要条件，但不是充分条件"><a href="#一个-workspace-是必要条件，但不是充分条件" class="headerlink" title="一个 workspace 是必要条件，但不是充分条件"></a>一个 workspace 是必要条件，但不是充分条件</h2><p>先承认一点，把多个服务放到一个 workspace 下，确实是目前很务实的做法。</p>
+<p>如果你本来就是 monorepo，那很适合 Agent。</p>
+<p>schema 定义、API 协议、共享类型、服务实现、测试代码，都在一个地方。Agent 不需要在十几个仓库之间来回切换，也不需要靠你一段段复制上下文。它可以自己搜索调用链，自己找接口定义，自己对照测试。</p>
+<p>这对 Agent 很重要。</p>
+<p>因为 Agent 最怕的不是代码多。</p>
+<p>它最怕的是缺关键上下文。</p>
+<p>一个用户故事跨了三个服务，如果 Agent 只看到了其中一个服务，它就很容易做出局部正确、系统错误的设计。它可能在订单服务里加了一个状态，却不知道支付服务已经用另一个字段表达同一件事；它可能改了一个返回结构，却不知道前端 BFF 和下游数据同步任务都依赖这个结构。</p>
+<p>如果历史原因不方便合成 monorepo，也没必要硬迁移。</p>
+<p>一个折中办法是虚拟 monorepo：把多个仓库 clone 到同一个本地目录里，外面套一层统一的 workspace。代码仍然是多个 repo，日常发布和权限边界不变，但 Agent 工作时能看到一个相对完整的系统视图。</p>
+<p>这一步能解决很多基础问题。</p>
+<p>但它解决不了全部。</p>
+<p>因为“看得到”不等于“看得懂”。</p>
+<p>十几个服务全部摊在 Agent 面前，有时候不是帮助，而是噪音。你给它一整座城市，它也许能找到路，也许会迷路。真正有用的不是把所有东西都塞进上下文，而是告诉它从哪里开始，哪些东西相关，哪些东西暂时不用看。</p>
+<p>这就是 Context Engineering 的核心味道。</p>
+<p>Anthropic 在讲 context engineering 的时候，有个判断我很认同：Agent 不是上下文越多越好，而是要在正确时间拿到正确上下文。上下文窗口再大，也不应该变成垃圾场。</p>
+<p>放到微服务里，这句话尤其要紧。</p>
+<h2 id="Agent-需要的不是文档堆，而是服务地图"><a href="#Agent-需要的不是文档堆，而是服务地图" class="headerlink" title="Agent 需要的不是文档堆，而是服务地图"></a>Agent 需要的不是文档堆，而是服务地图</h2><p>很多团队会说，我们有文档。</p>
+<p>但你点进去一看，经常是这种形态：Confluence 里几百页，接口文档散在几个目录，架构图是三年前的，某个 README 写着“详见新版本文档”，新版本文档又链接回旧页面。</p>
+<p>人都不愿意看。</p>
+<p>Agent 更不会神奇地看懂。</p>
+<p>给 Agent 的文档，最好不要从“大而全”开始，而是从“地图”开始。</p>
+<p>我会建议做三层。</p>
+<p>第一层，根目录放一份总索引。</p>
+<p>可以叫 <code>AGENTS.md</code>，也可以叫 <code>CLAUDE.md</code>，名字没那么重要，关键是它的职责要清楚：告诉 Agent 这个 workspace 里有哪些服务，每个服务负责什么，改某类需求时应该先看哪些目录，哪些命令可以跑，哪些命令不能随便跑。</p>
+<p>它不是百科全书。</p>
+<p>它是机场指示牌。</p>
+<p>比如：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">/identity-service</span><br><span class="line">  负责用户身份、登录态、权限校验</span><br><span class="line">  业务概念：User、Account、Session、Role</span><br><span class="line">  深入文档：identity-service/AGENTS.md</span><br><span class="line">  API spec：identity-service/openapi.yaml</span><br><span class="line">  契约测试：identity-service/contracts/</span><br><span class="line"></span><br><span class="line">/billing-service</span><br><span class="line">  负责订阅、账单、支付状态同步</span><br><span class="line">  注意：不拥有用户权限，只消费 identity 的 account projection</span><br></pre></td></tr></table></figure>
+
+<p>这种信息对 Agent 的价值非常高。</p>
+<p>它不需要一上来读完所有服务的所有文档。它先读根索引，判断当前 user story 可能涉及 identity、billing、notification，然后再去加载这几个服务的细节。</p>
+<p>第二层，每个服务目录里放自己的边界说明。</p>
+<p>这份文档不要写成“本服务采用 Spring Boot + MySQL + Redis”。这些 Agent 读代码就能知道。</p>
+<p>真正该写的是代码里不容易直接看出来的东西：</p>
+<p>这个服务拥有哪些业务事实？</p>
+<p>哪些概念属于它，哪些概念只是从别的服务同步过来的？</p>
+<p>它对外承诺哪些 API 语义？</p>
+<p>哪些字段不能随便改名？</p>
+<p>哪些状态转换有业务含义？</p>
+<p>哪些下游调用依赖幂等、重试、顺序或最终一致性？</p>
+<p>这其实就是 DDD 里的 bounded context，只是你不用把它写得像 DDD 教材。Agent 不需要口号，它需要边界。</p>
+<p>第三层，给 Agent 明确上下文路由规则。</p>
+<p>比如：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">如果任务涉及“用户是否有权限购买套餐”，先读：</span><br><span class="line">1. /identity-service/AGENTS.md</span><br><span class="line">2. /billing-service/AGENTS.md</span><br><span class="line">3. /contracts/identity-billing/</span><br><span class="line"></span><br><span class="line">不要直接修改 notification-service，除非 contract test 指向它。</span><br></pre></td></tr></table></figure>
+
+<p>这类规则很土。</p>
+<p>但很有用。</p>
+<p>它相当于把资深工程师脑子里的“先看哪里、别碰哪里、这里以前踩过坑”写下来。对人有帮助，对 Agent 更有帮助。</p>
+<p><img src="imgs/02-layered-context.png" alt="三层上下文结构，根 AGENTS.md 是索引，每个服务 AGENTS.md 是边界说明，OpenAPI/contract tests 是可执行证据"></p>
+<h2 id="文档最大的问题，是它会老"><a href="#文档最大的问题，是它会老" class="headerlink" title="文档最大的问题，是它会老"></a>文档最大的问题，是它会老</h2><p>但只靠文档还有一个硬伤。</p>
+<p>文档会老。</p>
+<p>而且微服务文档老得特别快。</p>
+<p>一次接口新增字段，一次错误码调整，一次异步事件 payload 改动，一次数据库状态枚举扩展，都可能让文档和代码开始偏离。人类工程师有时候还能靠记忆和群聊补齐，Agent 没有这种组织八卦能力。</p>
+<p>它会相信你给它的上下文。</p>
+<p>过期文档对 Agent 的伤害，比没有文档还大。没有文档时，它至少会去读代码、跑测试、问你确认；过期文档会给它一种虚假的确定感。</p>
+<p>所以我越来越倾向于一个原则：</p>
+<p>能从代码或规格生成的，就不要手写。</p>
+<p>OpenAPI spec 就是典型例子。</p>
+<p>一份写得好的 OpenAPI，不只是给人看的接口文档。它还可以生成 SDK，生成 mock server，生成 contract test 的输入，甚至作为 Agent 理解服务边界的机器可读材料。</p>
+<p>它比一段“用户服务提供登录接口”的自然语言可靠得多。</p>
+<p>因为它会告诉 Agent：</p>
+<p>这个 endpoint 是 <code>POST /sessions</code>。</p>
+<p>请求体有哪些字段。</p>
+<p>哪些字段必填。</p>
+<p>响应状态码有哪些。</p>
+<p>错误结构长什么样。</p>
+<p>这就从“描述”变成了“规格”。</p>
+<p>更进一步，如果你已经有 Pact 契约文件，或者有成熟的 consumer-driven contract testing，那就更好。</p>
+<p>因为 contract test 本身就是活文档。</p>
+<p>它不是某个人写在 wiki 里的愿望，而是调用方真实依赖的接口形状。调用方说，我实际用了这些字段、这些状态码、这些交互序列。被调方每次变更，都要验证自己仍然满足这些契约。</p>
+<p>这东西对 Agent 很值钱。</p>
+<p>它可以读契约，知道服务之间真正发生了什么；也可以改完代码以后跑契约测试，知道自己有没有破坏别人。</p>
+<p>微服务里最容易出问题的地方，恰好就是“我以为没人用”和“你怎么会这么用”。</p>
+<p>契约测试把这两句话提前变成测试失败。</p>
+<p>这比事后开会体面多了。</p>
+<h2 id="真正难的是验证，不是生成代码"><a href="#真正难的是验证，不是生成代码" class="headerlink" title="真正难的是验证，不是生成代码"></a>真正难的是验证，不是生成代码</h2><p>很多团队引入 Agent 的时候，最先关注的是代码生成质量。</p>
+<p>这个当然重要。</p>
+<p>但在微服务场景里，我觉得更应该先问另一个问题：Agent 写完以后，它怎么知道自己没搞坏？</p>
+<p>单服务还好办。</p>
+<p>跑单元测试。</p>
+<p>跑类型检查。</p>
+<p>跑本地集成测试。</p>
+<p>最多再起一个数据库和 Redis。</p>
+<p>跨微服务就麻烦了。一个 user story 可能涉及三五个服务，外加消息队列、对象存储、第三方支付、权限系统。你不可能让 Agent 每改一次代码，就把完整生产级环境在本地跑起来。</p>
+<p>就算能跑，成本也太高。</p>
+<p>于是很多 Agent 工作流会卡在这里：它能写代码，但验证不了；它能解释方案，但不知道方案在系统里能不能跑通。最后还是人来做集成验证，人来盯日志，人来判断哪里不对。</p>
+<p>这就回到了老问题。</p>
+<p>人，重新变成循环里的慢部件。</p>
+<p>要让 Agent 真正参与系统设计和编码，你得给它一个更轻的验证环境。</p>
+<p>我的建议是，每个服务至少提供两类东西。</p>
+<p>一类是 mock server。</p>
+<p>它可以手写，也可以基于 OpenAPI spec 自动生成。关键是 Agent 在改某个服务时，不需要把所有依赖服务都真实启动起来。它可以面对一个足够稳定的模拟对手，验证自己的请求格式、响应处理和异常分支。</p>
+<p>另一类是 contract test。</p>
+<p>它验证的不是“整个业务流程是不是完全正确”，而是“服务之间约定的协议有没有被破坏”。</p>
+<p>这个边界很重要。</p>
+<p>端到端测试当然有价值，但它太重，不适合作为 Agent 高频自我修正的主循环。contract test 更轻、更快、更贴近服务边界，适合放在 Agent 的本地工作流里。</p>
+<p>一个比较实用的闭环是这样：</p>
+<p>Agent 读根 <code>AGENTS.md</code>。</p>
+<p>定位相关服务。</p>
+<p>读取服务边界文档、OpenAPI spec、契约文件和相关测试。</p>
+<p>提出设计。</p>
+<p>修改代码。</p>
+<p>启动 mock server。</p>
+<p>跑 contract test。</p>
+<p>根据失败信息自我修正。</p>
+<p>再跑。</p>
+<p>直到测试通过，或者明确停下来告诉人类：当前契约和需求冲突，需要你做产品或架构判断。</p>
+<p>这才是 Agent 真正能干活的地方。</p>
+<p>不是一次把代码写对。</p>
+<p>而是它写错了以后，有一个系统能让它知道错在哪里。</p>
+<p><img src="imgs/03-validation-loop.png" alt="Agent 在本地工作台中循环执行 write-test-fix，旁边是 mock server、OpenAPI spec、contract tests 和测试失败日志"></p>
+<h2 id="不要让-Agent-直接面对整个系统"><a href="#不要让-Agent-直接面对整个系统" class="headerlink" title="不要让 Agent 直接面对整个系统"></a>不要让 Agent 直接面对整个系统</h2><p>这里还有一个容易被忽略的点。</p>
+<p>很多人把“让 Agent 理解全局”理解成“让 Agent 读取全部”。</p>
+<p>这两个不是一回事。</p>
+<p>一个资深工程师做跨服务设计，也不会把十几个服务每一行代码都读完。他会先建立系统地图，找到相关边界，再深入关键路径。Agent 也应该这么工作。</p>
+<p>所以 workspace 的设计目标，不是让 Agent 一次性吞掉整个系统，而是让它能按需导航。</p>
+<p>这也是我觉得根 <code>AGENTS.md</code> 特别重要的原因。</p>
+<p>它不是为了喂满上下文。</p>
+<p>它是为了减少上下文。</p>
+<p>好的索引，会把 Agent 从“全仓库漫游”拉回“任务相关路径”。好的服务文档，会把 Agent 从“读代码猜业务”拉回“先理解边界，再看实现”。好的契约测试，会把 Agent 从“我觉得这样没问题”拉回“协议有没有被破坏”。</p>
+<p>这三件事组合起来，才像一个可运行的 Agent 工作台。</p>
+<p>Anthropic 在 long-running agents 那篇文章里提到一个很实在的做法：长任务要给 Agent 搭 harness，包括进度记录、验证脚本、干净的工作状态，让它能跨长时间任务继续推进。</p>
+<p>放到微服务协作里，harness 不是一个抽象概念。</p>
+<p>它就是这些东西：</p>
+<p><code>AGENTS.md</code>。</p>
+<p>服务边界文档。</p>
+<p>OpenAPI spec。</p>
+<p>mock server。</p>
+<p>contract tests。</p>
+<p>本地启动脚本。</p>
+<p>测试命令。</p>
+<p>失败时该看哪里的日志。</p>
+<p>哪些目录只读。</p>
+<p>哪些变更必须人工确认。</p>
+<p>这些东西看起来不酷。</p>
+<p>但它们决定 Agent 是“会写代码的聊天框”，还是“能在你们系统里工作的工程同事”。</p>
+<h2 id="一个更靠谱的三层搭法"><a href="#一个更靠谱的三层搭法" class="headerlink" title="一个更靠谱的三层搭法"></a>一个更靠谱的三层搭法</h2><p>如果让我给一个十几个微服务的团队设计 Agent 工作方式，我不会从“买哪个 Agent 产品”开始。</p>
+<p>我会先搭三层。</p>
+<p>第一层，统一 workspace。</p>
+<p>能 monorepo 就 monorepo。不能就虚拟 monorepo。至少让 Agent 在一个地方看到相关服务、共享协议、测试和文档。</p>
+<p>这一层提供全局视图。</p>
+<p>第二层，分层上下文。</p>
+<p>根目录有系统索引，每个服务有边界说明，协议规格尽量机器可读。人写的文档只写代码和 spec 难以表达的内容，比如业务语义、历史决策、例外规则、危险区域。</p>
+<p>这一层提供精准上下文。</p>
+<p>第三层，验证闭环。</p>
+<p>每个服务提供 mock server 或模拟依赖，核心服务之间建立 contract test。Agent 改完以后，必须能在本地跑一组足够快、足够准的验证，而不是把所有风险都留给人类集成测试。</p>
+<p>这一层提供自我修正能力。</p>
+<p>这三层搭起来以后，Agent 的工作方式会发生变化。</p>
+<p>以前你可能是这样用：</p>
+<p>“帮我改一下订单状态逻辑。”</p>
+<p>然后你把相关代码贴给它，它改一版，你再告诉它哪里不对。</p>
+<p>新方式应该更像这样：</p>
+<p>“根据根 AGENTS.md，处理 story-123。先识别涉及的服务和契约，提出设计，不要修改无关服务。改完后启动 billing 依赖的 mock server，跑 identity-billing 和 billing-notification 的 contract tests。失败就自我修正，三轮仍失败再停下来说明原因。”</p>
+<p>这个 Prompt 不一定优雅。</p>
+<p>但它工程上更靠谱。</p>
+<p>因为它把 Agent 放进了一个可验证的循环里。</p>
+<p><img src="imgs/04-three-layer-setup.png" alt="三层 Agent 微服务工程体系，底层统一 workspace，中层分层上下文和协议活文档，上层 mock server 与 contract test 验证闭环"></p>
+<h2 id="写在最后"><a href="#写在最后" class="headerlink" title="写在最后"></a>写在最后</h2><p>我现在看 Agent 工程，越来越觉得它和新员工入职有点像。</p>
+<p>你不能把一个新同事拉进几百个群，丢给他十几个仓库，然后说：“你自己理解一下系统，明天开始做跨服务设计。”</p>
+<p>这不叫授权。</p>
+<p>这叫放生。</p>
+<p>真正靠谱的团队，会给他系统地图，会告诉他服务边界，会指明哪些文档可信，哪些接口有契约，哪些测试必须跑，哪些地方以前出过事故。</p>
+<p>Agent 也是一样。</p>
+<p>它读得快，写得快，跑命令也快。</p>
+<p>但它不天然知道你们公司的业务边界，不天然知道某个字段背后的历史包袱，也不天然知道一个接口变更会把哪个下游打穿。</p>
+<p>所以问题不是“要不要把十几个微服务放到一个 workspace 下”。</p>
+<p>要。</p>
+<p>但更关键的问题是：你们有没有把一个复杂系统整理成 Agent 可以导航、可以理解、可以验证的工作环境。</p>
+<p>统一 workspace 给它眼睛。</p>
+<p>分层文档和协议测试给它判断。</p>
+<p>mock server 和 contract test 给它反馈。</p>
+<p>三层都在，Agent 才有机会从“帮我补几行代码”，走到“参与跨微服务系统设计”。</p>
+<p>这件事说到底不是 AI 魔法。</p>
+<p>还是工程。</p>
+<p>只不过这一次，我们不是只给人类工程师搭工程体系。</p>
+<p>我们也要给 Agent 搭。</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ol>
+<li>Anthropic, <a target="_blank" rel="noopener" href="https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents">Effective context engineering for AI agents</a></li>
+<li>Anthropic, <a target="_blank" rel="noopener" href="https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents">Effective harnesses for long-running agents</a></li>
+<li>Datadog Frontend Platform, <a target="_blank" rel="noopener" href="https://dev.to/datadog-frontend-dev/steering-ai-agents-in-monorepos-with-agentsmd-13g0">Steering AI Agents in Monorepos with AGENTS.md</a></li>
+<li>Pact, <a target="_blank" rel="noopener" href="https://docs.pact.io/">Consumer driven contract testing</a></li>
+</ol>
+</div>
+    <aside class="post-rail">
+      <span class="post-rail__line"></span>
+      <span>LESLIE / WRITING</span>
+    </aside>
+  </div>
+
+  <footer class="post-footer shell">
+    <div><h2>如果这篇文章帮到了你，<br>也许下一篇会更有意思。</h2></div>
+    <a class="button button--primary" href="/writing/">继续阅读 →</a>
+  </footer>
+</article>
+</main>
+    <footer class="site-footer">
+  <div class="footer-grid">
+    <div>
+      <p class="footer-kicker">Leslie Zhang</p>
+      <p class="footer-statement">流水不争先，<br>争的是滔滔不绝。</p>
+    </div>
+    <div class="footer-links">
+      <a href="https://github.com/leslieAIbin" target="_blank" rel="noreferrer">GitHub ↗</a>
+      <a href="https://www.instagram.com/leslieaibin/" target="_blank" rel="noreferrer">Instagram ↗</a>
+      <button type="button" data-wechat-open>微信 / WeChat</button>
+      <a href="mailto:aibinzhangleslie@gmail.com">Email ↗</a>
+      <a href="/atom.xml">RSS ↗</a>
+    </div>
+    <div class="footer-meta">
+      <span>© 2026 Leslie Zhang</span>
+      <span>Writing, research and working systems.</span>
+    </div>
+  </div>
+</footer>
+
+    <dialog class="ask-dialog" id="ask-leslie" aria-labelledby="ask-title">
+  <div class="ask-dialog__shell">
+    <div class="ask-dialog__topbar">
+      <div>
+        <h2 id="ask-title">Ask Leslie</h2>
+      </div>
+      <button class="icon-button" type="button" data-ask-close aria-label="关闭">×</button>
+    </div>
+    <p class="ask-dialog__intro">从本站公开文章中寻找答案。当前版本在浏览器本地检索，不上传问题，也不会编造不存在的经历。</p>
+    <form class="ask-form" data-ask-form>
+      <label class="sr-only" for="ask-query">输入问题</label>
+      <textarea id="ask-query" rows="2" placeholder="例如：Agent Runtime 应该怎么设计？" data-ask-input></textarea>
+      <button type="submit">检索知识库 <span aria-hidden="true">↗</span></button>
+    </form>
+    <div class="ask-suggestions" aria-label="推荐问题">
+      
+        <button type="button" data-ask-suggestion="Agent Runtime 应该怎么设计？">Agent Runtime 应该怎么设计？</button>
+      
+        <button type="button" data-ask-suggestion="如何让 AI 操控真实世界设备？">如何让 AI 操控真实世界设备？</button>
+      
+        <button type="button" data-ask-suggestion="Leslie 最近在研究什么？">Leslie 最近在研究什么？</button>
+      
+    </div>
+    <div class="ask-results" data-ask-results aria-live="polite">
+      <div class="ask-empty">
+        <p>输入一个问题，我会把你带到 Leslie 写过的相关内容。</p>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+    <dialog class="wechat-dialog" id="wechat-leslie" aria-labelledby="wechat-title">
+  <div class="wechat-dialog__shell">
+    <header>
+      <div>
+        <p class="section-label">WeChat</p>
+        <h2 id="wechat-title">微信联系</h2>
+      </div>
+      <button class="icon-button" type="button" data-wechat-close aria-label="关闭微信二维码">×</button>
+    </header>
+    <img src="/images/contact/wechat-leslie.png" alt="Leslie Zhang 的微信二维码" loading="lazy">
+    <p>扫码添加 Leslie，建议备注你的名字与来意。</p>
+  </div>
+</dialog>
+
+    <script>window.ORBITAL_ROOT = '/';</script>
+    <script src="/js/orbital.js" defer></script>
+  </body>
+</html>

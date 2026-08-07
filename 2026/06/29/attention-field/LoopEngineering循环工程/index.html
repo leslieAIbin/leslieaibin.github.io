@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+  <head>
+
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#050b18">
+<meta name="color-scheme" content="dark light">
+<title>别再只会提示 AI 了：Loop Engineering 才是 Agent 时代真正的工程能力 | Leslie Zhang</title>
+<meta name="description" content="Prompt 没有过时，但它正在从主角变成零件。真正拉开差距的，是你能不能设计一个可靠运行、持续验证、知道何时停下来的 Agent Loop。">
+<meta name="author" content="Leslie Zhang">
+<link rel="canonical" href="https://leslieaibin.github.io/2026/06/29/attention-field/LoopEngineering%E5%BE%AA%E7%8E%AF%E5%B7%A5%E7%A8%8B/">
+<link rel="icon" href="/imgs/01.jpg">
+<link rel="alternate" type="application/atom+xml" title="Leslie Zhang" href="/atom.xml">
+<meta property="og:type" content="article">
+<meta property="og:title" content="别再只会提示 AI 了：Loop Engineering 才是 Agent 时代真正的工程能力 | Leslie Zhang">
+<meta property="og:description" content="Prompt 没有过时，但它正在从主角变成零件。真正拉开差距的，是你能不能设计一个可靠运行、持续验证、知道何时停下来的 Agent Loop。">
+<meta property="og:url" content="https://leslieaibin.github.io/2026/06/29/attention-field/LoopEngineering%E5%BE%AA%E7%8E%AF%E5%B7%A5%E7%A8%8B/">
+<meta property="og:image" content="https://leslieaibin.github.io/2026/06/29/attention-field/LoopEngineering%E5%BE%AA%E7%8E%AF%E5%B7%A5%E7%A8%8B/imgs/cover.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="别再只会提示 AI 了：Loop Engineering 才是 Agent 时代真正的工程能力 | Leslie Zhang">
+<meta name="twitter:description" content="Prompt 没有过时，但它正在从主角变成零件。真正拉开差距的，是你能不能设计一个可靠运行、持续验证、知道何时停下来的 Agent Loop。">
+<meta name="twitter:image" content="https://leslieaibin.github.io/2026/06/29/attention-field/LoopEngineering%E5%BE%AA%E7%8E%AF%E5%B7%A5%E7%A8%8B/imgs/cover.jpg">
+<script>
+  (function () {
+    var saved = localStorage.getItem('orbital-theme');
+    var theme = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    document.documentElement.dataset.theme = theme;
+  })();
+</script>
+<link rel="stylesheet" href="/css/orbital.css">
+<meta name="generator" content="Hexo 5.2.0"></head>
+  <body class="page-post">
+    <a class="skip-link" href="#main-content">跳到主要内容</a>
+    <div class="reading-progress" data-reading-progress></div>
+    <header class="site-header" data-header>
+  <div class="nav-shell">
+    <a class="brand" href="/" aria-label="返回首页">
+      <span class="brand-mark" aria-hidden="true"><img src="/images/brand/leslie-mythos-avatar.webp" alt="" width="512" height="512"></span>
+      <span class="brand-copy">
+        <strong>LESLIE</strong>
+        <small>REAL-WORLD AGENTS</small>
+      </span>
+    </a>
+
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav" data-nav-toggle>
+      <span></span><span></span>
+      <span class="sr-only">打开导航</span>
+    </button>
+
+    <nav class="main-nav" id="main-nav" aria-label="主导航" data-nav>
+      
+        <a href="/" class="">首页</a>
+      
+        <a href="/writing/" class="">写作</a>
+      
+        <a href="/projects/" class="">项目</a>
+      
+        <a href="/about/" class="">关于</a>
+      
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换明暗主题">
+        <span class="theme-toggle__sun" aria-hidden="true">☼</span>
+        <span class="theme-toggle__moon" aria-hidden="true">◐</span>
+      </button>
+      <button class="ask-nav" type="button" data-ask-open>ASK LESLIE</button>
+    </nav>
+  </div>
+</header>
+
+    <main id="main-content"><article class="post-shell">
+  <header class="post-hero shell">
+    <a class="post-back" href="/writing/">← 返回写作</a>
+    <div class="post-hero__meta">
+      <time datetime="2026-06-29">2026 年 06 月 29 日</time>
+      <span>11 分钟阅读</span>
+    </div>
+    <h1>别再只会提示 AI 了：Loop Engineering 才是 Agent 时代真正的工程能力</h1>
+    <p class="post-hero__summary">Prompt 没有过时，但它正在从主角变成零件。真正拉开差距的，是你能不能设计一个可靠运行、持续验证、知道何时停下来的 Agent Loop。</p>
+    <div class="chip-row"><a href="/tags/Claude-Code/">Claude Code</a><a href="/tags/Context-Engineering/">Context Engineering</a><a href="/tags/AI-Agent/">AI Agent</a><a href="/tags/Prompt-Engineering/">Prompt Engineering</a><a href="/tags/Loop-Engineering/">Loop Engineering</a><a href="/tags/OpenAI-Codex/">OpenAI Codex</a></div>
+  </header>
+
+  <div class="post-cover shell"><img src="/2026/06/29/attention-field/LoopEngineering%E5%BE%AA%E7%8E%AF%E5%B7%A5%E7%A8%8B/imgs/cover.jpg" alt="别再只会提示 AI 了：Loop Engineering 才是 Agent 时代真正的工程能力"></div>
+
+  <div class="post-layout shell">
+    <aside class="post-toc" aria-label="文章目录">
+      <span class="aside-title">目录</span>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Prompt-%E6%B2%A1%E6%AD%BB%EF%BC%8C%E5%AE%83%E5%8F%AA%E6%98%AF%E9%99%8D%E7%BA%A7%E6%88%90%E4%BA%86%E9%9B%B6%E4%BB%B6"><span class="toc-text">Prompt 没死，它只是降级成了零件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Loop-%E4%B8%8D%E6%98%AF-while-%E5%BE%AA%E7%8E%AF%EF%BC%8C%E6%98%AF%E4%B8%80%E5%A5%97%E7%9B%AE%E6%A0%87%E7%B3%BB%E7%BB%9F"><span class="toc-text">Loop 不是 while 循环，是一套目标系统</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9C%9F%E6%AD%A3%E7%9A%84-Loop-%E8%A6%81%E6%9C%89%E5%85%AD%E4%B8%AA%E5%99%A8%E5%AE%98"><span class="toc-text">真正的 Loop 要有六个器官</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%8E%E3%80%8C%E4%BC%9A%E7%94%A8-AI%E3%80%8D%E5%88%B0%E3%80%8C%E4%BC%9A%E8%AE%BE%E8%AE%A1-AI-%E5%B7%A5%E4%BD%9C%E3%80%8D"><span class="toc-text">从「会用 AI」到「会设计 AI 工作」</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%80%E5%B0%8F-Loop-%E5%BA%94%E8%AF%A5%E4%BB%8E%E5%8F%AA%E8%AF%BB%E5%BC%80%E5%A7%8B"><span class="toc-text">最小 Loop 应该从只读开始</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Loop-%E6%9C%80%E5%8F%AF%E6%80%95%E7%9A%84%E9%A3%8E%E9%99%A9%EF%BC%8C%E6%98%AF%E4%BD%A0%E5%BC%80%E5%A7%8B%E4%B8%8D%E8%AF%BB%E4%BB%A3%E7%A0%81"><span class="toc-text">Loop 最可怕的风险，是你开始不读代码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%99%E5%9C%A8%E6%9C%80%E5%90%8E%EF%BC%9A%E6%A2%A6%E6%83%B3%E4%B8%8D%E6%98%AF%E8%AE%A9-AI-%E6%9B%BF%E4%BD%A0%E6%80%9D%E8%80%83"><span class="toc-text">写在最后：梦想不是让 AI 替你思考</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="toc-text">参考资料</span></a></li></ol>
+    </aside>
+    <div class="article-content"><h1 id="别再只会提示-AI-了：Loop-Engineering-才是-Agent-时代真正的工程能力"><a href="#别再只会提示-AI-了：Loop-Engineering-才是-Agent-时代真正的工程能力" class="headerlink" title="别再只会提示 AI 了：Loop Engineering 才是 Agent 时代真正的工程能力"></a>别再只会提示 AI 了：Loop Engineering 才是 Agent 时代真正的工程能力</h1><p>前几天我看到菜鸟教程上架了一整套 AI Agent 教程，里面有一篇专门讲 Loop Engineering。</p>
+<p>说实话，我第一反应有点恍惚。</p>
+<p>菜鸟教程这个网站，在很多工程师心里是一个很特殊的存在。你第一次查 HTML，第一次抄 JavaScript 示例，第一次搞不懂 SQL 的 <code>JOIN</code>，很可能都打开过它。</p>
+<p>它的 slogan 也很老派。</p>
+<p>「学的不仅是技术，更是梦想。」</p>
+<p>以前看这句话，多少有点中二。</p>
+<p>但现在回头看，挺有意思的。因为到了 2026 年，连这样一个最朴素、最入门、最「抄代码就能跑」的网站，都开始把 AI Agent、Harness Engineering、Loop Engineering 放进教程导航里了。</p>
+<p>这说明一件事。</p>
+<p>Agent 这件事，已经从少数人的玩具，变成了普通工程师也绕不开的基本功。</p>
+<p>而 Loop Engineering 这个词，恰好戳中了我最近很强的一个体感：<strong>我们一直以为自己在优化 Prompt，其实真正卡住的，是人类还在用手推进每一步。</strong></p>
+<p>你写一句 Prompt。</p>
+<p>AI 回一句。</p>
+<p>你看一眼。</p>
+<p>再补一句。</p>
+<p>它再改一版。</p>
+<p>这个模式当然有用。过去两年，很多人的生产力就是这么涨起来的。</p>
+<p>但你只要稍微做过一点复杂任务，就会发现它有一个很硬的天花板。</p>
+<p>人，变成了循环里的慢部件。</p>
+<p><img src="imgs/cover.jpg" alt="一个工程师不再手动一条条提示模型，而是在设计一套 Agent Loop 控制台，目标、上下文、工具、验证和记忆围成闭环"></p>
+<h2 id="Prompt-没死，它只是降级成了零件"><a href="#Prompt-没死，它只是降级成了零件" class="headerlink" title="Prompt 没死，它只是降级成了零件"></a>Prompt 没死，它只是降级成了零件</h2><p>先把一个误解说清楚。</p>
+<p>Loop Engineering 不是说 Prompt Engineering 过时了。</p>
+<p>恰好相反，一个烂 Prompt 放进 Loop 里，只会让系统更稳定、更快速地产出烂结果。</p>
+<p>Prompt 仍然重要。</p>
+<p>只是它不再是全部。</p>
+<p>过去我们讲 Prompt Engineering，本质是在研究「怎么问 AI」。你把角色、任务、约束、输出格式写清楚，希望模型第一轮就给出更好的答案。</p>
+<p>后来大家开始意识到，光会问还不够。你得给模型足够好的上下文。于是有了 Context Engineering：文档怎么塞、历史怎么保留、RAG 怎么检索、工具说明怎么放、哪些信息该进上下文，哪些信息不该进。</p>
+<p>再往后，问题又变了。</p>
+<p>模型不只是回答问题，它开始调用工具、编辑文件、跑测试、查日志、开浏览器、连数据库。你得把模型、工具、权限、数据源组织起来。这就是 Harness Engineering，更像是在给模型搭一个工作台。</p>
+<p>但到了 Agent 真正开始干活以后，你会遇到下一个问题。</p>
+<p>它不是「能不能做」。</p>
+<p>是「能不能持续做，做错了能不能发现，发现以后能不能修，修到什么时候算完」。</p>
+<p>这就是 Loop Engineering 出场的地方。</p>
+<p>你想想看，一个真正有用的编程 Agent，不应该只是听你说「修一下测试」。</p>
+<p>它应该自己读失败日志，定位相关文件，提出假设，改代码，跑测试，看错误，再改，再跑，直到测试通过，或者明确告诉你它被什么卡住了。</p>
+<p>这一串动作里，每一步都有 Prompt。</p>
+<p>但真正值钱的不是其中某一句 Prompt。</p>
+<p>真正值钱的是这套闭环。</p>
+<p><img src="imgs/01-prompt-context-harness-loop.jpg" alt="Prompt、Context、Harness、Loop 四层阶梯，Prompt 是指令，Context 是燃料，Harness 是工具台，Loop 是持续运行的闭环系统"></p>
+<h2 id="Loop-不是-while-循环，是一套目标系统"><a href="#Loop-不是-while-循环，是一套目标系统" class="headerlink" title="Loop 不是 while 循环，是一套目标系统"></a>Loop 不是 while 循环，是一套目标系统</h2><p>Loop Engineering 这个词听起来容易被误解。</p>
+<p>很多人第一反应是，哦，不就是写个 <code>while true</code>，让 Agent 一直跑吗？</p>
+<p>真不是。</p>
+<p>一个坏的 Loop，确实可能就是无限循环。</p>
+<p>它不停改文件，不停跑命令，不停解释自己为什么还没成功。你看着 token 一路燃烧，最后只得到一堆越来越离谱的 diff。</p>
+<p>这不叫工程。</p>
+<p>这叫空转。</p>
+<p>一个好的 Loop 至少要有五件事。</p>
+<p><strong>目标。</strong></p>
+<p>它得知道成功是什么。不是「优化性能」这种大词，而是「把仪表盘首次加载时间降低 30%，同时现有筛选器行为不变」。</p>
+<p><strong>上下文。</strong></p>
+<p>它得知道当前任务相关的代码、日志、文档、历史决策、项目约束。没有上下文的 Agent，就像一个刚入职但没人带的同事，只能靠猜。</p>
+<p><strong>行动。</strong></p>
+<p>它要能编辑文件、运行命令、调用工具、读网页、查数据库。否则它只是一个会说话的旁观者。</p>
+<p><strong>观察。</strong></p>
+<p>它要能看到测试失败、类型错误、浏览器截图、CI 日志、Review 评论。观察不是装饰，观察是下一轮行动的燃料。</p>
+<p><strong>调整。</strong></p>
+<p>它要根据观察更新自己的计划，而不是死守第一版判断。第一次假设错了没关系，关键是错误能不能被系统吸收进下一轮。</p>
+<p>这五件事连起来，才是一个 Loop。</p>
+<p>Intent → Context → Action → Observation → Adjustment。</p>
+<p>再回到 Intent。</p>
+<p>看起来很简单。</p>
+<p>但真要做可靠，难点全在细节里。</p>
+<p>测试失败算不算失败？人工 Review 说「这里不太对」算不算阻断？Agent 连续三轮修不好，是继续烧 token，还是停下来问人？一个命令需要网络权限，是自动放行，还是要求人工审批？</p>
+<p>这些问题都不是 Prompt 能单独解决的。</p>
+<p>它们属于系统设计。</p>
+<p><img src="imgs/02-agent-loop-five-stages.jpg" alt="Agent Loop 五阶段闭环，Intent、Context、Action、Observation、Adjustment 首尾相连，旁边有测试、日志、代码 diff、人工 review 作为观察信号"></p>
+<h2 id="真正的-Loop-要有六个器官"><a href="#真正的-Loop-要有六个器官" class="headerlink" title="真正的 Loop 要有六个器官"></a>真正的 Loop 要有六个器官</h2><p>菜鸟教程那篇文章里，把一个能独立运行的 Loop 拆成六个要素：自动触发器、Worktrees、Skills、Connectors/MCP、Sub-Agents、Memory。</p>
+<p>这个拆法我觉得很对。</p>
+<p>因为它不是在讲概念，而是在讲一个 Agent 系统到底需要哪些器官。</p>
+<p>第一个器官，是<strong>自动触发器</strong>。</p>
+<p>没有触发器，Loop 就只是一次手动操作。你今天让它跑一次，它跑完就结束了。真正的 Loop 需要知道什么时候醒来。</p>
+<p>OpenAI Codex 的 Automations 就是这个方向：你可以让它定期在后台运行，把有发现的结果放进 Triage 收件箱；也可以把 automation 绑定到一个线程上，让它像心跳一样定期回来检查某件事。官方文档里还特别提醒，项目级 automation 依赖本地 Codex app 运行、项目仍在磁盘上，并且会继承你的 sandbox 设置。</p>
+<p>这个细节很重要。</p>
+<p>自动化不是魔法。</p>
+<p>它依赖运行环境，也依赖权限边界。</p>
+<p>第二个器官，是<strong>隔离环境</strong>。</p>
+<p>多个 Agent 同时改同一个仓库，最容易出事。</p>
+<p>所以 Worktree 会变得特别关键。Codex app 官方文档里对 worktree 的定位很明确：它让 Codex 在同一个项目里运行多个独立任务，而不干扰你的本地工作。Git worktree 背后是同一个 Git 历史，但每个 checkout 有自己的文件树。</p>
+<p>这件事的价值不只是「不冲突」。</p>
+<p>它让你敢并行。</p>
+<p>一个 Agent 修登录测试，一个 Agent 升级依赖，一个 Agent 做代码审查。它们不抢你当前正在写的文件，也不把你的本地状态搞乱。</p>
+<p>第三个器官，是<strong>技能文件</strong>。</p>
+<p>我现在越来越觉得，Skills 是 Agent 工程里被低估的东西。</p>
+<p>每次新对话都让 Agent 从零猜项目规范，是很浪费的。这个项目用 pnpm 还是 npm？测试命令是什么？数据库查询能不能直接写 SQL？新增 API 要不要改文档？哪些目录绝对不能碰？</p>
+<p>这些知识不该藏在人的脑子里。</p>
+<p>应该写成 Skills。</p>
+<p>Codex 官方手册里讲得很清楚：Skill 是一个目录，里面有 <code>SKILL.md</code>，还可以带脚本和参考资料；Codex 先只看技能名和 description，真正决定使用时再加载完整说明，这叫 progressive disclosure。</p>
+<p>你看，这就是典型的 Context Engineering 和 Loop Engineering 的交界处。</p>
+<p>你不是一次性把所有规则塞进上下文，而是把可复用工作流包装成可触发的能力。</p>
+<p>第四个器官，是<strong>连接器</strong>。</p>
+<p>一个只能读本地文件的 Agent，能做的事很有限。</p>
+<p>一旦接上 MCP，它就能查 GitHub Issue、读 Sentry 日志、看 Figma、控制浏览器、访问内部文档。Codex 文档里把 MCP 说得很直接：它连接模型和工具、上下文，支持 stdio server 和 streamable HTTP server，也支持 OAuth。</p>
+<p>但这里要非常克制。</p>
+<p>连接器越多，能力越强，风险也越大。</p>
+<p>读 GitHub Issue 和合并 PR 不是同一类权限。查日志和删除生产数据不是同一类权限。Loop 一旦无人值守运行，权限设计就不是安全洁癖，而是基本工程卫生。</p>
+<p>第五个器官，是<strong>子 Agent</strong>。</p>
+<p>一个很朴素的经验是，写代码的 Agent 不应该单独给自己打分。</p>
+<p>不是因为模型坏。</p>
+<p>是因为任何创作者都容易为自己的方案找理由。</p>
+<p>所以 Maker-Checker 模式会越来越常见：一个 Agent 负责实现，另一个 Agent 负责审查。Codex 的 subagents 文档也强调，子代理适合做并行探索、测试、日志分析、代码审查这类任务，但它不会自动生成，必须显式要求，而且会消耗更多 token。</p>
+<p>这句话很现实。</p>
+<p>Sub-Agent 不是免费午餐。</p>
+<p>它是用更多成本换更好的分工和更少的上下文污染。</p>
+<p>第六个器官，是<strong>记忆</strong>。</p>
+<p>模型每次醒来都会忘。</p>
+<p>仓库不会。</p>
+<p>所以很多可靠的 Loop，最后都会回到一个非常朴素的做法：把状态写进文件。</p>
+<p><code>TODO.md</code>、<code>LOOP_STATE.md</code>、<code>AGENTS.md</code>、<code>SKILL.md</code>、测试报告、Review 记录、失败假设。</p>
+<p>别笑，这些文件就是外部记忆。</p>
+<p>它们让下一次 Loop 不需要从零开始，也让人类能审计它到底做过什么。</p>
+<p><img src="imgs/03-loop-six-organs.jpg" alt="Loop 六大器官：自动触发器、Worktree、Skill、MCP、Sub-Agent、Memory 像一套 Agent 操作系统模块围绕中央目标运转"></p>
+<h2 id="从「会用-AI」到「会设计-AI-工作」"><a href="#从「会用-AI」到「会设计-AI-工作」" class="headerlink" title="从「会用 AI」到「会设计 AI 工作」"></a>从「会用 AI」到「会设计 AI 工作」</h2><p>Loop Engineering 真正改变的，不是工具按钮。</p>
+<p>是工程师的工作位置。</p>
+<p>以前你坐在驾驶位，AI 坐在副驾。你每一步都要说：看这个文件、改这里、跑测试、解释报错、再改一下。</p>
+<p>现在更像你在设计一套作业系统。</p>
+<p>你定义目标。</p>
+<p>你定义输入来源。</p>
+<p>你定义允许使用哪些工具。</p>
+<p>你定义验证信号。</p>
+<p>你定义什么时候停。</p>
+<p>你定义哪些事情必须叫醒你。</p>
+<p>这个变化非常微妙。</p>
+<p>因为它让「会不会写 Prompt」变成了一个局部能力，而「会不会设计工作流」变成了核心能力。</p>
+<p>我自己的感受是，未来厉害的工程师，不会是每天手动给 Agent 打很多字的人。</p>
+<p>而是能把重复出现的工作，沉淀成 Loop 的人。</p>
+<p>比如每天早上自动检查昨天失败的 CI，把失败按模块归类，写进 <code>TODO.md</code>，但不动源代码。</p>
+<p>比如每次 PR 收到 Review 后，启动一个 Review Loop：读取评论，逐条判断是必须修、可讨论、还是误报；能修的开一个小 diff；不能修的写出解释；最后跑测试。</p>
+<p>比如做前端页面时，Loop 每轮都打开浏览器截图，检查移动端是否溢出、按钮文字是否挤压、核心交互是否可用，而不是只凭代码猜测。</p>
+<p>这些都不是玄学。</p>
+<p>它们只是把人类原来机械推进的步骤，变成系统可以重复执行的步骤。</p>
+<h2 id="最小-Loop-应该从只读开始"><a href="#最小-Loop-应该从只读开始" class="headerlink" title="最小 Loop 应该从只读开始"></a>最小 Loop 应该从只读开始</h2><p>不过我不建议一上来就做全自动。</p>
+<p>尤其不建议做那种「发现问题 → 自动改代码 → 自动开 PR → CI 过了自动合并」的豪华 Loop。</p>
+<p>听起来很酷。</p>
+<p>风险也很真实。</p>
+<p>最好的第一个 Loop，应该是只读的。</p>
+<p>让它每天读 CI 失败、读 Issue、读日志，然后只写一个状态文件。</p>
+<p>它不改源代码。</p>
+<p>不开 PR。</p>
+<p>不发外部通知。</p>
+<p>你每天早上看一眼它整理的结果，决定下一步。</p>
+<p>这个 Loop 已经很有价值了。</p>
+<p>因为很多团队每天浪费的时间，不是在写代码，而是在「重新发现昨天已经发生过的问题」。</p>
+<p>CI 哪个模块挂了？同一个测试是不是连续失败三次？哪个 Issue 有复现信息？哪个错误可能只是环境抖动？这些事情很机械，但又很消耗注意力。</p>
+<p>让 Agent 做这部分，风险很低，收益很稳。</p>
+<p>然后再慢慢往前走。</p>
+<p>第二阶段，让它起草修复方案。</p>
+<p>第三阶段，让它在独立 worktree 里做小 diff。</p>
+<p>第四阶段，让它开 Draft PR。</p>
+<p>第五阶段，才考虑自动合并。</p>
+<p>中间每一步都要加验证。</p>
+<p>而且每一步都要能回退。</p>
+<p>这就是工程。</p>
+<p>不是因为我们不相信 Agent。</p>
+<p>是因为我们尊重系统出错的方式。</p>
+<p><img src="imgs/04-loop-maturity-ladder.jpg" alt="四阶段 Loop 成熟度阶梯：只读整理、草稿方案、独立 worktree 修改、Draft PR，最后才是高权限自动化"></p>
+<h2 id="Loop-最可怕的风险，是你开始不读代码"><a href="#Loop-最可怕的风险，是你开始不读代码" class="headerlink" title="Loop 最可怕的风险，是你开始不读代码"></a>Loop 最可怕的风险，是你开始不读代码</h2><p>讲到这里，必须泼一点冷水。</p>
+<p>Loop Engineering 会让一个人的产出速度明显变快。</p>
+<p>但它也会让一种债务积累得更快。</p>
+<p>理解债。</p>
+<p>Agent 产出的代码越多，你没读过、没理解、只是点头接受的部分就越多。短期看，这很爽。长期看，这就是系统慢慢变成黑箱的开始。</p>
+<p>更麻烦的是，Loop 越顺滑，人越容易认知投降。</p>
+<p>它说测试过了。</p>
+<p>它说修好了。</p>
+<p>它说 Review 已处理。</p>
+<p>你看着它的语气那么确定，就懒得再点开 diff。</p>
+<p>这才是危险的地方。</p>
+<p>不是 AI 会不会犯错。</p>
+<p>而是它犯错的时候，看起来也很像对的。</p>
+<p>所以我觉得 Loop Engineering 最重要的原则，不是「让 Agent 自主」。</p>
+<p>而是「让 Agent 自主到一个你仍然能理解、能审查、能负责的程度」。</p>
+<p>人类不应该回到每一步都手动输入的时代。</p>
+<p>但人类也不能退出判断席。</p>
+<p>真正好的 Loop，是把机械劳动交出去，把判断力留下来。</p>
+<p>它替你读日志、整理线索、跑测试、做小修。</p>
+<p>但产品取舍、架构方向、权限边界、最终合并，还是人的责任。</p>
+<h2 id="写在最后：梦想不是让-AI-替你思考"><a href="#写在最后：梦想不是让-AI-替你思考" class="headerlink" title="写在最后：梦想不是让 AI 替你思考"></a>写在最后：梦想不是让 AI 替你思考</h2><p>回到菜鸟教程那句 slogan。</p>
+<p>学的不仅是技术，更是梦想。</p>
+<p>以前我们学 HTML、JavaScript、Python，梦想可能是做一个网站，写一个工具，找到一份工作。</p>
+<p>现在学 Agent、Skills、MCP、Worktrees、Loop Engineering，梦想看起来变大了：让一组 AI 帮你持续推进项目，让系统自己发现问题、修复问题、验证问题。</p>
+<p>但我越研究这些东西，越觉得这里面最重要的不是「让 AI 替你工作」。</p>
+<p>而是重新理解什么叫工作。</p>
+<p>很多我们以为是创造力的部分，其实是机械推进。</p>
+<p>很多我们以为可以自动化的部分，其实藏着判断。</p>
+<p>Loop Engineering 的价值，就是把这两件事分开。</p>
+<p>让机器去跑循环。</p>
+<p>让人去设计循环。</p>
+<p>让机器去收集证据。</p>
+<p>让人去承担判断。</p>
+<p>Prompt 时代，我们学会了怎么把一句话问清楚。</p>
+<p>Loop 时代，我们要学会怎么把一件事做到底。</p>
+<p>这一步，才真正像工程。</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li>菜鸟教程：《Loop Engineering（循环工程）》，用户提供原文片段。</li>
+<li>OpenAI Codex Manual: Automations, Worktrees, Skills, MCP, Subagents. <a target="_blank" rel="noopener" href="https://developers.openai.com/codex/codex-manual.md">https://developers.openai.com/codex/codex-manual.md</a></li>
+<li>Anthropic Claude Code Docs. <a target="_blank" rel="noopener" href="https://docs.anthropic.com/en/docs/claude-code">https://docs.anthropic.com/en/docs/claude-code</a></li>
+<li>Business Insider: What are loops? AI engineering tips, 2026-06. <a target="_blank" rel="noopener" href="https://www.businessinsider.com/what-are-loops-ai-engineering-tips-2026-6">https://www.businessinsider.com/what-are-loops-ai-engineering-tips-2026-6</a></li>
+</ul>
+</div>
+    <aside class="post-rail">
+      <span class="post-rail__line"></span>
+      <span>LESLIE / WRITING</span>
+    </aside>
+  </div>
+
+  <footer class="post-footer shell">
+    <div><h2>如果这篇文章帮到了你，<br>也许下一篇会更有意思。</h2></div>
+    <a class="button button--primary" href="/writing/">继续阅读 →</a>
+  </footer>
+</article>
+</main>
+    <footer class="site-footer">
+  <div class="footer-grid">
+    <div>
+      <p class="footer-kicker">Leslie Zhang</p>
+      <p class="footer-statement">流水不争先，<br>争的是滔滔不绝。</p>
+    </div>
+    <div class="footer-links">
+      <a href="https://github.com/leslieAIbin" target="_blank" rel="noreferrer">GitHub ↗</a>
+      <a href="https://www.instagram.com/leslieaibin/" target="_blank" rel="noreferrer">Instagram ↗</a>
+      <button type="button" data-wechat-open>微信 / WeChat</button>
+      <a href="mailto:aibinzhangleslie@gmail.com">Email ↗</a>
+      <a href="/atom.xml">RSS ↗</a>
+    </div>
+    <div class="footer-meta">
+      <span>© 2026 Leslie Zhang</span>
+      <span>Writing, research and working systems.</span>
+    </div>
+  </div>
+</footer>
+
+    <dialog class="ask-dialog" id="ask-leslie" aria-labelledby="ask-title">
+  <div class="ask-dialog__shell">
+    <div class="ask-dialog__topbar">
+      <div>
+        <h2 id="ask-title">Ask Leslie</h2>
+      </div>
+      <button class="icon-button" type="button" data-ask-close aria-label="关闭">×</button>
+    </div>
+    <p class="ask-dialog__intro">从本站公开文章中寻找答案。当前版本在浏览器本地检索，不上传问题，也不会编造不存在的经历。</p>
+    <form class="ask-form" data-ask-form>
+      <label class="sr-only" for="ask-query">输入问题</label>
+      <textarea id="ask-query" rows="2" placeholder="例如：Agent Runtime 应该怎么设计？" data-ask-input></textarea>
+      <button type="submit">检索知识库 <span aria-hidden="true">↗</span></button>
+    </form>
+    <div class="ask-suggestions" aria-label="推荐问题">
+      
+        <button type="button" data-ask-suggestion="Agent Runtime 应该怎么设计？">Agent Runtime 应该怎么设计？</button>
+      
+        <button type="button" data-ask-suggestion="如何让 AI 操控真实世界设备？">如何让 AI 操控真实世界设备？</button>
+      
+        <button type="button" data-ask-suggestion="Leslie 最近在研究什么？">Leslie 最近在研究什么？</button>
+      
+    </div>
+    <div class="ask-results" data-ask-results aria-live="polite">
+      <div class="ask-empty">
+        <p>输入一个问题，我会把你带到 Leslie 写过的相关内容。</p>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+    <dialog class="wechat-dialog" id="wechat-leslie" aria-labelledby="wechat-title">
+  <div class="wechat-dialog__shell">
+    <header>
+      <div>
+        <p class="section-label">WeChat</p>
+        <h2 id="wechat-title">微信联系</h2>
+      </div>
+      <button class="icon-button" type="button" data-wechat-close aria-label="关闭微信二维码">×</button>
+    </header>
+    <img src="/images/contact/wechat-leslie.png" alt="Leslie Zhang 的微信二维码" loading="lazy">
+    <p>扫码添加 Leslie，建议备注你的名字与来意。</p>
+  </div>
+</dialog>
+
+    <script>window.ORBITAL_ROOT = '/';</script>
+    <script src="/js/orbital.js" defer></script>
+  </body>
+</html>

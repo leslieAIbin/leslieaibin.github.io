@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+  <head>
+
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#050b18">
+<meta name="color-scheme" content="dark light">
+<title>7.CPU密集型和IO密集型 | Leslie Zhang</title>
+<meta name="description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta name="author" content="Leslie Zhang">
+<link rel="canonical" href="https://leslieaibin.github.io/2021/10/24/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/7.CPU%E5%AF%86%E9%9B%86%E5%9E%8B%E5%92%8CIO%E5%AF%86%E9%9B%86%E5%9E%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B%E6%B1%A0/">
+<link rel="icon" href="/imgs/01.jpg">
+<link rel="alternate" type="application/atom+xml" title="Leslie Zhang" href="/atom.xml">
+<meta property="og:type" content="article">
+<meta property="og:title" content="7.CPU密集型和IO密集型 | Leslie Zhang">
+<meta property="og:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta property="og:url" content="https://leslieaibin.github.io/2021/10/24/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/7.CPU%E5%AF%86%E9%9B%86%E5%9E%8B%E5%92%8CIO%E5%AF%86%E9%9B%86%E5%9E%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B%E6%B1%A0/">
+<meta property="og:image" content="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/37.jpg?raw=true">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="7.CPU密集型和IO密集型 | Leslie Zhang">
+<meta name="twitter:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta name="twitter:image" content="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/37.jpg?raw=true">
+<script>
+  (function () {
+    var saved = localStorage.getItem('orbital-theme');
+    var theme = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    document.documentElement.dataset.theme = theme;
+  })();
+</script>
+<link rel="stylesheet" href="/css/orbital.css">
+<meta name="generator" content="Hexo 5.2.0"></head>
+  <body class="page-post">
+    <a class="skip-link" href="#main-content">跳到主要内容</a>
+    <div class="reading-progress" data-reading-progress></div>
+    <header class="site-header" data-header>
+  <div class="nav-shell">
+    <a class="brand" href="/" aria-label="返回首页">
+      <span class="brand-mark" aria-hidden="true"><img src="/images/brand/leslie-mythos-avatar.webp" alt="" width="512" height="512"></span>
+      <span class="brand-copy">
+        <strong>LESLIE</strong>
+        <small>REAL-WORLD AGENTS</small>
+      </span>
+    </a>
+
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav" data-nav-toggle>
+      <span></span><span></span>
+      <span class="sr-only">打开导航</span>
+    </button>
+
+    <nav class="main-nav" id="main-nav" aria-label="主导航" data-nav>
+      
+        <a href="/" class="">首页</a>
+      
+        <a href="/writing/" class="">写作</a>
+      
+        <a href="/projects/" class="">项目</a>
+      
+        <a href="/about/" class="">关于</a>
+      
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换明暗主题">
+        <span class="theme-toggle__sun" aria-hidden="true">☼</span>
+        <span class="theme-toggle__moon" aria-hidden="true">◐</span>
+      </button>
+      <button class="ask-nav" type="button" data-ask-open>ASK LESLIE</button>
+    </nav>
+  </div>
+</header>
+
+    <main id="main-content"><article class="post-shell">
+  <header class="post-hero shell">
+    <a class="post-back" href="/writing/">← 返回写作</a>
+    <div class="post-hero__meta">
+      <time datetime="2021-10-24">2021 年 10 月 24 日</time>
+      <span>4 分钟阅读</span>
+    </div>
+    <h1>7.CPU密集型和IO密集型</h1>
+    
+    <div class="chip-row"><a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">操作系统</a></div>
+  </header>
+
+  <div class="post-cover shell"><img src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/37.jpg?raw=true" alt="7.CPU密集型和IO密集型"></div>
+
+  <div class="post-layout shell">
+    <aside class="post-toc" aria-label="文章目录">
+      <span class="aside-title">目录</span>
+      
+    </aside>
+    <div class="article-content"><p>在看《Java并发编程的艺术》线程池这一块时，提到了要合理地配置线程池，要分析任务特性。任务的性质：CPU密集型、IO密集型和混合型。</p>
+<h1 id="CPU密集型和IO密集型"><a href="#CPU密集型和IO密集型" class="headerlink" title="CPU密集型和IO密集型"></a>CPU密集型和IO密集型</h1><p>CPU密集型也是指计算密集型，大部分时间用来做计算逻辑判断等CPU动作的程序称为CPU密集型任务。该类型的任务需要进行大量的计算，主要消耗CPU资源。这种计算密集型任务虽然也可以用多任务完成，但是任务越多，花在任务切换的时间就越多，CPU执行任务的效率就越低，所以，要最高效地利用CPU，计算密集型任务同时进行的数量应当等于CPU的核心数。</p>
+<p>IO密集型任务指任务需要执行大量的IO操作，涉及到网络、磁盘IO操作，对CPU消耗较少。</p>
+<h1 id="和线程池配置的关系"><a href="#和线程池配置的关系" class="headerlink" title="和线程池配置的关系"></a>和线程池配置的关系</h1><p>CPU密集型任务应配置尽可能小的线程，如配置CPU数目+1个线程的线程池。由于IO密集型任务线程并不是一直在执行任务，则应配置尽可能多的线程，如2*CPU数目。</p>
+<p>区别和使用：<br>IO密集型：大量网络，文件操作<br> CPU 密集型：大量计算，cpu 占用越接近 100%, 耗费多个核或多台机器</p>
+<p>业务要具体分析，假如CPU现在是10%，数据量增大一点点，CPU狂飙，那也可能CPU密集型。</p>
+<p>如何确定线程池大小？<br>线程数不是越多越好。</p>
+<p>由于CPU的核心数有限，线程之间切换也需要开销，频繁的切换上下文会使性能降低，适得其反。</p>
+<p>简单的总结就是：</p>
+<p>Ncpu 表示 核心数。</p>
+<p>如果是CPU密集型任务，就需要尽量压榨CPU，参考值可以设为 Ncpu+1</p>
+<p>如果是IO密集型任务，参考值可以设置为 2 * Ncpu</p>
+<p>上面两个公式为什么是Ncpu+1 呢，而不是Ncpu+2 呢，为什么不是3 * Ncpu 呢？</p>
+<p>在《Java并发编程实践》中，是这样来计算线程池的线程数目的：</p>
+<p>一个基准负载下，使用 几种不同大小的线程池运行你的应用程序，并观察CPU利用率的水平。<br> 给定下列定义：</p>
+<p> Ncpu = CPU的数量<br> Ucpu = 目标CPU的使用率， 0 &lt;= Ucpu &lt;= 1<br> W/C = 等待时间与计算时间的比率</p>
+<p>为保持处理器达到期望的使用率，最优的池的大小等于：</p>
+<p> Nthreads = Ncpu x Ucpu x (1 + W/C)<br>复制<br>CPU数量是确定的，CPU使用率是目标值也是确定的，W/C也是可以通过基准程序测试得出的。</p>
+<p>对于计算密集型应用，假定等待时间趋近于0，是的CPU利用率达到100%，那么线程数就是CPU核心数，那这个+1意义何在呢？</p>
+<p>《Java并发编程实践》这么说：</p>
+<p> 计算密集型的线程恰好在某时因为发生一个页错误或者因其他原因而暂停，刚好有一个“额外”的线程，可以确保在这种情况下CPU周期不会中断工作。</p>
+<p>所以 Ncpu+1 是一个经验值。</p>
+<p>对于IO密集型应用，假定所有的操作时间几乎都是IO操作耗时，那么 W/C的值就为1，Ucpu 要达到100%利用率。</p>
+<p>根据 Nthreads = Ncpu x Ucpu x (1 + W/C)，</p>
+<p>那么对应的线程数确实为 2Ncpu 。</p>
+<p>Java代码中可以通过Rumtime来获得CUP的数目：</p>
+<p>int N_CPUS = Runtime.getRuntime().availableProcessor();<br>复制<br>对于包含I/O操作或者其他阻塞的任务，由于线程不会一直执行，因此线程池的数量应该更多。</p>
+<p>在《linux多线程服务器端编程》中有一个思路，CPU计算和IO的阻抗匹配原则。</p>
+<p>如果线程池中的线程在执行任务时，密集计算所占的时间比重为P(0&lt;P&lt;=1)，而系统一共有C个CPU，为了让CPU跑满而又不过载，线程池的大小经验公式 T = C / P。在此，T只是一个参考，考虑到P的估计并不是很准确，T的最佳估值可以上下浮动50%。</p>
+<p>这个经验公式的原理很简单，T个线程，每个线程占用P的CPU时间，如果刚好占满C个CPU,那么必有 T * P = C。</p>
+<p>如果一个web程序有CPU操作，也有IO操作，那该如何设置呢？</p>
+<p>有一个估算公式：</p>
+<p>最佳线程数目 = （（线程等待时间+线程CPU时间）/线程CPU时间 ）* CPU数目<br>复制<br>这个公式进一步转化为：</p>
+<p>最佳线程数目 = （线程等待时间与线程CPU时间之比 + 1）* CPU数目<br>复制</p>
+</div>
+    <aside class="post-rail">
+      <span class="post-rail__line"></span>
+      <span>LESLIE / WRITING</span>
+    </aside>
+  </div>
+
+  <footer class="post-footer shell">
+    <div><h2>如果这篇文章帮到了你，<br>也许下一篇会更有意思。</h2></div>
+    <a class="button button--primary" href="/writing/">继续阅读 →</a>
+  </footer>
+</article>
+</main>
+    <footer class="site-footer">
+  <div class="footer-grid">
+    <div>
+      <p class="footer-kicker">Leslie Zhang</p>
+      <p class="footer-statement">流水不争先，<br>争的是滔滔不绝。</p>
+    </div>
+    <div class="footer-links">
+      <a href="https://github.com/leslieAIbin" target="_blank" rel="noreferrer">GitHub ↗</a>
+      <a href="https://www.instagram.com/leslieaibin/" target="_blank" rel="noreferrer">Instagram ↗</a>
+      <button type="button" data-wechat-open>微信 / WeChat</button>
+      <a href="mailto:aibinzhangleslie@gmail.com">Email ↗</a>
+      <a href="/atom.xml">RSS ↗</a>
+    </div>
+    <div class="footer-meta">
+      <span>© 2026 Leslie Zhang</span>
+      <span>Writing, research and working systems.</span>
+    </div>
+  </div>
+</footer>
+
+    <dialog class="ask-dialog" id="ask-leslie" aria-labelledby="ask-title">
+  <div class="ask-dialog__shell">
+    <div class="ask-dialog__topbar">
+      <div>
+        <h2 id="ask-title">Ask Leslie</h2>
+      </div>
+      <button class="icon-button" type="button" data-ask-close aria-label="关闭">×</button>
+    </div>
+    <p class="ask-dialog__intro">从本站公开文章中寻找答案。当前版本在浏览器本地检索，不上传问题，也不会编造不存在的经历。</p>
+    <form class="ask-form" data-ask-form>
+      <label class="sr-only" for="ask-query">输入问题</label>
+      <textarea id="ask-query" rows="2" placeholder="例如：Agent Runtime 应该怎么设计？" data-ask-input></textarea>
+      <button type="submit">检索知识库 <span aria-hidden="true">↗</span></button>
+    </form>
+    <div class="ask-suggestions" aria-label="推荐问题">
+      
+        <button type="button" data-ask-suggestion="Agent Runtime 应该怎么设计？">Agent Runtime 应该怎么设计？</button>
+      
+        <button type="button" data-ask-suggestion="如何让 AI 操控真实世界设备？">如何让 AI 操控真实世界设备？</button>
+      
+        <button type="button" data-ask-suggestion="Leslie 最近在研究什么？">Leslie 最近在研究什么？</button>
+      
+    </div>
+    <div class="ask-results" data-ask-results aria-live="polite">
+      <div class="ask-empty">
+        <p>输入一个问题，我会把你带到 Leslie 写过的相关内容。</p>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+    <dialog class="wechat-dialog" id="wechat-leslie" aria-labelledby="wechat-title">
+  <div class="wechat-dialog__shell">
+    <header>
+      <div>
+        <p class="section-label">WeChat</p>
+        <h2 id="wechat-title">微信联系</h2>
+      </div>
+      <button class="icon-button" type="button" data-wechat-close aria-label="关闭微信二维码">×</button>
+    </header>
+    <img src="/images/contact/wechat-leslie.png" alt="Leslie Zhang 的微信二维码" loading="lazy">
+    <p>扫码添加 Leslie，建议备注你的名字与来意。</p>
+  </div>
+</dialog>
+
+    <script>window.ORBITAL_ROOT = '/';</script>
+    <script src="/js/orbital.js" defer></script>
+  </body>
+</html>

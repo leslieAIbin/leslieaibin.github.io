@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+  <head>
+
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#050b18">
+<meta name="color-scheme" content="dark light">
+<title>如何保证消息队列的可靠性传输 | Leslie Zhang</title>
+<meta name="description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta name="author" content="Leslie Zhang">
+<link rel="canonical" href="https://leslieaibin.github.io/2021/08/26/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/%E5%A6%82%E4%BD%95%E4%BF%9D%E8%AF%81%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E7%9A%84%E5%8F%AF%E9%9D%A0%E6%80%A7%E4%BC%A0%E8%BE%93/">
+<link rel="icon" href="/imgs/01.jpg">
+<link rel="alternate" type="application/atom+xml" title="Leslie Zhang" href="/atom.xml">
+<meta property="og:type" content="article">
+<meta property="og:title" content="如何保证消息队列的可靠性传输 | Leslie Zhang">
+<meta property="og:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta property="og:url" content="https://leslieaibin.github.io/2021/08/26/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/%E5%A6%82%E4%BD%95%E4%BF%9D%E8%AF%81%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E7%9A%84%E5%8F%AF%E9%9D%A0%E6%80%A7%E4%BC%A0%E8%BE%93/">
+<meta property="og:image" content="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/47.jpg?raw=true">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="如何保证消息队列的可靠性传输 | Leslie Zhang">
+<meta name="twitter:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta name="twitter:image" content="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/47.jpg?raw=true">
+<script>
+  (function () {
+    var saved = localStorage.getItem('orbital-theme');
+    var theme = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    document.documentElement.dataset.theme = theme;
+  })();
+</script>
+<link rel="stylesheet" href="/css/orbital.css">
+<meta name="generator" content="Hexo 5.2.0"></head>
+  <body class="page-post">
+    <a class="skip-link" href="#main-content">跳到主要内容</a>
+    <div class="reading-progress" data-reading-progress></div>
+    <header class="site-header" data-header>
+  <div class="nav-shell">
+    <a class="brand" href="/" aria-label="返回首页">
+      <span class="brand-mark" aria-hidden="true"><img src="/images/brand/leslie-mythos-avatar.webp" alt="" width="512" height="512"></span>
+      <span class="brand-copy">
+        <strong>LESLIE</strong>
+        <small>REAL-WORLD AGENTS</small>
+      </span>
+    </a>
+
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav" data-nav-toggle>
+      <span></span><span></span>
+      <span class="sr-only">打开导航</span>
+    </button>
+
+    <nav class="main-nav" id="main-nav" aria-label="主导航" data-nav>
+      
+        <a href="/" class="">首页</a>
+      
+        <a href="/writing/" class="">写作</a>
+      
+        <a href="/projects/" class="">项目</a>
+      
+        <a href="/about/" class="">关于</a>
+      
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换明暗主题">
+        <span class="theme-toggle__sun" aria-hidden="true">☼</span>
+        <span class="theme-toggle__moon" aria-hidden="true">◐</span>
+      </button>
+      <button class="ask-nav" type="button" data-ask-open>ASK LESLIE</button>
+    </nav>
+  </div>
+</header>
+
+    <main id="main-content"><article class="post-shell">
+  <header class="post-hero shell">
+    <a class="post-back" href="/writing/">← 返回写作</a>
+    <div class="post-hero__meta">
+      <time datetime="2021-08-26">2021 年 08 月 26 日</time>
+      <span>3 分钟阅读</span>
+    </div>
+    <h1>如何保证消息队列的可靠性传输</h1>
+    
+    <div class="chip-row"><a href="/tags/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/">消息队列</a></div>
+  </header>
+
+  <div class="post-cover shell"><img src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/47.jpg?raw=true" alt="如何保证消息队列的可靠性传输"></div>
+
+  <div class="post-layout shell">
+    <aside class="post-toc" aria-label="文章目录">
+      <span class="aside-title">目录</span>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%94%9F%E4%BA%A7%E8%80%85%E5%BC%84%E4%B8%A2%E6%95%B0%E6%8D%AE"><span class="toc-text">生产者弄丢数据</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RabbitMQ-%E5%BC%84%E4%B8%A2%E4%BA%86%E6%95%B0%E6%8D%AE"><span class="toc-text">RabbitMQ 弄丢了数据</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B6%88%E8%B4%B9%E7%AB%AF%E5%BC%84%E4%B8%A2%E4%BA%86%E6%95%B0%E6%8D%AE"><span class="toc-text">消费端弄丢了数据</span></a></li></ol>
+    </aside>
+    <div class="article-content"><h1 id="RabbitMQ如何保证消息队列的可靠性传输"><a href="#RabbitMQ如何保证消息队列的可靠性传输" class="headerlink" title="RabbitMQ如何保证消息队列的可靠性传输"></a>RabbitMQ如何保证消息队列的可靠性传输</h1><p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/v2-6303e69011255831c54d605250a6aa67_720w.jpg" alt="img"></p>
+<h2 id="生产者弄丢数据"><a href="#生产者弄丢数据" class="headerlink" title="生产者弄丢数据"></a>生产者弄丢数据</h2><p>生产者将数据发送到RabbitMQ的时候，可能数据就在半路丢失。此时RabbitMQ提供事务功能，就是生产者发送数据之前开启RabbitMQ事务channel.txSelect，然后发送消息，如果消息没有成功被RabbitMQ接受到，那么生产者就会异常报错，此时回滚事务channel.txRollback，然后重发消息，如果收到消息就可以提交事务channel.txCommit</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 开启事务</span></span><br><span class="line">channel.txSelect</span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">    <span class="comment">// 这里发送消息</span></span><br><span class="line">&#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">    channel.txRollback</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 这里再次重发这条消息</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 提交事务</span></span><br><span class="line">channel.txCommit</span><br></pre></td></tr></table></figure>
+
+<p>但是问题是，RabbitMQ 事务机制（同步）一搞，基本上<strong>吞吐量会下来，因为太耗性能</strong>。</p>
+<p>所以一般来说，如果你要确保说写 RabbitMQ 的消息别丢，可以开启 <code>confirm</code> 模式，在生产者那里设置开启 <code>confirm</code> 模式之后，你每次写的消息都会分配一个唯一的 id，然后如果写入了 RabbitMQ 中，RabbitMQ 会给你回传一个 <code>ack</code> 消息，告诉你说这个消息 ok 了。如果 RabbitMQ 没能处理这个消息，会回调你的一个 <code>nack</code> 接口，告诉你这个消息接收失败，你可以重试。而且你可以结合这个机制自己在内存里维护每个消息 id 的状态，如果超过一定时间还没接收到这个消息的回调，那么你可以重发。</p>
+<p>事务机制和 <code>cnofirm</code> 机制最大的不同在于，<strong>事务机制是同步的</strong>，你提交一个事务之后会<strong>阻塞</strong>在那儿，但是 <code>confirm</code> 机制是<strong>异步</strong>的，你发送个消息之后就可以发送下一个消息，然后那个消息 RabbitMQ 接收了之后会异步回调你的一个接口通知你这个消息接收到了。</p>
+<p>所以一般在生产者这块<strong>避免数据丢失</strong>，都是用 <code>confirm</code> 机制的。</p>
+<h2 id="RabbitMQ-弄丢了数据"><a href="#RabbitMQ-弄丢了数据" class="headerlink" title="RabbitMQ 弄丢了数据"></a><strong>RabbitMQ 弄丢了数据</strong></h2><p>就是 RabbitMQ 自己弄丢了数据，这个你必须<strong>开启 RabbitMQ 的持久化</strong>，就是消息写入之后会持久化到磁盘，哪怕是 RabbitMQ 自己挂了，<strong>恢复之后会自动读取之前存储的数据</strong>，一般数据不会丢。除非极其罕见的是，RabbitMQ 还没持久化，自己就挂了，<strong>可能导致少量数据丢失</strong>，但是这个概率较小。</p>
+<p>设置持久化有<strong>两个步骤</strong>：</p>
+<ul>
+<li>创建 queue 的时候将其设置为持久化<br>这样就可以保证 RabbitMQ 持久化 queue 的元数据，但是它是不会持久化 queue 里的数据的。</li>
+<li>第二个是发送消息的时候将消息的 <code>deliveryMode</code> 设置为 2<br>就是将消息设置为持久化的，此时 RabbitMQ 就会将消息持久化到磁盘上去。</li>
+</ul>
+<p>必须要同时设置这两个持久化才行，RabbitMQ 哪怕是挂了，再次重启，也会从磁盘上重启恢复 queue，恢复这个 queue 里的数据。</p>
+<p>注意，哪怕是你给 RabbitMQ 开启了持久化机制，也有一种可能，就是这个消息写到了 RabbitMQ 中，但是还没来得及持久化到磁盘上，结果不巧，此时 RabbitMQ 挂了，就会导致内存里的一点点数据丢失。</p>
+<p>所以，持久化可以跟生产者那边的 <code>confirm</code> 机制配合起来，只有消息被持久化到磁盘之后，才会通知生产者 <code>ack</code> 了，所以哪怕是在持久化到磁盘之前，RabbitMQ 挂了，数据丢了，生产者收不到 <code>ack</code>，你也是可以自己重发的。</p>
+<h2 id="消费端弄丢了数据"><a href="#消费端弄丢了数据" class="headerlink" title="消费端弄丢了数据"></a><strong>消费端弄丢了数据</strong></h2><p>RabbitMQ 如果丢失了数据，主要是因为你消费的时候，<strong>刚消费到，还没处理，结果进程挂了</strong>，比如重启了，那么就尴尬了，RabbitMQ 认为你都消费了，这数据就丢了。</p>
+<p>这个时候得用 RabbitMQ 提供的 <code>ack</code> 机制，简单来说，就是你必须关闭 RabbitMQ 的自动 <code>ack</code>，可以通过一个 api 来调用就行，然后每次你自己代码里确保处理完的时候，再在程序里 <code>ack</code> 一把。这样的话，如果你还没处理完，不就没有 <code>ack</code> 了？那 RabbitMQ 就认为你还没处理完，这个时候 RabbitMQ 会把这个消费分配给别的 consumer 去处理，消息是不会丢的。</p>
+<p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/v2-83213e2ac79cd8899b09a66a5cf71669_720w.jpg" alt="img"></p>
+</div>
+    <aside class="post-rail">
+      <span class="post-rail__line"></span>
+      <span>LESLIE / WRITING</span>
+    </aside>
+  </div>
+
+  <footer class="post-footer shell">
+    <div><h2>如果这篇文章帮到了你，<br>也许下一篇会更有意思。</h2></div>
+    <a class="button button--primary" href="/writing/">继续阅读 →</a>
+  </footer>
+</article>
+</main>
+    <footer class="site-footer">
+  <div class="footer-grid">
+    <div>
+      <p class="footer-kicker">Leslie Zhang</p>
+      <p class="footer-statement">流水不争先，<br>争的是滔滔不绝。</p>
+    </div>
+    <div class="footer-links">
+      <a href="https://github.com/leslieAIbin" target="_blank" rel="noreferrer">GitHub ↗</a>
+      <a href="https://www.instagram.com/leslieaibin/" target="_blank" rel="noreferrer">Instagram ↗</a>
+      <button type="button" data-wechat-open>微信 / WeChat</button>
+      <a href="mailto:aibinzhangleslie@gmail.com">Email ↗</a>
+      <a href="/atom.xml">RSS ↗</a>
+    </div>
+    <div class="footer-meta">
+      <span>© 2026 Leslie Zhang</span>
+      <span>Writing, research and working systems.</span>
+    </div>
+  </div>
+</footer>
+
+    <dialog class="ask-dialog" id="ask-leslie" aria-labelledby="ask-title">
+  <div class="ask-dialog__shell">
+    <div class="ask-dialog__topbar">
+      <div>
+        <h2 id="ask-title">Ask Leslie</h2>
+      </div>
+      <button class="icon-button" type="button" data-ask-close aria-label="关闭">×</button>
+    </div>
+    <p class="ask-dialog__intro">从本站公开文章中寻找答案。当前版本在浏览器本地检索，不上传问题，也不会编造不存在的经历。</p>
+    <form class="ask-form" data-ask-form>
+      <label class="sr-only" for="ask-query">输入问题</label>
+      <textarea id="ask-query" rows="2" placeholder="例如：Agent Runtime 应该怎么设计？" data-ask-input></textarea>
+      <button type="submit">检索知识库 <span aria-hidden="true">↗</span></button>
+    </form>
+    <div class="ask-suggestions" aria-label="推荐问题">
+      
+        <button type="button" data-ask-suggestion="Agent Runtime 应该怎么设计？">Agent Runtime 应该怎么设计？</button>
+      
+        <button type="button" data-ask-suggestion="如何让 AI 操控真实世界设备？">如何让 AI 操控真实世界设备？</button>
+      
+        <button type="button" data-ask-suggestion="Leslie 最近在研究什么？">Leslie 最近在研究什么？</button>
+      
+    </div>
+    <div class="ask-results" data-ask-results aria-live="polite">
+      <div class="ask-empty">
+        <p>输入一个问题，我会把你带到 Leslie 写过的相关内容。</p>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+    <dialog class="wechat-dialog" id="wechat-leslie" aria-labelledby="wechat-title">
+  <div class="wechat-dialog__shell">
+    <header>
+      <div>
+        <p class="section-label">WeChat</p>
+        <h2 id="wechat-title">微信联系</h2>
+      </div>
+      <button class="icon-button" type="button" data-wechat-close aria-label="关闭微信二维码">×</button>
+    </header>
+    <img src="/images/contact/wechat-leslie.png" alt="Leslie Zhang 的微信二维码" loading="lazy">
+    <p>扫码添加 Leslie，建议备注你的名字与来意。</p>
+  </div>
+</dialog>
+
+    <script>window.ORBITAL_ROOT = '/';</script>
+    <script src="/js/orbital.js" defer></script>
+  </body>
+</html>

@@ -1,0 +1,496 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+  <head>
+
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#050b18">
+<meta name="color-scheme" content="dark light">
+<title>GPT 降价 80%，GLM Coding Plan 却涨了？AI Coding 的真实成本，不能只看 Token | Leslie Zhang</title>
+<meta name="description" content="GPT-5.6 Luna 降价 80%，GLM Coding Plan 却提高月付门槛。两家公司其实都在使用 API 与订阅双轨、模型分级、缓存折算和时间窗口。本文从两套计费体系出发，拆解 AI Coding 的真实成本。">
+<meta name="author" content="Leslie Zhang">
+<link rel="canonical" href="https://leslieaibin.github.io/2026/07/31/attention-field/AICoding%E4%BB%B7%E6%A0%BC%E4%B8%8D%E8%83%BD%E5%8F%AA%E7%9C%8BToken/">
+<link rel="icon" href="/imgs/01.jpg">
+<link rel="alternate" type="application/atom+xml" title="Leslie Zhang" href="/atom.xml">
+<meta property="og:type" content="article">
+<meta property="og:title" content="GPT 降价 80%，GLM Coding Plan 却涨了？AI Coding 的真实成本，不能只看 Token | Leslie Zhang">
+<meta property="og:description" content="GPT-5.6 Luna 降价 80%，GLM Coding Plan 却提高月付门槛。两家公司其实都在使用 API 与订阅双轨、模型分级、缓存折算和时间窗口。本文从两套计费体系出发，拆解 AI Coding 的真实成本。">
+<meta property="og:url" content="https://leslieaibin.github.io/2026/07/31/attention-field/AICoding%E4%BB%B7%E6%A0%BC%E4%B8%8D%E8%83%BD%E5%8F%AA%E7%9C%8BToken/">
+<meta property="og:image" content="https://leslieaibin.github.io/2026/07/31/attention-field/AICoding%E4%BB%B7%E6%A0%BC%E4%B8%8D%E8%83%BD%E5%8F%AA%E7%9C%8BToken/imgs/cover.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="GPT 降价 80%，GLM Coding Plan 却涨了？AI Coding 的真实成本，不能只看 Token | Leslie Zhang">
+<meta name="twitter:description" content="GPT-5.6 Luna 降价 80%，GLM Coding Plan 却提高月付门槛。两家公司其实都在使用 API 与订阅双轨、模型分级、缓存折算和时间窗口。本文从两套计费体系出发，拆解 AI Coding 的真实成本。">
+<meta name="twitter:image" content="https://leslieaibin.github.io/2026/07/31/attention-field/AICoding%E4%BB%B7%E6%A0%BC%E4%B8%8D%E8%83%BD%E5%8F%AA%E7%9C%8BToken/imgs/cover.jpg">
+<script>
+  (function () {
+    var saved = localStorage.getItem('orbital-theme');
+    var theme = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    document.documentElement.dataset.theme = theme;
+  })();
+</script>
+<link rel="stylesheet" href="/css/orbital.css">
+<meta name="generator" content="Hexo 5.2.0"></head>
+  <body class="page-post">
+    <a class="skip-link" href="#main-content">跳到主要内容</a>
+    <div class="reading-progress" data-reading-progress></div>
+    <header class="site-header" data-header>
+  <div class="nav-shell">
+    <a class="brand" href="/" aria-label="返回首页">
+      <span class="brand-mark" aria-hidden="true"><img src="/images/brand/leslie-mythos-avatar.webp" alt="" width="512" height="512"></span>
+      <span class="brand-copy">
+        <strong>LESLIE</strong>
+        <small>REAL-WORLD AGENTS</small>
+      </span>
+    </a>
+
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav" data-nav-toggle>
+      <span></span><span></span>
+      <span class="sr-only">打开导航</span>
+    </button>
+
+    <nav class="main-nav" id="main-nav" aria-label="主导航" data-nav>
+      
+        <a href="/" class="">首页</a>
+      
+        <a href="/writing/" class="">写作</a>
+      
+        <a href="/projects/" class="">项目</a>
+      
+        <a href="/about/" class="">关于</a>
+      
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换明暗主题">
+        <span class="theme-toggle__sun" aria-hidden="true">☼</span>
+        <span class="theme-toggle__moon" aria-hidden="true">◐</span>
+      </button>
+      <button class="ask-nav" type="button" data-ask-open>ASK LESLIE</button>
+    </nav>
+  </div>
+</header>
+
+    <main id="main-content"><article class="post-shell">
+  <header class="post-hero shell">
+    <a class="post-back" href="/writing/">← 返回写作</a>
+    <div class="post-hero__meta">
+      <time datetime="2026-07-31">2026 年 07 月 31 日</time>
+      <span>17 分钟阅读</span>
+    </div>
+    <h1>GPT 降价 80%，GLM Coding Plan 却涨了？AI Coding 的真实成本，不能只看 Token</h1>
+    <p class="post-hero__summary">GPT-5.6 Luna 降价 80%，GLM Coding Plan 却提高月付门槛。两家公司其实都在使用 API 与订阅双轨、模型分级、缓存折算和时间窗口。本文从两套计费体系出发，拆解 AI Coding 的真实成本。</p>
+    <div class="chip-row"><a href="/tags/Agent/">Agent</a><a href="/tags/GPT-5-6/">GPT-5.6</a><a href="/tags/GLM-5-2/">GLM-5.2</a><a href="/tags/AI-Coding/">AI Coding</a><a href="/tags/Prompt-Cache/">Prompt Cache</a><a href="/tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E6%8E%A8%E7%90%86/">大模型推理</a></div>
+  </header>
+
+  <div class="post-cover shell"><img src="/2026/07/31/attention-field/AICoding%E4%BB%B7%E6%A0%BC%E4%B8%8D%E8%83%BD%E5%8F%AA%E7%9C%8BToken/imgs/cover.jpg" alt="GPT 降价 80%，GLM Coding Plan 却涨了？AI Coding 的真实成本，不能只看 Token"></div>
+
+  <div class="post-layout shell">
+    <aside class="post-toc" aria-label="文章目录">
+      <span class="aside-title">目录</span>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%8D%E6%98%AF%E4%B8%A4%E5%BC%A0%E4%BB%B7%E6%A0%BC%E8%A1%A8%EF%BC%8C%E8%80%8C%E6%98%AF%E5%9B%9B%E5%BC%A0"><span class="toc-text">不是两张价格表，而是四张</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88-Agent-%E4%B8%80%E8%BF%90%E8%A1%8C%EF%BC%8CToken-%E5%8D%95%E4%BB%B7%E5%B0%B1%E5%BC%80%E5%A7%8B%E5%A4%B1%E7%9C%9F"><span class="toc-text">为什么 Agent 一运行，Token 单价就开始失真</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Cache-Hit-Ratio%EF%BC%8C%E4%B8%BA%E4%BB%80%E4%B9%88%E8%AF%84%E8%AE%BA%E5%8C%BA%E8%AF%B4%E5%AE%83%E6%89%8D%E6%98%AF%E5%A4%A7%E5%A4%B4"><span class="toc-text">Cache Hit Ratio，为什么评论区说它才是大头</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BC%93%E5%AD%98%E4%B8%8D%E6%98%AF%E6%A8%A1%E5%9E%8B%E9%80%81%E7%9A%84%E6%8A%98%E6%89%A3%EF%BC%8C%E8%80%8C%E6%98%AF%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1%E5%87%BA%E6%9D%A5%E7%9A%84"><span class="toc-text">缓存不是模型送的折扣，而是系统设计出来的</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%88%E4%BB%98-118-%E5%85%83%EF%BC%8C%E5%88%B0%E5%BA%95%E8%B4%B5%E4%B8%8D%E8%B4%B5"><span class="toc-text">月付 118 元，到底贵不贵</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%8C%E5%90%8D%E6%A8%A1%E5%9E%8B%EF%BC%8C%E4%B9%9F%E5%8F%AF%E8%83%BD%E4%B8%8D%E6%98%AF%E5%90%8C%E4%B8%80%E9%A1%B9%E6%9C%8D%E5%8A%A1"><span class="toc-text">同名模型，也可能不是同一项服务</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9C%9F%E6%AD%A3%E8%AF%A5%E7%AE%97%E7%9A%84%EF%BC%8C%E6%98%AF-Cost-per-Accepted-Task"><span class="toc-text">真正该算的，是 Cost per Accepted Task</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#GPT-%E5%9C%A8%E9%99%8D%E8%BE%B9%E9%99%85%E6%88%90%E6%9C%AC%EF%BC%8CGLM-%E5%9C%A8%E9%87%8D%E5%81%9A%E5%AE%B9%E9%87%8F%E5%A5%97%E9%A4%90"><span class="toc-text">GPT 在降边际成本，GLM 在重做容量套餐</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%99%E5%9C%A8%E6%9C%80%E5%90%8E"><span class="toc-text">写在最后</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="toc-text">参考资料</span></a></li></ol>
+    </aside>
+    <div class="article-content"><h1 id="GPT-降价-80-，GLM-Coding-Plan-却涨了？AI-Coding-的真实成本，不能只看-Token"><a href="#GPT-降价-80-，GLM-Coding-Plan-却涨了？AI-Coding-的真实成本，不能只看-Token" class="headerlink" title="GPT 降价 80%，GLM Coding Plan 却涨了？AI Coding 的真实成本，不能只看 Token"></a>GPT 降价 80%，GLM Coding Plan 却涨了？AI Coding 的真实成本，不能只看 Token</h1><p><img src="imgs/cover.jpg" alt="AI Coding 的真实成本，不能只看 Token"></p>
+<p>2026 年 7 月 30 日，两张价格表几乎同时摆到了开发者面前。</p>
+<p>OpenAI 宣布 GPT-5.6 Luna 的 API 输入价格从每百万 Token 1 美元降到 0.2 美元，输出从 6 美元降到 1.2 美元。降幅 80%。</p>
+<p>同一天，GLM Coding Plan 恢复开放订阅。个人版新的月付价格是 Lite 118 元、Pro 538 元、Max 1078 元。与此前公开的 49 元、149 元和 469 元相比，月付门槛明显上升。</p>
+<p>评论区很快给出了最直接的反应。</p>
+<p>「花钱去买 GPT 吧。」</p>
+<p>「现在国外的 Code Plan 都比国内便宜了。」</p>
+<p>如果只看这两张价格表，这个结论很自然。一个正在打折，一个正在提价，方向完全相反。</p>
+<p>但把资料继续往下翻，问题就出现了。</p>
+<p>OpenAI 并不只有按 Token 计费的 API。ChatGPT Work 和 Codex 同样采用订阅额度、Credits、5 小时时间窗口和模型分级，部分套餐还可能有额外周限额。Luna、Terra 降价后，订阅价格与额度预算没有变化，但调用它们会消耗更少 Credits。</p>
+<p>智谱也不只有 Coding Plan。GLM-5.2 还有按输入、缓存命中和输出分别计费的标准 API。</p>
+<p>所以真正的情况不是「GPT 按量、GLM 包月」。</p>
+<p>两家公司都在同时经营 API 和订阅两条轨道。区别在于，这轮 OpenAI 降低了 API 单价和订阅中的额度消耗，智谱则提高了 Coding Plan 的月付门槛，同时重构了积分、峰谷折扣与 MCP 权益。</p>
+<p>更麻烦的是，AI Coding 也不是一次输入、一次输出就结束的聊天。Agent 要反复读取代码库、加载工具定义、调用 Shell、运行测试、处理报错、修改代码，再把越来越长的历史上下文送回模型。</p>
+<p>同一个任务，缓存有没有命中，输出写了多少，失败后重试几次，模型最终能不能交付，都会让账单变成另一回事。</p>
+<p>所以这篇文章不准备回答「GPT 和 GLM 到底谁更便宜」。</p>
+<p>这个问题缺少工作负载，根本没有统一答案。</p>
+<p>我更想把价格表背后那套容易被忽略的计算方式讲清楚：当大模型从聊天工具变成 Coding Agent，我们到底应该怎样计算一次任务的真实成本？</p>
+<p><img src="imgs/01-comparison-four-price-layers.jpg" alt="OpenAI 与智谱的 API、Coding 订阅四层价格体系"></p>
+<h2 id="不是两张价格表，而是四张"><a href="#不是两张价格表，而是四张" class="headerlink" title="不是两张价格表，而是四张"></a>不是两张价格表，而是四张</h2><p>要把这次价格变化说清楚，至少要分成四个格子。</p>
+<table>
+<thead>
+<tr>
+<th>厂商</th>
+<th>按量 API</th>
+<th>Coding 订阅</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>OpenAI</td>
+<td>GPT-5.6 按输入、缓存读写和输出计费</td>
+<td>ChatGPT Work 与 Codex 共享用量，采用 Credits、5 小时窗口和模型分级</td>
+</tr>
+<tr>
+<td>智谱</td>
+<td>GLM-5.2 按普通输入、缓存命中和输出计费</td>
+<td>Coding Plan 采用积分、5 小时与每周额度、峰谷折扣和 MCP 权益</td>
+</tr>
+</tbody></table>
+<p>API 对 API，比较的是每百万 Token、缓存、长上下文与工具调用。</p>
+<p>订阅对订阅，比较的则是月费、时间窗口、周限额、模型折算、超额机制与利用率。</p>
+<p>先看 OpenAI 的订阅。</p>
+<p>ChatGPT Work 与 Codex 共用一套用量预算。官方没有把它简单写成「每月能发多少条消息」，因为同一条消息可能只是改一个函数，也可能要读取整个仓库、运行数十次工具并保持很长的上下文。</p>
+<p>系统会把模型、上下文、推理强度、工具和缓存共同折算成 Credits。当前公开的模型 Credits 权重如下：</p>
+<table>
+<thead>
+<tr>
+<th>模型</th>
+<th align="right">输入 / 1M</th>
+<th align="right">缓存输入 / 1M</th>
+<th align="right">输出 / 1M</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>GPT-5.6 Luna</td>
+<td align="right">5 Credits</td>
+<td align="right">0.5 Credits</td>
+<td align="right">30 Credits</td>
+</tr>
+<tr>
+<td>GPT-5.6 Terra</td>
+<td align="right">50 Credits</td>
+<td align="right">5 Credits</td>
+<td align="right">300 Credits</td>
+</tr>
+<tr>
+<td>GPT-5.6 Sol</td>
+<td align="right">125 Credits</td>
+<td align="right">12.5 Credits</td>
+<td align="right">750 Credits</td>
+</tr>
+</tbody></table>
+<p>三个模型的缓存输入都只消耗普通输入约十分之一的 Credits，输出则是普通输入的 6 倍。选择 Luna，不只是 API 账单更低，订阅额度也能支撑更多高频任务。</p>
+<p>OpenAI 官方给出的 Plus 档估算很直观。在一个 5 小时窗口内，Sol 大约对应 10～100 条本地消息，Terra 是 25～200 条，Luna 则是 250～2000 条。这个范围很宽，因为消息数量从来不是稳定计量单位，真实消耗仍取决于任务复杂度。</p>
+<p>额度耗尽后，Plus 和 Pro 用户可以购买额外 Credits，也可以切换到更小的模型；额外本地任务还可以改用 API Key，按标准 API 价格付费。</p>
+<p>再看 GPT-5.6 API。</p>
+<p>OpenAI 这次调整的是标准 API 价格。每向模型发送一批 Token，平台按输入、缓存输入、缓存写入和输出分别计费。</p>
+<table>
+<thead>
+<tr>
+<th>模型</th>
+<th align="right">普通输入 / 1M</th>
+<th align="right">缓存输入 / 1M</th>
+<th align="right">缓存写入 / 1M</th>
+<th align="right">输出 / 1M</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>GPT-5.6 Luna</td>
+<td align="right">$0.20</td>
+<td align="right">$0.02</td>
+<td align="right">$0.25</td>
+<td align="right">$1.20</td>
+</tr>
+<tr>
+<td>GPT-5.6 Terra</td>
+<td align="right">$2.00</td>
+<td align="right">$0.20</td>
+<td align="right">$2.50</td>
+<td align="right">$12.00</td>
+</tr>
+<tr>
+<td>GPT-5.6 Sol</td>
+<td align="right">$5.00</td>
+<td align="right">$0.50</td>
+<td align="right">$6.25</td>
+<td align="right">$30.00</td>
+</tr>
+</tbody></table>
+<p>Luna 的普通输入与输出均下降 80%，Terra 下降 20%，Sol 保持原价。</p>
+<p>这张表很清楚。调用多少，支付多少。</p>
+<p>但里面已经埋着两个容易被标题忽略的条件。</p>
+<p>一个是缓存写入并不免费。GPT-5.6 的缓存写入价格是普通输入的 1.25 倍，后续读取才降到普通输入的十分之一。</p>
+<p>另一个是长上下文加价。对超过 272K 输入 Token 的请求，GPT-5.6 会进入长上下文计价，完整请求按普通输入 2 倍、输出 1.5 倍收费。</p>
+<p>至于 Sol 新增的 Fast mode，也不是「加速不加价」。官方写得很明确，速度最高达到标准模式的 2.5 倍，价格则是标准模式的 2 倍，模型智能水平不变。</p>
+<p>所以 Luna 降价 80% 是准确事实。</p>
+<p>「所有 GPT-5.6 调用成本都下降 80%」则不是。</p>
+<p>GLM 也有与之对应的标准 API。当前 GLM-5.2 每百万 Token 普通输入 8 元、缓存命中 2 元、输出 28 元。Coding Plan 则是另一条订阅轨道。</p>
+<p>Coding Plan 卖的不是一包可以任意调用的 API Token，而是专门供 Claude Code、OpenCode、TRAE、OpenClaw 等受支持编码环境使用的订阅权益。普通 API、自建网站、SaaS 和机器人调用不共享这份额度。</p>
+<p>新的个人套餐同时受每 5 小时和每周积分约束。</p>
+<table>
+<thead>
+<tr>
+<th>套餐</th>
+<th align="right">5 小时积分</th>
+<th align="right">每周积分</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Lite</td>
+<td align="right">2,000</td>
+<td align="right">10,000</td>
+</tr>
+<tr>
+<td>Pro</td>
+<td align="right">12,000</td>
+<td align="right">60,000</td>
+</tr>
+<tr>
+<td>Max</td>
+<td align="right">28,000</td>
+<td align="right">140,000</td>
+</tr>
+</tbody></table>
+<p>积分也不是按「一次对话」简单扣除。</p>
+<p>以 GLM-5.2 为例，普通输入、缓存输入和输出的抵扣系数分别是 6.9、1.7 和 24。模型生成 1 个输出 Token，消耗的积分约是 1 个普通输入 Token 的 3.48 倍、1 个缓存输入 Token 的 14.1 倍。</p>
+<p>调用时间也会改变结果。工作日 14 点到 18 点是高峰，其余非高峰时段只按基础积分的 50% 抵扣。</p>
+<p>此外，套餐还加入了联网搜索、网页读取、开源仓库、视觉理解等 MCP 权益。</p>
+<p>这套商品已经从「多少次 Prompt」变成了「模型、缓存、输出、时段和工具共同折算出的 Coding 工作量」。</p>
+<p>因此，GLM 的月付标价确实上涨了。</p>
+<p>但它不是一件参数完全不变的商品，从 49 元直接换成 118 元。</p>
+<p>两套订阅策略其实很像。都有 5 小时窗口，都按模型等级区分消耗，都把缓存输入算得更便宜，复杂任务也都会更快吃掉额度。</p>
+<p>差别同样具体。</p>
+<p>OpenAI 当前公开规则中没有 Coding Plan 那样的峰谷折扣，但允许购买额外 Credits，也可以切到 API Key 继续运行。GLM 在非高峰期按 50% 积分消耗，套餐额度用完后则要等待窗口恢复，不会自动扣标准 API 余额。</p>
+<p>如果文章只把 Luna API 和 GLM 月费放进一张红绿对比图，传播效果会很好，结论却经不起追问。</p>
+<p>真正公平的做法，是 API 对 API，订阅对订阅。</p>
+<p>这不是在替任何一家厂商辩护。</p>
+<p>只是价格比较最起码要同口径。</p>
+<h2 id="为什么-Agent-一运行，Token-单价就开始失真"><a href="#为什么-Agent-一运行，Token-单价就开始失真" class="headerlink" title="为什么 Agent 一运行，Token 单价就开始失真"></a>为什么 Agent 一运行，Token 单价就开始失真</h2><p>普通聊天的成本很容易理解。</p>
+<p>用户输入一句话，模型生成一段回答，输入 Token 加输出 Token，就是一次调用的主要费用。</p>
+<p>Coding Agent 的链路长得多。</p>
+<p>它启动时要读取系统指令、仓库规则、工具 Schema 和当前任务；接着搜索文件、打开代码、执行命令；工具结果回到上下文后，模型再决定下一步。一次修复可能经历十几轮甚至几十轮「模型判断—工具执行—结果回传」。</p>
+<p>而且上下文会越滚越长。</p>
+<p>第一轮读取的 <code>AGENTS.md</code>、工具定义和任务要求，后面每一轮还要继续带着。前面已经看过的代码、执行日志和修改结果，也可能反复进入输入。</p>
+<p>于是 Agent 的账单里出现了四种不同的 Token。</p>
+<p>第一种是新输入。刚打开的文件、新的错误日志和用户追加的要求，都属于这部分。</p>
+<p>第二种是重复前缀。系统指令、工具定义、仓库规范和没有变化的历史消息，如果前缀保持一致，就可能命中 Prompt Cache。</p>
+<p>第三种是模型输出。解释越长、工具参数越复杂、推理轨迹越多，这部分越贵。</p>
+<p>第四种是失败产生的 Token。走错路径、工具报错、测试没通过，前面花掉的 Token 不会退回，只会进入下一轮上下文。</p>
+<p>这时再问「每百万 Token 多少钱」，就像只看汽油单价判断一辆货车的运输成本。</p>
+<p>油价当然重要。</p>
+<p>但空驶率、载重量、路线和能不能按时送到，同样决定最后一公里花了多少钱。</p>
+<p><img src="imgs/02-flowchart-agent-cost-loop.jpg" alt="Coding Agent 的多轮任务成本链路"></p>
+<h2 id="Cache-Hit-Ratio，为什么评论区说它才是大头"><a href="#Cache-Hit-Ratio，为什么评论区说它才是大头" class="headerlink" title="Cache Hit Ratio，为什么评论区说它才是大头"></a>Cache Hit Ratio，为什么评论区说它才是大头</h2><p>评论区里有一句话很关键：</p>
+<blockquote>
+<p>Agent Cache Hit 比例才是大头。</p>
+</blockquote>
+<p>这个判断有官方数据支持。</p>
+<p>智谱在 Coding Plan 文档里，直接采用 90.9% 作为编程场景的平均缓存命中率，并以此估算套餐可用量。OpenAI 公布的 Blitzy 案例也显示，工作流从一次结构化输出改成完整工具调用循环后，Prompt Cache 复用率从 24% 提高到 90%，处理的上下文增加到 2.2 倍，输出 Token 反而减少了 8.5 倍，最终成本比 GPT-5.4 mini 低 87%。</p>
+<p>为什么缓存会有这么大影响？</p>
+<p>因为 Agent 的输入里，真正每轮都变化的内容可能只占一小部分。</p>
+<p>系统提示没有变。</p>
+<p>几十个工具的 JSON Schema 没有变。</p>
+<p>仓库规则没有变。</p>
+<p>任务最初的要求也没有变。</p>
+<p>如果这些内容每轮都保持相同顺序，服务商就可以复用前缀已经完成的计算，后续只处理新增部分。这就是 Prompt Cache 或 Prefix Cache。</p>
+<p>它和单次推理内部的 KV Cache 有联系，但不是一回事。</p>
+<p>KV Cache 保存当前请求已经计算出的 Key 和 Value，让 Decode 阶段不必反复计算历史 Token。Prompt Cache 则把相同前缀的计算结果跨请求复用，让后续请求跳过一部分 Prefill。</p>
+<p>前者是一次生成能高效继续的基础。</p>
+<p>后者决定重复上下文要不要反复付钱。</p>
+<p>把一个公开算式摆出来，体感会更直接。</p>
+<p>假设某个 Luna 工作流连续发出 100 次请求。每次输入 10 万 Token，其中 9 万是稳定前缀，1 万是本轮新增内容；每次平均输出 5000 Token。为了便于理解，这里只演示标准短上下文价格，不考虑工具费和失败重试。</p>
+<p>完全不使用缓存时：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">输入：100 × 100K = 10M Tokens</span><br><span class="line">输入费用：10M × $0.20 = $2.00</span><br><span class="line"></span><br><span class="line">输出：100 × 5K = 0.5M Tokens</span><br><span class="line">输出费用：0.5M × $1.20 = $0.60</span><br><span class="line"></span><br><span class="line">总计：$2.60</span><br></pre></td></tr></table></figure>
+
+<p>如果 9 万 Token 的稳定前缀成功复用：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">首次缓存写入：0.09M × $0.25 = $0.0225</span><br><span class="line">后续 99 次缓存读取：8.91M × $0.02 = $0.1782</span><br><span class="line">100 次新增输入：1M × $0.20 = $0.20</span><br><span class="line">输出费用：0.5M × $1.20 = $0.60</span><br><span class="line"></span><br><span class="line">总计：约 $1.00</span><br></pre></td></tr></table></figure>
+
+<p>同一个模型，同一个标价，只因为前缀缓存设计不同，账单就从 2.60 美元降到了约 1 美元。</p>
+<p>但也别急着把 90% 缓存命中理解成 90% 总成本下降。</p>
+<p>缓存写入要付费，新增输入照常计费，输出通常更贵，工具调用和失败重试也没有消失。上面的示例中，输入的大部分已经命中缓存，最终总成本只下降约 61.5%。</p>
+<p>问题就在这里。</p>
+<p>Cache Hit Ratio 很重要，却仍然不是完整答案。</p>
+<p>真正值得监控的至少有缓存命中 Token、缓存写入 Token、普通输入 Token、输出 Token，以及缓存因为前缀变化而失效的次数。</p>
+<p>如果只展示「缓存读取低至普通输入的十分之一」，却不告诉用户到底命中了多少，这张价格表仍然缺了一半。</p>
+<h2 id="缓存不是模型送的折扣，而是系统设计出来的"><a href="#缓存不是模型送的折扣，而是系统设计出来的" class="headerlink" title="缓存不是模型送的折扣，而是系统设计出来的"></a>缓存不是模型送的折扣，而是系统设计出来的</h2><p>缓存命中率看起来像服务商指标，实际上很大一部分取决于 Agent Harness 怎样组织上下文。</p>
+<p>工具定义的顺序每轮变化，前缀可能失效。</p>
+<p>把当前时间、随机 ID 和实时状态放在系统提示最前面，后面的稳定内容也可能无法复用。</p>
+<p>每一轮都重新拼接一份格式略有不同的仓库摘要，肉眼看着差不多，Token 前缀却已经变了。</p>
+<p>多 Agent 系统如果给每个子 Agent 动态裁剪不同工具，能减少单次上下文，但也可能打散原有缓存前缀。这里没有永远正确的选择，需要在上下文体积、工具选择准确率和缓存复用之间权衡。</p>
+<p>一个更适合缓存的上下文，通常把内容分成两段。</p>
+<p>前面放稳定部分，例如系统规则、工具 Schema、项目规范和长期不变的参考资料。</p>
+<p>后面放动态部分，例如当前任务、最新工具结果、实时状态和本轮新增文件。</p>
+<p>稳定内容尽量保持字节级一致，动态内容再往后追加。</p>
+<p>这件事很像仓库打包。</p>
+<p>每天都要发货的标准物料，提前放进固定货箱；订单临时增加的东西，装在最后一层。如果每来一张订单就把仓库重新摆一遍，再好的物流系统也复用不了之前的工作。</p>
+<p>所以缓存不是调用 API 时顺手勾选的一个选项。</p>
+<p>它是上下文工程、工具路由和会话管理共同产生的结果。</p>
+<p><img src="imgs/03-comparison-cache-prefix.jpg" alt="稳定前缀如何提高 Prompt Cache 命中率"></p>
+<h2 id="月付-118-元，到底贵不贵"><a href="#月付-118-元，到底贵不贵" class="headerlink" title="月付 118 元，到底贵不贵"></a>月付 118 元，到底贵不贵</h2><p>回到 GLM Coding Plan。</p>
+<p>旧版公开月付价格是 Lite 49 元、Pro 149 元、Max 469 元。新版变成 118 元、538 元和 1078 元，标价分别提高约 141%、261% 和 130%。</p>
+<p>如果一个用户原本每月只花 49 元，现在需要支付 118 元，他感受到的就是涨价。</p>
+<p>这种感受不需要被纠正。</p>
+<p>但从工程成本看，还要继续问几件事。</p>
+<p>新套餐能用哪些模型？每周有多少积分？普通输入、缓存输入和输出怎样折算？用户主要在高峰还是非高峰运行？是否能用满额度？MCP 权益有没有实际价值？</p>
+<p>智谱给出的官方估算是，在全部使用 GLM-5.2、缓存命中率为 90.9% 时，Lite 每周大约可使用 0.43 亿至 0.87 亿 Token，Pro 为 2.63 亿至 5.26 亿，Max 为 6.13 亿至 12.26 亿。区间差异来自峰谷时段。</p>
+<p>官方还给出一个「最高节省 92%」的说法。</p>
+<p>这个数字有明确前提：充分利用非高峰折扣，并拿 Coding Plan 与按量调用 GLM-5.2 标准 API 比较。</p>
+<p>它不是每位订阅用户都会自动获得的折扣。</p>
+<p>低频用户可能根本用不满每周积分。工作时间集中在下午的团队，也未必能充分吃到非高峰优惠。输出比例较高、频繁使用 GLM-5.2 或大量调用 MCP，积分消耗还会更快。</p>
+<p>订阅制最容易制造一种错觉：付完月费以后，后面的调用都是免费的。</p>
+<p>其实用户购买的是一个带时间窗口的容量池。用不满，未消耗的额度就是沉没成本；用得太快，又会撞上 5 小时或每周上限。</p>
+<p>所以判断 Coding Plan 是否划算，不能只算「月费除以官方最大 Token」。</p>
+<p>还要算利用率。</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">订阅有效成本</span><br><span class="line">= 月费</span><br><span class="line"> 超额后切换其他模型或等待的成本</span><br><span class="line">+ 因限流、排队带来的时间成本</span><br><span class="line">+ 没有使用掉的额度</span><br></pre></td></tr></table></figure>
+
+<p>对于每天高频运行 Coding Agent、上下文重复度高、可以避开高峰的用户，订阅可能很划算。</p>
+<p>对于偶尔让模型改几段代码、用量波动大、需要自建 API 或必须保证随时可用的团队，按量计费可能更灵活。</p>
+<p>贵不贵，取决于使用曲线。</p>
+<p>不是取决于海报上的最大数字。</p>
+<p><img src="imgs/04-infographic-glm-plan.jpg" alt="GLM Coding Plan 的标价、积分与利用率"></p>
+<h2 id="同名模型，也可能不是同一项服务"><a href="#同名模型，也可能不是同一项服务" class="headerlink" title="同名模型，也可能不是同一项服务"></a>同名模型，也可能不是同一项服务</h2><p>评论区还有一个提醒很专业：做模型 Provider 横评时，不能只抄 API 价格。</p>
+<p>同一个模型名称，经由官方 API、云厂商和第三方中转调用，价格、缓存、限速和数据边界都可能不同。</p>
+<p>OpenAI 的价格页明确写明，区域数据驻留端点会加价 10%，Amazon Bedrock 的价格也可能与 OpenAI 直连不同。</p>
+<p>Anthropic 的缓存机制又是另一套规则。5 分钟缓存写入按普通输入的 1.25 倍收费，1 小时写入为 2 倍，缓存命中读取则是 0.1 倍。不同合作云平台还可能有独立区域定价。</p>
+<p>第三方中转站通常会展示一个很低的普通输入价格，但下面这些问题更重要：</p>
+<ul>
+<li>缓存读写是否完整透传；</li>
+<li>缓存是否按用户、项目或上游 Provider 隔离；</li>
+<li>长上下文是否加价；</li>
+<li>高峰期是否限速、排队或自动降级；</li>
+<li>请求失败后是否切换到另一个 Provider；</li>
+<li>工具调用、图片和搜索如何计费；</li>
+<li>数据经过哪些系统，日志保留多久。</li>
+</ul>
+<p>还有量化。</p>
+<p>GLM-5.2 已经开放 BF16 和 FP8 权重，也存在大量 INT8、INT4 社区量化版本。4-bit 权重能显著降低显存需求，让更多空间留给 KV Cache，也可能提高某些部署的吞吐。</p>
+<p>但它不能与官方托管服务自动画等号。</p>
+<p>量化方法、推理框架、上下文长度、并发配置和硬件都会影响速度与质量。某个量化版本在一组推理题上没有明显掉点，不代表它在长代码生成、工具调用和百万上下文中同样没有损失。</p>
+<p>同名模型只是起点。</p>
+<p>真正公平的横评，应该锁定模型版本、权重精度、上下文、工具、提示词、任务集和验收标准，再比较每个成功任务的成本。</p>
+<p><img src="imgs/05-framework-provider-differences.jpg" alt="同名模型在不同 Provider 与量化部署中的差异"></p>
+<h2 id="真正该算的，是-Cost-per-Accepted-Task"><a href="#真正该算的，是-Cost-per-Accepted-Task" class="headerlink" title="真正该算的，是 Cost per Accepted Task"></a>真正该算的，是 Cost per Accepted Task</h2><p>OpenAI 在这次降价公告里反复使用一个口径，叫 cost per task。</p>
+<p>不是每百万 Token 成本。</p>
+<p>是完成一项任务花了多少钱。</p>
+<p>我觉得还可以再严格一点，计算 Cost per Accepted Task，也就是「每个通过验收任务的成本」。</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">每个通过验收任务的成本</span><br><span class="line">=（普通输入</span><br><span class="line">  + 缓存读写</span><br><span class="line">  + 输出</span><br><span class="line">  + 工具调用</span><br><span class="line">  + 失败重试</span><br><span class="line">  + 超时与排队</span><br><span class="line">  + 人工复核）</span><br><span class="line">  ÷ 最终通过验收的任务数</span><br></pre></td></tr></table></figure>
+
+<p>这里最容易漏掉的是分母。</p>
+<p>假设 A Provider 每次尝试只花 0.6 元，但一次成功率是 60%；B Provider 每次花 0.9 元，一次成功率是 90%。为了演示公式，暂时假设失败后独立重试，也不计算额外上下文增长。</p>
+<p>那么：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">A：0.6 ÷ 60% = 1 元 / 成功任务</span><br><span class="line">B：0.9 ÷ 90% = 1 元 / 成功任务</span><br></pre></td></tr></table></figure>
+
+<p>页面标价相差 50%，交付成本却一样。</p>
+<p>真实 Agent 任务中，失败重试通常还会更贵。因为第二次尝试不是从空白开始，错误日志、补充解释和已经走过的路径都会进入上下文。重试次数一多，成本不是简单乘法，而是带着更长上下文继续增长。</p>
+<p>任务成功率也不能由模型自己宣布。</p>
+<p>代码 Agent 说「已经修复」不算成功。测试通过、构建成功、Diff 没有越界、目标功能得到验证，才进入分母。</p>
+<p>研究 Agent 说「资料充分」也不算成功。引用能够访问、来源支持对应论断、时间与统计口径一致，才算通过。</p>
+<p>到了这一层，模型价格就和 Harness、Loop、Graph 连在了一起。</p>
+<p>Harness 决定上下文怎样组织、工具是否稳定、缓存能否命中。</p>
+<p>Loop 决定失败后怎样获得证据、是否重试、何时停止。</p>
+<p>Graph 决定任务走哪些节点，哪里并行，哪里必须审核，哪些步骤可以交给便宜模型。</p>
+<p>一套糟糕的 Agent Harness，可以把最便宜的模型用得很贵。</p>
+<p>一套设计得好的工作流，也能让昂贵模型只出现在真正需要它的地方。</p>
+<p><img src="imgs/06-framework-accepted-task-cost.jpg" alt="每个通过验收任务的完整成本公式"></p>
+<h2 id="GPT-在降边际成本，GLM-在重做容量套餐"><a href="#GPT-在降边际成本，GLM-在重做容量套餐" class="headerlink" title="GPT 在降边际成本，GLM 在重做容量套餐"></a>GPT 在降边际成本，GLM 在重做容量套餐</h2><p>把两家公司的动作放回 Agent 这个背景，方向其实没有表面上那么相反。</p>
+<p>OpenAI 把 Luna 的 API 价格压到上一代 nano 模型附近，却保留工具调用、长上下文和多步工作流能力。过去只能拿便宜小模型做分类、抽取和排序，现在可以让它承担代码审查、后台监控、测试生成和高频验证。</p>
+<p>Luna 降价 80%，降低的是每多运行一次 Agent Loop 的边际成本。这个变化同时进入 Codex 和 ChatGPT Work：订阅价格与总额度预算不变，Terra 和 Luna 消耗的 Credits 减少，同一笔订阅费可以让 Agent 多跑几轮。</p>
+<p>GLM 则在把 Coding Plan 从简单次数套餐改造成按模型、缓存、输出、时段和 MCP 共同折算的容量产品。月付门槛提高了，但计量方式也更接近真实 Agent 负载。</p>
+<p>这两种动作都在争夺同一件东西。</p>
+<p>高频工作流。</p>
+<p>模型厂商已经不满足于偶尔回答一个问题。它们希望模型常驻在代码仓库里，持续读取、修改、检查和复核。一次调用便宜固然重要，更重要的是一天运行几百次后，用户是否还愿意让它继续跑。</p>
+<p>Token 价格战没有结束。</p>
+<p>只是战场正在从「谁的一百万 Token 更便宜」，转向「谁能用更少的钱交付一个被接受的结果」。</p>
+<p>这里面会同时比模型能力、推理效率、缓存命中、上下文管理、工具可靠性、工作流设计和服务稳定性。</p>
+<p>价格表越来越短。</p>
+<p>真正的成本模型越来越长。</p>
+<h2 id="写在最后"><a href="#写在最后" class="headerlink" title="写在最后"></a>写在最后</h2><p>看到 GPT 降价 80%，第一反应是国外模型开始掀桌子。</p>
+<p>看到 GLM Coding Plan 提高月费，第一反应又是国产模型正在涨价。</p>
+<p>两种感受都能理解。</p>
+<p>但做工程判断时，最好再往下多看一层。</p>
+<p>API 单价回答的是「这批 Token 多少钱」。两家公司都有这张表。</p>
+<p>订阅价格回答的是「一个月进入这个容量池要多少钱」。两家公司也都有时间窗口、模型折算和额度规则。</p>
+<p>缓存命中率回答的是「有多少重复计算不必重新付费」。</p>
+<p>任务成功率回答的是「这些钱最后有没有换来可验收的结果」。</p>
+<p>Provider、量化、限流、长上下文和工具费用，则决定价格表上的数字能不能落到你的真实工作流里。</p>
+<p>如果只想记住一个判断，我会选这句：</p>
+<p><strong>别再只比较每百万 Token 的价格。比较同一个任务，在同一套验收标准下，完成一次到底花多少钱。</strong></p>
+<p>毕竟我们真正想买的，从来不是 Token。</p>
+<p>是工作被完成。</p>
+<hr>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ol>
+<li>OpenAI, <a target="_blank" rel="noopener" href="https://openai.com/index/advancing-the-price-performance-frontier-with-gpt-5-6/">Advancing the price-performance frontier with GPT-5.6</a></li>
+<li>OpenAI, <a target="_blank" rel="noopener" href="https://learn.chatgpt.com/docs/pricing">ChatGPT Work 与 Codex 定价、额度及 Credits</a></li>
+<li>OpenAI API, <a target="_blank" rel="noopener" href="https://developers.openai.com/api/docs/pricing">Pricing</a></li>
+<li>OpenAI API, <a target="_blank" rel="noopener" href="https://developers.openai.com/api/docs/guides/fast-mode">Fast mode</a></li>
+<li>智谱 AI, <a target="_blank" rel="noopener" href="https://docs.bigmodel.cn/cn/coding-plan/overview">GLM Coding Plan 套餐概览</a></li>
+<li>智谱 AI, <a target="_blank" rel="noopener" href="https://docs.bigmodel.cn/cn/coding-plan/faq">GLM Coding Plan 常见问题</a></li>
+<li>智谱 AI, <a target="_blank" rel="noopener" href="https://bigmodel.cn/pricing">GLM 模型 API 价格</a></li>
+<li>Z.ai, <a target="_blank" rel="noopener" href="https://huggingface.co/zai-org/GLM-5.2-FP8">GLM-5.2-FP8 官方模型卡</a></li>
+<li>Anthropic, <a target="_blank" rel="noopener" href="https://platform.claude.com/docs/en/about-claude/pricing">Claude API Pricing</a></li>
+<li>《证券日报》, <a target="_blank" rel="noopener" href="https://finance.sina.com.cn/jjxw/2026-04-15/doc-inhuqsme4665738.shtml">大模型 Coding Plan 历史价格报道</a></li>
+<li>中国电信天翼云, <a target="_blank" rel="noopener" href="https://www.ctyun.cn/document/11061839/11092368">GLM Coding Plan 历史产品文档</a></li>
+</ol>
+</div>
+    <aside class="post-rail">
+      <span class="post-rail__line"></span>
+      <span>LESLIE / WRITING</span>
+    </aside>
+  </div>
+
+  <footer class="post-footer shell">
+    <div><h2>如果这篇文章帮到了你，<br>也许下一篇会更有意思。</h2></div>
+    <a class="button button--primary" href="/writing/">继续阅读 →</a>
+  </footer>
+</article>
+</main>
+    <footer class="site-footer">
+  <div class="footer-grid">
+    <div>
+      <p class="footer-kicker">Leslie Zhang</p>
+      <p class="footer-statement">流水不争先，<br>争的是滔滔不绝。</p>
+    </div>
+    <div class="footer-links">
+      <a href="https://github.com/leslieAIbin" target="_blank" rel="noreferrer">GitHub ↗</a>
+      <a href="https://www.instagram.com/leslieaibin/" target="_blank" rel="noreferrer">Instagram ↗</a>
+      <button type="button" data-wechat-open>微信 / WeChat</button>
+      <a href="mailto:aibinzhangleslie@gmail.com">Email ↗</a>
+      <a href="/atom.xml">RSS ↗</a>
+    </div>
+    <div class="footer-meta">
+      <span>© 2026 Leslie Zhang</span>
+      <span>Writing, research and working systems.</span>
+    </div>
+  </div>
+</footer>
+
+    <dialog class="ask-dialog" id="ask-leslie" aria-labelledby="ask-title">
+  <div class="ask-dialog__shell">
+    <div class="ask-dialog__topbar">
+      <div>
+        <h2 id="ask-title">Ask Leslie</h2>
+      </div>
+      <button class="icon-button" type="button" data-ask-close aria-label="关闭">×</button>
+    </div>
+    <p class="ask-dialog__intro">从本站公开文章中寻找答案。当前版本在浏览器本地检索，不上传问题，也不会编造不存在的经历。</p>
+    <form class="ask-form" data-ask-form>
+      <label class="sr-only" for="ask-query">输入问题</label>
+      <textarea id="ask-query" rows="2" placeholder="例如：Agent Runtime 应该怎么设计？" data-ask-input></textarea>
+      <button type="submit">检索知识库 <span aria-hidden="true">↗</span></button>
+    </form>
+    <div class="ask-suggestions" aria-label="推荐问题">
+      
+        <button type="button" data-ask-suggestion="Agent Runtime 应该怎么设计？">Agent Runtime 应该怎么设计？</button>
+      
+        <button type="button" data-ask-suggestion="如何让 AI 操控真实世界设备？">如何让 AI 操控真实世界设备？</button>
+      
+        <button type="button" data-ask-suggestion="Leslie 最近在研究什么？">Leslie 最近在研究什么？</button>
+      
+    </div>
+    <div class="ask-results" data-ask-results aria-live="polite">
+      <div class="ask-empty">
+        <p>输入一个问题，我会把你带到 Leslie 写过的相关内容。</p>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+    <dialog class="wechat-dialog" id="wechat-leslie" aria-labelledby="wechat-title">
+  <div class="wechat-dialog__shell">
+    <header>
+      <div>
+        <p class="section-label">WeChat</p>
+        <h2 id="wechat-title">微信联系</h2>
+      </div>
+      <button class="icon-button" type="button" data-wechat-close aria-label="关闭微信二维码">×</button>
+    </header>
+    <img src="/images/contact/wechat-leslie.png" alt="Leslie Zhang 的微信二维码" loading="lazy">
+    <p>扫码添加 Leslie，建议备注你的名字与来意。</p>
+  </div>
+</dialog>
+
+    <script>window.ORBITAL_ROOT = '/';</script>
+    <script src="/js/orbital.js" defer></script>
+  </body>
+</html>

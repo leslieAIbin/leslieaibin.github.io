@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+  <head>
+
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#050b18">
+<meta name="color-scheme" content="dark light">
+<title>05.Spring-Bean(2) | Leslie Zhang</title>
+<meta name="description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta name="author" content="Leslie Zhang">
+<link rel="canonical" href="https://leslieaibin.github.io/2021/09/19/Spring/06.Spring-Bean(2)/">
+<link rel="icon" href="/imgs/01.jpg">
+<link rel="alternate" type="application/atom+xml" title="Leslie Zhang" href="/atom.xml">
+<meta property="og:type" content="article">
+<meta property="og:title" content="05.Spring-Bean(2) | Leslie Zhang">
+<meta property="og:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta property="og:url" content="https://leslieaibin.github.io/2021/09/19/Spring/06.Spring-Bean(2)/">
+<meta property="og:image" content="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/22.jpg?raw=true">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="05.Spring-Bean(2) | Leslie Zhang">
+<meta name="twitter:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta name="twitter:image" content="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/22.jpg?raw=true">
+<script>
+  (function () {
+    var saved = localStorage.getItem('orbital-theme');
+    var theme = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    document.documentElement.dataset.theme = theme;
+  })();
+</script>
+<link rel="stylesheet" href="/css/orbital.css">
+<meta name="generator" content="Hexo 5.2.0"></head>
+  <body class="page-post">
+    <a class="skip-link" href="#main-content">跳到主要内容</a>
+    <div class="reading-progress" data-reading-progress></div>
+    <header class="site-header" data-header>
+  <div class="nav-shell">
+    <a class="brand" href="/" aria-label="返回首页">
+      <span class="brand-mark" aria-hidden="true"><img src="/images/brand/leslie-mythos-avatar.webp" alt="" width="512" height="512"></span>
+      <span class="brand-copy">
+        <strong>LESLIE</strong>
+        <small>REAL-WORLD AGENTS</small>
+      </span>
+    </a>
+
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav" data-nav-toggle>
+      <span></span><span></span>
+      <span class="sr-only">打开导航</span>
+    </button>
+
+    <nav class="main-nav" id="main-nav" aria-label="主导航" data-nav>
+      
+        <a href="/" class="">首页</a>
+      
+        <a href="/writing/" class="">写作</a>
+      
+        <a href="/projects/" class="">项目</a>
+      
+        <a href="/about/" class="">关于</a>
+      
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换明暗主题">
+        <span class="theme-toggle__sun" aria-hidden="true">☼</span>
+        <span class="theme-toggle__moon" aria-hidden="true">◐</span>
+      </button>
+      <button class="ask-nav" type="button" data-ask-open>ASK LESLIE</button>
+    </nav>
+  </div>
+</header>
+
+    <main id="main-content"><article class="post-shell">
+  <header class="post-hero shell">
+    <a class="post-back" href="/writing/">← 返回写作</a>
+    <div class="post-hero__meta">
+      <time datetime="2021-09-19">2021 年 09 月 19 日</time>
+      <span>7 分钟阅读</span>
+    </div>
+    <h1>05.Spring-Bean(2)</h1>
+    
+    <div class="chip-row"><a href="/tags/Spring/">Spring</a></div>
+  </header>
+
+  <div class="post-cover shell"><img src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/22.jpg?raw=true" alt="05.Spring-Bean(2)"></div>
+
+  <div class="post-layout shell">
+    <aside class="post-toc" aria-label="文章目录">
+      <span class="aside-title">目录</span>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Spring-Bean%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F"><span class="toc-text">Spring Bean的生命周期</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="toc-text">初始化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%94%80%E6%AF%81"><span class="toc-text">销毁</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Spring-%E8%A7%A3%E5%86%B3Bean%E7%9A%84%E5%BE%AA%E7%8E%AF%E4%BE%9D%E8%B5%96"><span class="toc-text">Spring 解决Bean的循环依赖</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Spring-Bean-%E5%BE%AA%E7%8E%AF%E4%BE%9D%E8%B5%96%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E4%B8%89%E7%BA%A7%E7%BC%93%E5%AD%98"><span class="toc-text">Spring Bean 循环依赖为什么需要三级缓存</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89%E7%BA%A7%E7%BC%93%E5%AD%98"><span class="toc-text">三级缓存</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Component-Controller-Repository-Service-%E5%8C%BA%E5%88%AB"><span class="toc-text">@Component, @Controller, @Repository, @Service 区别</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Autowired-%E6%B3%A8%E8%A7%A3%E6%9C%89%E4%BB%80%E4%B9%88%E4%BD%9C%E7%94%A8"><span class="toc-text">@Autowired 注解有什么作用</span></a></li></ol>
+    </aside>
+    <div class="article-content"><h2 id="Spring-Bean的生命周期"><a href="#Spring-Bean的生命周期" class="headerlink" title="Spring Bean的生命周期"></a>Spring Bean的生命周期</h2><p><img src="https://test-1874253.oss-cn-beijing.aliyuncs.com/img/java10-1558500659.jpg" alt="深究Spring中Bean的生命周期"></p>
+<h3 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h3><ul>
+<li><code>BeanNameAware.setBeanName()</code> 在创建此bean的bean工厂中设置bean的名称，在普通属性设置之后调用，在<code>InitializinngBean.afterPropertiesSet()</code>方法之前调用</li>
+<li><code>BeanClassLoaderAware.setBeanClassLoader()</code>: 在普通属性设置之后，InitializingBean.afterPropertiesSet()之前调用</li>
+<li><code>BeanFactoryAware.setBeanFactory() </code>: 回调提供了自己的bean实例工厂，在普通属性设置之后，在<code>InitializingBean.afterPropertiesSet()</code>或者自定义初始化方法之前调用</li>
+<li><code>EnvironmentAware.setEnvironment()</code>: 设置environment在组件使用时调用</li>
+<li><code>EmbeddedValueResolverAware.setEmbeddedValueResolver()</code>: 设置StringValueResolver 用来解决嵌入式的值域问题</li>
+<li><code>ResourceLoaderAware.setResourceLoader()</code>: 在普通bean对象之后调用，在afterPropertiesSet 或者自定义的init-method 之前调用，在 ApplicationContextAware 之前调用。</li>
+<li><code>ApplicationEventPublisherAware.setApplicationEventPublisher()</code>: 在普通bean属性之后调用，在初始化调用afterPropertiesSet 或者自定义初始化方法之前调用。在 ApplicationContextAware 之前调用。</li>
+<li><code>MessageSourceAware.setMessageSource()</code>: 在普通bean属性之后调用，在初始化调用afterPropertiesSet 或者自定义初始化方法之前调用，在 ApplicationContextAware 之前调用。</li>
+<li><code>ApplicationContextAware.setApplicationContext():</code> 在普通Bean对象生成之后调用，在InitializingBean.afterPropertiesSet之前调用或者用户自定义初始化方法之前。在<code>ResourceLoaderAware.setResourceLoader</code>，<code>ApplicationEventPublisherAware.setApplicationEventPublisher，MessageSourceAware</code>之后调用。</li>
+<li><code>ServletContextAware.setServletContext()</code>: 运行时设置ServletContext，在普通bean初始化后调用，在InitializingBean.afterPropertiesSet之前调用，在 ApplicationContextAware 之后调用<strong>注：是在WebApplicationContext 运行时</strong></li>
+<li><code>BeanPostProcessor.postProcessBeforeInitialization()</code> : 将此BeanPostProcessor 应用于给定的新bean实例 在任何bean初始化回调方法(像是InitializingBean.afterPropertiesSet或者自定义的初始化方法）之前调用。这个bean将要准备填充属性的值。返回的bean示例可能被普通对象包装，默认实现返回是一个bean。</li>
+<li><code>BeanPostProcessor.postProcessAfterInitialization()</code> : 将此BeanPostProcessor 应用于给定的新bean实例 在任何bean初始化回调方法(像是InitializingBean.afterPropertiesSet或者自定义的初始化方法)之后调用。这个bean将要准备填充属性的值。返回的bean示例可能被普通对象包装</li>
+<li><code>InitializingBean.afterPropertiesSet():</code> 被BeanFactory在设置所有bean属性之后调用(并且满足BeanFactory 和 ApplicationContextAware)。</li>
+</ul>
+<h3 id="销毁"><a href="#销毁" class="headerlink" title="销毁"></a>销毁</h3><p>在BeanFactory 关闭的时候，Bean的生命周期会调用如下方法:</p>
+<ul>
+<li><code>DestructionAwareBeanPostProcessor.postProcessBeforeDestruction()</code>: 在销毁之前将此BeanPostProcessor 应用于给定的bean实例。能够调用自定义回调，像是DisposableBean 的销毁和自定义销毁方法，这个回调仅仅适用于工厂中的单例bean(包括内部bean)</li>
+<li>实现了自定义的destory()方法</li>
+</ul>
+<h2 id="Spring-解决Bean的循环依赖"><a href="#Spring-解决Bean的循环依赖" class="headerlink" title="Spring 解决Bean的循环依赖"></a>Spring 解决Bean的循环依赖</h2><p>Spring的循环依赖的理论依据其实是基于Java的引用传递，当我们获取到对象的引用时，对象的field或则属性是可以延后设置的(但是构造器必须是在获取引用之前)。</p>
+<p>Spring的单例对象的初始化主要分为三步：</p>
+<p>（1）createBeanInstance：实例化，其实也就是调用对象的构造方法实例化对象</p>
+<p>（2）populateBean：填充属性，这一步主要是多bean的依赖属性进行填充</p>
+<p>（3）initializeBean：调用spring xml中的init 方法。</p>
+<p>从上面讲述的单例bean初始化步骤我们可以知道，循环依赖主要发生在第一、第二部。也就是构造器循环依赖和field循环依赖。</p>
+<p>那么我们要解决循环引用也应该从初始化过程着手，对于单例来说，在Spring容器整个生命周期内，有且只有一个对象，所以很容易想到这个对象应该存在Cache中，Spring为了解决单例的循环依赖问题，使用了三级缓存。</p>
+<p>首先我们看源码，三级缓存主要指：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/** Cache of singleton objects: bean name --&gt; bean instance */</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> Map&lt;String, Object&gt; singletonObjects = <span class="keyword">new</span> ConcurrentHashMap&lt;String, Object&gt;(<span class="number">256</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">/** Cache of singleton factories: bean name --&gt; ObjectFactory */</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> Map&lt;String, ObjectFactory&lt;?&gt;&gt; singletonFactories = <span class="keyword">new</span> HashMap&lt;String, ObjectFactory&lt;?&gt;&gt;(<span class="number">16</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">/** Cache of early singleton objects: bean name --&gt; bean instance */</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> Map&lt;String, Object&gt; earlySingletonObjects = <span class="keyword">new</span> HashMap&lt;String, Object&gt;(<span class="number">16</span>);</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<p>这三级缓存分别指：<br>singletonFactories ： 单例对象工厂的cache<br>earlySingletonObjects ：提前暴光的单例对象的Cache<br>singletonObjects：单例对象的cache</p>
+<p>我们在创建bean的时候，首先想到的是从cache中获取这个单例的bean，这个缓存就是singletonObjects。主要调用方法就就是：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">protected</span> Object <span class="title">getSingleton</span><span class="params">(String beanName, <span class="keyword">boolean</span> allowEarlyReference)</span> </span>&#123;</span><br><span class="line">    Object singletonObject = <span class="keyword">this</span>.singletonObjects.get(beanName);</span><br><span class="line">    <span class="keyword">if</span> (singletonObject == <span class="keyword">null</span> &amp;&amp; isSingletonCurrentlyInCreation(beanName)) &#123;</span><br><span class="line">        <span class="keyword">synchronized</span> (<span class="keyword">this</span>.singletonObjects) &#123;</span><br><span class="line">            singletonObject = <span class="keyword">this</span>.earlySingletonObjects.get(beanName);</span><br><span class="line">            <span class="keyword">if</span> (singletonObject == <span class="keyword">null</span> &amp;&amp; allowEarlyReference) &#123;</span><br><span class="line">                ObjectFactory&lt;?&gt; singletonFactory = <span class="keyword">this</span>.singletonFactories.get(beanName);</span><br><span class="line">                <span class="keyword">if</span> (singletonFactory != <span class="keyword">null</span>) &#123;</span><br><span class="line">                    singletonObject = singletonFactory.getObject();</span><br><span class="line">                    <span class="keyword">this</span>.earlySingletonObjects.put(beanName, singletonObject);</span><br><span class="line">                    <span class="keyword">this</span>.singletonFactories.remove(beanName);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> (singletonObject != NULL_OBJECT ? singletonObject : <span class="keyword">null</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>上面的代码需要解释两个参数：</p>
+<p>isSingletonCurrentlyInCreation()判断当前单例bean是否正在创建中，也就是没有初始化完成(比如A的构造器依赖了B对象所以得先去创建B对象， 或则在A的populateBean过程中依赖了B对象，得先去创建B对象，这时的A就是处于创建中的状态。)<br>allowEarlyReference 是否允许从singletonFactories中通过getObject拿到对象<br>分析getSingleton()的整个过程，Spring首先从一级缓存singletonObjects中获取。如果获取不到，并且对象正在创建中，就再从二级缓存earlySingletonObjects中获取。如果还是获取不到且允许singletonFactories通过getObject()获取，就从三级缓存singletonFactory.getObject()(三级缓存)获取，如果获取到了则：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">this</span>.earlySingletonObjects.put(beanName, singletonObject);</span><br><span class="line">                        <span class="keyword">this</span>.singletonFactories.remove(beanName);</span><br></pre></td></tr></table></figure>
+
+<p>从singletonFactories中移除，并放入earlySingletonObjects中。其实也就是从三级缓存移动到了二级缓存。</p>
+<p>从上面三级缓存的分析，我们可以知道，Spring解决循环依赖的诀窍就在于singletonFactories这个三级cache。这个cache的类型是ObjectFactory，定义如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">ObjectFactory</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line">    <span class="function">T <span class="title">getObject</span><span class="params">()</span> <span class="keyword">throws</span> BeansException</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个接口在下面被引用</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">addSingletonFactory</span><span class="params">(String beanName, ObjectFactory&lt;?&gt; singletonFactory)</span> </span>&#123;</span><br><span class="line">    Assert.notNull(singletonFactory, <span class="string">&quot;Singleton factory must not be null&quot;</span>);</span><br><span class="line">    <span class="keyword">synchronized</span> (<span class="keyword">this</span>.singletonObjects) &#123;</span><br><span class="line">        <span class="keyword">if</span> (!<span class="keyword">this</span>.singletonObjects.containsKey(beanName)) &#123;</span><br><span class="line">            <span class="keyword">this</span>.singletonFactories.put(beanName, singletonFactory);</span><br><span class="line">            <span class="keyword">this</span>.earlySingletonObjects.remove(beanName);</span><br><span class="line">            <span class="keyword">this</span>.registeredSingletons.add(beanName);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>这里就是解决循环依赖的关键，这段代码发生在createBeanInstance之后，也就是说单例对象此时已经被创建出来(调用了构造器)。这个对象已经被生产出来了，虽然还不完美（还没有进行初始化的第二步和第三步），但是已经能被人认出来了（根据对象引用能定位到堆中的对象），所以Spring此时将这个对象提前曝光出来让大家认识，让大家使用。</p>
+<p>Spring 是如何通过上面介绍的三级缓存来解决循环依赖的呢？这里只用 A，B 形成的循环依赖来举例：</p>
+<ol>
+<li>实例化 A，此时 A 还未完成属性填充和初始化方法（@PostConstruct）的执行，A 只是一个半成品。</li>
+<li>为 A 创建一个 Bean 工厂，并放入到  singletonFactories 中。</li>
+<li>发现 A 需要注入 B 对象，但是一级、二级、三级缓存均为发现对象 B。</li>
+<li>实例化 B，此时 B 还未完成属性填充和初始化方法（@PostConstruct）的执行，B 只是一个半成品。</li>
+<li>为 B 创建一个 Bean 工厂，并放入到  singletonFactories 中。</li>
+<li>发现 B 需要注入 A 对象，此时在一级、二级未发现对象 A，但是在三级缓存中发现了对象 A，从三级缓存中得到对象 A，并将对象 A 放入二级缓存中，同时删除三级缓存中的对象 A。（注意，此时的 A 还是一个半成品，并没有完成属性填充和执行初始化方法）</li>
+<li>将对象 A 注入到对象 B 中。</li>
+<li>对象 B 完成属性填充，执行初始化方法，并放入到一级缓存中，同时删除二级缓存中的对象 B。（此时对象 B 已经是一个成品）</li>
+<li>对象 A 得到对象 B，将对象 B 注入到对象 A 中。（对象 A 得到的是一个完整的对象 B）</li>
+<li>对象 A 完成属性填充，执行初始化方法，并放入到一级缓存中，同时删除二级缓存中的对象 A。</li>
+</ol>
+<h2 id="Spring-Bean-循环依赖为什么需要三级缓存"><a href="#Spring-Bean-循环依赖为什么需要三级缓存" class="headerlink" title="Spring Bean 循环依赖为什么需要三级缓存"></a>Spring Bean 循环依赖为什么需要三级缓存</h2><h3 id="三级缓存"><a href="#三级缓存" class="headerlink" title="三级缓存"></a>三级缓存</h3><p>Spring 解决循环依赖的核心就是提前暴露对象，而提前暴露的对象就是放置于第二级缓存中。缓存的底层都是Map，至于它们属于第几层是由Spring获取数据顺序以及其作用来表现的。</p>
+<p>三级缓存的说明：</p>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>singletonObjects</code></td>
+<td>一级缓存，存放完整的 Bean。</td>
+</tr>
+<tr>
+<td><code>earlySingletonObjects</code></td>
+<td>二级缓存，存放提前暴露的Bean，Bean 是不完整的，未完成属性注入和执行 初始化（init） 方法。</td>
+</tr>
+<tr>
+<td><code>singletonFactories</code></td>
+<td>三级缓存，存放的是 Bean 工厂，主要是生产 Bean，存放到二级缓存中。</td>
+</tr>
+</tbody></table>
+<h2 id="Component-Controller-Repository-Service-区别"><a href="#Component-Controller-Repository-Service-区别" class="headerlink" title="@Component, @Controller, @Repository, @Service 区别"></a>@Component, @Controller, @Repository, @Service 区别</h2><p>@Component：这将 java 类标记为 bean。它是任何 Spring 管理组件的通用构造型。spring 的组件扫描机制现在可以将其拾取并将其拉入应用程序环境中。<br>@Controller：这将一个类标记为 Spring Web MVC 控制器。标有它的 Bean 会自动导入到 IoC 容器中。<br>@Service：此注解是组件注解的特化。它不会对 @Component 注解提供任何其他行为。您可以在服务层类中使用@Service 而不是 @Component，因为它以更好的方式指定了意图。<br>@Repository：这个注解是具有类似用途和功能的 @Component 注解的特化。它为 DAO 提供了额外的好处。它将DAO 导入 IoC 容器，并使未经检查的异常有资格转换为 Spring DataAccessException。</p>
+<h2 id="Autowired-注解有什么作用"><a href="#Autowired-注解有什么作用" class="headerlink" title="@Autowired 注解有什么作用"></a>@Autowired 注解有什么作用</h2><p>@Autowired默认是按照类型装配注入的，默认情况下它要求依赖对象必须存在（可以设置它required属性为false）。<br>@Autowired 注解提供了更细粒度的控制，包括在何处以及如何完成自动装配。</p>
+</div>
+    <aside class="post-rail">
+      <span class="post-rail__line"></span>
+      <span>LESLIE / WRITING</span>
+    </aside>
+  </div>
+
+  <footer class="post-footer shell">
+    <div><h2>如果这篇文章帮到了你，<br>也许下一篇会更有意思。</h2></div>
+    <a class="button button--primary" href="/writing/">继续阅读 →</a>
+  </footer>
+</article>
+</main>
+    <footer class="site-footer">
+  <div class="footer-grid">
+    <div>
+      <p class="footer-kicker">Leslie Zhang</p>
+      <p class="footer-statement">流水不争先，<br>争的是滔滔不绝。</p>
+    </div>
+    <div class="footer-links">
+      <a href="https://github.com/leslieAIbin" target="_blank" rel="noreferrer">GitHub ↗</a>
+      <a href="https://www.instagram.com/leslieaibin/" target="_blank" rel="noreferrer">Instagram ↗</a>
+      <button type="button" data-wechat-open>微信 / WeChat</button>
+      <a href="mailto:aibinzhangleslie@gmail.com">Email ↗</a>
+      <a href="/atom.xml">RSS ↗</a>
+    </div>
+    <div class="footer-meta">
+      <span>© 2026 Leslie Zhang</span>
+      <span>Writing, research and working systems.</span>
+    </div>
+  </div>
+</footer>
+
+    <dialog class="ask-dialog" id="ask-leslie" aria-labelledby="ask-title">
+  <div class="ask-dialog__shell">
+    <div class="ask-dialog__topbar">
+      <div>
+        <h2 id="ask-title">Ask Leslie</h2>
+      </div>
+      <button class="icon-button" type="button" data-ask-close aria-label="关闭">×</button>
+    </div>
+    <p class="ask-dialog__intro">从本站公开文章中寻找答案。当前版本在浏览器本地检索，不上传问题，也不会编造不存在的经历。</p>
+    <form class="ask-form" data-ask-form>
+      <label class="sr-only" for="ask-query">输入问题</label>
+      <textarea id="ask-query" rows="2" placeholder="例如：Agent Runtime 应该怎么设计？" data-ask-input></textarea>
+      <button type="submit">检索知识库 <span aria-hidden="true">↗</span></button>
+    </form>
+    <div class="ask-suggestions" aria-label="推荐问题">
+      
+        <button type="button" data-ask-suggestion="Agent Runtime 应该怎么设计？">Agent Runtime 应该怎么设计？</button>
+      
+        <button type="button" data-ask-suggestion="如何让 AI 操控真实世界设备？">如何让 AI 操控真实世界设备？</button>
+      
+        <button type="button" data-ask-suggestion="Leslie 最近在研究什么？">Leslie 最近在研究什么？</button>
+      
+    </div>
+    <div class="ask-results" data-ask-results aria-live="polite">
+      <div class="ask-empty">
+        <p>输入一个问题，我会把你带到 Leslie 写过的相关内容。</p>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+    <dialog class="wechat-dialog" id="wechat-leslie" aria-labelledby="wechat-title">
+  <div class="wechat-dialog__shell">
+    <header>
+      <div>
+        <p class="section-label">WeChat</p>
+        <h2 id="wechat-title">微信联系</h2>
+      </div>
+      <button class="icon-button" type="button" data-wechat-close aria-label="关闭微信二维码">×</button>
+    </header>
+    <img src="/images/contact/wechat-leslie.png" alt="Leslie Zhang 的微信二维码" loading="lazy">
+    <p>扫码添加 Leslie，建议备注你的名字与来意。</p>
+  </div>
+</dialog>
+
+    <script>window.ORBITAL_ROOT = '/';</script>
+    <script src="/js/orbital.js" defer></script>
+  </body>
+</html>

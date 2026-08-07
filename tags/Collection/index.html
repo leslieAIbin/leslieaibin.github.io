@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+  <head>
+
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#050b18">
+<meta name="color-scheme" content="dark light">
+<title>Leslie Zhang | AI Agent &amp; Agent Infra Engineer</title>
+<meta name="description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta name="author" content="Leslie Zhang">
+<link rel="canonical" href="https://leslieaibin.github.io/tags/Collection/index.html">
+<link rel="icon" href="/imgs/01.jpg">
+<link rel="alternate" type="application/atom+xml" title="Leslie Zhang" href="/atom.xml">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Leslie Zhang | AI Agent &amp; Agent Infra Engineer">
+<meta property="og:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta property="og:url" content="https://leslieaibin.github.io/tags/Collection/index.html">
+<meta property="og:image" content="https://leslieaibin.github.io/og-blue.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Leslie Zhang | AI Agent &amp; Agent Infra Engineer">
+<meta name="twitter:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta name="twitter:image" content="https://leslieaibin.github.io/og-blue.png">
+<script>
+  (function () {
+    var saved = localStorage.getItem('orbital-theme');
+    var theme = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    document.documentElement.dataset.theme = theme;
+  })();
+</script>
+<link rel="stylesheet" href="/css/orbital.css">
+<meta name="generator" content="Hexo 5.2.0"></head>
+  <body class="page-index">
+    <a class="skip-link" href="#main-content">跳到主要内容</a>
+    <div class="reading-progress" data-reading-progress></div>
+    <header class="site-header" data-header>
+  <div class="nav-shell">
+    <a class="brand" href="/" aria-label="返回首页">
+      <span class="brand-mark" aria-hidden="true"><img src="/images/brand/leslie-mythos-avatar.webp" alt="" width="512" height="512"></span>
+      <span class="brand-copy">
+        <strong>LESLIE</strong>
+        <small>REAL-WORLD AGENTS</small>
+      </span>
+    </a>
+
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav" data-nav-toggle>
+      <span></span><span></span>
+      <span class="sr-only">打开导航</span>
+    </button>
+
+    <nav class="main-nav" id="main-nav" aria-label="主导航" data-nav>
+      
+        <a href="/" class="">首页</a>
+      
+        <a href="/writing/" class="">写作</a>
+      
+        <a href="/projects/" class="">项目</a>
+      
+        <a href="/about/" class="">关于</a>
+      
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换明暗主题">
+        <span class="theme-toggle__sun" aria-hidden="true">☼</span>
+        <span class="theme-toggle__moon" aria-hidden="true">◐</span>
+      </button>
+      <button class="ask-nav" type="button" data-ask-open>ASK LESLIE</button>
+    </nav>
+  </div>
+</header>
+
+    <main id="main-content"><section class="page-hero shell"><p class="page-kicker">Writing topic</p><h1># Collection</h1><p>沿着这个关键词，继续往里看。</p></section>
+<section class="section shell"><div class="writing-list" data-writing-list>
+  
+    <article class="writing-row reveal" data-writing-item data-search="6.循环队列 collection 循环队列 一、普通队列的弊端 队列：是一种可以分别在两端进行增删的特殊线性表。既然是线性表，那么可以使用顺序存储和链式存储来实现，如果是链式存储的话，那么增删的复杂度都是o(1)，这一点很好理解，应该只要修改一下指针就好了，如果是顺序存储的话，在队尾增加的时间复杂度是o(1)，但是在队头进行删除的时候，会涉及到迁移操作，这时候的时候复杂度就是o(n)，所以一般来讲不会直接使用顺序存储的方式来实现普通队列。 二、循环队列的原理概述 较之普通队列用顺序存储来实现存在删除带来的时间…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-09-25">2021.09.25</time><span>3 MIN</span></div>
+        <h2><a href="/2021/09/25/Collection/6.%E5%BE%AA%E7%8E%AF%E9%98%9F%E5%88%97/">6.循环队列</a></h2>
+        <p>循环队列 一、普通队列的弊端 队列：是一种可以分别在两端进行增删的特殊线性表。既然是线性表，那么可以使用顺序存储和链式存储来实现，如果是链式存储的话，那么增删的复杂度都是O(1)，这一点很好理解，应该只要修改一下指针就好了，如果是顺序存储的话，在队尾增加的时间复杂度是O(1)，但是在队头进行删除的时…</p>
+        <div class="chip-row"><span>Collection</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/09/25/Collection/6.%E5%BE%AA%E7%8E%AF%E9%98%9F%E5%88%97/" aria-label="阅读《6.循环队列》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="5.concurrenthashmap详解 collection concurrenthashmap跟hashmap，hashtable的对比 我们都知道hashmap不是线程安全的，所以在处理并发的时候会出现问题。 而hashtable虽然是线程安全的，但是是通过整个来加锁的方式，当一个线程在写操作的时候，另外的线程则不能进行读写。 而concurrenthashmap则可以支持并发的读写。跟1.7版本相比，1.8版本又有了很大的变化，已经抛弃了segment的概念，虽然源码里面还保留了，也只是为了兼容性的考虑。 concurrentha…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-09-24">2021.09.24</time><span>6 MIN</span></div>
+        <h2><a href="/2021/09/24/Collection/5.ConcurrentHashMap%E8%AF%A6%E8%A7%A3/">5.ConcurrentHashMap详解</a></h2>
+        <p>ConcurrentHashMap跟HashMap，HashTable的对比 我们都知道HashMap不是线程安全的，所以在处理并发的时候会出现问题。 而HashTable虽然是线程安全的，但是是通过整个来加锁的方式，当一个线程在写操作的时候，另外的线程则不能进行读写。 而ConcurrentHas…</p>
+        <div class="chip-row"><span>Collection</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/09/24/Collection/5.ConcurrentHashMap%E8%AF%A6%E8%A7%A3/" aria-label="阅读《5.ConcurrentHashMap详解》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="4.hashmap实现原理 collection hashmap的实现原理 概述 hashmap是java中对map接口的实现类，是最常用的实现类中之一。主要有以下几个特性： hashmap中的key 和 value 都允许为null， 但最多智能拥有一个null的key hashmap不保证顺序性 hashmap非线性安全 hashmap的数据结构： hashmap内部是以数组+链表的方式存储的数据。 hashmap的数组中，每个元素称之为“ 桶 ”。需要注意的是，这个“桶”并不等同于“键值对（entity）”。至于它是什…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-09-05">2021.09.05</time><span>10 MIN</span></div>
+        <h2><a href="/2021/09/05/Collection/4.HashMap%E7%9A%84%E6%89%A9%E5%AE%B9%E6%9C%BA%E5%88%B6/">4.HashMap实现原理</a></h2>
+        <p>HashMap的实现原理 概述 HashMap是Java中对Map接口的实现类，是最常用的实现类中之一。主要有以下几个特性： HashMap中的key 和 value 都允许为null， 但最多智能拥有一个null的key HashMap不保证顺序性 HashMap非线性安全 HashMap的数据结…</p>
+        <div class="chip-row"><span>Collection</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/09/05/Collection/4.HashMap%E7%9A%84%E6%89%A9%E5%AE%B9%E6%9C%BA%E5%88%B6/" aria-label="阅读《4.HashMap实现原理》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="3.hashmap、concurrenthashmap、hashtable collection hashmap、concurrenthashmap、hashtable的区别 hashmap vs concurrenthashmap 引入concurrenthashmap是为了同步集合hashtable之间有更好的选择，hashtable与hashmap,concurrenthashmap主要区别于hashmap不是同步的，线程不安全的和不适合应用于多线程并发环境下，而concurrenthashmap是线程安全的集合容器，特别是在多线程和并发环境中，通常作为map的主要…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-08-24">2021.08.24</time><span>6 MIN</span></div>
+        <h2><a href="/2021/08/24/Collection/3.java%E9%9B%86%E5%90%88%5B3%5D--HashMap%E3%80%81ConcurrentHashMap%E3%80%81HashTable%E7%9A%84%E5%8C%BA%E5%88%AB/">3.HashMap、ConcurrentHashMap、HashTable</a></h2>
+        <p>HashMap、ConcurrentHashMap、HashTable的区别 HashMap vs ConcurrentHashMap 引入ConcurrentHashMap是为了同步集合HashTable之间有更好的选择，HashTable与HashMap,ConcurrentHashMap主要区…</p>
+        <div class="chip-row"><span>Collection</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/08/24/Collection/3.java%E9%9B%86%E5%90%88%5B3%5D--HashMap%E3%80%81ConcurrentHashMap%E3%80%81HashTable%E7%9A%84%E5%8C%BA%E5%88%AB/" aria-label="阅读《3.HashMap、ConcurrentHashMap、HashTable》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="2.java集合 collection 集合容器概述 什么是集合 集合就是一个放数据的容器，准确的说是放数据对象引用的容器 集合类存放的都是对象的引用，而不是对象的本身 集合类型主要有三种： set(集)、list(列表) 和 map(映射) 集合的特点 集合用于存储对象的容器，对象是用来封装数据，对象多了也需要存储集中式管理 和数组对比对象的大小是不确定的，集合的长度是可变的，数组需要提前定义大小 集合和数组的区别 数组是 固定长度的，集合可变长度的 数组可以存储基本数据类型，也可以存储引用数据类型，集合只能存储…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-08-20">2021.08.20</time><span>28 MIN</span></div>
+        <h2><a href="/2021/08/20/Collection/2.%E9%9B%86%E5%90%88%5B2%5D/">2.Java集合</a></h2>
+        <p>集合容器概述 什么是集合 集合就是一个放数据的容器，准确的说是放数据对象引用的容器 集合类存放的都是对象的引用，而不是对象的本身 集合类型主要有三种： set(集)、list(列表) 和 map(映射) 集合的特点 集合用于存储对象的容器，对象是用来封装数据，对象多了也需要存储集中式管理 和数组对比…</p>
+        <div class="chip-row"><span>Collection</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/08/20/Collection/2.%E9%9B%86%E5%90%88%5B2%5D/" aria-label="阅读《2.Java集合》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="1.java集合-框架 collection java集合[1]–java集合分类 之前大概分为三种， ， ， 三种，jdk5之后，增加 .主要由 和 两个接口衍生出来,同时 接口继承 接口，所以我们也可以说java里面的集合类主要是由 和 两个接口以及他们的子接口或者其实现类组成。我们可以认为 接口定义了单列集合的规范，每次只能存储一个元素，而 接口定义了双列集合的规范，每次能存储一对元素。 iterable接口:主要是实现遍历功能 collection接口: 允许重复 set接口：无序，元素不可重复,访问元素只能通过…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-03-26">2021.03.26</time><span>12 MIN</span></div>
+        <h2><a href="/2021/03/26/Collection/1.Java%E9%9B%86%E5%90%88-%E6%A1%86%E6%9E%B6/">1.Java集合-框架</a></h2>
+        <p>Java集合[1]–java集合分类 之前大概分为三种， ， ， 三种，JDK5之后，增加 .主要由 和 两个接口衍生出来,同时 接口继承 接口，所以我们也可以说java里面的集合类主要是由 和 两个接口以及他们的子接口或者其实现类组成。我们可以认为 接口定义了单列集合的规范，每次只能存储一个元素，…</p>
+        <div class="chip-row"><span>Collection</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/03/26/Collection/1.Java%E9%9B%86%E5%90%88-%E6%A1%86%E6%9E%B6/" aria-label="阅读《1.Java集合-框架》">↗</a>
+    </article>
+  
+</div>
+<span class="page-number current">1</span></section>
+</main>
+    <footer class="site-footer">
+  <div class="footer-grid">
+    <div>
+      <p class="footer-kicker">Leslie Zhang</p>
+      <p class="footer-statement">流水不争先，<br>争的是滔滔不绝。</p>
+    </div>
+    <div class="footer-links">
+      <a href="https://github.com/leslieAIbin" target="_blank" rel="noreferrer">GitHub ↗</a>
+      <a href="https://www.instagram.com/leslieaibin/" target="_blank" rel="noreferrer">Instagram ↗</a>
+      <button type="button" data-wechat-open>微信 / WeChat</button>
+      <a href="mailto:aibinzhangleslie@gmail.com">Email ↗</a>
+      <a href="/atom.xml">RSS ↗</a>
+    </div>
+    <div class="footer-meta">
+      <span>© 2026 Leslie Zhang</span>
+      <span>Writing, research and working systems.</span>
+    </div>
+  </div>
+</footer>
+
+    <dialog class="ask-dialog" id="ask-leslie" aria-labelledby="ask-title">
+  <div class="ask-dialog__shell">
+    <div class="ask-dialog__topbar">
+      <div>
+        <h2 id="ask-title">Ask Leslie</h2>
+      </div>
+      <button class="icon-button" type="button" data-ask-close aria-label="关闭">×</button>
+    </div>
+    <p class="ask-dialog__intro">从本站公开文章中寻找答案。当前版本在浏览器本地检索，不上传问题，也不会编造不存在的经历。</p>
+    <form class="ask-form" data-ask-form>
+      <label class="sr-only" for="ask-query">输入问题</label>
+      <textarea id="ask-query" rows="2" placeholder="例如：Agent Runtime 应该怎么设计？" data-ask-input></textarea>
+      <button type="submit">检索知识库 <span aria-hidden="true">↗</span></button>
+    </form>
+    <div class="ask-suggestions" aria-label="推荐问题">
+      
+        <button type="button" data-ask-suggestion="Agent Runtime 应该怎么设计？">Agent Runtime 应该怎么设计？</button>
+      
+        <button type="button" data-ask-suggestion="如何让 AI 操控真实世界设备？">如何让 AI 操控真实世界设备？</button>
+      
+        <button type="button" data-ask-suggestion="Leslie 最近在研究什么？">Leslie 最近在研究什么？</button>
+      
+    </div>
+    <div class="ask-results" data-ask-results aria-live="polite">
+      <div class="ask-empty">
+        <p>输入一个问题，我会把你带到 Leslie 写过的相关内容。</p>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+    <dialog class="wechat-dialog" id="wechat-leslie" aria-labelledby="wechat-title">
+  <div class="wechat-dialog__shell">
+    <header>
+      <div>
+        <p class="section-label">WeChat</p>
+        <h2 id="wechat-title">微信联系</h2>
+      </div>
+      <button class="icon-button" type="button" data-wechat-close aria-label="关闭微信二维码">×</button>
+    </header>
+    <img src="/images/contact/wechat-leslie.png" alt="Leslie Zhang 的微信二维码" loading="lazy">
+    <p>扫码添加 Leslie，建议备注你的名字与来意。</p>
+  </div>
+</dialog>
+
+    <script>window.ORBITAL_ROOT = '/';</script>
+    <script src="/js/orbital.js" defer></script>
+  </body>
+</html>

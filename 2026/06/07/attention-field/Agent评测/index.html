@@ -1,0 +1,377 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+  <head>
+
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#050b18">
+<meta name="color-scheme" content="dark light">
+<title>Agent评测：从Golden Set到业务指标 | Leslie Zhang</title>
+<meta name="description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta name="author" content="Leslie Zhang">
+<link rel="canonical" href="https://leslieaibin.github.io/2026/06/07/attention-field/Agent%E8%AF%84%E6%B5%8B/">
+<link rel="icon" href="/imgs/01.jpg">
+<link rel="alternate" type="application/atom+xml" title="Leslie Zhang" href="/atom.xml">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Agent评测：从Golden Set到业务指标 | Leslie Zhang">
+<meta property="og:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta property="og:url" content="https://leslieaibin.github.io/2026/06/07/attention-field/Agent%E8%AF%84%E6%B5%8B/">
+<meta property="og:image" content="https://leslieaibin.github.io/2026/06/07/attention-field/Agent%E8%AF%84%E6%B5%8B/imgs/01-three-layers.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Agent评测：从Golden Set到业务指标 | Leslie Zhang">
+<meta name="twitter:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta name="twitter:image" content="https://leslieaibin.github.io/2026/06/07/attention-field/Agent%E8%AF%84%E6%B5%8B/imgs/01-three-layers.png">
+<script>
+  (function () {
+    var saved = localStorage.getItem('orbital-theme');
+    var theme = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    document.documentElement.dataset.theme = theme;
+  })();
+</script>
+<link rel="stylesheet" href="/css/orbital.css">
+<meta name="generator" content="Hexo 5.2.0"></head>
+  <body class="page-post">
+    <a class="skip-link" href="#main-content">跳到主要内容</a>
+    <div class="reading-progress" data-reading-progress></div>
+    <header class="site-header" data-header>
+  <div class="nav-shell">
+    <a class="brand" href="/" aria-label="返回首页">
+      <span class="brand-mark" aria-hidden="true"><img src="/images/brand/leslie-mythos-avatar.webp" alt="" width="512" height="512"></span>
+      <span class="brand-copy">
+        <strong>LESLIE</strong>
+        <small>REAL-WORLD AGENTS</small>
+      </span>
+    </a>
+
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav" data-nav-toggle>
+      <span></span><span></span>
+      <span class="sr-only">打开导航</span>
+    </button>
+
+    <nav class="main-nav" id="main-nav" aria-label="主导航" data-nav>
+      
+        <a href="/" class="">首页</a>
+      
+        <a href="/writing/" class="">写作</a>
+      
+        <a href="/projects/" class="">项目</a>
+      
+        <a href="/about/" class="">关于</a>
+      
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换明暗主题">
+        <span class="theme-toggle__sun" aria-hidden="true">☼</span>
+        <span class="theme-toggle__moon" aria-hidden="true">◐</span>
+      </button>
+      <button class="ask-nav" type="button" data-ask-open>ASK LESLIE</button>
+    </nav>
+  </div>
+</header>
+
+    <main id="main-content"><article class="post-shell">
+  <header class="post-hero shell">
+    <a class="post-back" href="/writing/">← 返回写作</a>
+    <div class="post-hero__meta">
+      <time datetime="2026-06-07">2026 年 06 月 07 日</time>
+      <span>5 分钟阅读</span>
+    </div>
+    <h1>Agent评测：从Golden Set到业务指标</h1>
+    
+    <div class="chip-row"><a href="/tags/Agent/">Agent</a><a href="/tags/LLM/">LLM</a><a href="/tags/%E8%AF%84%E6%B5%8B/">评测</a><a href="/tags/%E8%B4%A8%E9%87%8F%E4%BF%9D%E9%9A%9C/">质量保障</a></div>
+  </header>
+
+  <div class="post-cover shell"><img src="/2026/06/07/attention-field/Agent%E8%AF%84%E6%B5%8B/imgs/01-three-layers.png" alt="Agent评测：从Golden Set到业务指标"></div>
+
+  <div class="post-layout shell">
+    <aside class="post-toc" aria-label="文章目录">
+      <span class="aside-title">目录</span>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88Agent%E8%AF%84%E6%B5%8B%E9%9A%BE"><span class="toc-text">为什么Agent评测难</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E9%9D%9E%E7%A1%AE%E5%AE%9A%E6%80%A7"><span class="toc-text">1. 非确定性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E9%95%BF%E9%93%BE%E8%B7%AF"><span class="toc-text">2. 长链路</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E8%AF%84%E4%BB%B7%E6%A0%87%E5%87%86%E6%A8%A1%E7%B3%8A"><span class="toc-text">3. 评价标准模糊</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AF%84%E6%B5%8B%E4%BD%93%E7%B3%BB%E7%9A%84%E4%B8%89%E5%B1%82%E6%A8%A1%E5%9E%8B"><span class="toc-text">评测体系的三层模型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Layer-1-Golden-Set%EF%BC%88%E5%9F%BA%E7%BA%BF%EF%BC%89"><span class="toc-text">Layer 1: Golden Set（基线）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Layer-2-LLM-as-Judge%EF%BC%88%E8%87%AA%E5%8A%A8%E5%8C%96%EF%BC%89"><span class="toc-text">Layer 2: LLM-as-Judge（自动化）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Layer-3-%E4%B8%9A%E5%8A%A1%E6%8C%87%E6%A0%87%EF%BC%88%E7%BA%BF%E4%B8%8A%EF%BC%89"><span class="toc-text">Layer 3: 业务指标（线上）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%BF%E7%9C%9F%E7%8E%AF%E5%A2%83"><span class="toc-text">仿真环境</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%BF%E7%9C%9F-%E2%89%A0-Mock"><span class="toc-text">仿真 ≠ Mock</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%90%AD%E5%BB%BA%E6%80%9D%E8%B7%AF"><span class="toc-text">搭建思路</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%88%90%E6%9C%AC%E8%AE%A1%E7%AE%97"><span class="toc-text">成本计算</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E9%A3%9E%E8%BD%AE"><span class="toc-text">数据飞轮</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AF%84%E6%B5%8B%E5%8D%B3%E4%B8%8A%E7%BA%BF%E9%97%A8%E7%A6%81"><span class="toc-text">评测即上线门禁</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="toc-text">参考资料</span></a></li></ol>
+    </aside>
+    <div class="article-content"><h1 id="Agent评测：从Golden-Set到业务指标"><a href="#Agent评测：从Golden-Set到业务指标" class="headerlink" title="Agent评测：从Golden Set到业务指标"></a>Agent评测：从Golden Set到业务指标</h1><p>很多人觉得Agent评测就是”写几个测试用例，跑一下看结果对不对”。和单元测试有些相似，但本质不同。</p>
+<p>但Agent的行为是<strong>非确定性</strong>的——同样的输入，今天能过明天可能就不过了。你改了一个Prompt的措辞，或者LLM provider悄悄更新了模型，Agent的行为就可能漂移。</p>
+<p>你需要的不是”通过/不通过”的二值判断，而是一套<strong>能持续度量质量、定位退化、驱动迭代的评测体系</strong>。</p>
+<hr>
+<h2 id="为什么Agent评测难"><a href="#为什么Agent评测难" class="headerlink" title="为什么Agent评测难"></a>为什么Agent评测难</h2><p>原因有三，且个个棘手。</p>
+<h3 id="1-非确定性"><a href="#1-非确定性" class="headerlink" title="1. 非确定性"></a>1. 非确定性</h3><p>传统软件测试的假设是：输入确定 → 输出确定。断言<code>add(2, 3) == 5</code>永远成立。</p>
+<p>但Agent并非如此。同一个用户请求”帮我检查这片森林有没有火灾”，Agent今天可能规划15步完成，明天可能规划18步。路径不同，但结果可能都是对的。如何编写断言就成了难题。</p>
+<h3 id="2-长链路"><a href="#2-长链路" class="headerlink" title="2. 长链路"></a>2. 长链路</h3><p>一个Agent任务可能涉及20-50步工具调用。每一步都可能出错，中间任何一步失败都会影响最终结果。</p>
+<p>假设每步的成功率是99%，50步的端到端成功率是 <code>0.99^50 ≈ 60.5%</code>。换言之，即使单步成功率极高，长链路任务的端到端成功率也仅约六成。</p>
+<h3 id="3-评价标准模糊"><a href="#3-评价标准模糊" class="headerlink" title="3. 评价标准模糊"></a>3. 评价标准模糊</h3><p>“帮我订一张去上海的机票”——什么算评测通过？</p>
+<ul>
+<li>找到了航班并展示？✓</li>
+<li>完成了预订？✓✓</li>
+<li>选了最便宜的？✓✓✓</li>
+<li>选了最便宜且时间最合适的？✓✓✓✓</li>
+</ul>
+<p>评价标准不是非黑即白，是分层次的。</p>
+<hr>
+<h2 id="评测体系的三层模型"><a href="#评测体系的三层模型" class="headerlink" title="评测体系的三层模型"></a>评测体系的三层模型</h2><p><img src="imgs/01-three-layers.png" alt="三层评测模型"></p>
+<h3 id="Layer-1-Golden-Set（基线）"><a href="#Layer-1-Golden-Set（基线）" class="headerlink" title="Layer 1: Golden Set（基线）"></a>Layer 1: Golden Set（基线）</h3><p>Golden Set是你精心标注的标准测试集。它是评测的锚点。</p>
+<p><img src="imgs/04-golden-set.png" alt="Golden Set结构"></p>
+<p><strong>怎么建？</strong></p>
+<ol>
+<li>从真实用户场景中提取50-100个代表性任务</li>
+<li>每个任务标注期望的行为（不是期望的输出，而是期望的行为路径）</li>
+<li>人工验证每个标注的正确性</li>
+</ol>
+<p><strong>标注什么？</strong></p>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>标注内容</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>意图</td>
+<td>用户真实意图</td>
+<td>“看有没有火灾” → 巡检+异常检测</td>
+</tr>
+<tr>
+<td>工具调用</td>
+<td>应该调用哪些工具</td>
+<td><code>take_off</code> → <code>fly_to</code> → <code>take_photo</code> → <code>detect_fire</code></td>
+</tr>
+<tr>
+<td>最终结果</td>
+<td>任务完成的判定标准</td>
+<td>发现火灾→报警，未发现→生成报告</td>
+</tr>
+<tr>
+<td>边界条件</td>
+<td>异常处理</td>
+<td>目标区域不可达时怎么办</td>
+</tr>
+</tbody></table>
+<p><strong>规模建议</strong>：</p>
+<ul>
+<li>初始50个case，覆盖核心场景</li>
+<li>逐步扩展到200-500个，覆盖长尾场景</li>
+<li>每个case标注耗时约15-30分钟</li>
+</ul>
+<h3 id="Layer-2-LLM-as-Judge（自动化）"><a href="#Layer-2-LLM-as-Judge（自动化）" class="headerlink" title="Layer 2: LLM-as-Judge（自动化）"></a>Layer 2: LLM-as-Judge（自动化）</h3><p>Golden Set的问题是需要人工判断”Agent做得对不对”。这在大规模评测中不可持续。</p>
+<p>解法：<strong>让LLM评判LLM的输出。</strong></p>
+<p>具体方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">输入给Judge LLM：</span><br><span class="line">1. 原始任务描述</span><br><span class="line">2. Agent的执行过程（工具调用链路）</span><br><span class="line">3. 最终输出结果</span><br><span class="line">4. 评判标准（rubric，即评分量规）</span><br><span class="line"></span><br><span class="line">Judge LLM输出：</span><br><span class="line">- 分数（1-5）</span><br><span class="line">- 判断理由</span><br><span class="line">- 具体问题点</span><br></pre></td></tr></table></figure>
+
+<p><strong>准确率如何？</strong></p>
+<p>研究表明，GPT-4作为Judge与人工评判在pairwise比较场景下的一致性约80%[^1]。不完美，但已经可以作为高效的初筛工具——LLM Judge标出可能有问题的case，再人工复核。</p>
+<p><strong>Judge的Prompt设计很关键</strong>。一个不好的Judge Prompt会导致系统性偏差。比如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"># 差的Judge Prompt</span><br><span class="line">&quot;请判断这个Agent的输出是否正确。&quot;</span><br><span class="line"></span><br><span class="line"># 好的Judge Prompt</span><br><span class="line">&quot;你是一个Agent评测专家。请按以下维度评分：</span><br><span class="line"></span><br><span class="line">1. 任务完成度（1-5）：Agent是否完成了用户要求的任务？</span><br><span class="line">   - 1: 完全未完成</span><br><span class="line">   - 3: 部分完成，有关键步骤缺失</span><br><span class="line">   - 5: 完整完成</span><br><span class="line"></span><br><span class="line">2. 执行效率（1-5）：Agent是否用最少的步骤完成了任务？</span><br><span class="line">   - 1: 明显有冗余步骤</span><br><span class="line">   - 3: 有少量优化空间</span><br><span class="line">   - 5: 步骤精简高效</span><br><span class="line"></span><br><span class="line">3. 异常处理（1-5）：遇到问题时Agent是否正确处理？</span><br><span class="line">   ...&quot;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Layer-3-业务指标（线上）"><a href="#Layer-3-业务指标（线上）" class="headerlink" title="Layer 3: 业务指标（线上）"></a>Layer 3: 业务指标（线上）</h3><p>Golden Set和LLM Judge是离线评测。线上需要看<strong>业务指标</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>指标</th>
+<th>定义</th>
+<th>目标</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>任务完成率</td>
+<td>Agent完整执行任务的比例</td>
+<td>≥ 95%</td>
+</tr>
+<tr>
+<td>用户满意度</td>
+<td>用户给正面反馈的比例</td>
+<td>≥ 80%</td>
+</tr>
+<tr>
+<td>平均执行步数</td>
+<td>完成一次任务的工具调用次数</td>
+<td>越少越好</td>
+</tr>
+<tr>
+<td>平均耗时</td>
+<td>从用户发起到任务完成的时间</td>
+<td>取决于任务类型</td>
+</tr>
+<tr>
+<td>React兜底率</td>
+<td>触发ReAct（Reasoning+Acting）异常兜底机制的比例</td>
+<td>≤ 10%</td>
+</tr>
+<tr>
+<td>修正率</td>
+<td>用户在Agent完成后手动修正的比例</td>
+<td>≤ 15%</td>
+</tr>
+</tbody></table>
+<p>这些指标和Golden Set怎么联动？</p>
+<p><strong>线上发现bad case → 标注 → 补充到Golden Set → 下一代模型/Prompt改进 → Golden Set验证不退化 → 上线</strong>。这就是数据飞轮——通过线上问题持续补充测试集、驱动模型改进的闭环机制。</p>
+<p><img src="imgs/03-data-flywheel-detail.png" alt="数据飞轮详细流程"></p>
+<hr>
+<h2 id="仿真环境"><a href="#仿真环境" class="headerlink" title="仿真环境"></a>仿真环境</h2><p>真机测试成本高、周期长，因此需要搭建仿真环境来运行评测。</p>
+<p><img src="imgs/02-simulation.png" alt="仿真环境架构"></p>
+<h3 id="仿真-≠-Mock"><a href="#仿真-≠-Mock" class="headerlink" title="仿真 ≠ Mock"></a>仿真 ≠ Mock</h3><p>很多人把仿真等同于Mock。区别：</p>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>Mock</th>
+<th>仿真</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>工具行为</td>
+<td>固定返回预设值</td>
+<td>模拟真实行为（有延迟、有失败、有边界条件）</td>
+</tr>
+<tr>
+<td>环境状态</td>
+<td>无状态</td>
+<td>维护状态（文件系统、数据库）</td>
+</tr>
+<tr>
+<td>异常模拟</td>
+<td>手动触发</td>
+<td>随机注入（网络超时、工具报错）</td>
+</tr>
+<tr>
+<td>成本</td>
+<td>零</td>
+<td>有（需要计算资源）</td>
+</tr>
+</tbody></table>
+<p>仿真的目标是<strong>尽量接近真实环境</strong>。一个只返回成功结果的Mock，和真实的Agent执行环境差太远了。</p>
+<h3 id="搭建思路"><a href="#搭建思路" class="headerlink" title="搭建思路"></a>搭建思路</h3><ol>
+<li><strong>模拟工具层</strong>：把真实工具替换为模拟版本，但保持相同的接口</li>
+<li><strong>模拟用户交互</strong>：人机协同（Human-in-the-Loop）的确认步骤自动模拟（根据场景自动选择”确认”或”取消”）</li>
+<li><strong>异常注入</strong>：按概率注入超时、错误、异常响应</li>
+<li><strong>状态管理</strong>：维护一个虚拟的环境状态（文件、数据库、外部服务状态）</li>
+</ol>
+<h3 id="成本计算"><a href="#成本计算" class="headerlink" title="成本计算"></a>成本计算</h3><p>用本地GPU（如RTX 5090）跑小模型做评测：</p>
+<table>
+<thead>
+<tr>
+<th>方案</th>
+<th>每次评测成本</th>
+<th>100个case成本</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>调API（Claude Opus）</td>
+<td>~$0.50</td>
+<td>~$50</td>
+</tr>
+<tr>
+<td>调API（Claude Haiku）</td>
+<td>~$0.02</td>
+<td>~$2</td>
+</tr>
+<tr>
+<td>本地小模型（5090）</td>
+<td>~$0.001（电费）</td>
+<td>~$0.10</td>
+</tr>
+</tbody></table>
+<p>本地方案的代价是准确率略低，但对Golden Set基线评测来说已经够用。</p>
+<hr>
+<h2 id="数据飞轮"><a href="#数据飞轮" class="headerlink" title="数据飞轮"></a>数据飞轮</h2><p>评测体系的终极目标是建立数据飞轮：</p>
+<p>这个飞轮转一圈的速度，决定了你的Agent迭代速度。快的团队一天转一圈，慢的团队一个月转一圈。差距就是这么拉开的。</p>
+<hr>
+<h2 id="评测即上线门禁"><a href="#评测即上线门禁" class="headerlink" title="评测即上线门禁"></a>评测即上线门禁</h2><p>评测不是”做完了测一下”，而是<strong>上线门禁</strong>。</p>
+<p>每次发版前：</p>
+<ol>
+<li>跑完整Golden Set</li>
+<li>端到端完成率 ≥ 95%（红线，不达标不放行）</li>
+<li>无新增退化case（可以有改善的case，但不能有变差的）</li>
+<li>LLM Judge平均分不低于上个版本</li>
+</ol>
+<p>不通过就卡住。和CI/CD集成，自动化执行。</p>
+<p>这并非理想主义，而是工程纪律。缺乏门禁的Agent系统上线，风险极高——小概率事件一旦发生，后果严重。</p>
+<hr>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><p>Zheng et al., “Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena”, NeurIPS 2023</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2308.03688">AgentBench: Evaluating LLMs as Agents</a></li>
+<li><a target="_blank" rel="noopener" href="https://webarena.dev/">WebArena: A Realistic Web Environment for Building Autonomous Agents</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.swebench.com/">SWE-bench: Can Language Models Resolve Real-World GitHub Issues?</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/openai/evals">OpenAI Evals Framework</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/promptfoo/promptfoo">Promptfoo: LLM Evaluation Framework</a></li>
+</ul>
+</div>
+    <aside class="post-rail">
+      <span class="post-rail__line"></span>
+      <span>LESLIE / WRITING</span>
+    </aside>
+  </div>
+
+  <footer class="post-footer shell">
+    <div><h2>如果这篇文章帮到了你，<br>也许下一篇会更有意思。</h2></div>
+    <a class="button button--primary" href="/writing/">继续阅读 →</a>
+  </footer>
+</article>
+</main>
+    <footer class="site-footer">
+  <div class="footer-grid">
+    <div>
+      <p class="footer-kicker">Leslie Zhang</p>
+      <p class="footer-statement">流水不争先，<br>争的是滔滔不绝。</p>
+    </div>
+    <div class="footer-links">
+      <a href="https://github.com/leslieAIbin" target="_blank" rel="noreferrer">GitHub ↗</a>
+      <a href="https://www.instagram.com/leslieaibin/" target="_blank" rel="noreferrer">Instagram ↗</a>
+      <button type="button" data-wechat-open>微信 / WeChat</button>
+      <a href="mailto:aibinzhangleslie@gmail.com">Email ↗</a>
+      <a href="/atom.xml">RSS ↗</a>
+    </div>
+    <div class="footer-meta">
+      <span>© 2026 Leslie Zhang</span>
+      <span>Writing, research and working systems.</span>
+    </div>
+  </div>
+</footer>
+
+    <dialog class="ask-dialog" id="ask-leslie" aria-labelledby="ask-title">
+  <div class="ask-dialog__shell">
+    <div class="ask-dialog__topbar">
+      <div>
+        <h2 id="ask-title">Ask Leslie</h2>
+      </div>
+      <button class="icon-button" type="button" data-ask-close aria-label="关闭">×</button>
+    </div>
+    <p class="ask-dialog__intro">从本站公开文章中寻找答案。当前版本在浏览器本地检索，不上传问题，也不会编造不存在的经历。</p>
+    <form class="ask-form" data-ask-form>
+      <label class="sr-only" for="ask-query">输入问题</label>
+      <textarea id="ask-query" rows="2" placeholder="例如：Agent Runtime 应该怎么设计？" data-ask-input></textarea>
+      <button type="submit">检索知识库 <span aria-hidden="true">↗</span></button>
+    </form>
+    <div class="ask-suggestions" aria-label="推荐问题">
+      
+        <button type="button" data-ask-suggestion="Agent Runtime 应该怎么设计？">Agent Runtime 应该怎么设计？</button>
+      
+        <button type="button" data-ask-suggestion="如何让 AI 操控真实世界设备？">如何让 AI 操控真实世界设备？</button>
+      
+        <button type="button" data-ask-suggestion="Leslie 最近在研究什么？">Leslie 最近在研究什么？</button>
+      
+    </div>
+    <div class="ask-results" data-ask-results aria-live="polite">
+      <div class="ask-empty">
+        <p>输入一个问题，我会把你带到 Leslie 写过的相关内容。</p>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+    <dialog class="wechat-dialog" id="wechat-leslie" aria-labelledby="wechat-title">
+  <div class="wechat-dialog__shell">
+    <header>
+      <div>
+        <p class="section-label">WeChat</p>
+        <h2 id="wechat-title">微信联系</h2>
+      </div>
+      <button class="icon-button" type="button" data-wechat-close aria-label="关闭微信二维码">×</button>
+    </header>
+    <img src="/images/contact/wechat-leslie.png" alt="Leslie Zhang 的微信二维码" loading="lazy">
+    <p>扫码添加 Leslie，建议备注你的名字与来意。</p>
+  </div>
+</dialog>
+
+    <script>window.ORBITAL_ROOT = '/';</script>
+    <script src="/js/orbital.js" defer></script>
+  </body>
+</html>

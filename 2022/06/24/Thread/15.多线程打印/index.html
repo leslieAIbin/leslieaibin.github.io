@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+  <head>
+
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#050b18">
+<meta name="color-scheme" content="dark light">
+<title>15.多线程打印 | Leslie Zhang</title>
+<meta name="description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta name="author" content="Leslie Zhang">
+<link rel="canonical" href="https://leslieaibin.github.io/2022/06/24/Thread/15.%E5%A4%9A%E7%BA%BF%E7%A8%8B%E6%89%93%E5%8D%B0/">
+<link rel="icon" href="/imgs/01.jpg">
+<link rel="alternate" type="application/atom+xml" title="Leslie Zhang" href="/atom.xml">
+<meta property="og:type" content="article">
+<meta property="og:title" content="15.多线程打印 | Leslie Zhang">
+<meta property="og:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta property="og:url" content="https://leslieaibin.github.io/2022/06/24/Thread/15.%E5%A4%9A%E7%BA%BF%E7%A8%8B%E6%89%93%E5%8D%B0/">
+<meta property="og:image" content="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/28.jpg?raw=true">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="15.多线程打印 | Leslie Zhang">
+<meta name="twitter:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta name="twitter:image" content="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/28.jpg?raw=true">
+<script>
+  (function () {
+    var saved = localStorage.getItem('orbital-theme');
+    var theme = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    document.documentElement.dataset.theme = theme;
+  })();
+</script>
+<link rel="stylesheet" href="/css/orbital.css">
+<meta name="generator" content="Hexo 5.2.0"></head>
+  <body class="page-post">
+    <a class="skip-link" href="#main-content">跳到主要内容</a>
+    <div class="reading-progress" data-reading-progress></div>
+    <header class="site-header" data-header>
+  <div class="nav-shell">
+    <a class="brand" href="/" aria-label="返回首页">
+      <span class="brand-mark" aria-hidden="true"><img src="/images/brand/leslie-mythos-avatar.webp" alt="" width="512" height="512"></span>
+      <span class="brand-copy">
+        <strong>LESLIE</strong>
+        <small>REAL-WORLD AGENTS</small>
+      </span>
+    </a>
+
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav" data-nav-toggle>
+      <span></span><span></span>
+      <span class="sr-only">打开导航</span>
+    </button>
+
+    <nav class="main-nav" id="main-nav" aria-label="主导航" data-nav>
+      
+        <a href="/" class="">首页</a>
+      
+        <a href="/writing/" class="">写作</a>
+      
+        <a href="/projects/" class="">项目</a>
+      
+        <a href="/about/" class="">关于</a>
+      
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换明暗主题">
+        <span class="theme-toggle__sun" aria-hidden="true">☼</span>
+        <span class="theme-toggle__moon" aria-hidden="true">◐</span>
+      </button>
+      <button class="ask-nav" type="button" data-ask-open>ASK LESLIE</button>
+    </nav>
+  </div>
+</header>
+
+    <main id="main-content"><article class="post-shell">
+  <header class="post-hero shell">
+    <a class="post-back" href="/writing/">← 返回写作</a>
+    <div class="post-hero__meta">
+      <time datetime="2022-06-24">2022 年 06 月 24 日</time>
+      <span>2 分钟阅读</span>
+    </div>
+    <h1>15.多线程打印</h1>
+    
+    <div class="chip-row"><a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E4%B8%8E%E5%B9%B6%E5%8F%91/">多线程与并发</a></div>
+  </header>
+
+  <div class="post-cover shell"><img src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/28.jpg?raw=true" alt="15.多线程打印"></div>
+
+  <div class="post-layout shell">
+    <aside class="post-toc" aria-label="文章目录">
+      <span class="aside-title">目录</span>
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#synchronized-wait-notify"><span class="toc-text">synchronized+wait&#x2F;notify</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Lock"><span class="toc-text">Lock</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Lock-Condition"><span class="toc-text">Lock+Condition</span></a></li></ol>
+    </aside>
+    <div class="article-content"><p>一道面试中常考的并发编程的代码题：</p>
+<ul>
+<li>三个线程T1、T2、T3轮流打印ABC，打印n次，如ABCABCABCABC…….</li>
+<li>两个线程交替打印1-100的奇偶数</li>
+<li>N个线程循环打印1-100</li>
+<li>……</li>
+</ul>
+<p>其实这类问题本质上都是线程通信问题，思路基本上都是一个线程执行完毕，阻塞该线程，唤醒其他线程，按顺序执行下一个线程。下面先来看最简单的，如何按顺序执行三个线程。</p>
+<h3 id="synchronized-wait-notify"><a href="#synchronized-wait-notify" class="headerlink" title="synchronized+wait/notify"></a><strong>synchronized+wait/notify</strong></h3><p>基本思路就是线程A、线程B、线程C三个线程同时启动，因为变量<code>num</code>的初始值为<code>0</code>，所以线程B或线程C拿到锁后，进入<code>while()</code>循环，然后执行<code>wait()</code>方法，线程线程阻塞，释放锁。只有线程A拿到锁后，不进入<code>while()</code>循环，执行<code>num++</code>，打印字符<code>A</code>，最后唤醒线程B和线程C。此时<code>num</code>值为<code>1</code>，只有线程B拿到锁后，不被阻塞，执行<code>num++</code>，打印字符<code>B</code>，最后唤醒线程A和线程C，后面以此类推。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Wait_Notify_ABC</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">volatile</span> <span class="keyword">int</span> num;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Object Lock = <span class="keyword">new</span> Object();</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">printABC</span><span class="params">(<span class="keyword">int</span> tagertNum)</span></span>&#123;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; ++i)&#123;</span><br><span class="line">            <span class="keyword">synchronized</span> (Lock)&#123;</span><br><span class="line">                <span class="keyword">while</span> (num % <span class="number">3</span> != tagertNum)&#123;</span><br><span class="line">                    <span class="keyword">try</span> &#123;</span><br><span class="line">                        Lock.wait();</span><br><span class="line">                    &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                        e.printStackTrace();</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                num++;</span><br><span class="line">                System.out.println(Thread.currentThread().getName());</span><br><span class="line">                Lock.notifyAll();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Wait_Notify_ABC wait_Notify_ABC = <span class="keyword">new</span> Wait_Notify_ABC();</span><br><span class="line">        Thread threadA = <span class="keyword">new</span> Thread(() -&gt; wait_Notify_ABC.printABC(<span class="number">0</span>), <span class="string">&quot;A&quot;</span>);</span><br><span class="line">        Thread threadB = <span class="keyword">new</span> Thread(() -&gt; wait_Notify_ABC.printABC(<span class="number">1</span>),  <span class="string">&quot;B&quot;</span>);</span><br><span class="line">        Thread threadC = <span class="keyword">new</span> Thread(() -&gt; wait_Notify_ABC.printABC(<span class="number">2</span>),  <span class="string">&quot;C&quot;</span>);</span><br><span class="line">        threadA.start();</span><br><span class="line">        threadB.start();</span><br><span class="line">        threadC.start();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>输出结果：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ABCABCABCABCABCABCABCABCABCABC</span><br><span class="line">Process finished with exit code <span class="number">0</span></span><br></pre></td></tr></table></figure>
+
+<p>下面看第二个问题，两个线程交替打印1-100的奇偶数，为了减少输入所占篇幅，这里将100 改成了10。基本思路上面类似，线程odd先拿到锁——打印数字——唤醒线程even——阻塞线程odd，以此循环。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span>  <span class="title">Wait_Notify_Odd_Even</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> Object monitor = <span class="keyword">new</span> Object();</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">volatile</span> <span class="keyword">int</span> count;</span><br><span class="line">    Wait_Notify_Odd_Even(<span class="keyword">int</span> initCount) &#123;</span><br><span class="line">        <span class="keyword">this</span>.count = initCount;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">printOddEven</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">synchronized</span> (monitor) &#123;</span><br><span class="line">            <span class="keyword">while</span> (count &lt; <span class="number">10</span>) &#123;</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    System.out.print( Thread.currentThread().getName() + <span class="string">&quot;：&quot;</span>);</span><br><span class="line">                    System.out.println(++count);</span><br><span class="line">                    monitor.notifyAll();</span><br><span class="line">                    monitor.wait();</span><br><span class="line">                &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                    e.printStackTrace();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">//防止count=10后，while()循环不再执行，有子线程被阻塞未被唤醒，导致主线程不能退出</span></span><br><span class="line">            monitor.notifyAll();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">        Wait_Notify_Odd_Even waitNotifyOddEven = <span class="keyword">new</span> Wait_Notify_Odd_Even(<span class="number">0</span>);</span><br><span class="line">        <span class="keyword">new</span> Thread(waitNotifyOddEven::printOddEven, <span class="string">&quot;odd&quot;</span>).start();</span><br><span class="line">        Thread.sleep(<span class="number">10</span>); <span class="comment">//为了保证线程odd先拿到锁</span></span><br><span class="line">        <span class="keyword">new</span> Thread(waitNotifyOddEven::printOddEven, <span class="string">&quot;even&quot;</span>).start();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>运行结果：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">odd：<span class="number">1</span></span><br><span class="line">even：<span class="number">2</span></span><br><span class="line">odd：<span class="number">3</span></span><br><span class="line">even：<span class="number">4</span></span><br><span class="line">odd：<span class="number">5</span></span><br><span class="line">even：<span class="number">6</span></span><br><span class="line">odd：<span class="number">7</span></span><br><span class="line">even：<span class="number">8</span></span><br><span class="line">odd：<span class="number">9</span></span><br><span class="line">even：<span class="number">10</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>再看第三个问题，N个线程循环打印1-100，其实仔细想想这个和三个线程循环打印ABC并没有什么本质区别，只需要加上判断是否到了打印数字的最大值的语句即可。假设N=3，为了能把输出结果完全显示，打印1-10，代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Wait_Notify_100</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> num;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Object LOCK = <span class="keyword">new</span> Object();</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> maxnum = <span class="number">10</span>;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">printABC</span><span class="params">(<span class="keyword">int</span> targetNum)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">            <span class="keyword">synchronized</span> (LOCK) &#123;</span><br><span class="line">                <span class="keyword">while</span> (num % <span class="number">3</span> != targetNum) &#123; <span class="comment">//想想这里为什么不能用if代替，想不起来可以看公众号上一篇文章</span></span><br><span class="line">                    <span class="keyword">if</span>(num &gt;= maxnum)&#123;</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="keyword">try</span> &#123;</span><br><span class="line">                        LOCK.wait();</span><br><span class="line">                    &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                        e.printStackTrace();</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">if</span>(num &gt;= maxnum)&#123;</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                num++;</span><br><span class="line">                System.out.println(Thread.currentThread().getName() + <span class="string">&quot;: &quot;</span> + num);</span><br><span class="line">                LOCK.notifyAll();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Wait_Notify_100  wait_notify_100 = <span class="keyword">new</span> Wait_Notify_100 ();</span><br><span class="line">        <span class="keyword">new</span> Thread(() -&gt; &#123;</span><br><span class="line">            wait_notify_100.printABC(<span class="number">0</span>);</span><br><span class="line">        &#125;, <span class="string">&quot;thread1&quot;</span>).start();</span><br><span class="line">        <span class="keyword">new</span> Thread(() -&gt; &#123;</span><br><span class="line">            wait_notify_100.printABC(<span class="number">1</span>);</span><br><span class="line">        &#125;, <span class="string">&quot;thread2&quot;</span>).start();</span><br><span class="line">        <span class="keyword">new</span> Thread(() -&gt; &#123;</span><br><span class="line">            wait_notify_100.printABC(<span class="number">2</span>);</span><br><span class="line">        &#125;, <span class="string">&quot;thread3&quot;</span>).start();</span><br><span class="line">    &#125;    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>输出打印：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">thread1: <span class="number">1</span></span><br><span class="line">thread2: <span class="number">2</span></span><br><span class="line">thread3: <span class="number">3</span></span><br><span class="line">thread1: <span class="number">4</span></span><br><span class="line">thread2: <span class="number">5</span></span><br><span class="line">thread3: <span class="number">6</span></span><br><span class="line">thread1: <span class="number">7</span></span><br><span class="line">thread2: <span class="number">8</span></span><br><span class="line">thread3: <span class="number">9</span></span><br><span class="line">thread1: <span class="number">10</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="Lock"><a href="#Lock" class="headerlink" title="Lock"></a><strong>Lock</strong></h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"> <span class="class"><span class="keyword">class</span> <span class="title">Lock_ABC</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> num;   <span class="comment">// 当前状态值：保证三个线程之间交替打印</span></span><br><span class="line">    <span class="keyword">private</span> Lock lock = <span class="keyword">new</span> ReentrantLock();</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">printABC</span><span class="params">(<span class="keyword">int</span> targetNum)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; ) &#123;</span><br><span class="line">            lock.lock();</span><br><span class="line">            <span class="keyword">if</span> (num % <span class="number">3</span> == targetNum) &#123;</span><br><span class="line">                num++;</span><br><span class="line">                i++;</span><br><span class="line">                System.out.print(Thread.currentThread().getName());</span><br><span class="line">            &#125;</span><br><span class="line">            lock.unlock();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Lock_ABC lockABC = <span class="keyword">new</span> Lock_ABC();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">new</span> Thread(() -&gt; &#123;</span><br><span class="line">            lockABC.printABC(<span class="number">0</span>);</span><br><span class="line">        &#125;, <span class="string">&quot;A&quot;</span>).start();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">new</span> Thread(() -&gt; &#123;</span><br><span class="line">            lockABC.printABC(<span class="number">1</span>);</span><br><span class="line">        &#125;, <span class="string">&quot;B&quot;</span>).start();</span><br><span class="line">        <span class="keyword">new</span> Thread(() -&gt; &#123;</span><br><span class="line">            lockABC.printABC(<span class="number">2</span>);</span><br><span class="line">        &#125;, <span class="string">&quot;C&quot;</span>).start();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>输出日志：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ABCABCABCABCABCABCABCABCABCABC</span><br></pre></td></tr></table></figure>
+
+<h3 id="Lock-Condition"><a href="#Lock-Condition" class="headerlink" title="Lock+Condition"></a><strong>Lock+Condition</strong></h3><p>使用Lock+Condition实现对线程的精准唤醒，减少对同步锁的无意义竞争，浪费资源。</p>
+<p>该思路和synchronized+wait/notify方法的很像，synchronized对应lock，await/signal方法对应wait/notify方法。下面的代码为了能精准地唤醒下一个线程，创建了多个Condition对象。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">LockConditionABC</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> num;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Lock lock = <span class="keyword">new</span> ReentrantLock();</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Condition c1 = lock.newCondition();</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Condition c2 = lock.newCondition();</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Condition c3 = lock.newCondition();</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">printABC</span><span class="params">(<span class="keyword">int</span> targetNum, Condition currentThread, Condition nextThread)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; ) &#123;</span><br><span class="line">            lock.lock();</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                <span class="keyword">while</span> (num % <span class="number">3</span> != targetNum) &#123;</span><br><span class="line">                    currentThread.await();  <span class="comment">//阻塞当前线程</span></span><br><span class="line">                &#125;</span><br><span class="line">                num++;</span><br><span class="line">                i++;</span><br><span class="line">                System.out.print(Thread.currentThread().getName());</span><br><span class="line">                nextThread.signal();    <span class="comment">//唤醒下一个线程，而不是唤醒所有线程</span></span><br><span class="line">            &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">                lock.unlock();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        LockConditionABC print = <span class="keyword">new</span> LockConditionABC();</span><br><span class="line">        <span class="keyword">new</span> Thread(() -&gt; &#123;</span><br><span class="line">            print.printABC(<span class="number">0</span>, c1, c2);</span><br><span class="line">        &#125;, <span class="string">&quot;A&quot;</span>).start();</span><br><span class="line">        <span class="keyword">new</span> Thread(() -&gt; &#123;</span><br><span class="line">            print.printABC(<span class="number">1</span>, c2, c3);</span><br><span class="line">        &#125;, <span class="string">&quot;B&quot;</span>).start();</span><br><span class="line">        <span class="keyword">new</span> Thread(() -&gt; &#123;</span><br><span class="line">            print.printABC(<span class="number">2</span>, c3, c1);</span><br><span class="line">        &#125;, <span class="string">&quot;C&quot;</span>).start();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>输出结果：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ABCABCABCABCABCABCABCABCABCABC</span><br></pre></td></tr></table></figure>
+
+</div>
+    <aside class="post-rail">
+      <span class="post-rail__line"></span>
+      <span>LESLIE / WRITING</span>
+    </aside>
+  </div>
+
+  <footer class="post-footer shell">
+    <div><h2>如果这篇文章帮到了你，<br>也许下一篇会更有意思。</h2></div>
+    <a class="button button--primary" href="/writing/">继续阅读 →</a>
+  </footer>
+</article>
+</main>
+    <footer class="site-footer">
+  <div class="footer-grid">
+    <div>
+      <p class="footer-kicker">Leslie Zhang</p>
+      <p class="footer-statement">流水不争先，<br>争的是滔滔不绝。</p>
+    </div>
+    <div class="footer-links">
+      <a href="https://github.com/leslieAIbin" target="_blank" rel="noreferrer">GitHub ↗</a>
+      <a href="https://www.instagram.com/leslieaibin/" target="_blank" rel="noreferrer">Instagram ↗</a>
+      <button type="button" data-wechat-open>微信 / WeChat</button>
+      <a href="mailto:aibinzhangleslie@gmail.com">Email ↗</a>
+      <a href="/atom.xml">RSS ↗</a>
+    </div>
+    <div class="footer-meta">
+      <span>© 2026 Leslie Zhang</span>
+      <span>Writing, research and working systems.</span>
+    </div>
+  </div>
+</footer>
+
+    <dialog class="ask-dialog" id="ask-leslie" aria-labelledby="ask-title">
+  <div class="ask-dialog__shell">
+    <div class="ask-dialog__topbar">
+      <div>
+        <h2 id="ask-title">Ask Leslie</h2>
+      </div>
+      <button class="icon-button" type="button" data-ask-close aria-label="关闭">×</button>
+    </div>
+    <p class="ask-dialog__intro">从本站公开文章中寻找答案。当前版本在浏览器本地检索，不上传问题，也不会编造不存在的经历。</p>
+    <form class="ask-form" data-ask-form>
+      <label class="sr-only" for="ask-query">输入问题</label>
+      <textarea id="ask-query" rows="2" placeholder="例如：Agent Runtime 应该怎么设计？" data-ask-input></textarea>
+      <button type="submit">检索知识库 <span aria-hidden="true">↗</span></button>
+    </form>
+    <div class="ask-suggestions" aria-label="推荐问题">
+      
+        <button type="button" data-ask-suggestion="Agent Runtime 应该怎么设计？">Agent Runtime 应该怎么设计？</button>
+      
+        <button type="button" data-ask-suggestion="如何让 AI 操控真实世界设备？">如何让 AI 操控真实世界设备？</button>
+      
+        <button type="button" data-ask-suggestion="Leslie 最近在研究什么？">Leslie 最近在研究什么？</button>
+      
+    </div>
+    <div class="ask-results" data-ask-results aria-live="polite">
+      <div class="ask-empty">
+        <p>输入一个问题，我会把你带到 Leslie 写过的相关内容。</p>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+    <dialog class="wechat-dialog" id="wechat-leslie" aria-labelledby="wechat-title">
+  <div class="wechat-dialog__shell">
+    <header>
+      <div>
+        <p class="section-label">WeChat</p>
+        <h2 id="wechat-title">微信联系</h2>
+      </div>
+      <button class="icon-button" type="button" data-wechat-close aria-label="关闭微信二维码">×</button>
+    </header>
+    <img src="/images/contact/wechat-leslie.png" alt="Leslie Zhang 的微信二维码" loading="lazy">
+    <p>扫码添加 Leslie，建议备注你的名字与来意。</p>
+  </div>
+</dialog>
+
+    <script>window.ORBITAL_ROOT = '/';</script>
+    <script src="/js/orbital.js" defer></script>
+  </body>
+</html>

@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+  <head>
+
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#050b18">
+<meta name="color-scheme" content="dark light">
+<title>13.线程安全 | Leslie Zhang</title>
+<meta name="description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta name="author" content="Leslie Zhang">
+<link rel="canonical" href="https://leslieaibin.github.io/2021/10/24/Thread/13.%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98/">
+<link rel="icon" href="/imgs/01.jpg">
+<link rel="alternate" type="application/atom+xml" title="Leslie Zhang" href="/atom.xml">
+<meta property="og:type" content="article">
+<meta property="og:title" content="13.线程安全 | Leslie Zhang">
+<meta property="og:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta property="og:url" content="https://leslieaibin.github.io/2021/10/24/Thread/13.%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98/">
+<meta property="og:image" content="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/26.jpg?raw=true">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="13.线程安全 | Leslie Zhang">
+<meta name="twitter:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta name="twitter:image" content="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/26.jpg?raw=true">
+<script>
+  (function () {
+    var saved = localStorage.getItem('orbital-theme');
+    var theme = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    document.documentElement.dataset.theme = theme;
+  })();
+</script>
+<link rel="stylesheet" href="/css/orbital.css">
+<meta name="generator" content="Hexo 5.2.0"></head>
+  <body class="page-post">
+    <a class="skip-link" href="#main-content">跳到主要内容</a>
+    <div class="reading-progress" data-reading-progress></div>
+    <header class="site-header" data-header>
+  <div class="nav-shell">
+    <a class="brand" href="/" aria-label="返回首页">
+      <span class="brand-mark" aria-hidden="true"><img src="/images/brand/leslie-mythos-avatar.webp" alt="" width="512" height="512"></span>
+      <span class="brand-copy">
+        <strong>LESLIE</strong>
+        <small>REAL-WORLD AGENTS</small>
+      </span>
+    </a>
+
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav" data-nav-toggle>
+      <span></span><span></span>
+      <span class="sr-only">打开导航</span>
+    </button>
+
+    <nav class="main-nav" id="main-nav" aria-label="主导航" data-nav>
+      
+        <a href="/" class="">首页</a>
+      
+        <a href="/writing/" class="">写作</a>
+      
+        <a href="/projects/" class="">项目</a>
+      
+        <a href="/about/" class="">关于</a>
+      
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换明暗主题">
+        <span class="theme-toggle__sun" aria-hidden="true">☼</span>
+        <span class="theme-toggle__moon" aria-hidden="true">◐</span>
+      </button>
+      <button class="ask-nav" type="button" data-ask-open>ASK LESLIE</button>
+    </nav>
+  </div>
+</header>
+
+    <main id="main-content"><article class="post-shell">
+  <header class="post-hero shell">
+    <a class="post-back" href="/writing/">← 返回写作</a>
+    <div class="post-hero__meta">
+      <time datetime="2021-10-24">2021 年 10 月 24 日</time>
+      <span>9 分钟阅读</span>
+    </div>
+    <h1>13.线程安全</h1>
+    
+    <div class="chip-row"><a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E4%B8%8E%E5%B9%B6%E5%8F%91/">多线程与并发</a></div>
+  </header>
+
+  <div class="post-cover shell"><img src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/26.jpg?raw=true" alt="13.线程安全"></div>
+
+  <div class="post-layout shell">
+    <aside class="post-toc" aria-label="文章目录">
+      <span class="aside-title">目录</span>
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-text">前言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BA%BF%E7%A8%8B"><span class="toc-text">线程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8"><span class="toc-text">什么是线程安全</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%A3%E5%86%B3%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8"><span class="toc-text">解决线程安全</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E4%BD%BF%E7%94%A8synchronized%E5%85%B3%E9%94%AE%E5%AD%97"><span class="toc-text">1. 使用synchronized关键字</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E4%BD%BF%E7%94%A8Lock%E6%8E%A5%E5%8F%A3%E4%B8%8B%E7%9A%84%E5%AE%9E%E7%8E%B0%E7%B1%BB"><span class="toc-text">2. 使用Lock接口下的实现类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E4%BD%BF%E7%94%A8%E7%BA%BF%E7%A8%8B%E6%9C%AC%E5%9C%B0%E5%AD%98%E5%82%A8ThreadLocal"><span class="toc-text">3. 使用线程本地存储ThreadLocal</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E4%BD%BF%E7%94%A8%E4%B9%90%E8%A7%82%E9%94%81%E6%9C%BA%E5%88%B6"><span class="toc-text">4. 使用乐观锁机制</span></a></li></ol>
+    </aside>
+    <div class="article-content"><h1 id="4种解决线程安全问题的方式"><a href="#4种解决线程安全问题的方式" class="headerlink" title="4种解决线程安全问题的方式"></a>4种解决线程安全问题的方式</h1><h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>线程安全问题，在做高并发的系统的时候，是程序员经常需要考虑的地方。怎么有效的防止线程安全问题，保证数据的准确性？怎么合理的最大化的利用系统资源等，这些问题都需要充分的理解并运行线程。当然关于多线程的问题在面试的时候也是出现频率比较高的。下面就来学习一下吧！</p>
+<h3 id="线程"><a href="#线程" class="headerlink" title="线程"></a>线程</h3><p>先来看看什么是进程和线程？</p>
+<p>进程是资源（CPU、内存等）分配的基本单位，它是程序执行时的一个实例。程序运行时系统就会创建一个进程，并为它分配资源，然后把该进程放入进程就绪队列，进程调度器选中它的时候就会为它分配CPU时间，程序开始真正运行。就比如说，我们开发的一个单体项目，运行它，就会产生一个进程。</p>
+<p>线程是程序执行时的最小单位，它是进程的一个执行流，是CPU调度和分派的基本单位，一个进程可以由很多个线程组成，线程间共享进程的所有资源，每个线程有自己的堆栈和局部变量。线程由CPU独立调度执行，在多CPU环境下就允许多个线程同时运行。同样多线程也可以实现并发操作，每个请求分配一个线程来处理。在这里强调一点就是：计算机中的线程和应用程序中的线程不是同一个概念。</p>
+<p>总之一句话描述就是：进程是资源分配的最小单位，线程是程序执行的最小单位。</p>
+<h3 id="什么是线程安全"><a href="#什么是线程安全" class="headerlink" title="什么是线程安全"></a>什么是线程安全</h3><p>什么是线程安全呢？什么样的情况会造成线程安全问题呢？怎么解决线程安全呢？这些问题都是在下文中所要讲述的。</p>
+<p><strong>线程安全：</strong>当多个线程访问一个对象时，如果不用考虑这些线程在运行时环境下的调度和交替执行，也不需要进行额外的同步，或者在调用方进行任何其他的协调操作，调用这个对象的行为都可以获得正确的结果，那这个对象就是线程安全的。</p>
+<p>那什么时候会造成线程安全问题呢？当多个线程同时去访问一个对象时，就可能会出现线程安全问题。那么怎么解决呢？请往下看！</p>
+<h3 id="解决线程安全"><a href="#解决线程安全" class="headerlink" title="解决线程安全"></a>解决线程安全</h3><p>在这里提供4种方法来解决线程安全问题，也是最常用的4种方法。前提是项目在一个服务器中，如果是分布式项目可能就会用到分布锁了，这个就放到后面文章来详谈了。</p>
+<p>讲4种方法前，还是先来了解一下悲观锁和乐观锁吧！</p>
+<p>悲观锁，顾名思义它是悲观的。讲得通俗点就是，认为自己在使用数据的时候，一定有别的线程来修改数据，因此在获取数据的时候先加锁，确保数据不会被线程修改。形象理解就是总觉得有刁民想害朕。</p>
+<p>而乐观锁就比较乐观了，认为在使用数据时，不会有别的线程来修改数据，就不会加锁，只是在更新数据的时候去判断之前有没有别的线程来更新了数据。具体用法在下面讲解。</p>
+<p>现在来看有那4种方法吧！</p>
+<h3 id="1-使用synchronized关键字"><a href="#1-使用synchronized关键字" class="headerlink" title="1. 使用synchronized关键字"></a>1. 使用synchronized关键字</h3><p>一个表现为原生语法层面的互斥锁，它是一种悲观锁，使用它的时候我们一般需要一个监听对象 并且监听对象必须是唯一的，通常就是当前类的字节码对象。它是JVM级别的，不会造成死锁的情况。使用synchronized可以拿来修饰类，静态方法，普通方法和代码块。比如：Hashtable类就是使用synchronized来修饰方法的。put方法部分源码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> V <span class="title">put</span><span class="params">(K key, V value)</span> </span>&#123;</span><br><span class="line">  <span class="comment">// Make sure the value is not null</span></span><br><span class="line">  <span class="keyword">if</span> (value == <span class="keyword">null</span>) &#123;</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> NullPointerException();</span><br><span class="line">  &#125; </span><br></pre></td></tr></table></figure>
+
+<p>而ConcurrentHashMap类中就是使用synchronized来锁代码块的。putVal方法部分源码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">else</span> &#123;</span><br><span class="line">              V oldVal = <span class="keyword">null</span>;</span><br><span class="line">              <span class="keyword">synchronized</span> (f) &#123;</span><br><span class="line">                  <span class="keyword">if</span> (tabAt(tab, i) == f) &#123;</span><br><span class="line">                      <span class="keyword">if</span> (fh &gt;= <span class="number">0</span>) &#123;</span><br><span class="line">                          binCount = <span class="number">1</span>;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>synchronized关键字底层实现主要是通过monitorenter 与monitorexit计数 ，如果计数器不为0，说明资源被占用，其他线程就不能访问了，但是可重入的除外。说到这，就来讲讲什么是可重入的。这里其实就是指的可重入锁：指的是同一线程外层函数获得锁之后，内层递归函数仍然有获取该锁的代码，但不受影响，执行对象中所有同步方法不用再次获得锁。避免了频繁的持有释放操作，这样既提升了效率，又避免了死锁。</p>
+<p>其实在使用synchronized时，存在一个锁升级原理。它是指在锁对象的对象头里面有一个 threadid 字段，在第一次访问的时候 threadid 为空，jvm 让其持有偏向锁，并将 threadid 设置为其线程 id，再次进入的时候会先判断 threadid 是否与其线程 id 一致，如果一致则可以直接使用此对象，如果不一致，则升级偏向锁为轻量级锁，通过自旋循环一定次数来获取锁，执行一定次数之后，如果还没有正常获取到要使用的对象，此时就会把锁从轻量级升级为重量级锁，此过程就构成了 synchronized 锁的升级。锁升级的目的是为了减低了锁带来的性能消耗。在 Java 6 之后优化 synchronized 的实现方式，使用了偏向锁升级为轻量级锁再升级到重量级锁的方式，从而减低了锁带来的性能消耗。可能你又会问什么是偏向锁？什么是轻量级锁？什么是重量级锁？这里就简单描述一下吧，能够帮你更好的理解synchronized。</p>
+<p>偏向锁（无锁）：大多数情况下锁不仅不存在多线程竞争，而且总是由同一线程多次获得。偏向锁的目的是在某个线程获得锁之后（线程的id会记录在对象的Mark Word中），消除这个线程锁重入（CAS）的开销，看起来让这个线程得到了偏护。</p>
+<p>轻量级锁（CAS）：就是由偏向锁升级来的，偏向锁运行在一个线程进入同步块的情况下，当第二个线程加入锁争用的时候，偏向锁就会升级为轻量级锁；轻量级锁的意图是在没有多线程竞争的情况下，通过CAS操作尝试将MarkWord更新为指向LockRecord的指针，减少了使用重量级锁的系统互斥量产生的性能消耗。</p>
+<p>重量级锁：虚拟机使用CAS操作尝试将MarkWord更新为指向LockRecord的指针，如果更新成功表示线程就拥有该对象的锁；如果失败，会检查MarkWord是否指向当前线程的栈帧，如果是，表示当前线程已经拥有这个锁；如果不是，说明这个锁被其他线程抢占，此时膨胀为重量级锁。</p>
+<h3 id="2-使用Lock接口下的实现类"><a href="#2-使用Lock接口下的实现类" class="headerlink" title="2. 使用Lock接口下的实现类"></a>2. 使用Lock接口下的实现类</h3><p>Lock是juc（java.util.concurrent）包下面的一个接口。常用的实现类就是ReentrantLock 类，它其实也是一种悲观锁。一种表现为 API 层面的互斥锁。通过lock() 和 unlock() 方法配合使用。因此也可以说是一种手动锁，使用比较灵活。但是使用这个锁时一定要注意要释放锁，不然就会造成死锁。一般配合try/finally 语句块来完成。比如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TicketThreadSafe</span> <span class="keyword">extends</span> <span class="title">Thread</span></span>&#123;</span><br><span class="line">      <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">int</span> num = <span class="number">5000</span>;</span><br><span class="line">      ReentrantLock lock = <span class="keyword">new</span> ReentrantLock();</span><br><span class="line">      <span class="meta">@Override</span></span><br><span class="line">      <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">while</span>(num&gt;<span class="number">0</span>)&#123;</span><br><span class="line">             <span class="keyword">try</span> &#123;</span><br><span class="line">               lock.lock();</span><br><span class="line">               <span class="keyword">if</span>(num&gt;<span class="number">0</span>)&#123;</span><br><span class="line">                 System.out.println(Thread.currentThread().getName()+<span class="string">&quot;你的票号是&quot;</span>+num--);</span><br><span class="line">               &#125;</span><br><span class="line">              &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">                 e.printStackTrace();</span><br><span class="line">              &#125;<span class="keyword">finally</span> &#123;</span><br><span class="line">                 lock.unlock();</span><br><span class="line">              &#125;</span><br><span class="line">            &#125;</span><br><span class="line">      &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>相比 synchronized，ReentrantLock 增加了一些高级功能，主要有以下 3 项：等待可中断、可实现公平锁，以及锁可以绑定多个条件。</p>
+<p>等待可中断是指：当持有锁的线程长期不释放锁的时候，正在等待的线程可以选择放弃等待，改为处理其他事情，可中断特性对处理执行时间非常长的同步块很有帮助。</p>
+<p>公平锁是指：多个线程在等待同一个锁时，必须按照申请锁的时间顺序来依次获得锁；而非公平锁则不保证这一点，在锁被释放时，任何一个等待锁的线程都有机会获得锁。synchronized 中的锁是非公平的，ReentrantLock 默认情况下也是非公平的，但可以通过带布尔值的构造函数要求使用公平锁。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">ReentrantLock</span><span class="params">(<span class="keyword">boolean</span> fair)</span> </span>&#123;</span><br><span class="line">        sync = fair ? <span class="keyword">new</span> FairSync() : <span class="keyword">new</span> NonfairSync();</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>锁绑定多个条件是指：一个 ReentrantLock 对象可以同时绑定多个 Condition 对象，而在 synchronized 中，锁对象的 wait() 和 notify() 或 notifyAll() 方法可以实现一个隐含的条件，如果要和多于一个的条件关联的时候，就不得不额外地添加一个锁，而 ReentrantLock 则无须这样做，只需要多次调用 newCondition() 方法即可。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">final</span> ConditionObject <span class="title">newCondition</span><span class="params">()</span> </span>&#123; <span class="comment">//ConditionObject是Condition的实现类</span></span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> ConditionObject();</span><br><span class="line">    &#125; </span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="3-使用线程本地存储ThreadLocal"><a href="#3-使用线程本地存储ThreadLocal" class="headerlink" title="3. 使用线程本地存储ThreadLocal"></a>3. 使用线程本地存储ThreadLocal</h3><p>当多个线程操作同一个变量且互不干扰的场景下，可以使用ThreadLocal来解决。它会在每个线程中对该变量创建一个副本，即每个线程内部都会有一个该变量，且在线程内部任何地方都可以使用，线程之间互不影响，这样一来就不存在线程安全问题，也不会严重影响程序执行性能。在很多情况下，ThreadLocal比直接使用synchronized同步机制解决线程安全问题更简单，更方便，且结果程序拥有更高的并发性。通过set(T value)方法给线程的局部变量设置值；get()获取线程局部变量中的值。当给线程绑定一个 Object 内容后，只要线程不变,就可以随时取出；改变线程,就无法取出内容.。这里提供一个用法示例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ThreadLocalTest</span> </span>&#123;</span><br><span class="line">      <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">int</span> a = <span class="number">500</span>;</span><br><span class="line">      <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">new</span> Thread(()-&gt;&#123;</span><br><span class="line">                  ThreadLocal&lt;Integer&gt; local = <span class="keyword">new</span> ThreadLocal&lt;Integer&gt;();</span><br><span class="line">                  <span class="keyword">while</span>(<span class="keyword">true</span>)&#123;</span><br><span class="line">                        local.set(++a);   <span class="comment">//子线程对a的操作不会影响主线程中的a</span></span><br><span class="line">                        <span class="keyword">try</span> &#123;</span><br><span class="line">                              Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">                        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                              e.printStackTrace();</span><br><span class="line">                        &#125;</span><br><span class="line">                        System.out.println(<span class="string">&quot;子线程：&quot;</span>+local.get());</span><br><span class="line">                  &#125;</span><br><span class="line">            &#125;).start();</span><br><span class="line">            a = <span class="number">22</span>;</span><br><span class="line">            ThreadLocal&lt;Integer&gt; local = <span class="keyword">new</span> ThreadLocal&lt;Integer&gt;();</span><br><span class="line">            local.set(a);</span><br><span class="line">            <span class="keyword">while</span>(<span class="keyword">true</span>)&#123;</span><br><span class="line">                  <span class="keyword">try</span> &#123;</span><br><span class="line">                        Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">                  &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                        e.printStackTrace();</span><br><span class="line">                  &#125;</span><br><span class="line">                  System.out.println(<span class="string">&quot;主线程：&quot;</span>+local.get());</span><br><span class="line">            &#125;</span><br><span class="line">      &#125;</span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+
+
+
+<p>ThreadLocal线程容器保存变量时，底层其实是通过ThreadLocalMap来实现的。它是以当前ThreadLocal变量为key ，要存的变量为value。获取的时候就是以当前ThreadLocal变量去找到对应的key，然后获取到对应的值。源码参考如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">set</span><span class="params">(T value)</span> </span>&#123;</span><br><span class="line">       Thread t = Thread.currentThread();</span><br><span class="line">       ThreadLocalMap map = getMap(t);</span><br><span class="line">       <span class="keyword">if</span> (map != <span class="keyword">null</span>)</span><br><span class="line">           map.set(<span class="keyword">this</span>, value);</span><br><span class="line">       <span class="keyword">else</span></span><br><span class="line">           createMap(t, value);</span><br><span class="line">   &#125;</span><br><span class="line">    <span class="function">ThreadLocalMap <span class="title">getMap</span><span class="params">(Thread t)</span> </span>&#123;</span><br><span class="line">       <span class="keyword">return</span> t.threadLocals; <span class="comment">//ThreadLocal.ThreadLocalMap threadLocals = null;Thread类中声明的</span></span><br><span class="line">   &#125;</span><br><span class="line">   <span class="function"><span class="keyword">void</span> <span class="title">createMap</span><span class="params">(Thread t, T firstValue)</span> </span>&#123;</span><br><span class="line">       t.threadLocals = <span class="keyword">new</span> ThreadLocalMap(<span class="keyword">this</span>, firstValue);</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>观察源码就会发现，其实每个线程Thread内部有一个ThreadLocal.ThreadLocalMap类型的成员变量threadLocals，这个threadLocals就是用来存储实际的变量副本的，键值为当前ThreadLocal变量，value为变量副本（即T类型的变量）。</p>
+<p>初始时，在Thread里面，threadLocals为空，当通过ThreadLocal变量调用get()方法或者set()方法，就会对Thread类中的threadLocals进行初始化，并且以当前ThreadLocal变量为键值，以ThreadLocal要保存的副本变量为value，存到threadLocals。</p>
+<p>然后在当前线程里面，如果要使用副本变量，就可以通过get方法在threadLocals里面查找即可。</p>
+<h3 id="4-使用乐观锁机制"><a href="#4-使用乐观锁机制" class="headerlink" title="4. 使用乐观锁机制"></a>4. 使用乐观锁机制</h3><p>前面已经讲述了什么是乐观锁。这里就来描述哈在java开发中怎么使用的。</p>
+<p>其实在表设计的时候，我们通常就需要往表里加一个version字段。每次查询时，查出带有version的数据记录，更新数据时，判断数据库里对应id的记录的version是否和查出的version相同。若相同，则更新数据并把版本号+1；若不同，则说明，该数据发生了并发，被别的线程使用了，进行递归操作，再次执行递归方法，直到成功更新数据为止。</p>
+</div>
+    <aside class="post-rail">
+      <span class="post-rail__line"></span>
+      <span>LESLIE / WRITING</span>
+    </aside>
+  </div>
+
+  <footer class="post-footer shell">
+    <div><h2>如果这篇文章帮到了你，<br>也许下一篇会更有意思。</h2></div>
+    <a class="button button--primary" href="/writing/">继续阅读 →</a>
+  </footer>
+</article>
+</main>
+    <footer class="site-footer">
+  <div class="footer-grid">
+    <div>
+      <p class="footer-kicker">Leslie Zhang</p>
+      <p class="footer-statement">流水不争先，<br>争的是滔滔不绝。</p>
+    </div>
+    <div class="footer-links">
+      <a href="https://github.com/leslieAIbin" target="_blank" rel="noreferrer">GitHub ↗</a>
+      <a href="https://www.instagram.com/leslieaibin/" target="_blank" rel="noreferrer">Instagram ↗</a>
+      <button type="button" data-wechat-open>微信 / WeChat</button>
+      <a href="mailto:aibinzhangleslie@gmail.com">Email ↗</a>
+      <a href="/atom.xml">RSS ↗</a>
+    </div>
+    <div class="footer-meta">
+      <span>© 2026 Leslie Zhang</span>
+      <span>Writing, research and working systems.</span>
+    </div>
+  </div>
+</footer>
+
+    <dialog class="ask-dialog" id="ask-leslie" aria-labelledby="ask-title">
+  <div class="ask-dialog__shell">
+    <div class="ask-dialog__topbar">
+      <div>
+        <h2 id="ask-title">Ask Leslie</h2>
+      </div>
+      <button class="icon-button" type="button" data-ask-close aria-label="关闭">×</button>
+    </div>
+    <p class="ask-dialog__intro">从本站公开文章中寻找答案。当前版本在浏览器本地检索，不上传问题，也不会编造不存在的经历。</p>
+    <form class="ask-form" data-ask-form>
+      <label class="sr-only" for="ask-query">输入问题</label>
+      <textarea id="ask-query" rows="2" placeholder="例如：Agent Runtime 应该怎么设计？" data-ask-input></textarea>
+      <button type="submit">检索知识库 <span aria-hidden="true">↗</span></button>
+    </form>
+    <div class="ask-suggestions" aria-label="推荐问题">
+      
+        <button type="button" data-ask-suggestion="Agent Runtime 应该怎么设计？">Agent Runtime 应该怎么设计？</button>
+      
+        <button type="button" data-ask-suggestion="如何让 AI 操控真实世界设备？">如何让 AI 操控真实世界设备？</button>
+      
+        <button type="button" data-ask-suggestion="Leslie 最近在研究什么？">Leslie 最近在研究什么？</button>
+      
+    </div>
+    <div class="ask-results" data-ask-results aria-live="polite">
+      <div class="ask-empty">
+        <p>输入一个问题，我会把你带到 Leslie 写过的相关内容。</p>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+    <dialog class="wechat-dialog" id="wechat-leslie" aria-labelledby="wechat-title">
+  <div class="wechat-dialog__shell">
+    <header>
+      <div>
+        <p class="section-label">WeChat</p>
+        <h2 id="wechat-title">微信联系</h2>
+      </div>
+      <button class="icon-button" type="button" data-wechat-close aria-label="关闭微信二维码">×</button>
+    </header>
+    <img src="/images/contact/wechat-leslie.png" alt="Leslie Zhang 的微信二维码" loading="lazy">
+    <p>扫码添加 Leslie，建议备注你的名字与来意。</p>
+  </div>
+</dialog>
+
+    <script>window.ORBITAL_ROOT = '/';</script>
+    <script src="/js/orbital.js" defer></script>
+  </body>
+</html>

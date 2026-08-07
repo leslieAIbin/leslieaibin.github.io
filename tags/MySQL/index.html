@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+  <head>
+
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#050b18">
+<meta name="color-scheme" content="dark light">
+<title>Leslie Zhang | AI Agent &amp; Agent Infra Engineer</title>
+<meta name="description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta name="author" content="Leslie Zhang">
+<link rel="canonical" href="https://leslieaibin.github.io/tags/MySQL/index.html">
+<link rel="icon" href="/imgs/01.jpg">
+<link rel="alternate" type="application/atom+xml" title="Leslie Zhang" href="/atom.xml">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Leslie Zhang | AI Agent &amp; Agent Infra Engineer">
+<meta property="og:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta property="og:url" content="https://leslieaibin.github.io/tags/MySQL/index.html">
+<meta property="og:image" content="https://leslieaibin.github.io/og-blue.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Leslie Zhang | AI Agent &amp; Agent Infra Engineer">
+<meta name="twitter:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta name="twitter:image" content="https://leslieaibin.github.io/og-blue.png">
+<script>
+  (function () {
+    var saved = localStorage.getItem('orbital-theme');
+    var theme = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    document.documentElement.dataset.theme = theme;
+  })();
+</script>
+<link rel="stylesheet" href="/css/orbital.css">
+<meta name="generator" content="Hexo 5.2.0"></head>
+  <body class="page-index">
+    <a class="skip-link" href="#main-content">跳到主要内容</a>
+    <div class="reading-progress" data-reading-progress></div>
+    <header class="site-header" data-header>
+  <div class="nav-shell">
+    <a class="brand" href="/" aria-label="返回首页">
+      <span class="brand-mark" aria-hidden="true"><img src="/images/brand/leslie-mythos-avatar.webp" alt="" width="512" height="512"></span>
+      <span class="brand-copy">
+        <strong>LESLIE</strong>
+        <small>REAL-WORLD AGENTS</small>
+      </span>
+    </a>
+
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav" data-nav-toggle>
+      <span></span><span></span>
+      <span class="sr-only">打开导航</span>
+    </button>
+
+    <nav class="main-nav" id="main-nav" aria-label="主导航" data-nav>
+      
+        <a href="/" class="">首页</a>
+      
+        <a href="/writing/" class="">写作</a>
+      
+        <a href="/projects/" class="">项目</a>
+      
+        <a href="/about/" class="">关于</a>
+      
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换明暗主题">
+        <span class="theme-toggle__sun" aria-hidden="true">☼</span>
+        <span class="theme-toggle__moon" aria-hidden="true">◐</span>
+      </button>
+      <button class="ask-nav" type="button" data-ask-open>ASK LESLIE</button>
+    </nav>
+  </div>
+</header>
+
+    <main id="main-content"><section class="page-hero shell"><p class="page-kicker">Writing topic</p><h1># MySQL</h1><p>沿着这个关键词，继续往里看。</p></section>
+<section class="section shell"><div class="writing-list" data-writing-list>
+  
+    <article class="writing-row reveal" data-writing-item data-search="12.mysql事务 mysql 什么是事务？ 事务（ ），一般是指要做的或所做的事情。在计算机术语中是指访问并可能更新数据库中各种数据项的一个程序执行单元。事务通常由高 级数 据库操作语言或编程语言（如 sql，c++ 或 java）书写的用户程序的执行所引起，并用形如 和 语句（或函数调用）来界定。事务由事务开始（ ）和事务结束（ ）之间执行的全部操作组成。 对于 mysql 数据库来说，事务是指以执行 命令开始，到执行 或者 命令结束之间的全部 sql 操作，如果这些 sql 操作全部执行成功，则执行…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2022-07-04">2022.07.04</time><span>21 MIN</span></div>
+        <h2><a href="/2022/07/04/MySQL/12.%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3mysql%E4%BA%8B%E5%8A%A1/">12.MySql事务</a></h2>
+        <p>什么是事务？ 事务（ ），一般是指要做的或所做的事情。在计算机术语中是指访问并可能更新数据库中各种数据项的一个程序执行单元。事务通常由高 级数 据库操作语言或编程语言（如 SQL，C++ 或 Java）书写的用户程序的执行所引起，并用形如 和 语句（或函数调用）来界定。事务由事务开始（ ）和事务结束…</p>
+        <div class="chip-row"><span>MySQL</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2022/07/04/MySQL/12.%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3mysql%E4%BA%8B%E5%8A%A1/" aria-label="阅读《12.MySql事务》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="10.分库分表 mysql 1. 为什么要拆分数据库？ 单体项目在构建之初， 数据库 的负载和数据量都不大，所以不需要对数据库做拆分，小型财务系统、文书系统、erp系统、oa系统，用一个mysql数据库实例基本就够用了。 就像《淘宝技术这十年》里面说到的，电商业务的数据量增长飞快，所以最开始的php+mysql的架构已经不能满足实际要求了，于是淘宝想到的第一个办法就是把mysql替换成oracle。但是没过了多久，在08年前后，单节点的oracle数据库也不好用了，于是淘宝终于告别了单节点数据库，开始拆…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-10-25">2021.10.25</time><span>5 MIN</span></div>
+        <h2><a href="/2021/10/25/MySQL/10.%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8/">10.分库分表</a></h2>
+        <p>1. 为什么要拆分数据库？ 单体项目在构建之初， 数据库 的负载和数据量都不大，所以不需要对数据库做拆分，小型财务系统、文书系统、ERP系统、OA系统，用一个MySQL数据库实例基本就够用了。 就像《淘宝技术这十年》里面说到的，电商业务的数据量增长飞快，所以最开始的PHP+MySQL的架构已经不能满…</p>
+        <div class="chip-row"><span>MySQL</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/10/25/MySQL/10.%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8/" aria-label="阅读《10.分库分表》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="07.innodb引擎特性和日志 mysql innodb引擎的4大特性 插入缓存（insert buffer/change buffer) 插入缓存之前版本叫insert buffer，现版本change buffer，主要提升插入性能，change buffer 是insert buffer的加强，insert buffer 只针对insert有效，change buffering 对insert、delete、update（delete + insert）、purge都有效 对于非聚聚索引来说，比如存在用户购买金额…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-09-25">2021.09.25</time><span>16 MIN</span></div>
+        <h2><a href="/2021/09/25/MySQL/07.Innodb%E5%BC%95%E6%93%8E%E7%9A%844%E5%A4%A7%E7%89%B9%E6%80%A7%E4%B8%8E%E6%97%A5%E5%BF%97/">07.Innodb引擎特性和日志</a></h2>
+        <p>Innodb引擎的4大特性 插入缓存（Insert Buffer/Change Buffer) 插入缓存之前版本叫insert buffer，现版本Change Buffer，主要提升插入性能，change buffer 是insert buffer的加强，insert buffer 只针对inse…</p>
+        <div class="chip-row"><span>MySQL</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/09/25/MySQL/07.Innodb%E5%BC%95%E6%93%8E%E7%9A%844%E5%A4%A7%E7%89%B9%E6%80%A7%E4%B8%8E%E6%97%A5%E5%BF%97/" aria-label="阅读《07.Innodb引擎特性和日志》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="08.abc联合索引生效问题 mysql abc联合索引生效问题 对于复合索引：mysql从左到右的使用索引中的字段，一个查询可以只使用索引中的一部份，但只能是最左侧部分。例如索引是key index （a,b,c）。 可以支持 a | a,b| a,b,c 3种组合进行查找，但不支持 b,c进行查找 .当最左侧字段是常量引用时，索引就十分有效。 以下是一些 例子： **abc顺序** where里面的条件顺序在查询之前会被mysql自动优化，**效果跟上一句一样** b范围值，断点，阻塞了c的索引a用到了，b也用到…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-09-25">2021.09.25</time><span>2 MIN</span></div>
+        <h2><a href="/2021/09/25/MySQL/08.%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E7%94%9F%E6%95%88%E9%97%AE%E9%A2%98/">08.ABC联合索引生效问题</a></h2>
+        <p>ABC联合索引生效问题 对于复合索引：Mysql从左到右的使用索引中的字段，一个查询可以只使用索引中的一部份，但只能是最左侧部分。例如索引是key index （a,b,c）。 可以支持 a | a,b| a,b,c 3种组合进行查找，但不支持 b,c进行查找 .当最左侧字段是常量引用时，索引就十分…</p>
+        <div class="chip-row"><span>MySQL</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/09/25/MySQL/08.%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E7%94%9F%E6%95%88%E9%97%AE%E9%A2%98/" aria-label="阅读《08.ABC联合索引生效问题》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="09.一条update执行的过程 mysql 语句的执行过程如下： 客户端（通常是你的服务）发出更新语句” update t set b = 200 where id = 2 “ 并向mysql服务端建立连接； mysql连接器负责和客户端建立连接，获取权限，维持和管理连接； mysql拿到一个查询请求后，会先到查询缓存看看（mysql8.x已经废弃了查询缓存），看之前是否已经执行过，如果执行过，执行语句及结果会以key-value形式存储到内存中，如果命中缓存会返回结果。如果没命中缓存，就开始真正执行语句。分析器会先做…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-09-25">2021.09.25</time><span>7 MIN</span></div>
+        <h2><a href="/2021/09/25/MySQL/09.%E4%B8%80%E6%9D%A1update%E6%89%A7%E8%A1%8C%E7%9A%84%E8%BF%87%E7%A8%8B/">09.一条update执行的过程</a></h2>
+        <p>语句的执行过程如下： 客户端（通常是你的服务）发出更新语句” update t set b = 200 where id = 2 “ 并向MySQL服务端建立连接； MySQL连接器负责和客户端建立连接，获取权限，维持和管理连接； MySQL拿到一个查询请求后，会先到查询缓存看看（MySQL8.x已…</p>
+        <div class="chip-row"><span>MySQL</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/09/25/MySQL/09.%E4%B8%80%E6%9D%A1update%E6%89%A7%E8%A1%8C%E7%9A%84%E8%BF%87%E7%A8%8B/" aria-label="阅读《09.一条update执行的过程》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="06.mysql的主从复制 mysql mysql binlog mysql 的 binlog 日志是一种二进制格式的日志，binlog记录所有的ddl和dml语句（除了数据查询语句select， show 等），以event的形式记录，同时记录语句执行时间。 binlog的 主要作用有两种： 数据恢复： 因为binlog详细记录所有修改数据的sql，当某一个时刻的数据误操作而导致出问题，或者数据库当局数据丢失，那么可以根据binlog回放历史数据 主从复制 想做多级备份的业务，可以去监听当前写库的binlog日志…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-09-21">2021.09.21</time><span>10 MIN</span></div>
+        <h2><a href="/2021/09/21/MySQL/06.MySQL%E7%9A%84%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">06.MySQL的主从复制</a></h2>
+        <p>MySQL BinLog MySQL 的 Binlog 日志是一种二进制格式的日志，Binlog记录所有的DDL和DML语句（除了数据查询语句Select， show 等），以Event的形式记录，同时记录语句执行时间。 BInlog的 主要作用有两种： 数据恢复： 因为Binlog详细记录所有修改…</p>
+        <div class="chip-row"><span>MySQL</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/09/21/MySQL/06.MySQL%E7%9A%84%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/" aria-label="阅读《06.MySQL的主从复制》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="05.分布式锁 mysql 分布式锁 什么是锁 在单线程的系统中，当存在多个线程可以同时改变某个变量（可变共享变量）时，就需要对变量或代码块做同步，使其在修改这种变量时能够线性执行消除并发修改变量 而同步的本质是通过锁实现的。为了实现多个线程在一个时刻同一代码块只能有一个线程可执行，那么需要在某个地方做个标记，这个必须每个线程都能看到，当标记不存在时可以设置该标记，其余后续线程发现已经有标记了则等待拥有标记的线程结束同步代码块取消标记后再去尝试设置标记。这个标记可以理解为锁。 不同地方实现锁的方式也不一…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-09-11">2021.09.11</time><span>9 MIN</span></div>
+        <h2><a href="/2021/09/11/MySQL/05.%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81/">05.分布式锁</a></h2>
+        <p>分布式锁 什么是锁 在单线程的系统中，当存在多个线程可以同时改变某个变量（可变共享变量）时，就需要对变量或代码块做同步，使其在修改这种变量时能够线性执行消除并发修改变量 而同步的本质是通过锁实现的。为了实现多个线程在一个时刻同一代码块只能有一个线程可执行，那么需要在某个地方做个标记，这个必须每个线程…</p>
+        <div class="chip-row"><span>MySQL</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/09/11/MySQL/05.%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81/" aria-label="阅读《05.分布式锁》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="04.mysql索引原理及慢查询优化 mysql 背景 mysql凭借着出色的性能、低廉的成本、丰富的资源，已经成为绝大多数互联网公司的首选关系型数据库。虽然性能出色，但所谓“好马配好鞍”，如何能够更好的使用它，已经成为开发工程师的必修课，我们经常会从职位描述上看到诸如“精通mysql”、“sql语句优化”、“了解数据库原理”等要求。我们知道一般的应用系统，读写比例在10:1左右，而且插入操作和一般的更新操作很少出现性能问题，遇到最多的，也是最容易出问题的，还是一些复杂的查询操作，所以查询语句的优化显然是重中之重。背景 my…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-09-10">2021.09.10</time><span>10 MIN</span></div>
+        <h2><a href="/2021/09/10/MySQL/04.MySQL%E7%B4%A2%E5%BC%95%E5%8E%9F%E7%90%86%E5%8F%8A%E6%85%A2%E6%9F%A5%E8%AF%A2%E4%BC%98%E5%8C%96/">04.MySQL索引原理及慢查询优化</a></h2>
+        <p>背景 MySQL凭借着出色的性能、低廉的成本、丰富的资源，已经成为绝大多数互联网公司的首选关系型数据库。虽然性能出色，但所谓“好马配好鞍”，如何能够更好的使用它，已经成为开发工程师的必修课，我们经常会从职位描述上看到诸如“精通MySQL”、“SQL语句优化”、“了解数据库原理”等要求。我们知道一般的…</p>
+        <div class="chip-row"><span>MySQL</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/09/10/MySQL/04.MySQL%E7%B4%A2%E5%BC%95%E5%8E%9F%E7%90%86%E5%8F%8A%E6%85%A2%E6%9F%A5%E8%AF%A2%E4%BC%98%E5%8C%96/" aria-label="阅读《04.MySQL索引原理及慢查询优化》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="03.一条sql查询语句如何执行 mysql 一条sql查询语句如何执行 mysql可以分为server层和存储引擎层两部分 server层包括 连接器、查询缓存、分析器、优化器、执行器 等，涵盖了mysql的大多数核心功能，以及所有的内置函数（如日期、时间、数学和加密函数等），所有跨存储引擎的功能都在这一层实现，比如存储过程，触发器，视图等。 而存储引擎层负责数据的存储和提取。其架构模式是插件式的，支持innodb、myisam、memory等多个存储引擎。现在最常用的存储引擎innodb，它从mysql5.5.5版本…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-09-09">2021.09.09</time><span>7 MIN</span></div>
+        <h2><a href="/2021/09/09/MySQL/03.MySQL%E6%9F%A5%E8%AF%A2%E8%BF%87%E7%A8%8B/">03.一条SQL查询语句如何执行</a></h2>
+        <p>一条SQL查询语句如何执行 MySQL可以分为Server层和存储引擎层两部分 Server层包括 连接器、查询缓存、分析器、优化器、执行器 等，涵盖了MySQL的大多数核心功能，以及所有的内置函数（如日期、时间、数学和加密函数等），所有跨存储引擎的功能都在这一层实现，比如存储过程，触发器，视图等。…</p>
+        <div class="chip-row"><span>MySQL</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/09/09/MySQL/03.MySQL%E6%9F%A5%E8%AF%A2%E8%BF%87%E7%A8%8B/" aria-label="阅读《03.一条SQL查询语句如何执行》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="02.索引 mysql 索引 什么是索引 索引是一个单独的，存储在磁盘上的数据结构，包含着对数据表里所有记录的引用指针，使用索引可以快速记录找出在某个或多个列中有一特定值的行，所有mysql列数据都可以被索引，所有mysql列类型都可以被索引，对相关列使用时提高查询操作速度的最佳途径。 索引是在存储引擎中实现的，因此，每种存储引擎的索引都不一定完全相同，并且每种存储引擎也不一定支持所有索引类型。mysql中索引的存储类型有两种，即btree和hash，具体和表的存储引擎相关。 myisam和inno…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-09-04">2021.09.04</time><span>11 MIN</span></div>
+        <h2><a href="/2021/09/04/MySQL/02.%E7%B4%A2%E5%BC%95/">02.索引</a></h2>
+        <p>索引 什么是索引 索引是一个单独的，存储在磁盘上的数据结构，包含着对数据表里所有记录的引用指针，使用索引可以快速记录找出在某个或多个列中有一特定值的行，所有MySQL列数据都可以被索引，所有MySQL列类型都可以被索引，对相关列使用时提高查询操作速度的最佳途径。 索引是在存储引擎中实现的，因此，每种…</p>
+        <div class="chip-row"><span>MySQL</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/09/04/MySQL/02.%E7%B4%A2%E5%BC%95/" aria-label="阅读《02.索引》">↗</a>
+    </article>
+  
+</div>
+<span class="page-number current">1</span><a class="page-number" href="/tags/MySQL/page/2/">2</a><a class="extend next" rel="next" href="/tags/MySQL/page/2/">Next</a></section>
+</main>
+    <footer class="site-footer">
+  <div class="footer-grid">
+    <div>
+      <p class="footer-kicker">Leslie Zhang</p>
+      <p class="footer-statement">流水不争先，<br>争的是滔滔不绝。</p>
+    </div>
+    <div class="footer-links">
+      <a href="https://github.com/leslieAIbin" target="_blank" rel="noreferrer">GitHub ↗</a>
+      <a href="https://www.instagram.com/leslieaibin/" target="_blank" rel="noreferrer">Instagram ↗</a>
+      <button type="button" data-wechat-open>微信 / WeChat</button>
+      <a href="mailto:aibinzhangleslie@gmail.com">Email ↗</a>
+      <a href="/atom.xml">RSS ↗</a>
+    </div>
+    <div class="footer-meta">
+      <span>© 2026 Leslie Zhang</span>
+      <span>Writing, research and working systems.</span>
+    </div>
+  </div>
+</footer>
+
+    <dialog class="ask-dialog" id="ask-leslie" aria-labelledby="ask-title">
+  <div class="ask-dialog__shell">
+    <div class="ask-dialog__topbar">
+      <div>
+        <h2 id="ask-title">Ask Leslie</h2>
+      </div>
+      <button class="icon-button" type="button" data-ask-close aria-label="关闭">×</button>
+    </div>
+    <p class="ask-dialog__intro">从本站公开文章中寻找答案。当前版本在浏览器本地检索，不上传问题，也不会编造不存在的经历。</p>
+    <form class="ask-form" data-ask-form>
+      <label class="sr-only" for="ask-query">输入问题</label>
+      <textarea id="ask-query" rows="2" placeholder="例如：Agent Runtime 应该怎么设计？" data-ask-input></textarea>
+      <button type="submit">检索知识库 <span aria-hidden="true">↗</span></button>
+    </form>
+    <div class="ask-suggestions" aria-label="推荐问题">
+      
+        <button type="button" data-ask-suggestion="Agent Runtime 应该怎么设计？">Agent Runtime 应该怎么设计？</button>
+      
+        <button type="button" data-ask-suggestion="如何让 AI 操控真实世界设备？">如何让 AI 操控真实世界设备？</button>
+      
+        <button type="button" data-ask-suggestion="Leslie 最近在研究什么？">Leslie 最近在研究什么？</button>
+      
+    </div>
+    <div class="ask-results" data-ask-results aria-live="polite">
+      <div class="ask-empty">
+        <p>输入一个问题，我会把你带到 Leslie 写过的相关内容。</p>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+    <dialog class="wechat-dialog" id="wechat-leslie" aria-labelledby="wechat-title">
+  <div class="wechat-dialog__shell">
+    <header>
+      <div>
+        <p class="section-label">WeChat</p>
+        <h2 id="wechat-title">微信联系</h2>
+      </div>
+      <button class="icon-button" type="button" data-wechat-close aria-label="关闭微信二维码">×</button>
+    </header>
+    <img src="/images/contact/wechat-leslie.png" alt="Leslie Zhang 的微信二维码" loading="lazy">
+    <p>扫码添加 Leslie，建议备注你的名字与来意。</p>
+  </div>
+</dialog>
+
+    <script>window.ORBITAL_ROOT = '/';</script>
+    <script src="/js/orbital.js" defer></script>
+  </body>
+</html>

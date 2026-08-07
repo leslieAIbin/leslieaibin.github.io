@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+  <head>
+
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#050b18">
+<meta name="color-scheme" content="dark light">
+<title>17.锁升级和锁状态 | Leslie Zhang</title>
+<meta name="description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta name="author" content="Leslie Zhang">
+<link rel="canonical" href="https://leslieaibin.github.io/2021/08/30/JVM/17.%E9%94%81%E5%8D%87%E7%BA%A7%E5%92%8C%E9%94%81%E7%8A%B6%E6%80%81/">
+<link rel="icon" href="/imgs/01.jpg">
+<link rel="alternate" type="application/atom+xml" title="Leslie Zhang" href="/atom.xml">
+<meta property="og:type" content="article">
+<meta property="og:title" content="17.锁升级和锁状态 | Leslie Zhang">
+<meta property="og:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta property="og:url" content="https://leslieaibin.github.io/2021/08/30/JVM/17.%E9%94%81%E5%8D%87%E7%BA%A7%E5%92%8C%E9%94%81%E7%8A%B6%E6%80%81/">
+<meta property="og:image" content="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/48.jpg?raw=true">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="17.锁升级和锁状态 | Leslie Zhang">
+<meta name="twitter:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta name="twitter:image" content="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/48.jpg?raw=true">
+<script>
+  (function () {
+    var saved = localStorage.getItem('orbital-theme');
+    var theme = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    document.documentElement.dataset.theme = theme;
+  })();
+</script>
+<link rel="stylesheet" href="/css/orbital.css">
+<meta name="generator" content="Hexo 5.2.0"></head>
+  <body class="page-post">
+    <a class="skip-link" href="#main-content">跳到主要内容</a>
+    <div class="reading-progress" data-reading-progress></div>
+    <header class="site-header" data-header>
+  <div class="nav-shell">
+    <a class="brand" href="/" aria-label="返回首页">
+      <span class="brand-mark" aria-hidden="true"><img src="/images/brand/leslie-mythos-avatar.webp" alt="" width="512" height="512"></span>
+      <span class="brand-copy">
+        <strong>LESLIE</strong>
+        <small>REAL-WORLD AGENTS</small>
+      </span>
+    </a>
+
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav" data-nav-toggle>
+      <span></span><span></span>
+      <span class="sr-only">打开导航</span>
+    </button>
+
+    <nav class="main-nav" id="main-nav" aria-label="主导航" data-nav>
+      
+        <a href="/" class="">首页</a>
+      
+        <a href="/writing/" class="">写作</a>
+      
+        <a href="/projects/" class="">项目</a>
+      
+        <a href="/about/" class="">关于</a>
+      
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换明暗主题">
+        <span class="theme-toggle__sun" aria-hidden="true">☼</span>
+        <span class="theme-toggle__moon" aria-hidden="true">◐</span>
+      </button>
+      <button class="ask-nav" type="button" data-ask-open>ASK LESLIE</button>
+    </nav>
+  </div>
+</header>
+
+    <main id="main-content"><article class="post-shell">
+  <header class="post-hero shell">
+    <a class="post-back" href="/writing/">← 返回写作</a>
+    <div class="post-hero__meta">
+      <time datetime="2021-08-30">2021 年 08 月 30 日</time>
+      <span>11 分钟阅读</span>
+    </div>
+    <h1>17.锁升级和锁状态</h1>
+    
+    <div class="chip-row"><a href="/tags/JVM/">JVM</a></div>
+  </header>
+
+  <div class="post-cover shell"><img src="https://github.com/leslieAIbin/leslieaibin.github.io/blob/main/imgs/48.jpg?raw=true" alt="17.锁升级和锁状态"></div>
+
+  <div class="post-layout shell">
+    <aside class="post-toc" aria-label="文章目录">
+      <span class="aside-title">目录</span>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Java%E5%AF%B9%E8%B1%A1%E5%A4%B4"><span class="toc-text">Java对象头</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Monitor"><span class="toc-text">Monitor</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%97%A0%E9%94%81"><span class="toc-text">无锁</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%81%8F%E5%90%91%E9%94%81"><span class="toc-text">偏向锁</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BD%BB%E9%87%8F%E7%BA%A7%E9%94%81%EF%BC%88%E8%87%AA%E6%97%8B%E9%94%81%EF%BC%89"><span class="toc-text">轻量级锁（自旋锁）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%87%8D%E9%87%8F%E7%BA%A7%E9%94%81"><span class="toc-text">重量级锁</span></a></li></ol>
+    </aside>
+    <div class="article-content"><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>锁的状态总共有四种，级别由低到高依次为：无锁、偏向锁、轻量级锁、重量级锁，这四种锁状态分别代表什么，为什么会有锁升级。在JDK1.6之前，synchronized还是一个重量级锁，是一个效率比较低下的锁，但在JDK1.6后，JVM为了提高锁的获取与释放效率(sychronized) 进行了优化，引入了偏向锁和轻量级锁，从此以后锁的状态就有四种（无锁， 偏向锁， 轻量级锁，重量级锁），并且四种状态会随着竞争的情况逐渐升级，而且是不可逆的过程，即不可降级，也就是说只能进行锁升级（从低级别到高级别），不能锁降级（高级别到低级别），意味着偏向锁升级成轻量级锁后不能降级成偏向锁。这种锁升级却不能降级的策略，目的是为了提高获得锁和释放锁的效率。</p>
+<h1 id="锁的四种状态"><a href="#锁的四种状态" class="headerlink" title="锁的四种状态"></a>锁的四种状态</h1><p>在synchronized最初的实现方式是“阻塞或唤醒一个Java线程需要操作系统切换cpu状态来完成，这种状态切换需要耗费处理器时间，如果同步代码块中内容过于简单，这种切换的时间可能比用户代码执行的时间还长”，这种方式就是synchronized实现同步最初的方式，这也是当初开发者诟病的地方，这也是在JDK6以前 synchronized效率低下的原因，JDK6中为了减少获得锁和释放锁带来的性能消耗，引入了“偏向锁”和“轻量级锁”。</p>
+<p>所以目前锁状态一种有四种，从级别由低到高依次是：无锁、偏向锁，轻量级锁，重量级锁，锁状态只能升级，不能降级</p>
+<p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/1460000022904666" alt="img"></p>
+<h1 id="锁状态的思路以及特点"><a href="#锁状态的思路以及特点" class="headerlink" title="锁状态的思路以及特点"></a>锁状态的思路以及特点</h1><p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/1460000022904667" alt="img"></p>
+<h1 id="锁对比"><a href="#锁对比" class="headerlink" title="锁对比"></a>锁对比</h1><p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/1460000022904669" alt="img"></p>
+<h1 id="Synchronized锁"><a href="#Synchronized锁" class="headerlink" title="Synchronized锁"></a>Synchronized锁</h1><p>synchronized用的锁是存在Java对象头里的，那么什么是对象头</p>
+<h2 id="Java对象头"><a href="#Java对象头" class="headerlink" title="Java对象头"></a>Java对象头</h2><p>我们以Hotspot虚拟机为例，Hopspot 对象头主要包括两部分数据：Mark Word（标记字段） 和 Klass Pointer（类型指针）</p>
+<p>Mark Word：默认存储对象的hashcode，分代年龄和锁标志位信息。这些信息都是与对象自身定义无关的数据，所以Mark Word被设计成一个非固定的数据结构以便在极小的空间内存存储尽量多的数据。它会根据对象的状态复用自己的存储空间，也就是说在运行期间Mark Word里存储的数据会随着锁标志位的变化而变化。</p>
+<p>Klass Point：对象指向它的类元数据的指针，虚拟机通过这个指针来确定这个对象是哪个类的实例。</p>
+<p>在上面中我们知道了，synchronized 用的锁是存在Java对象头里的，那么具体是存在对象头哪里呢？答案是：存在锁对象的对象头的Mark Word中，那么MarkWord在对象头中到底长什么样，它到底存储了什么呢？</p>
+<p>在64位的虚拟机中：<img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/1460000022904668" alt="img"></p>
+<p>在32位的虚拟机中：<img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/1460000022904670" alt="img"></p>
+<p><strong>无锁 ：</strong>对象头开辟 25bit 的空间用来存储对象的 hashcode ，4bit 用于存放对象分代年龄，1bit 用来存放是否偏向锁的标识位，2bit 用来存放锁标识位为01</p>
+<p><strong>偏向锁：</strong> 在偏向锁中划分更细，还是开辟 25bit 的空间，其中23bit 用来存放线程ID，2bit 用来存放 Epoch，4bit 存放对象分代年龄，1bit 存放是否偏向锁标识， 0表示无锁，1表示偏向锁，锁的标识位还是01</p>
+<p><strong>轻量级锁：</strong>在轻量级锁中直接开辟 30bit 的空间存放指向栈中锁记录的指针，2bit 存放锁的标志位，其标志位为00</p>
+<p><strong>重量级锁：</strong> 在重量级锁中和轻量级锁一样，30bit 的空间用来存放指向重量级锁的指针，2bit 存放锁的标识位，为11</p>
+<p>GC标记： 开辟30bit 的内存空间却没有占用，2bit 空间存放锁标志位为11。</p>
+<p>其中无锁和偏向锁的锁标志位都是01，只是在前面的1bit区分了这是无锁状态还是偏向锁状态</p>
+<p>关于内存的分配，我们可以在git中openJDK中 markOop.hpp 可以看出：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span>:</span><br><span class="line">  <span class="comment">// Constants</span></span><br><span class="line">  <span class="class"><span class="keyword">enum</span> </span>&#123; age_bits                 = <span class="number">4</span>,</span><br><span class="line">         lock_bits                = <span class="number">2</span>,</span><br><span class="line">         biased_lock_bits         = <span class="number">1</span>,</span><br><span class="line">         max_hash_bits            = BitsPerWord - age_bits - lock_bits - biased_lock_bits,</span><br><span class="line">         hash_bits                = max_hash_bits &gt; <span class="number">31</span> ? <span class="number">31</span> : max_hash_bits,</span><br><span class="line">         cms_bits                 = LP64_ONLY(<span class="number">1</span>) NOT_LP64(<span class="number">0</span>),</span><br><span class="line">         epoch_bits               = <span class="number">2</span></span><br><span class="line">  &#125;;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>age_bits： 就是我们说的分代回收的标识，占用4字节</p>
+<p>lock_bits： 是锁的标志位，占用2个字节</p>
+<p>biased_lock_bits： 是是否偏向锁的标识，占用1个字节</p>
+<p>max_hash_bits： 是针对无锁计算的hashcode 占用字节数量，如果是32位虚拟机，就是 32 - 4 - 2 </p>
+<p>-1 = 25 byte，如果是64 位虚拟机，64 - 4 - 2 - 1 = 57 byte，但是会有 25 字节未使用，所以64位的 </p>
+<p>hashcode 占用 31 byte</p>
+<p>hash_bits： 是针对 64 位虚拟机来说，如果最大字节数大于 31，则取31，否则取真实的字节数</p>
+<p>cms_bits： 不是64位虚拟机就占用 0 byte，是64位就占用 1byte</p>
+<p>epoch_bits： 就是 epoch 所占用的字节大小，2字节。</p>
+<h2 id="Monitor"><a href="#Monitor" class="headerlink" title="Monitor"></a>Monitor</h2><p>Monitor 可以理解为一个同步工具或一种同步机制，通常被描述为一个对象。每一个 Java 对象就有一把看不见的锁，称为内部锁或者 Monitor 锁。</p>
+<p>Monitor 是线程私有的数据结构，每一个线程都有一个可用 monitor record 列表，同时还有一个全局的可用列表。每一个被锁住的对象都会和一个 monitor 关联，同时 monitor 中有一个 Owner 字段存放拥有该锁的线程的唯一标识，表示该锁被这个线程占用。</p>
+<p>Synchronized是通过对象内部的一个叫做监视器锁（monitor）来实现的，监视器锁本质又是依赖于底层的操作系统的 Mutex Lock（互斥锁）来实现的。而操作系统实现线程之间的切换需要从用户态转换到核心态，这个成本非常高，状态之间的转换需要相对比较长的时间，这就是为什么 Synchronized 效率低的原因。因此，这种依赖于操作系统 Mutex Lock 所实现的锁我们称之为重量级锁。</p>
+<p>随着锁的竞争，锁可以从偏向锁升级到轻量级锁，再升级的重量级锁（但是锁的升级是单向的，也就是说只能从低到高升级，不会出现锁的降级）。JDK 1.6中默认是开启偏向锁和轻量级锁的，我们也可以通过-XX:-UseBiasedLocking=false来禁用偏向锁。</p>
+<h1 id="锁的分类"><a href="#锁的分类" class="headerlink" title="锁的分类"></a>锁的分类</h1><h2 id="无锁"><a href="#无锁" class="headerlink" title="无锁"></a>无锁</h2><p>无锁是指没有对资源进行锁定，所有的线程都能访问并修改同一个资源，但同时只有一个线程能修改成功。</p>
+<p>无锁的特点是修改操作会在循环内进行，线程会不断的尝试修改共享资源。如果没有冲突就修改成功并退出，否则就会继续循环尝试。如果有多个线程修改同一个值，必定会有一个线程能修改成功，而其他修改失败的线程会不断重试直到修改成功。</p>
+<h2 id="偏向锁"><a href="#偏向锁" class="headerlink" title="偏向锁"></a>偏向锁</h2><p>初次执行到synchronized代码块的时候，锁对象变成偏向锁（通过CAS修改对象头里的锁标志位），字面意思是“偏向于第一个获得它的线程”的锁。执行完同步代码块后，线程并不会主动释放偏向锁。当第二次到达同步代码块时，线程会判断此时持有锁的线程是否就是自己（持有锁的线程ID也在对象头里），如果是则正常往下执行。由于之前没有释放锁，这里也就不需要重新加锁。如果自始至终使用锁的线程只有一个，很明显偏向锁几乎没有额外开销，性能极高。</p>
+<p>偏向锁是指当一段同步代码一直被同一个线程所访问时，即不存在多个线程的竞争时，那么该线程在后续访问时便会自动获得锁，从而降低获取锁带来的消耗，即提高性能。</p>
+<p>当一个线程访问同步代码块并获取锁时，会在 Mark Word 里存储锁偏向的线程 ID。在线程进入和退出同步块时不再通过 CAS 操作来加锁和解锁，而是检测 Mark Word 里是否存储着指向当前线程的偏向锁。轻量级锁的获取及释放依赖多次 CAS 原子指令，而偏向锁只需要在置换 ThreadID 的时候依赖一次 CAS 原子指令即可。</p>
+<p>偏向锁只有遇到其他线程尝试竞争偏向锁时，持有偏向锁的线程才会释放锁，线程是不会主动释放偏向锁的。</p>
+<p>关于偏向锁的撤销，需要等待全局安全点，即在某个时间点上没有字节码正在执行时，它会先暂停拥有偏向锁的线程，然后判断锁对象是否处于被锁定状态。如果线程不处于活动状态，则将对象头设置成无锁状态，并撤销偏向锁，恢复到无锁（标志位为01）或轻量级锁（标志位为00）的状态。</p>
+<h2 id="轻量级锁（自旋锁）"><a href="#轻量级锁（自旋锁）" class="headerlink" title="轻量级锁（自旋锁）"></a>轻量级锁（自旋锁）</h2><p><img src="http://test-1874253.oss-cn-beijing.aliyuncs.com/img/1460000022904671" alt="img"></p>
+<p>轻量级锁是指当锁是偏向锁的时候，却被另外的线程所访问，此时偏向锁就会升级为轻量级锁，其他线程会通过自旋（关于自旋的介绍见文末）的形式尝试获取锁，线程不会阻塞，从而提高性能。</p>
+<p>轻量级锁的获取主要由两种情况：</p>
+<p>① 当关闭偏向锁功能时；</p>
+<p>② 由于多个线程竞争偏向锁导致偏向锁升级为轻量级锁。</p>
+<p>一旦有第二个线程加入锁竞争，偏向锁就升级为轻量级锁（自旋锁）。这里要明确一下什么是锁竞争：如果多个线程轮流获取一个锁，但是每次获取锁的时候都很顺利，没有发生阻塞，那么就不存在锁竞争。只有当某线程尝试获取锁的时候，发现该锁已经被占用，只能等待其释放，这才发生了锁竞争。</p>
+<p>在轻量级锁状态下继续锁竞争，没有抢到锁的线程将自旋，即不停地循环判断锁是否能够被成功获取。获取锁的操作，其实就是通过CAS修改对象头里的锁标志位。先比较当前锁标志位是否为“释放”，如果是则将其设置为“锁定”，比较并设置是原子性发生的。这就算抢到锁了，然后线程将当前锁的持有者信息修改为自己。</p>
+<p>长时间的自旋操作是非常消耗资源的，一个线程持有锁，其他线程就只能在原地空耗CPU，执行不了任何有效的任务，这种现象叫做忙等（busy-waiting）。如果多个线程用一个锁，但是没有发生锁竞争，或者发生了很轻微的锁竞争，那么synchronized就用轻量级锁，允许短时间的忙等现象。这是一种折衷的想法，短时间的忙等，换取线程在用户态和内核态之间切换的开销。</p>
+<h2 id="重量级锁"><a href="#重量级锁" class="headerlink" title="重量级锁"></a>重量级锁</h2><p>重量级锁显然，此忙等是有限度的（有个计数器记录自旋次数，默认允许循环10次，可以通过虚拟机参数更改）。如果锁竞争情况严重，某个达到最大自旋次数的线程，会将轻量级锁升级为重量级锁（依然是CAS修改锁标志位，但不修改持有锁的线程ID）。当后续线程尝试获取锁时，发现被占用的锁是重量级锁，则直接将自己挂起（而不是忙等），等待将来被唤醒。</p>
+<p>重量级锁是指当有一个线程获取锁之后，其余所有等待获取该锁的线程都会处于阻塞状态。</p>
+<p>简言之，就是所有的控制权都交给了操作系统，由操作系统来负责线程间的调度和线程的状态变更。而这样会出现频繁地对线程运行状态的切换，线程的挂起和唤醒，从而消耗大量的系统资源</p>
+<p><strong>下面是我个人自己的理解：</strong> </p>
+<p><strong>偏向所锁，轻量级锁都是乐观锁，重量级锁是悲观锁。</strong> </p>
+<ul>
+<li><p> 一个对象刚开始实例化的时候，没有任何线程来访问它的时候。它是无锁的状态的，意味着，它现在认为可能有一个线程来访问。</p>
+</li>
+<li><p>当第一个线程来访问它的时候，它会偏向这个线程，此时，对象持有偏向锁。偏向第一个线程，这个线程在修改对象头成为偏向锁的时候使用CAS操作，并将对象头中的ThreadID改成自己的ID，之后再次访问这个对象时，只需要对比ID，不需要再使用CAS在进行操作。 </p>
+</li>
+<li><p>当第二个线程访问这个对象，因为偏向锁不会主动释放，所以第二个线程可以看到对象时偏向状态，这时表明在这个对象上已经存在竞争了，检查原来持有该对象锁的线程是否依然存活，如果挂了，则可以将对象变为无锁状态，然后重新偏向新的线程，如果原来的线程依然存活，则马上执行那个线程的操作栈，检查该对象的使用情况，如果仍然需要持有偏向锁，则偏向锁升级为轻量级锁，（偏向锁就是这个时候升级为轻量级锁的）。如果不存在使用了，则可以将对象恢复成无锁状态，然后重新偏向。 </p>
+</li>
+<li><p>轻量级锁认为竞争存在，但是竞争的程度很轻，一般两个线程对于同一个锁的操作都会错开，或者说稍微等待一下（自旋），另一个线程就会释放锁。 但是当自旋超过一定的次数，或者一个线程在持有锁，一个在自旋，又有第三个来访时，轻量级锁膨胀为重量级锁，重量级锁使除了拥有锁的线程以外的线程都阻塞，防止CPU空转。 </p>
+</li>
+</ul>
+</div>
+    <aside class="post-rail">
+      <span class="post-rail__line"></span>
+      <span>LESLIE / WRITING</span>
+    </aside>
+  </div>
+
+  <footer class="post-footer shell">
+    <div><h2>如果这篇文章帮到了你，<br>也许下一篇会更有意思。</h2></div>
+    <a class="button button--primary" href="/writing/">继续阅读 →</a>
+  </footer>
+</article>
+</main>
+    <footer class="site-footer">
+  <div class="footer-grid">
+    <div>
+      <p class="footer-kicker">Leslie Zhang</p>
+      <p class="footer-statement">流水不争先，<br>争的是滔滔不绝。</p>
+    </div>
+    <div class="footer-links">
+      <a href="https://github.com/leslieAIbin" target="_blank" rel="noreferrer">GitHub ↗</a>
+      <a href="https://www.instagram.com/leslieaibin/" target="_blank" rel="noreferrer">Instagram ↗</a>
+      <button type="button" data-wechat-open>微信 / WeChat</button>
+      <a href="mailto:aibinzhangleslie@gmail.com">Email ↗</a>
+      <a href="/atom.xml">RSS ↗</a>
+    </div>
+    <div class="footer-meta">
+      <span>© 2026 Leslie Zhang</span>
+      <span>Writing, research and working systems.</span>
+    </div>
+  </div>
+</footer>
+
+    <dialog class="ask-dialog" id="ask-leslie" aria-labelledby="ask-title">
+  <div class="ask-dialog__shell">
+    <div class="ask-dialog__topbar">
+      <div>
+        <h2 id="ask-title">Ask Leslie</h2>
+      </div>
+      <button class="icon-button" type="button" data-ask-close aria-label="关闭">×</button>
+    </div>
+    <p class="ask-dialog__intro">从本站公开文章中寻找答案。当前版本在浏览器本地检索，不上传问题，也不会编造不存在的经历。</p>
+    <form class="ask-form" data-ask-form>
+      <label class="sr-only" for="ask-query">输入问题</label>
+      <textarea id="ask-query" rows="2" placeholder="例如：Agent Runtime 应该怎么设计？" data-ask-input></textarea>
+      <button type="submit">检索知识库 <span aria-hidden="true">↗</span></button>
+    </form>
+    <div class="ask-suggestions" aria-label="推荐问题">
+      
+        <button type="button" data-ask-suggestion="Agent Runtime 应该怎么设计？">Agent Runtime 应该怎么设计？</button>
+      
+        <button type="button" data-ask-suggestion="如何让 AI 操控真实世界设备？">如何让 AI 操控真实世界设备？</button>
+      
+        <button type="button" data-ask-suggestion="Leslie 最近在研究什么？">Leslie 最近在研究什么？</button>
+      
+    </div>
+    <div class="ask-results" data-ask-results aria-live="polite">
+      <div class="ask-empty">
+        <p>输入一个问题，我会把你带到 Leslie 写过的相关内容。</p>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+    <dialog class="wechat-dialog" id="wechat-leslie" aria-labelledby="wechat-title">
+  <div class="wechat-dialog__shell">
+    <header>
+      <div>
+        <p class="section-label">WeChat</p>
+        <h2 id="wechat-title">微信联系</h2>
+      </div>
+      <button class="icon-button" type="button" data-wechat-close aria-label="关闭微信二维码">×</button>
+    </header>
+    <img src="/images/contact/wechat-leslie.png" alt="Leslie Zhang 的微信二维码" loading="lazy">
+    <p>扫码添加 Leslie，建议备注你的名字与来意。</p>
+  </div>
+</dialog>
+
+    <script>window.ORBITAL_ROOT = '/';</script>
+    <script src="/js/orbital.js" defer></script>
+  </body>
+</html>

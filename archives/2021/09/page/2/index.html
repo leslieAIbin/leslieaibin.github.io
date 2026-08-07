@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+  <head>
+
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#050b18">
+<meta name="color-scheme" content="dark light">
+<title>Leslie Zhang | AI Agent &amp; Agent Infra Engineer</title>
+<meta name="description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta name="author" content="Leslie Zhang">
+<link rel="canonical" href="https://leslieaibin.github.io/archives/2021/09/page/2/index.html">
+<link rel="icon" href="/imgs/01.jpg">
+<link rel="alternate" type="application/atom+xml" title="Leslie Zhang" href="/atom.xml">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Leslie Zhang | AI Agent &amp; Agent Infra Engineer">
+<meta property="og:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta property="og:url" content="https://leslieaibin.github.io/archives/2021/09/page/2/index.html">
+<meta property="og:image" content="https://leslieaibin.github.io/og-blue.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Leslie Zhang | AI Agent &amp; Agent Infra Engineer">
+<meta name="twitter:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta name="twitter:image" content="https://leslieaibin.github.io/og-blue.png">
+<script>
+  (function () {
+    var saved = localStorage.getItem('orbital-theme');
+    var theme = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    document.documentElement.dataset.theme = theme;
+  })();
+</script>
+<link rel="stylesheet" href="/css/orbital.css">
+<meta name="generator" content="Hexo 5.2.0"></head>
+  <body class="page-index">
+    <a class="skip-link" href="#main-content">跳到主要内容</a>
+    <div class="reading-progress" data-reading-progress></div>
+    <header class="site-header" data-header>
+  <div class="nav-shell">
+    <a class="brand" href="/" aria-label="返回首页">
+      <span class="brand-mark" aria-hidden="true"><img src="/images/brand/leslie-mythos-avatar.webp" alt="" width="512" height="512"></span>
+      <span class="brand-copy">
+        <strong>LESLIE</strong>
+        <small>REAL-WORLD AGENTS</small>
+      </span>
+    </a>
+
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav" data-nav-toggle>
+      <span></span><span></span>
+      <span class="sr-only">打开导航</span>
+    </button>
+
+    <nav class="main-nav" id="main-nav" aria-label="主导航" data-nav>
+      
+        <a href="/" class="">首页</a>
+      
+        <a href="/writing/" class="">写作</a>
+      
+        <a href="/projects/" class="">项目</a>
+      
+        <a href="/about/" class="">关于</a>
+      
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换明暗主题">
+        <span class="theme-toggle__sun" aria-hidden="true">☼</span>
+        <span class="theme-toggle__moon" aria-hidden="true">◐</span>
+      </button>
+      <button class="ask-nav" type="button" data-ask-open>ASK LESLIE</button>
+    </nav>
+  </div>
+</header>
+
+    <main id="main-content"><section class="page-hero shell">
+  <p class="page-kicker">Writing archive</p>
+  <h1>全部归档</h1>
+  <p>按时间回看，理解是怎样一层层长出来的。</p>
+</section>
+<section class="section shell"><div class="writing-list" data-writing-list>
+  
+    <article class="writing-row reveal" data-writing-item data-search="06.mysql的主从复制 mysql mysql binlog mysql 的 binlog 日志是一种二进制格式的日志，binlog记录所有的ddl和dml语句（除了数据查询语句select， show 等），以event的形式记录，同时记录语句执行时间。 binlog的 主要作用有两种： 数据恢复： 因为binlog详细记录所有修改数据的sql，当某一个时刻的数据误操作而导致出问题，或者数据库当局数据丢失，那么可以根据binlog回放历史数据 主从复制 想做多级备份的业务，可以去监听当前写库的binlog日志…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-09-21">2021.09.21</time><span>10 MIN</span></div>
+        <h2><a href="/2021/09/21/MySQL/06.MySQL%E7%9A%84%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">06.MySQL的主从复制</a></h2>
+        <p>MySQL BinLog MySQL 的 Binlog 日志是一种二进制格式的日志，Binlog记录所有的DDL和DML语句（除了数据查询语句Select， show 等），以Event的形式记录，同时记录语句执行时间。 BInlog的 主要作用有两种： 数据恢复： 因为Binlog详细记录所有修改…</p>
+        <div class="chip-row"><span>MySQL</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/09/21/MySQL/06.MySQL%E7%9A%84%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/" aria-label="阅读《06.MySQL的主从复制》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="05.spring-bean(2) spring spring bean的生命周期 初始化 在创建此bean的bean工厂中设置bean的名称，在普通属性设置之后调用，在 方法之前调用 : 在普通属性设置之后，initializingbean.afterpropertiesset()之前调用 : 回调提供了自己的bean实例工厂，在普通属性设置之后，在 或者自定义初始化方法之前调用 : 设置environment在组件使用时调用 : 设置stringvalueresolver 用来解决嵌入式的值域问题 : 在普通bean对象…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-09-19">2021.09.19</time><span>7 MIN</span></div>
+        <h2><a href="/2021/09/19/Spring/06.Spring-Bean(2)/">05.Spring-Bean(2)</a></h2>
+        <p>Spring Bean的生命周期 初始化 在创建此bean的bean工厂中设置bean的名称，在普通属性设置之后调用，在 方法之前调用 : 在普通属性设置之后，InitializingBean.afterPropertiesSet()之前调用 : 回调提供了自己的bean实例工厂，在普通属性设置之后…</p>
+        <div class="chip-row"><span>Spring</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/09/19/Spring/06.Spring-Bean(2)/" aria-label="阅读《05.Spring-Bean(2)》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="05.spring-ioc(2) spring spring ioc spring ioc容器 作用 控制反转即ioc(inversion of control)，将传统上由程序代码直接控制的对象的调度权交给容器，通过容器来实现对象组件的装配和管理。所谓的”控制反转”概念就是对组件对象控制权的转移，从本身程序代码转到容器，spring ioc 负责创建对象，管理对象（通过依赖注入（di），装配对象，配置对象，并且管理这些对象的整个生命周期）。对于l0c来说,最重要的就是容器。容器管理着bean的生命周期,控制着bean的依…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-09-18">2021.09.18</time><span>7 MIN</span></div>
+        <h2><a href="/2021/09/18/Spring/05.Spring-IoC(2)/">05.Spring-IoC(2)</a></h2>
+        <p>Spring IoC Spring IoC容器 作用 控制反转即IoC(Inversion of Control)，将传统上由程序代码直接控制的对象的调度权交给容器，通过容器来实现对象组件的装配和管理。所谓的”控制反转”概念就是对组件对象控制权的转移，从本身程序代码转到容器，Spring IOC 负…</p>
+        <div class="chip-row"><span>Spring</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/09/18/Spring/05.Spring-IoC(2)/" aria-label="阅读《05.Spring-IoC(2)》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="10.java内存模型 多线程与并发 java内存模型（jmm） jvm内存模型指的是jvm的内存分区；而java内存模型是一种虚拟机规范 jmm就是java内存模型（java mermory model）。因为在不同的硬件生产商和不同的操作系统下，内存的访问有一定的差异，所以会造成相同的代码运行在不同的系统上会出现各种问题。 所以java内存模型（jmm）屏蔽掉各种硬件和和操作系统的内存访问差异，以实现让java程序在各种平台下都能达到一致的并发效果 java内存模型规定所有的变量存储在主内存中，包括 实例变量…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-09-15">2021.09.15</time><span>8 MIN</span></div>
+        <h2><a href="/2021/09/15/Thread/11.Java%E7%9A%84%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%EF%BC%88JMM)/">10.Java内存模型</a></h2>
+        <p>Java内存模型（JMM） JVM内存模型指的是JVM的内存分区；而java内存模型是一种虚拟机规范 JMM就是Java内存模型（Java Mermory Model）。因为在不同的硬件生产商和不同的操作系统下，内存的访问有一定的差异，所以会造成相同的代码运行在不同的系统上会出现各种问题。 所以Ja…</p>
+        <div class="chip-row"><span>多线程与并发</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/09/15/Thread/11.Java%E7%9A%84%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%EF%BC%88JMM)/" aria-label="阅读《10.Java内存模型》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="05.分布式锁 mysql 分布式锁 什么是锁 在单线程的系统中，当存在多个线程可以同时改变某个变量（可变共享变量）时，就需要对变量或代码块做同步，使其在修改这种变量时能够线性执行消除并发修改变量 而同步的本质是通过锁实现的。为了实现多个线程在一个时刻同一代码块只能有一个线程可执行，那么需要在某个地方做个标记，这个必须每个线程都能看到，当标记不存在时可以设置该标记，其余后续线程发现已经有标记了则等待拥有标记的线程结束同步代码块取消标记后再去尝试设置标记。这个标记可以理解为锁。 不同地方实现锁的方式也不一…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-09-11">2021.09.11</time><span>9 MIN</span></div>
+        <h2><a href="/2021/09/11/MySQL/05.%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81/">05.分布式锁</a></h2>
+        <p>分布式锁 什么是锁 在单线程的系统中，当存在多个线程可以同时改变某个变量（可变共享变量）时，就需要对变量或代码块做同步，使其在修改这种变量时能够线性执行消除并发修改变量 而同步的本质是通过锁实现的。为了实现多个线程在一个时刻同一代码块只能有一个线程可执行，那么需要在某个地方做个标记，这个必须每个线程…</p>
+        <div class="chip-row"><span>MySQL</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/09/11/MySQL/05.%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81/" aria-label="阅读《05.分布式锁》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="18.字符串常量池 jvm jvm——字符串常量池详解 引言 在java开发中不管是前后端交互的json串，还是数据库中的数据存储，我们常常需要使用到string类型的字符串。作为最常用也是最基础的引用数据类型，jvm为string提供了字符串常量池来提高性能，本篇文章我们一起从底层jvm中认识并学习字符串常量池的概念和设计原理。 字符串常量池由来 在日常开发过程中，字符串的创建是比较频繁的，而字符串的分配和其他对象的分配是类似的，需要耗费大量的时间和空间，从而影响程序的运行性能，所以作为最基础最常用的…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-09-11">2021.09.11</time><span>6 MIN</span></div>
+        <h2><a href="/2021/09/11/JVM/18.%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%B8%B8%E9%87%8F%E6%B1%A0/">18.字符串常量池</a></h2>
+        <p>JVM——字符串常量池详解 引言 在Java开发中不管是前后端交互的JSON串，还是数据库中的数据存储，我们常常需要使用到String类型的字符串。作为最常用也是最基础的引用数据类型，JVM为String提供了字符串常量池来提高性能，本篇文章我们一起从底层JVM中认识并学习字符串常量池的概念和设计原…</p>
+        <div class="chip-row"><span>JVM</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/09/11/JVM/18.%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%B8%B8%E9%87%8F%E6%B1%A0/" aria-label="阅读《18.字符串常量池》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="19.oom排查 jvm 1、使用dmesg命令查看系统日志 dmesg |grep -e ‘kill|oom|out of memory’，可以查看操作系统启动后的系统日志，这里就是查看跟内存溢出相关联的系统日志。- 2、这时候，需要启动项目，使用ps命令查看进程 - ps -aux|grep java 或者是 ps -ef|grep java 命令查看一下你的java进程，就可以找到你的java进程的进程id。- 3、接着使用top命令 top命令显示的结果列表中，会看到%mem这一列，这里可以看…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-09-11">2021.09.11</time><span>5 MIN</span></div>
+        <h2><a href="/2021/09/11/JVM/19.oom%E6%8E%92%E6%9F%A5/">19.oom排查</a></h2>
+        <p>1、使用dmesg命令查看系统日志 dmesg |grep -E ‘kill|oom|out of memory’，可以查看操作系统启动后的系统日志，这里就是查看跟内存溢出相关联的系统日志。- 2、这时候，需要启动项目，使用ps命令查看进程 - ps -aux|grep java 或者是 ps -e…</p>
+        <div class="chip-row"><span>JVM</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/09/11/JVM/19.oom%E6%8E%92%E6%9F%A5/" aria-label="阅读《19.oom排查》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="04.mysql索引原理及慢查询优化 mysql 背景 mysql凭借着出色的性能、低廉的成本、丰富的资源，已经成为绝大多数互联网公司的首选关系型数据库。虽然性能出色，但所谓“好马配好鞍”，如何能够更好的使用它，已经成为开发工程师的必修课，我们经常会从职位描述上看到诸如“精通mysql”、“sql语句优化”、“了解数据库原理”等要求。我们知道一般的应用系统，读写比例在10:1左右，而且插入操作和一般的更新操作很少出现性能问题，遇到最多的，也是最容易出问题的，还是一些复杂的查询操作，所以查询语句的优化显然是重中之重。背景 my…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-09-10">2021.09.10</time><span>10 MIN</span></div>
+        <h2><a href="/2021/09/10/MySQL/04.MySQL%E7%B4%A2%E5%BC%95%E5%8E%9F%E7%90%86%E5%8F%8A%E6%85%A2%E6%9F%A5%E8%AF%A2%E4%BC%98%E5%8C%96/">04.MySQL索引原理及慢查询优化</a></h2>
+        <p>背景 MySQL凭借着出色的性能、低廉的成本、丰富的资源，已经成为绝大多数互联网公司的首选关系型数据库。虽然性能出色，但所谓“好马配好鞍”，如何能够更好的使用它，已经成为开发工程师的必修课，我们经常会从职位描述上看到诸如“精通MySQL”、“SQL语句优化”、“了解数据库原理”等要求。我们知道一般的…</p>
+        <div class="chip-row"><span>MySQL</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/09/10/MySQL/04.MySQL%E7%B4%A2%E5%BC%95%E5%8E%9F%E7%90%86%E5%8F%8A%E6%85%A2%E6%9F%A5%E8%AF%A2%E4%BC%98%E5%8C%96/" aria-label="阅读《04.MySQL索引原理及慢查询优化》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="03.一条sql查询语句如何执行 mysql 一条sql查询语句如何执行 mysql可以分为server层和存储引擎层两部分 server层包括 连接器、查询缓存、分析器、优化器、执行器 等，涵盖了mysql的大多数核心功能，以及所有的内置函数（如日期、时间、数学和加密函数等），所有跨存储引擎的功能都在这一层实现，比如存储过程，触发器，视图等。 而存储引擎层负责数据的存储和提取。其架构模式是插件式的，支持innodb、myisam、memory等多个存储引擎。现在最常用的存储引擎innodb，它从mysql5.5.5版本…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-09-09">2021.09.09</time><span>7 MIN</span></div>
+        <h2><a href="/2021/09/09/MySQL/03.MySQL%E6%9F%A5%E8%AF%A2%E8%BF%87%E7%A8%8B/">03.一条SQL查询语句如何执行</a></h2>
+        <p>一条SQL查询语句如何执行 MySQL可以分为Server层和存储引擎层两部分 Server层包括 连接器、查询缓存、分析器、优化器、执行器 等，涵盖了MySQL的大多数核心功能，以及所有的内置函数（如日期、时间、数学和加密函数等），所有跨存储引擎的功能都在这一层实现，比如存储过程，触发器，视图等。…</p>
+        <div class="chip-row"><span>MySQL</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/09/09/MySQL/03.MySQL%E6%9F%A5%E8%AF%A2%E8%BF%87%E7%A8%8B/" aria-label="阅读《03.一条SQL查询语句如何执行》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="http和rpc简介 tcp/ip http 的本质？http 和 rpc 的区别？ http 的本质 首先你要明确 http 是一个协议，是一个超文本传输协议。 它基于 tcp/ip 来传输文本、图片、视频、音频等。 重点来了 。 http 不提供数据包的传输功能，也就是数据包从浏览器到服务端再来回的 传输 和它没关系。 这是 tcp/ip 干的。 那 http 有啥用？我们来分析一波。 我们上网要么就是获取一些信息来看，要么就是修改一些信息。 比如你用浏览器刷微博就是获取信息，发微博就是修改信息。 所以说浏…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2021-09-09">2021.09.09</time><span>4 MIN</span></div>
+        <h2><a href="/2021/09/09/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/10.http%E5%92%8Crpc%E7%AE%80%E4%BB%8B/">http和rpc简介</a></h2>
+        <p>HTTP 的本质？HTTP 和 RPC 的区别？ HTTP 的本质 首先你要明确 HTTP 是一个协议，是一个超文本传输协议。 它基于 TCP/IP 来传输文本、图片、视频、音频等。 重点来了 。 HTTP 不提供数据包的传输功能，也就是数据包从浏览器到服务端再来回的 传输 和它没关系。 这是 TC…</p>
+        <div class="chip-row"><span>TCP/IP</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2021/09/09/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/10.http%E5%92%8Crpc%E7%AE%80%E4%BB%8B/" aria-label="阅读《http和rpc简介》">↗</a>
+    </article>
+  
+</div>
+<a class="extend prev" rel="prev" href="/archives/2021/09/">Prev</a><a class="page-number" href="/archives/2021/09/">1</a><span class="page-number current">2</span><a class="page-number" href="/archives/2021/09/page/3/">3</a><a class="extend next" rel="next" href="/archives/2021/09/page/3/">Next</a></section>
+</main>
+    <footer class="site-footer">
+  <div class="footer-grid">
+    <div>
+      <p class="footer-kicker">Leslie Zhang</p>
+      <p class="footer-statement">流水不争先，<br>争的是滔滔不绝。</p>
+    </div>
+    <div class="footer-links">
+      <a href="https://github.com/leslieAIbin" target="_blank" rel="noreferrer">GitHub ↗</a>
+      <a href="https://www.instagram.com/leslieaibin/" target="_blank" rel="noreferrer">Instagram ↗</a>
+      <button type="button" data-wechat-open>微信 / WeChat</button>
+      <a href="mailto:aibinzhangleslie@gmail.com">Email ↗</a>
+      <a href="/atom.xml">RSS ↗</a>
+    </div>
+    <div class="footer-meta">
+      <span>© 2026 Leslie Zhang</span>
+      <span>Writing, research and working systems.</span>
+    </div>
+  </div>
+</footer>
+
+    <dialog class="ask-dialog" id="ask-leslie" aria-labelledby="ask-title">
+  <div class="ask-dialog__shell">
+    <div class="ask-dialog__topbar">
+      <div>
+        <h2 id="ask-title">Ask Leslie</h2>
+      </div>
+      <button class="icon-button" type="button" data-ask-close aria-label="关闭">×</button>
+    </div>
+    <p class="ask-dialog__intro">从本站公开文章中寻找答案。当前版本在浏览器本地检索，不上传问题，也不会编造不存在的经历。</p>
+    <form class="ask-form" data-ask-form>
+      <label class="sr-only" for="ask-query">输入问题</label>
+      <textarea id="ask-query" rows="2" placeholder="例如：Agent Runtime 应该怎么设计？" data-ask-input></textarea>
+      <button type="submit">检索知识库 <span aria-hidden="true">↗</span></button>
+    </form>
+    <div class="ask-suggestions" aria-label="推荐问题">
+      
+        <button type="button" data-ask-suggestion="Agent Runtime 应该怎么设计？">Agent Runtime 应该怎么设计？</button>
+      
+        <button type="button" data-ask-suggestion="如何让 AI 操控真实世界设备？">如何让 AI 操控真实世界设备？</button>
+      
+        <button type="button" data-ask-suggestion="Leslie 最近在研究什么？">Leslie 最近在研究什么？</button>
+      
+    </div>
+    <div class="ask-results" data-ask-results aria-live="polite">
+      <div class="ask-empty">
+        <p>输入一个问题，我会把你带到 Leslie 写过的相关内容。</p>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+    <dialog class="wechat-dialog" id="wechat-leslie" aria-labelledby="wechat-title">
+  <div class="wechat-dialog__shell">
+    <header>
+      <div>
+        <p class="section-label">WeChat</p>
+        <h2 id="wechat-title">微信联系</h2>
+      </div>
+      <button class="icon-button" type="button" data-wechat-close aria-label="关闭微信二维码">×</button>
+    </header>
+    <img src="/images/contact/wechat-leslie.png" alt="Leslie Zhang 的微信二维码" loading="lazy">
+    <p>扫码添加 Leslie，建议备注你的名字与来意。</p>
+  </div>
+</dialog>
+
+    <script>window.ORBITAL_ROOT = '/';</script>
+    <script src="/js/orbital.js" defer></script>
+  </body>
+</html>

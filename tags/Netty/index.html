@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+  <head>
+
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#050b18">
+<meta name="color-scheme" content="dark light">
+<title>Leslie Zhang | AI Agent &amp; Agent Infra Engineer</title>
+<meta name="description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta name="author" content="Leslie Zhang">
+<link rel="canonical" href="https://leslieaibin.github.io/tags/Netty/index.html">
+<link rel="icon" href="/imgs/01.jpg">
+<link rel="alternate" type="application/atom+xml" title="Leslie Zhang" href="/atom.xml">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Leslie Zhang | AI Agent &amp; Agent Infra Engineer">
+<meta property="og:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta property="og:url" content="https://leslieaibin.github.io/tags/Netty/index.html">
+<meta property="og:image" content="https://leslieaibin.github.io/og-blue.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Leslie Zhang | AI Agent &amp; Agent Infra Engineer">
+<meta name="twitter:description" content="构建面向真实世界的 Agent 系统，也记录技术、行动与反馈如何改变理解。">
+<meta name="twitter:image" content="https://leslieaibin.github.io/og-blue.png">
+<script>
+  (function () {
+    var saved = localStorage.getItem('orbital-theme');
+    var theme = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    document.documentElement.dataset.theme = theme;
+  })();
+</script>
+<link rel="stylesheet" href="/css/orbital.css">
+<meta name="generator" content="Hexo 5.2.0"></head>
+  <body class="page-index">
+    <a class="skip-link" href="#main-content">跳到主要内容</a>
+    <div class="reading-progress" data-reading-progress></div>
+    <header class="site-header" data-header>
+  <div class="nav-shell">
+    <a class="brand" href="/" aria-label="返回首页">
+      <span class="brand-mark" aria-hidden="true"><img src="/images/brand/leslie-mythos-avatar.webp" alt="" width="512" height="512"></span>
+      <span class="brand-copy">
+        <strong>LESLIE</strong>
+        <small>REAL-WORLD AGENTS</small>
+      </span>
+    </a>
+
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav" data-nav-toggle>
+      <span></span><span></span>
+      <span class="sr-only">打开导航</span>
+    </button>
+
+    <nav class="main-nav" id="main-nav" aria-label="主导航" data-nav>
+      
+        <a href="/" class="">首页</a>
+      
+        <a href="/writing/" class="">写作</a>
+      
+        <a href="/projects/" class="">项目</a>
+      
+        <a href="/about/" class="">关于</a>
+      
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换明暗主题">
+        <span class="theme-toggle__sun" aria-hidden="true">☼</span>
+        <span class="theme-toggle__moon" aria-hidden="true">◐</span>
+      </button>
+      <button class="ask-nav" type="button" data-ask-open>ASK LESLIE</button>
+    </nav>
+  </div>
+</header>
+
+    <main id="main-content"><section class="page-hero shell"><p class="page-kicker">Writing topic</p><h1># Netty</h1><p>沿着这个关键词，继续往里看。</p></section>
+<section class="section shell"><div class="writing-list" data-writing-list>
+  
+    <article class="writing-row reveal" data-writing-item data-search="05.编写netty应用程序 netty 05.netty服务启动 之前讲过的 echoserver： 问题 通过前面使用案例的学习，我们知道，netty 启动的时候主要是下面这行代码： 这里主要有两个方法，一个是 bind ()，一个是 sync ()，sync () 属于 channelfuture 的范畴，我们之后再说： netty 的 channel 跟 java 原生的 channel 是否有某种关系？ bind () 是否调用了 java 底层的 socket 相关的操作？ netty 服务启动之后 ch…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2022-05-23">2022.05.23</time><span>4 MIN</span></div>
+        <h2><a href="/2022/05/23/Netty/05.Netty%E6%9C%8D%E5%8A%A1%E5%90%AF%E5%8A%A8/">05.编写Netty应用程序</a></h2>
+        <p>05.Netty服务启动 之前讲过的 EchoServer： 问题 通过前面使用案例的学习，我们知道，Netty 启动的时候主要是下面这行代码： 这里主要有两个方法，一个是 bind ()，一个是 sync ()，sync () 属于 ChannelFuture 的范畴，我们之后再说： Netty…</p>
+        <div class="chip-row"><span>Netty</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2022/05/23/Netty/05.Netty%E6%9C%8D%E5%8A%A1%E5%90%AF%E5%8A%A8/" aria-label="阅读《05.编写Netty应用程序》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="04.编写netty应用程序 netty 编写netty应用程序 从 工程下抄了一份 echoserver 过来，并删减了部分代码，归纳出来一份编写 netty 服务端程序的模板，我把它称为 “netty 编码十步曲”。 1. 声明线程池（必须） 一般来说，我们会声明两个 group，一个是 bossgroup，用于处理 accept 事件，一个是 workergroup，用于处理消息的读写事件。其中，bossgroup 一般声明为一个线程。当然，如果声明一个 group 也是可以的，只是不建议。 这就像是大型餐厅一…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2022-05-17">2022.05.17</time><span>5 MIN</span></div>
+        <h2><a href="/2022/05/17/Netty/04.%E7%BC%96%E5%86%99Netty%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F/">04.编写Netty应用程序</a></h2>
+        <p>编写Netty应用程序 从 工程下抄了一份 EchoServer 过来，并删减了部分代码，归纳出来一份编写 Netty 服务端程序的模板，我把它称为 “Netty 编码十步曲”。 1. 声明线程池（必须） 一般来说，我们会声明两个 Group，一个是 bossGroup，用于处理 Accept 事件…</p>
+        <div class="chip-row"><span>Netty</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2022/05/17/Netty/04.%E7%BC%96%E5%86%99Netty%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F/" aria-label="阅读《04.编写Netty应用程序》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="03.java nio的核心组件 netty 03.java nio的核心组件 channel 什么是 channel 呢？ 让我们来看看 jdk 怎么说： // java.nio.channels.channel a nexus for i/o operations. a channel represents an open connection to an entity such as a hardware device, a file, a network socket, or a program componen…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2022-05-17">2022.05.17</time><span>9 MIN</span></div>
+        <h2><a href="/2022/05/17/Netty/03.%20Java%20NIO%E7%9A%84%E6%A0%B8%E5%BF%83%E7%BB%84%E4%BB%B6/">03.Java NIO的核心组件</a></h2>
+        <p>03.Java NIO的核心组件 Channel 什么是 Channel 呢？ 让我们来看看 JDK 怎么说： // java.nio.channels.Channel A nexus for I/O operations. A channel represents an open connecti…</p>
+        <div class="chip-row"><span>Netty</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2022/05/17/Netty/03.%20Java%20NIO%E7%9A%84%E6%A0%B8%E5%BF%83%E7%BB%84%E4%BB%B6/" aria-label="阅读《03.Java NIO的核心组件》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="02.io多路复用实现机制 netty io 多路复用实现机制 概念说明 io 多路复用有三种实现，在介绍select、poll、epoll之前，首先介绍一下linux操作系统中 基础的概念 ： 用户空间和内核空间 进程切换 进程的阻塞 文件描述符 缓存 i/o 用户空间 / 内核空间 现在操作系统都是采用虚拟存储器，那么对32位操作系统而言，它的寻址空间（虚拟存储空间）为4g（2的32次方）。操作系统的核心是内核，独立于普通的应用程序，可以访问受保护的内存空间，也有访问底层硬件设备的所有权限。为了保证用户进程不能…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2022-05-14">2022.05.14</time><span>15 MIN</span></div>
+        <h2><a href="/2022/05/14/Netty/02.%20IO%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6/">02.IO多路复用实现机制</a></h2>
+        <p>IO 多路复用实现机制 概念说明 IO 多路复用有三种实现，在介绍select、poll、epoll之前，首先介绍一下Linux操作系统中 基础的概念 ： 用户空间和内核空间 进程切换 进程的阻塞 文件描述符 缓存 I/O 用户空间 / 内核空间 现在操作系统都是采用虚拟存储器，那么对32位操作系统…</p>
+        <div class="chip-row"><span>Netty</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2022/05/14/Netty/02.%20IO%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6/" aria-label="阅读《02.IO多路复用实现机制》">↗</a>
+    </article>
+  
+    <article class="writing-row reveal" data-writing-item data-search="01.io多路复用基础 netty i/o 五种io模型 前言 为了加深对 i/o多路复用机制 的理解，以及了解到多路复用也有局限性，在这里我们先回顾下 unix网络编程中的五种io模型 。 blocking io - 阻塞io noneblocking io - 非阻塞io io multiplexing - io多路复用 signal driven io - 信号驱动io asynchronous io - 异步io unix网络编程中的五种io模型 阻塞io - blocking io 最传统的一种io模…">
+      <div class="writing-row__main">
+        <div class="post-card__meta"><time datetime="2022-05-10">2022.05.10</time><span>8 MIN</span></div>
+        <h2><a href="/2022/05/10/Netty/01.%20IO%20%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8%E5%9F%BA%E7%A1%80/">01.IO多路复用基础</a></h2>
+        <p>I/O 五种IO模型 前言 为了加深对 I/O多路复用机制 的理解，以及了解到多路复用也有局限性，在这里我们先回顾下 Unix网络编程中的五种IO模型 。 Blocking IO - 阻塞IO NoneBlocking IO - 非阻塞IO IO multiplexing - IO多路复用 sign…</p>
+        <div class="chip-row"><span>Netty</span></div>
+      </div>
+      <a class="writing-row__arrow" href="/2022/05/10/Netty/01.%20IO%20%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8%E5%9F%BA%E7%A1%80/" aria-label="阅读《01.IO多路复用基础》">↗</a>
+    </article>
+  
+</div>
+<span class="page-number current">1</span></section>
+</main>
+    <footer class="site-footer">
+  <div class="footer-grid">
+    <div>
+      <p class="footer-kicker">Leslie Zhang</p>
+      <p class="footer-statement">流水不争先，<br>争的是滔滔不绝。</p>
+    </div>
+    <div class="footer-links">
+      <a href="https://github.com/leslieAIbin" target="_blank" rel="noreferrer">GitHub ↗</a>
+      <a href="https://www.instagram.com/leslieaibin/" target="_blank" rel="noreferrer">Instagram ↗</a>
+      <button type="button" data-wechat-open>微信 / WeChat</button>
+      <a href="mailto:aibinzhangleslie@gmail.com">Email ↗</a>
+      <a href="/atom.xml">RSS ↗</a>
+    </div>
+    <div class="footer-meta">
+      <span>© 2026 Leslie Zhang</span>
+      <span>Writing, research and working systems.</span>
+    </div>
+  </div>
+</footer>
+
+    <dialog class="ask-dialog" id="ask-leslie" aria-labelledby="ask-title">
+  <div class="ask-dialog__shell">
+    <div class="ask-dialog__topbar">
+      <div>
+        <h2 id="ask-title">Ask Leslie</h2>
+      </div>
+      <button class="icon-button" type="button" data-ask-close aria-label="关闭">×</button>
+    </div>
+    <p class="ask-dialog__intro">从本站公开文章中寻找答案。当前版本在浏览器本地检索，不上传问题，也不会编造不存在的经历。</p>
+    <form class="ask-form" data-ask-form>
+      <label class="sr-only" for="ask-query">输入问题</label>
+      <textarea id="ask-query" rows="2" placeholder="例如：Agent Runtime 应该怎么设计？" data-ask-input></textarea>
+      <button type="submit">检索知识库 <span aria-hidden="true">↗</span></button>
+    </form>
+    <div class="ask-suggestions" aria-label="推荐问题">
+      
+        <button type="button" data-ask-suggestion="Agent Runtime 应该怎么设计？">Agent Runtime 应该怎么设计？</button>
+      
+        <button type="button" data-ask-suggestion="如何让 AI 操控真实世界设备？">如何让 AI 操控真实世界设备？</button>
+      
+        <button type="button" data-ask-suggestion="Leslie 最近在研究什么？">Leslie 最近在研究什么？</button>
+      
+    </div>
+    <div class="ask-results" data-ask-results aria-live="polite">
+      <div class="ask-empty">
+        <p>输入一个问题，我会把你带到 Leslie 写过的相关内容。</p>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+    <dialog class="wechat-dialog" id="wechat-leslie" aria-labelledby="wechat-title">
+  <div class="wechat-dialog__shell">
+    <header>
+      <div>
+        <p class="section-label">WeChat</p>
+        <h2 id="wechat-title">微信联系</h2>
+      </div>
+      <button class="icon-button" type="button" data-wechat-close aria-label="关闭微信二维码">×</button>
+    </header>
+    <img src="/images/contact/wechat-leslie.png" alt="Leslie Zhang 的微信二维码" loading="lazy">
+    <p>扫码添加 Leslie，建议备注你的名字与来意。</p>
+  </div>
+</dialog>
+
+    <script>window.ORBITAL_ROOT = '/';</script>
+    <script src="/js/orbital.js" defer></script>
+  </body>
+</html>

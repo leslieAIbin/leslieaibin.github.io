@@ -31,11 +31,20 @@
     });
   }
 
+  function syncThemeColor() {
+    var meta = document.querySelector('meta[name="theme-color"]');
+    if (!meta) return;
+    meta.setAttribute('content', document.documentElement.dataset.theme === 'light' ? '#f4efe6' : '#171410');
+  }
+
+  syncThemeColor();
+
   document.querySelectorAll('[data-theme-toggle]').forEach(function (button) {
     button.addEventListener('click', function () {
       var next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
       document.documentElement.dataset.theme = next;
       localStorage.setItem('orbital-theme', next);
+      syncThemeColor();
     });
   });
 
@@ -224,8 +233,8 @@
 
     function color(name, alpha) {
       var light = document.documentElement.dataset.theme === 'light';
-      if (name === 'accent') return light ? 'rgba(23,105,210,' + alpha + ')' : 'rgba(77,163,255,' + alpha + ')';
-      return light ? 'rgba(0,127,189,' + alpha + ')' : 'rgba(83,215,255,' + alpha + ')';
+      if (name === 'accent') return light ? 'rgba(143,48,20,' + alpha + ')' : 'rgba(240,178,122,' + alpha + ')';
+      return light ? 'rgba(106,70,48,' + alpha + ')' : 'rgba(234,215,192,' + alpha + ')';
     }
 
     function draw(time) {
